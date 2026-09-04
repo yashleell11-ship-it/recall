@@ -3,6 +3,7 @@ import sys
 
 from recall.config import load_config
 from recall.db import connect, init_db
+from recall.demo import clear_demo, seed_demo
 from recall.export.anki import export_apkg
 
 TOPICS = {
@@ -89,6 +90,31 @@ def cmd_export(args, cfg) -> int:
     return 0
 
 
+def cmd_demo(args, cfg) -> int:
+    conn = _conn(cfg)
+    if args.clear:
+        print(f"removed {clear_demo(conn)} sample cards")
+        return 0
+    n = seed_demo(conn)
+    print(f"seeded {n} sample cards"
+          if n else "sample cards already present (use --clear to remove)")
+    return 0
+
+
+def cmd_serve(args, cfg) -> int:
+    import os
+
+    import uvicorn
+
+    from recall.api.app import bootstrap
+
+    os.environ["RECALL_DB"] = cfg.db_path
+    bootstrap(cfg.db_path)
+    uvicorn.run("recall.api.app:app", host=args.host, port=args.port,
+                reload=args.reload)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="recall")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -110,6 +136,16 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("ids", nargs="+", type=int)
     s.add_argument("--reject", action="store_true")
     s.set_defaults(func=cmd_approve)
+
+    s = sub.add_parser("demo", help="seed sample cards so the app works without a key")
+    s.add_argument("--clear", action="store_true")
+    s.set_defaults(func=cmd_demo)
+
+    s = sub.add_parser("serve", help="run the HTTP API")
+    s.add_argument("--host", default="127.0.0.1")
+    s.add_argument("--port", type=int, default=8000)
+    s.add_argument("--reload", action="store_true")
+    s.set_defaults(func=cmd_serve)
 
     s = sub.add_parser("export", help="write an Anki .apkg")
     s.add_argument("--topic", default=None)

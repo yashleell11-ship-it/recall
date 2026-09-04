@@ -1,26 +1,277 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ---------------------------------------------------------------------------
+   Recall — design tokens
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+   Two hand-picked palettes, not one palette and its inverse.
+
+   Light is "paper": a warm off-white ground, hairline rules, near-black ink.
+   Dark is "graphite": a warm-neutral charcoal that is deliberately NOT #000,
+   with lifted rules and an off-white ink so long reading sessions do not glare.
+   The accent is lightened and desaturated in dark so it sits at the same
+   perceptual weight it has on paper.
+
+   One accent — "ember" — and it is spent only on the primary action, the
+   focus ring, and the active nav marker. Nothing else in the product is
+   coloured except the four grade buttons, which earn colour because the
+   colour is the meaning.
+--------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+
+  --bg: #faf9f6;
+  --bg-sunken: #f1f0ea;
+  --surface: #ffffff;
+  --surface-hover: #f6f5f1;
+
+  --line: #e3e1d9;
+  --line-strong: #c9c6ba;
+
+  --fg: #1b1a17;
+  --fg-2: #57554d;
+  --fg-3: #8a877c;
+
+  --accent: #b04525;
+  --accent-hover: #953718;
+  --accent-fg: #fffaf7;
+  --accent-quiet: #f9ece6;
+  --accent-line: #e6c8ba;
+
+  --g-again: #a92f21;
+  --g-hard: #86601a;
+  --g-good: #2f6b3c;
+  --g-easy: #2c5a86;
+
+  --g-again-bg: #fbeeec;
+  --g-hard-bg: #f8f1e2;
+  --g-good-bg: #ecf3ed;
+  --g-easy-bg: #ebf1f7;
+
+  --radius-xs: 2px;
+  --radius-sm: 3px;
+  --radius-md: 5px;
+
+  --t: 90ms;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --bg: #16151a;
+    --bg-sunken: #100f13;
+    --surface: #1d1c22;
+    --surface-hover: #24232a;
+
+    --line: #2d2c34;
+    --line-strong: #423f4b;
+
+    --fg: #ebe8e2;
+    --fg-2: #a29fa8;
+    --fg-3: #726f7a;
+
+    --accent: #e07a52;
+    --accent-hover: #ee8b64;
+    --accent-fg: #1a0f08;
+    --accent-quiet: #2a1a13;
+    --accent-line: #4d3226;
+
+    --g-again: #ef8175;
+    --g-hard: #d6a556;
+    --g-good: #74bf83;
+    --g-easy: #7fb0da;
+
+    --g-again-bg: #2b1815;
+    --g-hard-bg: #2a2113;
+    --g-good-bg: #16251a;
+    --g-easy-bg: #15212c;
   }
 }
 
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #16151a;
+  --bg-sunken: #100f13;
+  --surface: #1d1c22;
+  --surface-hover: #24232a;
+
+  --line: #2d2c34;
+  --line-strong: #423f4b;
+
+  --fg: #ebe8e2;
+  --fg-2: #a29fa8;
+  --fg-3: #726f7a;
+
+  --accent: #e07a52;
+  --accent-hover: #ee8b64;
+  --accent-fg: #1a0f08;
+  --accent-quiet: #2a1a13;
+  --accent-line: #4d3226;
+
+  --g-again: #ef8175;
+  --g-hard: #d6a556;
+  --g-good: #74bf83;
+  --g-easy: #7fb0da;
+
+  --g-again-bg: #2b1815;
+  --g-hard-bg: #2a2113;
+  --g-good-bg: #16251a;
+  --g-easy-bg: #15212c;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-sunken: var(--bg-sunken);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-fg: var(--fg);
+  --color-fg-2: var(--fg-2);
+  --color-fg-3: var(--fg-3);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-quiet: var(--accent-quiet);
+  --color-accent-line: var(--accent-line);
+
+  --color-again: var(--g-again);
+  --color-hard: var(--g-hard);
+  --color-good: var(--g-good);
+  --color-easy: var(--g-easy);
+
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+
+  /* One family. Hierarchy comes from size and weight, never from hue.
+     Mono is reserved for keycaps and nothing else — a keycap is a picture
+     of an object, not running text. */
+  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Inter, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+}
+
+* {
+  border-color: var(--line);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Every number in this product sits in a column next to another number. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+::selection {
+  background: var(--accent-quiet);
+  color: var(--fg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-radius: 2px;
+}
+
+/* Native controls follow the palette rather than the OS. */
+input[type="range"] {
+  accent-color: var(--accent);
+}
+
+/* --- primitives ---------------------------------------------------------- */
+
+@layer components {
+  .kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.35rem;
+    height: 1.15rem;
+    padding: 0 0.28rem;
+    border: 1px solid var(--line-strong);
+    border-bottom-width: 2px;
+    border-radius: var(--radius-xs);
+    background: var(--surface);
+    color: var(--fg-2);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  .label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+  }
+
+  .link {
+    color: var(--fg);
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 2px;
+  }
+  .link:hover {
+    text-decoration-color: var(--fg-2);
+  }
+}
+
+/* --- motion: two transitions, both under 150ms --------------------------- */
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.anim-reveal {
+  animation: reveal 110ms ease-out;
+}
+
+.anim-advance {
+  animation: reveal 90ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
