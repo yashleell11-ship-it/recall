@@ -38,9 +38,11 @@ class SettingsIn(BaseModel):
 
 def create_app() -> FastAPI:
     app = FastAPI(title="Recall", version="0.1.0")
+    # Private single-user app served over loopback: any localhost port is the
+    # dev server, and pinning one port only breaks when that port is taken.
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+        allow_origin_regex=r"^http://(localhost|127\.0\.0\.1)(:\d+)?$",
         allow_methods=["*"],
         allow_headers=["*"],
     )

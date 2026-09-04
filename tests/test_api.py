@@ -204,3 +204,27 @@ def test_elapsed_days_reflects_real_time_since_last_review(client, db_path):
 
     card = next(c for c in client.get("/api/queue").json()["cards"] if c["id"] == 1)
     assert 8.9 < card["elapsed_days"] < 9.1
+
+
+def test_cors_allows_the_dev_server_on_any_localhost_port(client):
+    """Pinning one port breaks the moment that port is taken, which it was."""
+    for origin in ("http://localhost:3000", "http://localhost:3210",
+                   "http://127.0.0.1:8080"):
+        r = client.get("/api/topics", headers={"Origin": origin})
+        assert r.headers.get("access-control-allow-origin") == origin, origin
+
+
+def test_cors_rejects_a_remote_origin(client):
+    r = client.get("/api/topics", headers={"Origin": "https://evil.example.com"})
+    assert r.headers.get("access-control-allow-origin") is None
+
+
+def test_concurrent_requests_all_succeed(client):
+    """A page load fires several requests at once. Before check_same_thread=False
+    most of them returned 500 from a cross-thread sqlite close."""
+    import concurrent.futures
+
+    paths = ["/api/topics", "/api/stats", "/api/settings", "/api/queue"] * 6
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
+        codes = list(pool.map(lambda p: client.get(p).status_code, paths))
+    assert set(codes) == {200}, f"got {sorted(set(codes))}"
