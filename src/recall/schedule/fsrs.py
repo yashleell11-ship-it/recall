@@ -24,6 +24,13 @@ bolted on.
 
 Grades are 1 = again, 2 = hard, 3 = good, 4 = easy.
 
+One deliberate deviation from published FSRS-4.5: the lapse branch is clamped
+with ``min(S_new, S_old)``, so failing a card can never lengthen its interval.
+Stock 4.5 has no such guard and does lengthen it for cards below ~15.08 days of
+stability reviewed well past their due date. Anyone refitting the weights must
+know this, because the likelihood is then being fitted against the clamped
+branch rather than the published one.
+
 This module is pure: no I/O, no database, no logging, and no imports from
 anywhere else in ``recall``. It is only arithmetic, so it is cheap to call and
 easy to test.
@@ -132,10 +139,21 @@ def _checked_grade(grade: int) -> int:
     return grade
 
 
+def _initial_difficulty_raw(grade: int, params: Sequence[float]) -> float:
+    """`_initial_difficulty` before clamping, used as the mean-reversion target.
+
+    FSRS-4.5 is linear in the grade: ``D0(G) = w4 - w5 * (G - 3)``. So w4 is the
+    difficulty of a "good" first answer and w5 is one grade's worth of
+    difficulty. FSRS-5 replaces this with an exponential form fitted to its own
+    weights; the two must not be mixed, because the exponential form evaluated
+    on 4.5's weights underflows past the clamp floor for grades 3 and 4.
+    """
+    return params[4] - params[5] * (grade - 3)
+
+
 def _initial_difficulty(grade: int, params: Sequence[float]) -> float:
     """Difficulty assigned to a brand-new card from its very first grade."""
-    raw = params[4] - math.exp(params[5] * (grade - 1)) + 1.0
-    return _clamp_difficulty(raw)
+    return _clamp_difficulty(_initial_difficulty_raw(grade, params))
 
 
 def retrievability(elapsed_days: float, stability: float) -> float:
@@ -176,8 +194,9 @@ def initial_state(
 
     Initial stability is read straight off the weights (``S0(G) = w[G-1]``), so
     grading a new card "easy" starts it with a far longer interval than "again".
-    Initial difficulty is ``D0(G) = w4 - exp(w5 * (G - 1)) + 1``, clamped to
-    [1, 10].
+    Initial difficulty is ``D0(G) = w4 - w5 * (G - 3)``, clamped to [1, 10],
+    so a card you found easy on sight starts out less stubborn than one you
+    failed.
     """
     checked = _checked_grade(grade)
     return MemoryState(
@@ -216,7 +235,8 @@ def next_state(
     recall_prob = retrievability(days, stability)
 
     graded = difficulty - params[6] * (checked - 3)
-    reverted = params[7] * _initial_difficulty(EASY, params) + (1.0 - params[7]) * graded
+    target = _initial_difficulty_raw(EASY, params)
+    reverted = params[7] * target + (1.0 - params[7]) * graded
     next_difficulty = _clamp_difficulty(reverted)
 
     if checked == AGAIN:
@@ -226,6 +246,18 @@ def next_state(
             * ((stability + 1.0) ** params[13] - 1.0)
             * math.exp(params[14] * (1.0 - recall_prob))
         )
+        # Deliberate deviation from stock FSRS-4.5, and load-bearing. The lapse
+        # branch rebuilds stability from scratch instead of scaling the old
+        # value, and its exp(w14 * (1 - R)) term (up to e**1.587 = 4.89) can
+        # push the result *above* the stability it replaces. Measured against
+        # DEFAULT_PARAMS: that happens for every stability below ~15.08 days
+        # once the review is far enough overdue, worst case S 0.01 -> 0.033 —
+        # a 3.3x *increase* in durability as a reward for forgetting. Since
+        # most cards live below 15 days and students do leave cards months
+        # overdue, stock 4.5 would hand out longer intervals for failures in
+        # exactly the case where the schedule most needs to be trusted. Later
+        # FSRS versions apply this same min().
+        next_stability = min(next_stability, stability)
     else:
         hard = params[15] if checked == HARD else 1.0
         easy = params[16] if checked == EASY else 1.0

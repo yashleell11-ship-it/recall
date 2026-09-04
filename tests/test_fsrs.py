@@ -6,9 +6,9 @@ the invariants that have to survive a refit: monotonicity, ordering, clamping,
 finiteness, and the two exact identities that come from the *definition* of
 stability rather than from any fitted weight.
 
-Two required properties do not hold with the shipped defaults. They are kept as
-strict xfails so the assertion stays exactly as specified and flips to a loud
-failure the moment a refit makes them true. See the reasons on each.
+next_state clamps its lapse branch with min(S_new, S_old), which published
+FSRS-4.5 does not. Section 7 below pins both that guarantee and the pathology
+that motivates it, so the clamp cannot be dropped without a test going red.
 """
 
 import ast
@@ -92,43 +92,25 @@ def test_initial_stability_strictly_increases_with_grade():
     assert all(a < b for a, b in _pairs(stabilities)), stabilities
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "FINDING: with DEFAULT_PARAMS this property is false. The specified "
-        "initial-difficulty form D0(G) = w4 - exp(w5*(G-1)) + 1 evaluates to "
-        "-5.54 for 'good' and -33.86 for 'easy', so both clamp to the floor of "
-        "1.0 and the two grades become indistinguishable. The property itself "
-        "is right and the implementation satisfies it for weights fitted to "
-        "this form (see the test below); the shipped weights are FSRS-4.5's, "
-        "which were fitted to the linear form w4 - (G-3)*w5. Expect an XPASS "
-        "here after the refit, at which point delete this marker."
-    ),
-)
 def test_initial_difficulty_strictly_decreases_with_grade():
     difficulties = [initial_state(grade).difficulty for grade in GRADES]
     assert all(a > b for a, b in _pairs(difficulties)), difficulties
 
 
-def test_initial_difficulty_never_increases_with_grade():
-    difficulties = [initial_state(grade).difficulty for grade in GRADES]
-    assert all(a >= b for a, b in _pairs(difficulties)), difficulties
-
-
-def test_initial_difficulty_strictly_decreases_when_weights_suit_the_form():
-    # Identical code path, but with w4/w5 actually fitted to the exponential
-    # form. Isolates the failure above to the parameters, not the arithmetic.
-    params = list(DEFAULT_PARAMS)
-    params[4], params[5] = 7.1949, 0.5345
-    difficulties = [initial_state(grade, params).difficulty for grade in GRADES]
-    assert all(a > b for a, b in _pairs(difficulties)), difficulties
-
-
-def test_initial_state_is_always_in_range():
+def test_initial_difficulty_is_strictly_inside_the_clamp_range():
+    # A D0 sitting exactly on 1.0 or 10.0 means the formula ran out of range and
+    # the clamp quietly absorbed it. That is precisely what happened while this
+    # module was briefly built with FSRS-5's exponential D0 on FSRS-4.5 weights:
+    # grades 3 and 4 both pinned to the floor and became indistinguishable.
+    # Interior values, not merely in-range ones, are the real invariant.
     for grade in GRADES:
-        state = initial_state(grade)
-        assert state.stability > 0.0
-        assert fsrs.MIN_DIFFICULTY <= state.difficulty <= fsrs.MAX_DIFFICULTY
+        difficulty = initial_state(grade).difficulty
+        assert fsrs.MIN_DIFFICULTY < difficulty < fsrs.MAX_DIFFICULTY, (grade, difficulty)
+
+
+def test_initial_state_stability_is_positive():
+    for grade in GRADES:
+        assert initial_state(grade).stability > 0.0
 
 
 # --------------------------------------------------------------------------
@@ -185,36 +167,40 @@ def test_stability_survives_the_worst_realistic_streaks():
 
 # --------------------------------------------------------------------------
 # 7. A lapse must weaken the memory.
+#
+# Published FSRS-4.5 does not guarantee this. next_state clamps its lapse
+# branch with min(S_new, S_old); these tests pin both the guarantee and the
+# pathology that motivates it, so nobody deletes the clamp by accident.
 # --------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "FINDING: with DEFAULT_PARAMS this property is false for young, badly "
-        "overdue cards. The lapse formula rebuilds stability from scratch "
-        "rather than scaling the old value, and its exp(w14*(1-R)) term (up to "
-        "e**1.587 = 4.89) can push the result above the prior stability "
-        "whenever that stability is below ~15.08 days. FSRS-4.5 as specified "
-        "has no min(S_new, S_old) guard, so forgetting a one-day card you last "
-        "saw a year ago strengthens it — worst case observed: S 0.01 -> 0.033. "
-        "Adding the guard would fix it but is not in the frozen spec, so it is "
-        "reported rather than patched. The two tests below pin the region where "
-        "the property does hold."
-    ),
-)
-def test_lapse_always_reduces_stability():
+def _raw_lapse_stability(state, elapsed_days, params=DEFAULT_PARAMS):
+    """The published FSRS-4.5 lapse formula, without this module's min() guard."""
+    recall_prob = retrievability(elapsed_days, state.stability)
+    return (
+        params[11]
+        * state.difficulty ** -params[12]
+        * ((state.stability + 1.0) ** params[13] - 1.0)
+        * math.exp(params[14] * (1.0 - recall_prob))
+    )
+
+
+def test_lapse_never_increases_stability():
+    # The unconditional guarantee, across every stability, difficulty and gap.
+    # Note this is <= and not <: where the clamp binds it returns the prior
+    # stability exactly, because that is what min() does. Strict reduction is
+    # asserted below for the two regions where the model delivers it.
     for stability in STABILITIES:
         for difficulty in DIFFICULTIES:
-            for days in ELAPSED:
+            for days in (*ELAPSED, stability * 1000.0, 1e7):
                 before = MemoryState(stability, difficulty)
                 after = next_state(before, 1, days)
-                assert after.stability < before.stability, (before, days, after)
+                assert after.stability <= before.stability, (before, days, after)
 
 
-def test_lapse_reduces_stability_for_established_cards():
-    # True for every difficulty and every elapsed time once stability is above
-    # the measured crossover, including absurdly overdue reviews.
+def test_lapse_strictly_reduces_stability_for_established_cards():
+    # Above the crossover the raw formula is already well behaved, so the
+    # reduction is strict for every difficulty and every gap, however overdue.
     for stability in (LAPSE_SAFE_STABILITY, 30.0, 120.0, 365.0, 3650.0, 36_500.0):
         for difficulty in DIFFICULTIES:
             for days in (*ELAPSED, stability * 100.0, 1e7):
@@ -223,14 +209,59 @@ def test_lapse_reduces_stability_for_established_cards():
                 assert after.stability < before.stability, (before, days, after)
 
 
-def test_lapse_reduces_stability_when_the_card_was_reviewed_on_schedule():
-    # The case the scheduler actually produces: the card is shown at its due
-    # date, so retrievability is the target 0.9.
+def test_lapse_strictly_reduces_stability_when_reviewed_on_schedule():
+    # The case the scheduler actually produces: the card is shown on its due
+    # date, so retrievability is the target 0.9. Strict at every stability.
     for stability in (s for s in STABILITIES if s > fsrs.MIN_STABILITY):
         for difficulty in DIFFICULTIES:
             before = MemoryState(stability, difficulty)
             after = next_state(before, 1, interval_days(stability, 0.9))
             assert after.stability < before.stability, (before, after)
+
+
+def test_lapse_is_exactly_the_raw_formula_clamped():
+    # The clamp is the only difference from published FSRS-4.5. Nothing else
+    # about the lapse branch may drift.
+    for stability in STABILITIES:
+        for difficulty in DIFFICULTIES:
+            for days in ELAPSED:
+                before = MemoryState(stability, difficulty)
+                expected = max(
+                    min(_raw_lapse_stability(before, days), stability),
+                    fsrs.MIN_STABILITY,
+                )
+                assert next_state(before, 1, days).stability == pytest.approx(expected)
+
+
+def test_the_clamp_is_inert_above_the_crossover():
+    # Above ~15.08 days the clamp must never bind, or it would be silently
+    # capping legitimate values rather than fixing a defect.
+    for stability in (LAPSE_SAFE_STABILITY, 30.0, 365.0, 3650.0):
+        for difficulty in DIFFICULTIES:
+            for days in (0.0, 10.0, 365.0, 1e7):
+                before = MemoryState(stability, difficulty)
+                raw = _raw_lapse_stability(before, days)
+                assert raw < stability
+                assert next_state(before, 1, days).stability == pytest.approx(raw)
+
+
+def test_the_published_formula_is_pathological_without_the_clamp():
+    # Documents *why* the clamp exists, in the model's own terms. Worst case
+    # measured with the shipped weights: a 1-day card left a year past due is
+    # rewarded for being forgotten, S 0.01 -> 0.033.
+    ratios = [
+        _raw_lapse_stability(MemoryState(stability, difficulty), days) / stability
+        for stability in STABILITIES
+        for difficulty in DIFFICULTIES
+        for days in ELAPSED
+    ]
+    assert max(ratios) > 1.0, "the defect the clamp guards against has vanished"
+    # If a refit ever makes the line above fail, the clamp has become
+    # unnecessary. That is a decision to take deliberately, not a test to
+    # delete: the clamp is still correct, just inert.
+    before = MemoryState(0.01, 1.0)
+    assert _raw_lapse_stability(before, 3650.0) > before.stability
+    assert next_state(before, 1, 3650.0).stability == pytest.approx(before.stability)
 
 
 # --------------------------------------------------------------------------
