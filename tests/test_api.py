@@ -6,8 +6,13 @@ from recall.db import connect, init_db
 
 
 @pytest.fixture
-def client(tmp_path):
-    db = str(tmp_path / "api.db")
+def db_path(tmp_path):
+    return str(tmp_path / "api.db")
+
+
+@pytest.fixture
+def client(db_path):
+    db = db_path
     conn = connect(db)
     init_db(conn)
     conn.execute("INSERT INTO users (id, name) VALUES (1, 'yash')")
@@ -154,3 +159,48 @@ def test_sources_reports_filename_and_topic(client):
     body = client.get("/api/sources").json()
     assert body[0]["filename"] == "lec1.pdf"
     assert body[0]["topic_code"] == "CSE111"
+
+
+def test_new_queue_cards_carry_no_memory_state(client):
+    card = client.get("/api/queue").json()["cards"][0]
+    assert card["is_new"] is True
+    assert card["stability"] is None
+    assert card["difficulty"] is None
+    assert card["elapsed_days"] == 0.0
+
+
+def test_due_queue_cards_carry_memory_state_for_exact_previews(client, db_path):
+    """The client prices each grade button from this; estimates are not good enough."""
+    from datetime import datetime, timedelta, timezone
+
+    from recall.db import connect
+
+    client.post("/api/review", json={"card_id": 1, "grade": 3})
+    past = (datetime.now(timezone.utc) - timedelta(days=3)).isoformat()
+    conn = connect(db_path)
+    conn.execute("UPDATE card_state SET due_at = ? WHERE card_id = 1", (past,))
+    conn.commit()
+    conn.close()
+
+    card = next(c for c in client.get("/api/queue").json()["cards"] if c["id"] == 1)
+    assert card["is_new"] is False
+    assert card["stability"] > 0
+    assert 1.0 <= card["difficulty"] <= 10.0
+    assert card["elapsed_days"] >= 0.0
+
+
+def test_elapsed_days_reflects_real_time_since_last_review(client, db_path):
+    from datetime import datetime, timedelta, timezone
+
+    from recall.db import connect
+
+    client.post("/api/review", json={"card_id": 1, "grade": 3})
+    conn = connect(db_path)
+    long_ago = (datetime.now(timezone.utc) - timedelta(days=9)).isoformat()
+    conn.execute("UPDATE reviews SET reviewed_at = ? WHERE card_id = 1", (long_ago,))
+    conn.execute("UPDATE card_state SET due_at = ? WHERE card_id = 1", (long_ago,))
+    conn.commit()
+    conn.close()
+
+    card = next(c for c in client.get("/api/queue").json()["cards"] if c["id"] == 1)
+    assert 8.9 < card["elapsed_days"] < 9.1

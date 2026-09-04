@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "dev:mock": "NEXT_PUBLIC_MOCK=1 next dev -p 3111"
   },
   "dependencies": {
     "next": "16.3.4",

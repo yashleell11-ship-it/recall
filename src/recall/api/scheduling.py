@@ -79,7 +79,9 @@ def build_queue(conn, user_id: int, topic_code: str | None = None,
 
     due_rows = conn.execute(
         "SELECT c.id, c.kind, c.question, c.answer, c.cloze_text, t.code AS topic_code,"
-        " ch.page_ref, cs.due_at"
+        " ch.page_ref, cs.due_at, cs.stability, cs.difficulty,"
+        " (SELECT MAX(reviewed_at) FROM reviews r"
+        "  WHERE r.card_id = c.id AND r.user_id = cs.user_id) AS last_reviewed_at"
         " FROM cards c"
         " JOIN card_state cs ON cs.card_id = c.id AND cs.user_id = ?"
         " JOIN topics t ON t.id = c.topic_id"
@@ -104,10 +106,23 @@ def build_queue(conn, user_id: int, topic_code: str | None = None,
     ).fetchall()
 
     def card(row, is_new: bool) -> dict:
+        # Memory state travels with the card so the client can price each grade
+        # button exactly, instead of estimating what the next interval will be.
+        keys = row.keys()
+        stability = None if is_new else row["stability"]
+        difficulty = None if is_new else row["difficulty"]
+        elapsed = 0.0
+        if not is_new and "last_reviewed_at" in keys and row["last_reviewed_at"]:
+            elapsed = max(
+                0.0,
+                (utc_now() - datetime.fromisoformat(row["last_reviewed_at"]))
+                .total_seconds() / 86400.0,
+            )
         return {"id": row["id"], "kind": row["kind"], "question": row["question"],
                 "answer": row["answer"], "cloze_text": row["cloze_text"],
                 "topic_code": row["topic_code"], "page_ref": row["page_ref"],
-                "is_new": is_new}
+                "is_new": is_new, "stability": stability, "difficulty": difficulty,
+                "elapsed_days": round(elapsed, 4)}
 
     cards = [card(r, False) for r in due_rows] + [card(r, True) for r in new_rows]
     cap = min(settings["daily_review_cap"], limit or settings["daily_review_cap"])

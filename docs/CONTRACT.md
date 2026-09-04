@@ -72,7 +72,10 @@ is a config change, not a rewrite.
 | GET | `/api/sources` | — | `[{id, filename, topic_code, added_at, accepted, rejected, cost_estimate}]` |
 
 ```
-QueueCard   = {id, kind, question, answer, cloze_text, topic_code, page_ref, is_new}
+QueueCard   = {id, kind, question, answer, cloze_text, topic_code, page_ref, is_new,
+               stability, difficulty, elapsed_days}
+              stability/difficulty are null for new cards. They travel with the card so
+              the client can price each grade button exactly rather than estimating.
 PendingCard = {id, kind, question, answer, cloze_text, topic_code, page_ref, source_filename}
 ```
 

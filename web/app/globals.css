@@ -36,7 +36,6 @@
   --accent-hover: #953718;
   --accent-fg: #fffaf7;
   --accent-quiet: #f9ece6;
-  --accent-line: #e6c8ba;
 
   --g-again: #a92f21;
   --g-hard: #86601a;
@@ -52,7 +51,6 @@
   --radius-sm: 3px;
   --radius-md: 5px;
 
-  --t: 90ms;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -75,7 +73,6 @@
     --accent-hover: #ee8b64;
     --accent-fg: #1a0f08;
     --accent-quiet: #2a1a13;
-    --accent-line: #4d3226;
 
     --g-again: #ef8175;
     --g-hard: #d6a556;
@@ -108,7 +105,6 @@
   --accent-hover: #ee8b64;
   --accent-fg: #1a0f08;
   --accent-quiet: #2a1a13;
-  --accent-line: #4d3226;
 
   --g-again: #ef8175;
   --g-hard: #d6a556;
@@ -138,7 +134,6 @@
   --color-accent-hover: var(--accent-hover);
   --color-accent-fg: var(--accent-fg);
   --color-accent-quiet: var(--accent-quiet);
-  --color-accent-line: var(--accent-line);
 
   --color-again: var(--g-again);
   --color-hard: var(--g-hard);
@@ -158,44 +153,49 @@
     "Liberation Mono", monospace;
 }
 
-* {
-  border-color: var(--line);
-}
+/* Base sits in @layer base on purpose: unlayered rules outrank every
+   @layer utilities declaration, so an unlayered `* { border-color }` would
+   silently beat `border-accent`, `border-fg`, even `border-transparent`. */
+@layer base {
+  * {
+    border-color: var(--line);
+  }
 
-html {
-  -webkit-text-size-adjust: 100%;
-}
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
 
-body {
-  background: var(--bg);
-  color: var(--fg);
-  font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-/* Every number in this product sits in a column next to another number. */
-.tnum {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
-}
+  /* Every number in this product sits in a column next to another number. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
 
-::selection {
-  background: var(--accent-quiet);
-  color: var(--fg);
-}
+  ::selection {
+    background: var(--accent-quiet);
+    color: var(--fg);
+  }
 
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
-  border-radius: 2px;
-}
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-radius: 2px;
+  }
 
-/* Native controls follow the palette rather than the OS. */
-input[type="range"] {
-  accent-color: var(--accent);
+  /* Native controls follow the palette rather than the OS. */
+  input[type="range"] {
+    accent-color: var(--accent);
+  }
 }
 
 /* --- primitives ---------------------------------------------------------- */
@@ -242,6 +242,17 @@ input[type="range"] {
   }
   .link:hover {
     text-decoration-color: var(--fg-2);
+  }
+
+  /* Overflow scrolling for the nav strip, without the scrollbar drawing a
+     grey line across the header on desktop. */
+  .scroll-x {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scroll-x::-webkit-scrollbar {
+    display: none;
   }
 }
 
