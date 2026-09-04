@@ -129,3 +129,14 @@ CREATE TABLE IF NOT EXISTS test_questions (
   UNIQUE(test_id, ordinal)
 );
 CREATE INDEX IF NOT EXISTS idx_test_questions_test ON test_questions(test_id);
+
+-- Teaching: a grounded explanation of a card that was missed. Cached by card
+-- because explanations cost money and the same card gets missed repeatedly.
+CREATE TABLE IF NOT EXISTS card_explanations (
+  id           INTEGER PRIMARY KEY,
+  card_id      INTEGER NOT NULL UNIQUE REFERENCES cards(id) ON DELETE CASCADE,
+  explanation  TEXT NOT NULL,
+  source_quote TEXT NOT NULL,
+  model        TEXT NOT NULL,
+  created_at   TEXT NOT NULL
+);

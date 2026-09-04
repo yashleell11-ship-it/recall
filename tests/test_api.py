@@ -228,3 +228,29 @@ def test_concurrent_requests_all_succeed(client):
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
         codes = list(pool.map(lambda p: client.get(p).status_code, paths))
     assert set(codes) == {200}, f"got {sorted(set(codes))}"
+
+
+def test_every_contract_route_is_mounted(client):
+    """A router that exists but was never included is invisible until someone hits
+    it in production. Assert against the OpenAPI schema rather than app.routes:
+    FastAPI represents an included router as ONE opaque entry in app.routes, so
+    counting that list silently reports zero for every mounted router."""
+    paths = set(client.app.openapi()["paths"])
+    expected = {
+        "/api/topics", "/api/queue", "/api/review", "/api/pending",
+        "/api/pending/decide", "/api/settings", "/api/stats", "/api/sources",
+        "/api/tests", "/api/tests/{test_id}", "/api/tests/{test_id}/answer",
+        "/api/tests/{test_id}/submit", "/api/teach/explain",
+        "/api/sources/upload", "/api/sources/{source_id}/generate",
+    }
+    missing = expected - paths
+    assert not missing, f"declared in CONTRACT.md but not mounted: {sorted(missing)}"
+
+
+def test_mounted_routes_actually_respond(client):
+    """Schema presence is not reachability. Hit them."""
+    assert client.get("/api/tests").status_code == 200
+    # Unknown ids must 404, not 500 — proves the handler runs, not just the route.
+    assert client.get("/api/tests/999999").status_code == 404
+    assert client.post("/api/teach/explain",
+                       json={"card_id": 999999}).status_code == 404

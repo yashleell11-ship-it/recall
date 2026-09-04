@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from recall.api import scheduling
+from recall.api import teach_routes, tests_routes, upload_routes
 from recall.db import connect, init_db
 
 USER_ID = 1  # single user for now; every query already filters by it
@@ -135,6 +136,11 @@ def create_app() -> FastAPI:
             " WHERE s.user_id = ? ORDER BY s.added_at DESC", (USER_ID,)
         ).fetchall()
         return [dict(r) for r in rows]
+
+    # Routers own their full /api paths, so they mount without a prefix.
+    app.include_router(tests_routes.router)
+    app.include_router(teach_routes.router)
+    app.include_router(upload_routes.router)
 
     return app
 

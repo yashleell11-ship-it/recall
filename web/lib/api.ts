@@ -10,6 +10,8 @@ import * as mock from "./mock";
 import type {
   DecideAction,
   DecideResponse,
+  Explanation,
+  GenerateResponse,
   Grade,
   PendingResponse,
   QueueResponse,
@@ -18,36 +20,19 @@ import type {
   SettingsPatch,
   Source,
   Stats,
+  TestKind,
+  TestPaper,
+  TestResult,
+  TestSummary,
   Topic,
+  UploadResponse,
+  Verdict,
 } from "./types";
 
-export const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000";
+import { API_BASE, ApiError, errorMessage, MOCK } from "./http";
 
-export const MOCK = process.env.NEXT_PUBLIC_MOCK === "1";
-
-export class ApiError extends Error {
-  readonly status: number;
-  readonly path: string;
-
-  constructor(status: number, path: string, detail: string) {
-    super(detail);
-    this.name = "ApiError";
-    this.status = status;
-    this.path = path;
-  }
-}
-
-/** Turn anything thrown by fetch or the API into one readable sentence. */
-export function errorMessage(err: unknown): string {
-  if (err instanceof ApiError) {
-    return err.status === 0
-      ? `Could not reach the API at ${API_BASE}.`
-      : `${err.message} (${err.status})`;
-  }
-  if (err instanceof Error) return err.message;
-  return "Something went wrong.";
-}
+// Re-exported so this stays the one module the rest of the app imports from.
+export { API_BASE, ApiError, errorMessage, MOCK };
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let res: Response;
@@ -166,4 +151,154 @@ export function getStats(): Promise<Stats> {
 export function getSources(): Promise<Source[]> {
   if (MOCK) return mock.getSources();
   return request<Source[]>("/api/sources");
+}
+
+/* --- test mode ----------------------------------------------------------- */
+
+/** POST /api/tests — assembles a paper and starts the clock. */
+export function createTest(
+  kind: TestKind,
+  topicCode?: string,
+): Promise<TestPaper> {
+  if (MOCK) return mock.createTest(kind, topicCode);
+  return request<TestPaper>("/api/tests", {
+    method: "POST",
+    body: JSON.stringify({ kind, topic_code: topicCode }),
+  });
+}
+
+/** GET /api/tests/{id} — the same paper with its recorded verdicts, for resuming. */
+export function getTest(id: number): Promise<TestPaper> {
+  if (MOCK) return mock.getTest(id);
+  return request<TestPaper>(`/api/tests/${id}`);
+}
+
+/** POST /api/tests/{id}/answer — one call per verdict, so a closed tab loses nothing. */
+export function postAnswer(
+  id: number,
+  ordinal: number,
+  verdict: Verdict,
+  seconds: number,
+): Promise<{ ok: true }> {
+  if (MOCK) return mock.postAnswer(id, ordinal, verdict, seconds);
+  return request<{ ok: true }>(`/api/tests/${id}/answer`, {
+    method: "POST",
+    body: JSON.stringify({ ordinal, verdict, seconds }),
+  });
+}
+
+/** POST /api/tests/{id}/submit — scores the paper and feeds the scheduler. */
+export function submitTest(id: number): Promise<TestResult> {
+  if (MOCK) return mock.submitTest(id);
+  return request<TestResult>(`/api/tests/${id}/submit`, { method: "POST" });
+}
+
+/** GET /api/tests */
+export function getTests(): Promise<TestSummary[]> {
+  if (MOCK) return mock.getTests();
+  return request<TestSummary[]>("/api/tests");
+}
+
+/* --- teaching ------------------------------------------------------------ */
+
+/** POST /api/teach/explain — 422 when the model could not cite its source. */
+export function postExplain(cardId: number): Promise<Explanation> {
+  if (MOCK) return mock.postExplain(cardId);
+  return request<Explanation>("/api/teach/explain", {
+    method: "POST",
+    body: JSON.stringify({ card_id: cardId }),
+  });
+}
+
+/* --- upload -------------------------------------------------------------- */
+
+export const ACCEPTED_EXTENSIONS = [
+  ".pdf",
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".webp",
+  ".txt",
+  ".md",
+];
+
+export const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
+
+/**
+ * POST /api/sources/upload.
+ *
+ * XMLHttpRequest rather than fetch: this is the one request in the app whose
+ * progress matters, and fetch cannot report upload progress. A phone on a
+ * tunnelled connection pushing a 20 MB scan needs the bar to move.
+ */
+export function uploadSource(
+  file: File,
+  topicCode: string,
+  onProgress?: (fraction: number) => void,
+  signal?: AbortSignal,
+): Promise<UploadResponse> {
+  if (MOCK) return mock.uploadSource(file, topicCode, onProgress, signal);
+
+  const path = "/api/sources/upload";
+  return new Promise<UploadResponse>((resolve, reject) => {
+    const form = new FormData();
+    form.append("file", file);
+    form.append("topic_code", topicCode);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `${API_BASE}${path}`);
+    xhr.setRequestHeader("Accept", "application/json");
+
+    xhr.upload.addEventListener("progress", (e) => {
+      if (e.lengthComputable) onProgress?.(e.loaded / e.total);
+    });
+
+    xhr.addEventListener("load", () => {
+      // The bytes are gone; anything left is the server thinking.
+      onProgress?.(1);
+      let body: unknown = null;
+      try {
+        body = JSON.parse(xhr.responseText) as unknown;
+      } catch {
+        /* a non-JSON body is still a response */
+      }
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(body as UploadResponse);
+        return;
+      }
+      const detail = (body as { detail?: unknown } | null)?.detail;
+      reject(
+        new ApiError(
+          xhr.status,
+          path,
+          typeof detail === "string" ? detail : xhr.statusText || "Upload failed",
+        ),
+      );
+    });
+
+    xhr.addEventListener("error", () =>
+      reject(new ApiError(0, path, `Could not reach the API at ${API_BASE}.`)),
+    );
+    xhr.addEventListener("abort", () =>
+      reject(new ApiError(0, path, "Upload cancelled.")),
+    );
+
+    if (signal) {
+      if (signal.aborted) {
+        xhr.abort();
+        return;
+      }
+      signal.addEventListener("abort", () => xhr.abort(), { once: true });
+    }
+
+    xhr.send(form);
+  });
+}
+
+/** POST /api/sources/{id}/generate — the step that spends money. */
+export function generateCards(sourceId: number): Promise<GenerateResponse> {
+  if (MOCK) return mock.generateCards(sourceId);
+  return request<GenerateResponse>(`/api/sources/${sourceId}/generate`, {
+    method: "POST",
+  });
 }

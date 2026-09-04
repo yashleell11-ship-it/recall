@@ -15,6 +15,8 @@ import type {
   CardKind,
   DecideAction,
   DecideResponse,
+  Explanation,
+  GenerateResponse,
   Grade,
   PendingCard,
   PendingResponse,
@@ -24,9 +26,18 @@ import type {
   Settings,
   Source,
   Stats,
+  TestKind,
+  TestPaper,
+  TestQuestion,
+  TestResult,
+  TestSummary,
   Topic,
+  UploadResponse,
+  Verdict,
 } from "./types";
 import { initialState, intervalDays, nextState } from "./fsrs";
+import { ApiError } from "./http";
+import { marksFor, scoreFor } from "./marks";
 
 /* --- deck ---------------------------------------------------------------- */
 
@@ -1119,7 +1130,7 @@ export async function getStats(): Promise<Stats> {
     totals: {
       active: Object.values(BACKLOG).reduce((n, b) => n + b.active, 0),
       pending: s.pending.length,
-      sources: SOURCES.length,
+      sources: SOURCES.length + uploaded.length,
     },
   };
 }
@@ -1225,10 +1236,417 @@ const SOURCES: Omit<Source, "added_at">[] = [
 
 const SOURCE_AGE_DAYS = [2, 5, 6, 9, 12, 14, 18, 21, 24, 27, 33, 41];
 
+/** Anything uploaded during this tab's lifetime, newest first. */
+const uploaded: Source[] = [];
+
 export async function getSources(): Promise<Source[]> {
   await delay();
-  return SOURCES.map((s, i) => ({
-    ...s,
-    added_at: isoDay(-SOURCE_AGE_DAYS[i]),
+  return [
+    ...uploaded,
+    ...SOURCES.map((s, i) => ({
+      ...s,
+      added_at: isoDay(-SOURCE_AGE_DAYS[i]),
+    })),
+  ];
+}
+
+/* --- test mode ----------------------------------------------------------- */
+
+const PAPERS: Record<TestKind, { target: number | null; limit: number | null }> =
+  {
+    class30: { target: 30, limit: 45 * 60 },
+    endterm100: { target: 100, limit: 180 * 60 },
+    fullday: { target: null, limit: null },
+  };
+
+interface MockTest {
+  id: number;
+  kind: TestKind;
+  started_at: string;
+  startedMs: number;
+  time_limit_s: number | null;
+  questions: TestQuestion[];
+  seconds: Record<number, number>;
+  submitted: boolean;
+  obtained: number;
+  duration_s: number | null;
+}
+
+const tests = new Map<number, MockTest>();
+let nextTestId = 41;
+
+/**
+ * Weak first: high difficulty, low stability. A brand-new card has no state, so
+ * it sits mid-table rather than pretending to be either.
+ */
+function weakness(c: MockCard): number {
+  const d = c.difficulty ?? 5.5;
+  const s = c.stability ?? 1;
+  return d / Math.log2(2 + s);
+}
+
+/**
+ * Assembly, per the contract: stratified across topics in proportion to their
+ * active cards, weak cards preferred but not exclusively, greedy fill to hit
+ * the target exactly. Returns fewer marks than asked for when the deck cannot
+ * reach the target — the caller says so rather than padding.
+ */
+function assemble(pool: MockCard[], target: number | null): TestQuestion[] {
+  const byTopic = new Map<string, MockCard[]>();
+  for (const c of pool) {
+    const list = byTopic.get(c.topic_code) ?? [];
+    list.push(c);
+    byTopic.set(c.topic_code, list);
+  }
+
+  // Within a topic: weakest first, but every fourth pick comes off the strong
+  // end so a paper is not purely punishment.
+  const ordered = new Map<string, MockCard[]>();
+  for (const [code, cards] of byTopic) {
+    const sorted = [...cards].sort((a, b) => weakness(b) - weakness(a));
+    const out: MockCard[] = [];
+    let head = 0;
+    let tail = sorted.length - 1;
+    while (head <= tail) {
+      out.push(sorted[head++]);
+      if (out.length % 4 === 0 && head <= tail) out.push(sorted[tail--]);
+    }
+    ordered.set(code, out);
+  }
+
+  // Round-robin weighted by each topic's share, which is stratification.
+  const taken = new Map<string, number>();
+  const draw: MockCard[] = [];
+  const total = pool.length;
+  for (let n = 0; n < total; n++) {
+    let best: string | null = null;
+    let bestRatio = Infinity;
+    for (const [code, cards] of ordered) {
+      const used = taken.get(code) ?? 0;
+      if (used >= cards.length) continue;
+      const ratio = used / (cards.length / total);
+      if (ratio < bestRatio) {
+        bestRatio = ratio;
+        best = code;
+      }
+    }
+    if (best === null) break;
+    const used = taken.get(best) ?? 0;
+    draw.push(ordered.get(best)![used]);
+    taken.set(best, used + 1);
+  }
+
+  const questions: TestQuestion[] = [];
+  let marks = 0;
+  for (const c of draw) {
+    const m = marksFor(c.kind, c.answer);
+    if (target !== null) {
+      if (marks >= target) break;
+      if (marks + m > target) continue; // too big for the gap left; keep filling
+    }
+    marks += m;
+    questions.push({
+      ordinal: questions.length + 1,
+      card_id: c.id,
+      kind: c.kind,
+      question: c.question,
+      answer: c.answer,
+      cloze_text: c.cloze_text,
+      marks: m,
+      topic_code: c.topic_code,
+      page_ref: c.page_ref,
+      verdict: null,
+    });
+  }
+  return questions;
+}
+
+export async function createTest(
+  kind: TestKind,
+  topicCode?: string,
+): Promise<TestPaper> {
+  await delay(320);
+  const s = store();
+  const pool = topicCode
+    ? s.queue.filter((c) => c.topic_code === topicCode)
+    : s.queue.slice();
+
+  const paper = PAPERS[kind];
+  const questions = assemble(pool, paper.target);
+  const id = nextTestId++;
+  const now = Date.now();
+
+  tests.set(id, {
+    id,
+    kind,
+    started_at: new Date(now).toISOString(),
+    startedMs: now,
+    time_limit_s: paper.limit,
+    questions,
+    seconds: {},
+    submitted: false,
+    obtained: 0,
+    duration_s: null,
+  });
+
+  return toPaper(tests.get(id)!);
+}
+
+function toPaper(t: MockTest): TestPaper {
+  return {
+    test_id: t.id,
+    kind: t.kind,
+    total_marks: t.questions.reduce((n, q) => n + q.marks, 0),
+    time_limit_s: t.time_limit_s,
+    questions: t.questions.map((q) => ({ ...q })),
+  };
+}
+
+export async function getTest(id: number): Promise<TestPaper> {
+  await delay();
+  const t = tests.get(id);
+  if (!t) throw new ApiError(404, `/api/tests/${id}`, "No such test.");
+  return toPaper(t);
+}
+
+export async function postAnswer(
+  id: number,
+  ordinal: number,
+  verdict: Verdict,
+  seconds: number,
+): Promise<{ ok: true }> {
+  await delay(60);
+  const t = tests.get(id);
+  if (!t) throw new ApiError(404, `/api/tests/${id}/answer`, "No such test.");
+  const q = t.questions.find((x) => x.ordinal === ordinal);
+  if (!q) {
+    throw new ApiError(
+      404,
+      `/api/tests/${id}/answer`,
+      `This paper has no question ${ordinal}.`,
+    );
+  }
+  if (verdict === "partial" && q.marks < 2) {
+    throw new ApiError(
+      422,
+      `/api/tests/${id}/answer`,
+      "Partial credit needs a question worth 2 marks or more.",
+    );
+  }
+  q.verdict = verdict;
+  t.seconds[ordinal] = seconds;
+  return { ok: true };
+}
+
+export async function submitTest(id: number): Promise<TestResult> {
+  await delay(360);
+  const t = tests.get(id);
+  if (!t) throw new ApiError(404, `/api/tests/${id}/submit`, "No such test.");
+
+  const totals = new Map<string, { obtained: number; total: number }>();
+  let obtained = 0;
+  for (const q of t.questions) {
+    const got = scoreFor(q.verdict, q.marks);
+    obtained += got;
+    const row = totals.get(q.topic_code) ?? { obtained: 0, total: 0 };
+    row.obtained += got;
+    row.total += q.marks;
+    totals.set(q.topic_code, row);
+  }
+
+  const total = t.questions.reduce((n, q) => n + q.marks, 0);
+  const duration = Math.max(1, Math.round((Date.now() - t.startedMs) / 1000));
+
+  t.submitted = true;
+  t.obtained = obtained;
+  t.duration_s = duration;
+
+  return {
+    obtained_marks: obtained,
+    total_marks: total,
+    percent: total > 0 ? Number(((obtained / total) * 100).toFixed(1)) : 0,
+    duration_s: duration,
+    by_topic: [...totals.entries()].map(([topic_code, r]) => ({
+      topic_code,
+      obtained: r.obtained,
+      total: r.total,
+    })),
+    wrong: t.questions.filter((q) => q.verdict === "wrong").map((q) => ({ ...q })),
+    partial: t.questions
+      .filter((q) => q.verdict === "partial")
+      .map((q) => ({ ...q })),
+  };
+}
+
+/** Two finished papers from earlier in the term, plus whatever this tab made. */
+const PAST_TESTS: TestSummary[] = [
+  {
+    id: 39,
+    kind: "class30",
+    started_at: `${isoDay(-9)}T09:12:00+05:30`,
+    obtained_marks: 21,
+    total_marks: 30,
+    duration_s: 1985,
+  },
+  {
+    id: 40,
+    kind: "endterm100",
+    started_at: `${isoDay(-3)}T14:05:00+05:30`,
+    obtained_marks: 68.5,
+    total_marks: 100,
+    duration_s: 8760,
+  },
+];
+
+export async function getTests(): Promise<TestSummary[]> {
+  await delay();
+  const live: TestSummary[] = [...tests.values()].map((t) => ({
+    id: t.id,
+    kind: t.kind,
+    started_at: t.started_at,
+    obtained_marks: t.obtained,
+    total_marks: t.questions.reduce((n, q) => n + q.marks, 0),
+    duration_s: t.duration_s,
   }));
+  // Newest first, exactly as a server ordering by started_at desc would.
+  return [...live, ...PAST_TESTS].sort((a, b) =>
+    a.started_at < b.started_at ? 1 : -1,
+  );
+}
+
+/* --- teaching ------------------------------------------------------------ */
+
+const explained = new Set<number>();
+
+/**
+ * The real endpoint quotes the card's own source chunk and refuses when it
+ * cannot. The fixture builds a chunk around the card's answer and quotes a
+ * verbatim slice of it, so the screen renders exactly what a grounded
+ * explanation renders.
+ */
+export async function postExplain(cardId: number): Promise<Explanation> {
+  await delay(explained.has(cardId) ? 120 : 900);
+  const s = store();
+  const card =
+    s.queue.find((c) => c.id === cardId) ??
+    [...tests.values()]
+      .flatMap((t) => t.questions)
+      .find((q) => q.card_id === cardId);
+
+  if (!card) {
+    throw new ApiError(404, "/api/teach/explain", "No such card.");
+  }
+
+  const answer = card.answer.trim();
+  const firstSentence = answer.split(/(?<=\.)\s/)[0] ?? answer;
+  const marks = marksFor(card.kind, answer);
+
+  const wasCached = explained.has(cardId);
+  explained.add(cardId);
+
+  return {
+    explanation: [
+      answer,
+      `The source states this directly, so the mark is for reproducing the condition exactly rather than paraphrasing it. ${
+        marks >= 2
+          ? "On a question worth this much the working carries the marks, not the final line — write the reason down."
+          : "This is a one-mark recall question: the examiner wants the exact term, nothing around it."
+      }`,
+      `Most common mistake: stating the conclusion without the condition it depends on. If you wrote something close but left out the qualifier, that is the half you lost.`,
+    ].join("\n\n"),
+    source_quote: firstSentence,
+    page_ref: card.page_ref,
+    topic_code: card.topic_code,
+    cached: wasCached,
+  };
+}
+
+/* --- upload -------------------------------------------------------------- */
+
+const IMAGE_EXT = /\.(png|jpe?g|webp)$/i;
+
+export async function uploadSource(
+  file: File,
+  topicCode: string,
+  onProgress?: (fraction: number) => void,
+  signal?: AbortSignal,
+): Promise<UploadResponse> {
+  // Enough ticks that the bar visibly moves, as it would on a phone.
+  for (let i = 1; i <= 10; i++) {
+    if (signal?.aborted) throw new ApiError(0, "/api/sources/upload", "Upload cancelled.");
+    await delay(70);
+    onProgress?.(i / 10);
+  }
+  await delay(240);
+  if (signal?.aborted) throw new ApiError(0, "/api/sources/upload", "Upload cancelled.");
+
+  const isImage = IMAGE_EXT.test(file.name);
+  // A page of printed text is roughly 2 kB of characters; a phone photo of one
+  // is a couple of hundred kB of JPEG. That ratio is why OCR output always
+  // looks sparse next to the file it came from.
+  const textChars = isImage
+    ? Math.max(40, Math.round(file.size / 900))
+    : Math.max(120, Math.round(file.size / 3.2));
+  const chunks = Math.max(1, Math.round(textChars / 1400));
+
+  const id = 100 + uploaded.length;
+  uploaded.unshift({
+    id,
+    filename: file.name,
+    topic_code: topicCode,
+    added_at: isoDay(0),
+    accepted: 0,
+    rejected: 0,
+    cost_estimate: 0,
+  });
+
+  return {
+    source_id: id,
+    filename: file.name,
+    kind: isImage ? "image" : file.name.toLowerCase().endsWith(".pdf") ? "pdf" : "text",
+    chunks,
+    text_chars: textChars,
+    warning: isImage
+      ? "Only " +
+        textChars +
+        " characters came out of this image. Tesseract runs on the CPU and reads printed slides and textbook pages well, but handwriting badly. Check the generated cards carefully, or retake the photo straight-on in better light."
+      : null,
+  };
+}
+
+export async function generateCards(sourceId: number): Promise<GenerateResponse> {
+  await delay(1500);
+  const src = uploaded.find((s) => s.id === sourceId);
+  const chunks = Math.max(1, Math.round((src ? 6 : 4) + (sourceId % 5)));
+  const accepted = chunks * 3 + 2;
+  const rejected = Math.round(accepted * 0.22);
+
+  if (src) {
+    src.accepted = accepted;
+    src.rejected = rejected;
+    src.cost_estimate = Number((chunks * 0.0042).toFixed(4));
+  }
+
+  const s = store();
+  // Generated cards land in the triage queue, which is where the flow goes next.
+  for (let i = 0; i < Math.min(accepted, 6); i++) {
+    const seed = PENDING_SEEDS[i % PENDING_SEEDS.length];
+    s.pending.unshift({
+      id: 9000 + s.pending.length + i,
+      kind: seed.k,
+      question: seed.q,
+      answer: seed.a,
+      cloze_text: seed.c ?? null,
+      topic_code: src?.topic_code ?? seed.t,
+      page_ref: seed.p,
+      source_filename: src?.filename ?? seed.src,
+    });
+  }
+
+  return {
+    accepted,
+    rejected,
+    cost_usd: Number((chunks * 0.0042).toFixed(4)),
+    stopped_early: chunks > 9,
+  };
 }

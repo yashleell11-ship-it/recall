@@ -138,3 +138,103 @@ export interface Source {
   rejected: number;
   cost_estimate: number;
 }
+
+/* --- test mode ----------------------------------------------------------- */
+
+export type TestKind = "class30" | "endterm100" | "fullday";
+
+/** What the person claims about their own answer. `null` = not attempted yet. */
+export type Verdict = "correct" | "partial" | "wrong" | "skipped";
+
+export interface TestQuestion {
+  ordinal: number;
+  card_id: number;
+  kind: CardKind;
+  question: string;
+  answer: string;
+  cloze_text: string | null;
+  marks: number;
+  topic_code: string;
+  page_ref: string;
+  verdict: Verdict | null;
+}
+
+/** POST /api/tests and GET /api/tests/{id} */
+export interface TestPaper {
+  test_id: number;
+  kind: TestKind;
+  total_marks: number;
+  /** null (or 0) for `fullday`, which has no limit. */
+  time_limit_s: number | null;
+  questions: TestQuestion[];
+}
+
+export interface TestTopicScore {
+  topic_code: string;
+  obtained: number;
+  total: number;
+}
+
+/** POST /api/tests/{id}/submit */
+export interface TestResult {
+  obtained_marks: number;
+  total_marks: number;
+  /**
+   * The contract does not fix the scale (0–1 or 0–100), so nothing in the
+   * client reads it — every percentage on screen is derived from
+   * obtained_marks / total_marks, which cannot disagree with the marks printed
+   * beside it.
+   */
+  percent: number;
+  duration_s: number;
+  by_topic: TestTopicScore[];
+  wrong: TestQuestion[];
+  partial: TestQuestion[];
+}
+
+/** GET /api/tests */
+export interface TestSummary {
+  id: number;
+  kind: TestKind;
+  started_at: string;
+  obtained_marks: number;
+  total_marks: number;
+  /**
+   * OPTIONAL / ADDITIVE null: a paper that has been started but not submitted
+   * has no duration yet. The client treats null or 0 as "still open" and offers
+   * to resume it.
+   */
+  duration_s: number | null;
+}
+
+/* --- teaching ------------------------------------------------------------ */
+
+/** POST /api/teach/explain */
+export interface Explanation {
+  explanation: string;
+  source_quote: string;
+  page_ref: string;
+  topic_code: string;
+  cached: boolean;
+}
+
+/* --- upload -------------------------------------------------------------- */
+
+/** POST /api/sources/upload */
+export interface UploadResponse {
+  source_id: number;
+  filename: string;
+  kind: string;
+  chunks: number;
+  text_chars: number;
+  /** Present when OCR output looks too sparse for the image it came from. */
+  warning?: string | null;
+}
+
+/** POST /api/sources/{id}/generate */
+export interface GenerateResponse {
+  accepted: number;
+  rejected: number;
+  cost_usd: number;
+  stopped_early: boolean;
+}
