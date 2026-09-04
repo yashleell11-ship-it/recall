@@ -1,0 +1,17 @@
+FROM node:22-slim AS build
+WORKDIR /app
+COPY web/package.json web/package-lock.json* ./
+RUN npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+COPY web/ ./
+# Empty base => the browser calls /api/... on the same origin, so there is no CORS
+# and nothing is hardcoded to a hostname. Caddy routes /api/* to the backend.
+ENV NEXT_PUBLIC_API_BASE=""
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
+
+FROM node:22-slim AS run
+WORKDIR /app
+ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
+COPY --from=build /app ./
+EXPOSE 3000
+CMD ["npm", "run", "start"]

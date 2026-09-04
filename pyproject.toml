@@ -10,8 +10,11 @@ dependencies = [
     "genanki>=0.13.1",
     "httpx>=0.28.1",
     "numpy>=2.5.2",
+    "pillow>=12.3.0",
     "pymupdf>=1.28.2",
+    "pytesseract>=0.3.13",
     "python-multipart>=0.0.32",
+    "scipy>=1.18.1",
     "uvicorn[standard]>=0.52.4",
 ]
 

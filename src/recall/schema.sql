@@ -100,3 +100,32 @@ CREATE TABLE IF NOT EXISTS fit_runs (
   params_json  TEXT NOT NULL,
   val_logloss  REAL NOT NULL
 );
+
+-- Test mode: sit a paper of a given mark total, then feed the results back into
+-- the scheduler so what you got wrong actually comes back sooner.
+CREATE TABLE IF NOT EXISTS tests (
+  id             INTEGER PRIMARY KEY,
+  user_id        INTEGER NOT NULL REFERENCES users(id),
+  kind           TEXT NOT NULL CHECK (kind IN ('class30','endterm100','fullday')),
+  topic_id       INTEGER REFERENCES topics(id),
+  target_marks   INTEGER NOT NULL,
+  total_marks    INTEGER NOT NULL,
+  time_limit_s   INTEGER,
+  started_at     TEXT NOT NULL,
+  submitted_at   TEXT,
+  duration_s     INTEGER,
+  obtained_marks REAL
+);
+CREATE INDEX IF NOT EXISTS idx_tests_user ON tests(user_id, started_at);
+
+CREATE TABLE IF NOT EXISTS test_questions (
+  id        INTEGER PRIMARY KEY,
+  test_id   INTEGER NOT NULL REFERENCES tests(id),
+  card_id   INTEGER NOT NULL REFERENCES cards(id),
+  ordinal   INTEGER NOT NULL,
+  marks     INTEGER NOT NULL,
+  verdict   TEXT CHECK (verdict IN ('correct','partial','wrong','skipped')),
+  seconds   INTEGER,
+  UNIQUE(test_id, ordinal)
+);
+CREATE INDEX IF NOT EXISTS idx_test_questions_test ON test_questions(test_id);

@@ -122,3 +122,106 @@ Build instead:
 
 Screens: `/` dashboard, `/review` focus mode, `/approve` bulk triage of pending cards,
 `/settings`, `/sources`.
+
+---
+
+## Test mode
+
+Sit a paper of a fixed mark total, then feed the results back into the scheduler.
+This is the "test me and adjust the difficulty" loop: what you get wrong comes back sooner.
+
+### Marks per card (computed at assembly, not stored on the card)
+
+| Card | Marks |
+|---|---|
+| cloze | 1 |
+| qa, answer <= 4 words | 1 |
+| qa, answer <= 12 words | 2 |
+| qa, longer | 5 |
+
+### Papers
+
+| kind | target | time limit | notes |
+|---|---|---|---|
+| `class30` | 30 marks | 45 min | a sessional / MST |
+| `endterm100` | 100 marks | 180 min | a full end-term paper |
+| `fullday` | every active card | none | marathon, resumable across sittings |
+
+Assembly is stratified across topics in proportion to each topic's active cards, and
+within a topic prefers weak cards (high difficulty, low stability, due or overdue) while
+still including some strong ones so a paper is not purely punishment. Greedy fill to hit
+the target exactly; if the deck cannot reach the target, the paper is short and says so.
+
+### Endpoints
+
+| Method | Path | Request | Response |
+|---|---|---|---|
+| POST | `/api/tests` | `{kind, topic_code?}` | `{test_id, kind, total_marks, time_limit_s, questions: [TestQuestion]}` |
+| GET | `/api/tests/{id}` | — | same shape, plus recorded verdicts, for resuming |
+| POST | `/api/tests/{id}/answer` | `{ordinal, verdict, seconds}` | `{ok: true}` |
+| POST | `/api/tests/{id}/submit` | — | `TestResult` |
+| GET | `/api/tests` | — | `[{id, kind, started_at, obtained_marks, total_marks, duration_s}]` |
+
+```
+TestQuestion = {ordinal, card_id, kind, question, answer, cloze_text, marks,
+                topic_code, page_ref, verdict}
+verdict      = "correct" | "partial" | "wrong" | "skipped" | null
+TestResult   = {obtained_marks, total_marks, percent, duration_s,
+                by_topic: [{topic_code, obtained, total}],
+                wrong: [TestQuestion], partial: [TestQuestion]}
+```
+
+`partial` is only offered for questions worth 2 marks or more, and scores half.
+
+### Feedback into the scheduler
+
+On submit, every **answered** question records a real review through the normal
+scheduling path, so stability and difficulty update exactly as they would in daily
+review. Skipped questions record nothing — not attempting a question is not evidence
+about memory. Grade mapping: `wrong -> 1 (again)`, `partial -> 2 (hard)`,
+`correct -> 3 (good)`. Grade 4 is never inferred: "easy" is a claim only the person
+reviewing can make, and a test does not ask.
+
+---
+
+## Teaching: explain what you got wrong
+
+After a test (or a lapse in daily review), you can ask for an explanation of a card you
+missed. The explanation is **grounded in the card's own source chunk** — the same text
+the card was generated from — so it teaches your syllabus rather than the model's
+general knowledge.
+
+| Method | Path | Request | Response |
+|---|---|---|---|
+| POST | `/api/teach/explain` | `{card_id}` | `{explanation, source_quote, page_ref, topic_code, cached}` |
+
+Rules:
+- The explanation must cite a verbatim quote from the chunk, verified in Python exactly
+  as the groundedness gate does. An explanation that cannot cite its source is not
+  returned; the endpoint returns 422 with a plain reason instead of a confident guess.
+- Explanations are **cached in the database** keyed by card id. They cost money and the
+  same card gets missed repeatedly; regenerating each time is waste.
+- Explanations are prose for a first-year student: what the answer is, why, and the one
+  distinction most likely to have caused the mistake. No preamble, no encouragement.
+
+## Image and file upload
+
+Uploading is how notes get in from a phone, so this must work on a small screen over a
+tunnelled connection.
+
+| Method | Path | Request | Response |
+|---|---|---|---|
+| POST | `/api/sources/upload` | multipart: `file`, `topic_code` | `{source_id, filename, kind, chunks, text_chars, warning?}` |
+| POST | `/api/sources/{id}/generate` | — | `{accepted, rejected, cost_usd, stopped_early}` |
+
+Upload **extracts text and creates chunks only** — it never calls the paid API, so it is
+fast and free and works before any key exists. Card generation is a separate, explicit
+step because it costs money and takes time.
+
+Accepted: `.pdf`, `.png`, `.jpg`, `.jpeg`, `.webp`, `.txt`, `.md`. Max 25 MB.
+
+**OCR honesty:** images go through Tesseract on CPU. Printed slides, textbook pages and
+screenshots work well. **Handwriting works badly** — that is a real limitation of
+CPU OCR, not a bug, and the response carries a `warning` when extracted text looks too
+sparse for the image size. OCR sits behind a single `extract_text_from_image(path)`
+function so a vision-capable API can replace it later without touching anything else.
