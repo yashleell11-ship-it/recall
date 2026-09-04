@@ -52,3 +52,20 @@ def test_approve_only_touches_pending_cards(tmp_path, capsys):
     states = {r["id"]: r["state"] for r in
               connect(cfg.db_path).execute("SELECT id, state FROM cards").fetchall()}
     assert states == {1: "active", 2: "rejected"}
+
+
+def test_fit_refuses_on_thin_data_with_a_distinct_exit_code(tmp_path, capsys):
+    """Refusing to fit 17 parameters to a handful of reviews is correct behaviour,
+    and a nightly timer needs to tell it apart from a real failure."""
+    from recall.cli import cmd_fit
+    cfg = cfg_for(tmp_path)
+    cmd_init(build_parser().parse_args(["init"]), cfg)
+    code = cmd_fit(build_parser().parse_args(["fit"]), cfg)
+    assert code == 3
+    assert "not enough data" in capsys.readouterr().out
+
+
+def test_fit_parser_defaults():
+    args = build_parser().parse_args(["fit"])
+    assert args.min_reviews == 200
+    assert args.dry_run is False

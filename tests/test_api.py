@@ -254,3 +254,71 @@ def test_mounted_routes_actually_respond(client):
     assert client.get("/api/tests/999999").status_code == 404
     assert client.post("/api/teach/explain",
                        json={"card_id": 999999}).status_code == 404
+
+
+def test_a_saved_fit_actually_changes_scheduling(client, db_path):
+    """Fitted weights that nothing reads are decoration. Prove they reach FSRS."""
+    import json
+
+    from recall.db import connect
+    from recall.schedule.fsrs import DEFAULT_PARAMS
+
+    baseline = client.post("/api/review", json={"card_id": 1, "grade": 3}).json()
+
+    # Save a fit whose initial-stability weight for "good" is far larger.
+    tweaked = list(DEFAULT_PARAMS)
+    tweaked[2] = DEFAULT_PARAMS[2] * 3.0
+    conn = connect(db_path)
+    conn.execute(
+        "INSERT INTO fit_runs (ran_at, n_reviews, params_json, val_logloss)"
+        " VALUES ('2026-09-05T00:00:00+00:00', 900, ?, 0.42)",
+        (json.dumps(tweaked),),
+    )
+    conn.execute("DELETE FROM card_state")
+    conn.execute("DELETE FROM reviews")
+    conn.commit()
+    conn.close()
+
+    after = client.post("/api/review", json={"card_id": 1, "grade": 3}).json()
+    assert after["stability"] > baseline["stability"] * 2, (
+        f"fitted params ignored: {baseline['stability']} -> {after['stability']}"
+    )
+
+
+def test_leech_is_flagged_at_the_threshold(client, db_path):
+    from recall.api.scheduling import LEECH_THRESHOLD
+    from recall.db import connect
+
+    client.post("/api/review", json={"card_id": 1, "grade": 3})
+    conn = connect(db_path)
+    conn.execute("UPDATE card_state SET lapses = ?, due_at = '2020-01-01T00:00:00+00:00'"
+                 " WHERE card_id = 1", (LEECH_THRESHOLD,))
+    conn.commit()
+    conn.close()
+
+    card = next(c for c in client.get("/api/queue").json()["cards"] if c["id"] == 1)
+    assert card["is_leech"] is True
+    assert card["lapses"] == LEECH_THRESHOLD
+    assert client.get("/api/stats").json()["totals"]["leeches"] == 1
+
+
+def test_a_card_below_the_threshold_is_not_a_leech(client, db_path):
+    from recall.api.scheduling import LEECH_THRESHOLD
+    from recall.db import connect
+
+    client.post("/api/review", json={"card_id": 1, "grade": 3})
+    conn = connect(db_path)
+    conn.execute("UPDATE card_state SET lapses = ?, due_at = '2020-01-01T00:00:00+00:00'"
+                 " WHERE card_id = 1", (LEECH_THRESHOLD - 1,))
+    conn.commit()
+    conn.close()
+    card = next(c for c in client.get("/api/queue").json()["cards"] if c["id"] == 1)
+    assert card["is_leech"] is False
+    assert client.get("/api/stats").json()["totals"]["leeches"] == 0
+
+
+def test_new_cards_are_never_leeches(client):
+    card = client.get("/api/queue").json()["cards"][0]
+    assert card["is_new"] is True
+    assert card["is_leech"] is False
+    assert card["lapses"] == 0

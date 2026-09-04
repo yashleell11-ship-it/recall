@@ -84,6 +84,34 @@ def cmd_approve(args, cfg) -> int:
     return 0
 
 
+def cmd_fit(args, cfg) -> int:
+    """Refit the scheduler to this user's own review history."""
+    from recall.schedule.fit import fit_parameters, save_fit
+
+    conn = _conn(cfg)
+    result = fit_parameters(conn, 1, min_reviews=args.min_reviews)
+    if result is None:
+        n = conn.execute("SELECT COUNT(*) n FROM reviews").fetchone()["n"]
+        print(f"not enough data to fit: {n} reviews, need {args.min_reviews}. "
+              "Keep reviewing; the defaults are fine until then.")
+        return 3  # distinct from failure, so a nightly timer can ignore it
+    improved = result.val_logloss < result.baseline_logloss
+    if not args.dry_run and improved:
+        save_fit(conn, result)
+    print(f"reviews used      {result.n_reviews}")
+    print(f"held-out logloss  {result.val_logloss:.4f}")
+    print(f"default logloss   {result.baseline_logloss:.4f}")
+    print(f"converged         {result.converged}")
+    if improved:
+        gain = (result.baseline_logloss - result.val_logloss) / result.baseline_logloss
+        print(f"=> fit beats the defaults by {gain:.1%}"
+              + ("  (dry run, not saved)" if args.dry_run else "  — saved and now live"))
+    else:
+        print("=> fit does NOT beat the defaults on held-out data; NOT saved. "
+              "That is the honest outcome, not an error.")
+    return 0
+
+
 def cmd_export(args, cfg) -> int:
     n = export_apkg(_conn(cfg), args.out, topic_code=args.topic)
     print(f"wrote {n} notes to {args.out}")
@@ -146,6 +174,11 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--port", type=int, default=8000)
     s.add_argument("--reload", action="store_true")
     s.set_defaults(func=cmd_serve)
+
+    s = sub.add_parser("fit", help="refit the scheduler to your own review history")
+    s.add_argument("--min-reviews", type=int, default=200)
+    s.add_argument("--dry-run", action="store_true")
+    s.set_defaults(func=cmd_fit)
 
     s = sub.add_parser("export", help="write an Anki .apkg")
     s.add_argument("--topic", default=None)

@@ -8,10 +8,15 @@ substr(ts, 1, 10) is a valid date bucket.
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 
-from recall.schedule import fsrs
+from recall.schedule import fit, fsrs
 
-SCHEDULER_VERSION = "fsrs-4.5-default"
+SCHEDULER_VERSION = "fsrs-4.5"
 _AGAIN_DELAY_MINUTES = 10
+
+# A card you have forgotten this many times is not being learned by repetition;
+# it needs to be understood. Anki suspends leeches; we surface them instead,
+# because the teaching endpoint can actually explain them.
+LEECH_THRESHOLD = 8
 
 
 def utc_now() -> datetime:
@@ -79,7 +84,7 @@ def build_queue(conn, user_id: int, topic_code: str | None = None,
 
     due_rows = conn.execute(
         "SELECT c.id, c.kind, c.question, c.answer, c.cloze_text, t.code AS topic_code,"
-        " ch.page_ref, cs.due_at, cs.stability, cs.difficulty,"
+        " ch.page_ref, cs.due_at, cs.stability, cs.difficulty, cs.lapses,"
         " (SELECT MAX(reviewed_at) FROM reviews r"
         "  WHERE r.card_id = c.id AND r.user_id = cs.user_id) AS last_reviewed_at"
         " FROM cards c"
@@ -111,6 +116,7 @@ def build_queue(conn, user_id: int, topic_code: str | None = None,
         keys = row.keys()
         stability = None if is_new else row["stability"]
         difficulty = None if is_new else row["difficulty"]
+        lapses = 0 if is_new else (row["lapses"] if "lapses" in keys else 0)
         elapsed = 0.0
         if not is_new and "last_reviewed_at" in keys and row["last_reviewed_at"]:
             elapsed = max(
@@ -122,7 +128,8 @@ def build_queue(conn, user_id: int, topic_code: str | None = None,
                 "answer": row["answer"], "cloze_text": row["cloze_text"],
                 "topic_code": row["topic_code"], "page_ref": row["page_ref"],
                 "is_new": is_new, "stability": stability, "difficulty": difficulty,
-                "elapsed_days": round(elapsed, 4)}
+                "elapsed_days": round(elapsed, 4),
+                "lapses": lapses, "is_leech": lapses >= LEECH_THRESHOLD}
 
     cards = [card(r, False) for r in due_rows] + [card(r, True) for r in new_rows]
     cap = min(settings["daily_review_cap"], limit or settings["daily_review_cap"])
@@ -152,6 +159,7 @@ def record_review(conn, user_id: int, card_id: int, grade: int) -> ReviewOutcome
         raise LookupError(f"no card {card_id}")
 
     settings = get_settings(conn, user_id)
+    params = fit.load_latest_params(conn)
     now = utc_now()
     state_row = conn.execute(
         "SELECT stability, difficulty, reps, lapses FROM card_state"
@@ -161,7 +169,7 @@ def record_review(conn, user_id: int, card_id: int, grade: int) -> ReviewOutcome
     if state_row is None:
         elapsed_days = 0.0
         predicted_r = None
-        state = fsrs.initial_state(grade)
+        state = fsrs.initial_state(grade, params)
         reps, lapses = 1, (1 if grade == 1 else 0)
     else:
         last = _last_reviewed_at(conn, card_id, user_id)
@@ -173,7 +181,7 @@ def record_review(conn, user_id: int, card_id: int, grade: int) -> ReviewOutcome
         predicted_r = fsrs.retrievability(elapsed_days, state_row["stability"])
         state = fsrs.next_state(
             fsrs.MemoryState(state_row["stability"], state_row["difficulty"]),
-            grade, elapsed_days,
+            grade, elapsed_days, params,
         )
         reps = state_row["reps"] + 1
         lapses = state_row["lapses"] + (1 if grade == 1 else 0)
@@ -245,6 +253,11 @@ def stats(conn, user_id: int) -> dict:
     sources = conn.execute(
         "SELECT COUNT(*) AS n FROM sources WHERE user_id = ?", (user_id,)
     ).fetchone()["n"]
+    leeches = conn.execute(
+        "SELECT COUNT(*) AS n FROM card_state cs JOIN cards c ON c.id = cs.card_id"
+        " WHERE cs.user_id = ? AND cs.lapses >= ? AND c.state = 'active'",
+        (user_id, LEECH_THRESHOLD),
+    ).fetchone()["n"]
 
     streak, cursor = 0, utc_now()
     seen = {r["date"] for r in days}
@@ -261,5 +274,6 @@ def stats(conn, user_id: int) -> dict:
                          for r in reversed(days)],
         "totals": {"active": totals["active"] or 0,
                    "pending": totals["pending"] or 0,
-                   "sources": sources},
+                   "sources": sources,
+                   "leeches": leeches},
     }
