@@ -15,21 +15,24 @@ import type { Stats } from "@/lib/types";
  *
  *   held      = 1 − today.again / today.reviewed
  *               … today's global retention proxy: the share of today's
- *               reviews that did NOT lapse (0 when nothing was reviewed).
- *   share_t   = by_topic[t].reviewed / max_u(by_topic[u].reviewed)
- *               … the topic's share of today's practice, normalised to the
- *               most-practised topic so the busiest star reads at the full
- *               held-rate and the others scale down from it.
- *   mastery_t = totals.active > 0 ? clamp01(held × share_t) : 0
+ *               reviews that did NOT lapse (1 when nothing was reviewed
+ *               yet today — an empty day is not evidence of forgetting).
+ *   settled_t = (active_t − due_t) / active_t
+ *               … the share of the topic's cards whose intervals are
+ *               currently holding: not due means the scheduler still
+ *               believes you remember it. by_topic carries no per-topic
+ *               review counts, so this is the strongest per-topic signal
+ *               the endpoint actually returns.
+ *   mastery_t = active_t > 0 ? clamp01(held × settled_t) : 0
  *
- * It cannot flatter: a lapse-heavy day dims every star, and a topic that
- * got no practice today shows an empty ring until it is practised.
+ * It cannot flatter: a lapse-heavy day dims every star, and a topic whose
+ * cards keep coming due shows a thin ring no matter how much you grind.
  *
  * EDGES — the stats payload carries no per-topic co-practice days, so
  * (exactly as the spec's fallback allows) stars are linked in display
  * order rather than by shared review days. An edge brightens when both of
- * its endpoints were reviewed today — the one co-practice fact the
- * endpoint does prove.
+ * its endpoints are fully settled (active > 0 and nothing due) — the one
+ * cross-topic fact the endpoint does prove.
  *
  * MOTION — rings animate once, on entry, by stroke-dashoffset behind an
  * IntersectionObserver. Reduced motion renders the final state outright.
@@ -108,16 +111,17 @@ export function Constellation({
   const n = topics.length;
   if (n === 0) return null;
 
-  const reviewedOf = (i: number) => Math.max(0, topics[i].reviewed ?? 0);
-  const maxReviewed = topics.reduce((m, _, i) => Math.max(m, reviewedOf(i)), 0);
   const held =
     stats.today.reviewed > 0
       ? clamp01(1 - stats.today.again / stats.today.reviewed)
-      : 0;
+      : 1;
+  const settledOf = (i: number) => {
+    const t = topics[i];
+    return t.active > 0 ? clamp01((t.active - t.due) / t.active) : 0;
+  };
   const masteryOf = (i: number) =>
-    stats.totals.active > 0 && maxReviewed > 0
-      ? clamp01(held * (reviewedOf(i) / maxReviewed))
-      : 0;
+    topics[i].active > 0 ? clamp01(held * settledOf(i)) : 0;
+  const settled = (i: number) => topics[i].active > 0 && topics[i].due === 0;
 
   const span = Math.max(0, width - PAD_X * 2);
   const step = n > 1 ? span / (n - 1) : 0;
@@ -127,7 +131,7 @@ export function Constellation({
   const stars = topics.map((t, i) => ({
     code: t.code,
     mastery: masteryOf(i),
-    practised: reviewedOf(i) > 0,
+    practised: settled(i),
     x: n > 1 ? PAD_X + i * step : width / 2,
     y: ROW_Y[i % 2] + Y_JITTER[i % Y_JITTER.length],
   }));

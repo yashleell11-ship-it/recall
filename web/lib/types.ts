@@ -108,11 +108,15 @@ export type SettingsPatch = Partial<Settings>;
  * consumer treats the fields as optional.
  */
 export interface StatsTopic {
+  id: number;
   code: string;
-  label?: string | null;
+  label: string;
+  due: number;
+  new: number;
+  active: number;
+  pending: number;
+  /** Not returned by the API today; kept optional for older mock fixtures. */
   reviewed?: number | null;
-  due?: number | null;
-  new?: number | null;
 }
 
 export interface StatsDay {

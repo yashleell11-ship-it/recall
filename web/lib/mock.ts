@@ -1121,11 +1121,19 @@ export async function getStats(): Promise<Stats> {
       again: s.againToday,
       streak: s.streak,
     },
-    by_topic: TOPIC_META.map((t) => ({
-      code: t.code,
-      label: t.label,
-      reviewed: s.reviewedByTopic[t.code] ?? 0,
-    })),
+    by_topic: TOPIC_META.map((t, i) => {
+      const b = BACKLOG[t.code as keyof typeof BACKLOG];
+      return {
+        id: i + 1,
+        code: t.code,
+        label: t.label,
+        due: b?.due ?? 0,
+        new: b?.new ?? 0,
+        active: b?.active ?? 0,
+        pending: b?.pending ?? 0,
+        reviewed: s.reviewedByTopic[t.code] ?? 0,
+      };
+    }),
     last_14_days: last14,
     totals: {
       active: Object.values(BACKLOG).reduce((n, b) => n + b.active, 0),
