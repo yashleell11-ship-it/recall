@@ -1,7 +1,9 @@
 "use client";
 
+import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatedNumber, Skeleton, useToast } from "@/components/rich";
 import { Kbd, KindTag } from "@/components/ui";
 import { errorMessage, getPending, getTopics, postDecide } from "@/lib/api";
 import { parseCloze } from "@/lib/cloze";
@@ -12,7 +14,50 @@ import type { PendingCard, Topic } from "@/lib/types";
 type Mark = "approve" | "reject";
 const PAGE = 50;
 
+/** Mount reveal: the dashboard's spring, staggered at most 40ms per row and
+ *  capped so a 200-row page settles in a third of a second, not eight. */
+const ROW_SPRING = {
+  type: "spring",
+  stiffness: 420,
+  damping: 34,
+  mass: 0.9,
+} as const;
+const REVEAL_CAP = 8;
+
+/** Committed rows fade + collapse out with a short stagger before removal. */
+const EXIT_MS = 180;
+const EXIT_STAGGER_S = 0.03;
+const EXIT_STAGGER_CAP = 8;
+
+/** Ragged question-line widths for the skeleton, deterministic for SSR. */
+const SKELETON_WIDTHS = ["82%", "68%", "75%", "88%", "64%", "79%"];
+
+/** Entrance delays for one arriving batch, keyed by card id. */
+function staggerFor(batch: PendingCard[]): Record<number, number> {
+  const delays: Record<number, number> = {};
+  batch.forEach((c, i) => {
+    delays[c.id] = Math.min(i, REVEAL_CAP) * 0.04;
+  });
+  return delays;
+}
+
+function edgeColor(mark: Mark | undefined): string {
+  if (mark === "approve") return "var(--g-good)";
+  if (mark === "reject") return "var(--g-again)";
+  return "transparent";
+}
+
+function rowTint(mark: Mark | undefined, isCursor: boolean): string | undefined {
+  if (mark === "approve") return "var(--g-good-bg)";
+  if (mark === "reject") return "var(--g-again-bg)";
+  if (isCursor) return "var(--surface-hover)";
+  return undefined;
+}
+
 export default function ApprovePage() {
+  const toast = useToast();
+  const reduced = useReducedMotion();
+
   const [cards, setCards] = useState<PendingCard[]>([]);
   const [total, setTotal] = useState(0);
   const [topics, setTopics] = useState<Topic[]>([]);
@@ -26,10 +71,21 @@ export default function ApprovePage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [committing, setCommitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [flash, setFlash] = useState<string | null>(null);
   const [reloadNonce, setReloadNonce] = useState(0);
 
+  // Rows collapsing out after a commit. They stay in `cards` until the exit
+  // animation lands, so a failed request can bring them back exactly.
+  const [exiting, setExiting] = useState<Set<number>>(() => new Set());
+  const [exitDelays, setExitDelays] = useState<Map<number, number>>(
+    () => new Map(),
+  );
+  const removeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const rowRefs = useRef<(HTMLLIElement | null)[]>([]);
+
+  // Entrance delay per card id, assigned once when its batch arrives — the
+  // first page and each "load more" stagger; nothing else ever replays it.
+  const [mountDelays, setMountDelays] = useState<Record<number, number>>({});
 
   /* --- data -------------------------------------------------------------- */
 
@@ -38,11 +94,13 @@ export default function ApprovePage() {
     getPending(PAGE, 0, topic || undefined)
       .then((res) => {
         if (!live) return;
+        setMountDelays(staggerFor(res.cards));
         setCards(res.cards);
         setTotal(res.total);
         setCursor(0);
         setMarks({});
         setSelected(new Set());
+        setExiting(new Set());
         setError(null);
       })
       .catch((err: unknown) => {
@@ -62,6 +120,13 @@ export default function ApprovePage() {
       .catch(() => setTopics([]));
   }, []);
 
+  useEffect(
+    () => () => {
+      if (removeTimer.current) clearTimeout(removeTimer.current);
+    },
+    [],
+  );
+
   const reload = useCallback(() => {
     setLoading(true);
     setReloadNonce((n) => n + 1);
@@ -71,6 +136,7 @@ export default function ApprovePage() {
     setLoadingMore(true);
     try {
       const res = await getPending(PAGE, cards.length, topic || undefined);
+      setMountDelays((prev) => ({ ...prev, ...staggerFor(res.cards) }));
       setCards((c) => [...c, ...res.cards]);
       setTotal(res.total);
     } catch (err) {
@@ -139,13 +205,42 @@ export default function ApprovePage() {
 
     // Optimistic: the rows leave immediately, which is the whole point of a
     // triage screen. If the request fails the exact prior state comes back.
-    setCards((c) => c.filter((x) => !decided.has(x.id)));
+    const delays = new Map<number, number>();
+    let k = 0;
+    for (const c of cards) {
+      if (decided.has(c.id)) {
+        delays.set(c.id, Math.min(k++, EXIT_STAGGER_CAP) * EXIT_STAGGER_S);
+      }
+    }
+    setExitDelays(delays);
+
+    const finishRemoval = () => {
+      setCards((c) => c.filter((x) => !decided.has(x.id)));
+      setExiting(new Set());
+      setCursor((c) =>
+        Math.min(c, Math.max(0, before.cards.length - decided.size - 1)),
+      );
+    };
+
     setMarks({});
     setSelected(new Set());
     setTotal((t) => Math.max(0, t - decided.size));
-    setCursor((c) => Math.min(c, Math.max(0, before.cards.length - decided.size - 1)));
     setCommitting(true);
     setError(null);
+
+    if (reduced) {
+      finishRemoval();
+    } else {
+      setExiting(decided);
+      const lastDelay =
+        Math.min(Math.max(decided.size - 1, 0), EXIT_STAGGER_CAP) *
+        EXIT_STAGGER_S *
+        1000;
+      removeTimer.current = setTimeout(() => {
+        removeTimer.current = null;
+        finishRemoval();
+      }, lastDelay + EXIT_MS + 40);
+    }
 
     try {
       // One request per action — the contract's decide endpoint carries a
@@ -154,7 +249,7 @@ export default function ApprovePage() {
       if (approveIds.length) requests.push(postDecide(approveIds, "approve"));
       if (rejectIds.length) requests.push(postDecide(rejectIds, "reject"));
       await Promise.all(requests);
-      setFlash(
+      toast(
         [
           approveIds.length ? `${approveIds.length} approved` : null,
           rejectIds.length ? `${rejectIds.length} rejected` : null,
@@ -163,21 +258,32 @@ export default function ApprovePage() {
           .join(", "),
       );
     } catch (err) {
+      // Exact rollback of the optimistic removal.
+      if (removeTimer.current) {
+        clearTimeout(removeTimer.current);
+        removeTimer.current = null;
+      }
+      setExiting(new Set());
       setCards(before.cards);
       setMarks(before.marks);
       setTotal(before.total);
       setCursor(before.cursor);
-      setError(`${errorMessage(err)} Nothing was changed.`);
+      toast(`${errorMessage(err)} Nothing was changed.`, { variant: "error" });
     } finally {
       setCommitting(false);
     }
-  }, [approveIds, rejectIds, markedCount, committing, cards, marks, total, cursor]);
-
-  useEffect(() => {
-    if (!flash) return;
-    const t = setTimeout(() => setFlash(null), 2600);
-    return () => clearTimeout(t);
-  }, [flash]);
+  }, [
+    approveIds,
+    rejectIds,
+    markedCount,
+    committing,
+    cards,
+    marks,
+    total,
+    cursor,
+    reduced,
+    toast,
+  ]);
 
   /* --- keyboard ---------------------------------------------------------- */
 
@@ -261,11 +367,16 @@ export default function ApprovePage() {
         <div>
           <h1 className="text-[18px] font-semibold leading-none">Approve</h1>
           <p className="text-[13px] text-fg-2 mt-1.5">
-            {loading
-              ? "Loading the triage queue…"
-              : total === 0
-                ? "Nothing waiting."
-                : `${total} generated ${plural(total, "card")} waiting. Read, mark, commit.`}
+            {loading ? (
+              "Loading the triage queue…"
+            ) : total === 0 ? (
+              "Nothing waiting."
+            ) : (
+              <>
+                <AnimatedNumber value={total} /> generated{" "}
+                {plural(total, "card")} waiting. Read, mark, commit.
+              </>
+            )}
           </p>
         </div>
 
@@ -326,8 +437,36 @@ export default function ApprovePage() {
       )}
 
       {loading ? (
-        <div className="panel px-3 py-6 text-[13px] text-fg-3">
-          Loading the triage queue&hellip;
+        /* Shaped exactly like the rows it becomes: gutter, meta line,
+           question, answer. Nothing moves when the real queue arrives. */
+        <div
+          className="panel overflow-hidden"
+          aria-busy="true"
+          aria-label="Loading the triage queue"
+        >
+          <ul>
+            {SKELETON_WIDTHS.map((w, i) => (
+              <li
+                key={i}
+                className="flex gap-2.5 px-2.5 py-2.5 border-b border-line last:border-b-0 border-l-2 border-l-transparent"
+              >
+                <div className="w-6 shrink-0 flex flex-col items-center gap-1.5 pt-px">
+                  <span
+                    className="text-[10px] leading-none text-transparent"
+                    aria-hidden="true"
+                  >
+                    &#9656;
+                  </span>
+                  <Skeleton className="w-3 h-3 rounded-xs" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <Skeleton className="h-[14px] w-44 mb-2" />
+                  <Skeleton className="h-4" style={{ width: w }} />
+                  <Skeleton className="h-[14px] w-3/5 mt-2" />
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       ) : cards.length === 0 ? (
         <div className="panel px-3 py-8 max-w-prose">
@@ -352,36 +491,57 @@ export default function ApprovePage() {
               const mark = marks[card.id];
               const isCursor = i === cursor;
               const isSelected = selected.has(card.id);
+              const isExiting = exiting.has(card.id);
               return (
-                <li
+                <motion.li
                   key={card.id}
                   ref={(el) => {
                     rowRefs.current[i] = el;
                   }}
                   onClick={() => setCursor(i)}
+                  initial={reduced ? false : { opacity: 0, y: 8 }}
+                  animate={
+                    isExiting
+                      ? { opacity: 0, y: 0, height: 0, paddingTop: 0, paddingBottom: 0 }
+                      : { opacity: 1, y: 0, height: "auto", paddingTop: 10, paddingBottom: 10 }
+                  }
+                  transition={
+                    reduced
+                      ? { duration: 0 }
+                      : isExiting
+                        ? {
+                            duration: EXIT_MS / 1000,
+                            ease: "easeIn",
+                            delay: exitDelays.get(card.id) ?? 0,
+                          }
+                        : { ...ROW_SPRING, delay: mountDelays[card.id] ?? 0 }
+                  }
                   className={`flex gap-2.5 px-2.5 py-2.5 border-b border-line last:border-b-0 border-l-2
-                    cursor-default transition-colors duration-[90ms]
-                    ${isCursor ? "bg-surface-hover" : "hover:bg-surface-hover"}
-                    ${mark === "reject" ? "opacity-55" : ""}`}
+                    cursor-default transition-[background-color,border-color] duration-150 ease-out
+                    ${!mark && !isCursor && !isExiting ? "hover:bg-surface-hover" : ""}`}
                   style={{
-                    borderLeftColor:
-                      mark === "approve"
-                        ? "var(--fg)"
-                        : mark === "reject"
-                          ? "var(--line-strong)"
-                          : "transparent",
+                    borderLeftColor: edgeColor(mark),
+                    backgroundColor: rowTint(mark, isCursor),
+                    overflow: isExiting ? "hidden" : undefined,
+                    borderBottomWidth: isExiting ? 0 : undefined,
+                    pointerEvents: isExiting ? "none" : undefined,
                   }}
                 >
                   {/* gutter: cursor caret + selection box */}
                   <div className="w-6 shrink-0 flex flex-col items-center gap-1.5 pt-px">
-                    <span
-                      className={`text-[10px] leading-none ${
-                        isCursor ? "text-fg" : "text-transparent"
-                      }`}
+                    <motion.span
+                      className="text-[10px] leading-none text-fg"
                       aria-hidden="true"
+                      initial={false}
+                      animate={{ opacity: isCursor ? 1 : 0, x: isCursor ? 0 : -3 }}
+                      transition={
+                        reduced
+                          ? { duration: 0 }
+                          : { type: "spring", stiffness: 520, damping: 32, mass: 0.7 }
+                      }
                     >
                       &#9656;
-                    </span>
+                    </motion.span>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -416,7 +576,7 @@ export default function ApprovePage() {
 
                     <p
                       className={`text-[13.5px] font-medium leading-snug ${
-                        mark === "reject" ? "line-through" : ""
+                        mark === "reject" ? "line-through text-fg-2" : ""
                       }`}
                     >
                       {card.cloze_text
@@ -441,12 +601,20 @@ export default function ApprovePage() {
 
                   <div className="w-[58px] shrink-0 text-right">
                     {mark && (
-                      <span className="label">
+                      <span
+                        className="label"
+                        style={{
+                          color:
+                            mark === "approve"
+                              ? "var(--g-good)"
+                              : "var(--g-again)",
+                        }}
+                      >
                         {mark === "approve" ? "keep" : "drop"}
                       </span>
                     )}
                   </div>
-                </li>
+                </motion.li>
               );
             })}
           </ul>
@@ -490,9 +658,6 @@ export default function ApprovePage() {
                   </span>{" "}
                   to drop
                 </>
-              )}
-              {flash && (
-                <span className="ml-3 text-fg-3">{flash}</span>
               )}
             </div>
 
