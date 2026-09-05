@@ -69,11 +69,15 @@ function chipsFor(meta: TopicMeta): Chip[] {
       detail: "40 marks · 90 min · units 1–3",
     });
   }
-  chips.push({
-    kind: "endterm100",
-    label: "ETE",
-    detail: "100 marks · 3 h · all units",
-  });
+  // A course whose scheme carries no ETE weight (CSE111 is fully CA-driven)
+  // must not offer an ETE paper — the university will never set one.
+  if ((meta.scheme?.ete ?? 0) > 0) {
+    chips.push({
+      kind: "endterm100",
+      label: "ETE",
+      detail: "100 marks · 3 h · all units",
+    });
+  }
   return chips;
 }
 
