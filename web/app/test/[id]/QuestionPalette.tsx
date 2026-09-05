@@ -9,26 +9,25 @@ export interface PaletteState {
   visited: Set<number>;
 }
 
-/** Cell appearance is the whole point of the palette, so it lives in one place. */
+/**
+ * Cell appearance is the whole point of the palette, so it lives in one place.
+ *
+ * Answered cells all wear the same ion tint — answering is the user's act, so
+ * it takes the user's light. The verdict itself stays out of the palette (it
+ * is still spoken to screen readers, and the result view does the judging);
+ * a wall of red cells mid-paper is an invigilator tapping the desk.
+ */
 function cellStyle(
   verdict: Verdict | null | undefined,
   visited: boolean,
 ): { fill: string | null; frame: React.CSSProperties } {
   switch (verdict) {
     case "correct":
-      return {
-        fill: "var(--g-good-bg)",
-        frame: { borderColor: "var(--g-good)", color: "var(--g-good)" },
-      };
     case "partial":
-      return {
-        fill: "var(--g-hard-bg)",
-        frame: { borderColor: "var(--g-hard)", color: "var(--g-hard)" },
-      };
     case "wrong":
       return {
-        fill: "var(--g-again-bg)",
-        frame: { borderColor: "var(--g-again)", color: "var(--g-again)" },
+        fill: "var(--accent-quiet)",
+        frame: { borderColor: "var(--line-strong)", color: "var(--fg-2)" },
       };
     case "skipped":
       return {
@@ -94,7 +93,7 @@ export function QuestionPalette({
             title={`Q${q.ordinal} · ${q.topic_code} · ${q.marks} ${
               q.marks === 1 ? "mark" : "marks"
             }`}
-            className="relative h-9 sm:h-8 rounded-xs border text-[12px] tnum font-medium
+            className="telemetry relative h-9 sm:h-8 rounded-xs border text-[12px] font-medium
               flex items-center justify-center overflow-hidden
               transition-colors duration-[90ms] hover:border-fg-2"
             style={{
@@ -163,8 +162,8 @@ export function PaletteLegend({
       label: "answered",
       count: answered,
       style: {
-        background: "var(--g-good-bg)",
-        borderColor: "var(--g-good)",
+        background: "var(--accent-quiet)",
+        borderColor: "var(--line-strong)",
       },
     },
     {
@@ -183,7 +182,7 @@ export function PaletteLegend({
     {
       label: "marked",
       count: marked,
-      style: { borderColor: "var(--accent)", background: "var(--accent-quiet)" },
+      style: { borderColor: "var(--accent)" },
     },
   ];
 
@@ -197,7 +196,9 @@ export function PaletteLegend({
             style={r.style}
           />
           <span className="text-fg-3">{r.label}</span>
-          <span className="tnum text-fg-2 ml-auto">{r.count}</span>
+          <span className="telemetry text-[11px] text-fg-2 ml-auto">
+            {r.count}
+          </span>
         </div>
       ))}
     </div>

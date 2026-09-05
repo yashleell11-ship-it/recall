@@ -35,6 +35,26 @@ const GRADES: {
 /** How long the graded card takes to fade and lift out before the next enters. */
 const ADVANCE_MS = 240;
 
+/**
+ * The Flow Stack (Phosphor spec §6.1): №2 starts promoting this long before
+ * the graded card finishes leaving, so the two motions overlap and the flow
+ * never breaks.
+ */
+const PROMOTE_OVERLAP_MS = 40;
+
+/**
+ * Stack geometry: the current card at full presence, the next two physically
+ * beneath it — present, never demanding attention.
+ */
+const STACK_POS = [
+  { y: 0, scale: 1, opacity: 1 },
+  { y: 16, scale: 0.955, opacity: 0.55 },
+  { y: 30, scale: 0.915, opacity: 0.28 },
+] as const;
+
+/** Where a graded card goes: out the top, fading, over ADVANCE_MS. */
+const STACK_LEAVE = { y: -26, scale: 1, opacity: 0 } as const;
+
 /** The card's entrance: fade + 12px lift on a quick spring. */
 const ENTER_SPRING = {
   type: "spring",
@@ -97,6 +117,12 @@ export function ReviewSession() {
   // The graded card is fading out; inputs wait for the next one to arrive.
   const [leaving, setLeaving] = useState(false);
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Verdict feedback: one bio pulse-ring for a held card, a headshake for
+  // "Again". The nonce lets an immediate repeat replay the animation.
+  const [fx, setFx] = useState<{ kind: "pulse" | "shake"; n: number } | null>(
+    null,
+  );
 
   // Memory state learned from the server as the session goes, so a card that
   // comes back after "Again" is priced exactly rather than estimated.
@@ -213,6 +239,9 @@ export function ReviewSession() {
         advance();
         return;
       }
+      // Feedback paints at press time, before anything else: bio exhale for a
+      // held card, a 4px headshake for a lapse. Presentation only.
+      setFx({ kind: g === 1 ? "shake" : "pulse", n: Date.now() });
       setLeaving(true);
       advanceTimer.current = setTimeout(() => {
         advanceTimer.current = null;
@@ -357,7 +386,11 @@ export function ReviewSession() {
   const solved = card.cloze_text ? parseCloze(card.cloze_text) : null;
   const clozeAnswerIsRedundant =
     !!solved && clozeShowsAnswer(solved, card.answer);
-  const leech = card as QueueCard & LeechSignals;
+
+  // The Flow Stack window: the current card plus the next one or two,
+  // rendered physically beneath it. Keys are queue positions, so a promoted
+  // card keeps its DOM node and its spring simply continues to the next slot.
+  const stack = queue.slice(index, index + 3);
 
   return (
     <div className="min-h-dvh flex flex-col">
@@ -382,7 +415,7 @@ export function ReviewSession() {
       </div>
 
       <div className="shrink-0 px-4 sm:px-6 h-9 flex items-center justify-between text-[11px] text-fg-3">
-        <span className="tnum">
+        <span className={`tnum ${styles.telem}`}>
           {position} / {queue.length}
         </span>
         {unsaved.length > 0 && (
@@ -405,74 +438,122 @@ export function ReviewSession() {
       </div>
 
       <main className="flex-1 flex flex-col justify-center px-5 sm:px-6 py-6">
-        <motion.article
-          key={`${card.id}-${index}`}
-          className="w-full max-w-[36rem] mx-auto"
-          initial={reduced ? false : { opacity: 0, y: 12 }}
-          animate={leaving ? { opacity: 0, y: -12 } : { opacity: 1, y: 0 }}
-          transition={
-            reduced
+        <div
+          className={`relative w-full max-w-[36rem] mx-auto ${
+            fx?.kind === "shake" ? styles.shake : ""
+          }`}
+          onAnimationEnd={(e) => {
+            // The headshake runs on this element itself; animation ends that
+            // bubble up from children (cloze flash, pulse ring) are not ours.
+            if (e.target === e.currentTarget) setFx(null);
+          }}
+        >
+          {stack.map((c, i) => {
+            const top = i === 0;
+            const meta = c as QueueCard & LeechSignals;
+            const clozeSegs = c.cloze_text ? parseCloze(c.cloze_text) : null;
+            const target = leaving
+              ? top
+                ? STACK_LEAVE
+                : STACK_POS[i - 1]
+              : STACK_POS[i];
+            const transition = reduced
               ? { duration: 0 }
               : leaving
-                ? { duration: ADVANCE_MS / 1000 - 0.02, ease: "easeIn" }
-                : ENTER_SPRING
-          }
-        >
-          <p className="text-[11px] text-fg-3 tracking-[0.05em] mb-4">
-            <span className="font-semibold text-fg-2">{card.topic_code}</span>
-            <span className="mx-1.5">·</span>
-            {card.page_ref}
-            {card.is_new && (
-              <>
-                <span className="mx-1.5">·</span>
-                new
-              </>
-            )}
-            {leech.is_leech && (
-              <span
-                className="ml-2 inline-flex items-center rounded-xs px-1.5 py-px align-middle font-medium tracking-normal"
-                style={{
-                  color: "var(--g-hard)",
-                  background: "var(--g-hard-bg)",
-                }}
+                ? top
+                  ? {
+                      duration: ADVANCE_MS / 1000 - 0.02,
+                      ease: "easeIn" as const,
+                    }
+                  : {
+                      ...ENTER_SPRING,
+                      delay: (ADVANCE_MS - PROMOTE_OVERLAP_MS) / 1000,
+                    }
+                : ENTER_SPRING;
+            return (
+              <motion.article
+                key={`${c.id}-${index + i}`}
+                aria-hidden={top ? undefined : true}
+                className={`${styles.card} ${top ? "relative" : styles.ghost}`}
+                style={{ zIndex: 3 - i }}
+                initial={
+                  reduced
+                    ? false
+                    : top
+                      ? { ...STACK_POS[0], opacity: 0, y: 12 }
+                      : { ...STACK_POS[i], opacity: 0 }
+                }
+                animate={target}
+                transition={transition}
               >
-                {typeof leech.lapses === "number"
-                  ? `${leech.lapses} ${plural(leech.lapses, "lapse")}`
-                  : "leech"}
-              </span>
-            )}
-          </p>
+                <p className="flex flex-wrap items-center gap-1.5 mb-4">
+                  <span className="prov">
+                    {c.topic_code} · {c.page_ref}
+                    {c.is_new && <> · new</>}
+                  </span>
+                  <span className="prov prov--ai">AI</span>
+                  {meta.is_leech && (
+                    <span
+                      className="prov"
+                      style={{
+                        color: "var(--g-hard)",
+                        background: "var(--g-hard-bg)",
+                        borderColor: "transparent",
+                      }}
+                    >
+                      {typeof meta.lapses === "number"
+                        ? `${meta.lapses} ${plural(meta.lapses, "lapse")}`
+                        : "leech"}
+                    </span>
+                  )}
+                </p>
 
-          {solved ? (
-            <ClozePrompt
-              segments={solved}
-              revealed={revealed}
-              className={`text-[clamp(1.15rem,1rem+1.1vw,1.6rem)] leading-[1.55] font-normal ${styles.clozeFlash}`}
+                {clozeSegs ? (
+                  <ClozePrompt
+                    segments={clozeSegs}
+                    revealed={top && revealed}
+                    className={`k-question ${top ? styles.clozeFlash : ""}`}
+                  />
+                ) : top ? (
+                  <h1 className="k-question">{c.question}</h1>
+                ) : (
+                  <p className="k-question">{c.question}</p>
+                )}
+
+                {top && revealed && (!solved || !clozeAnswerIsRedundant) && (
+                  <motion.div
+                    className="mt-7 pt-6 border-t border-line"
+                    initial={reduced ? false : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={reduced ? { duration: 0 } : REVEAL_SPRING}
+                  >
+                    <p className="label mb-2">{solved ? "Note" : "Answer"}</p>
+                    <p className="k-answer text-fg">{card.answer}</p>
+                  </motion.div>
+                )}
+
+                {top && revealed && solved && clozeAnswerIsRedundant && (
+                  <div
+                    className="mt-7 pt-6 border-t border-line"
+                    aria-hidden="true"
+                  />
+                )}
+              </motion.article>
+            );
+          })}
+
+          {fx?.kind === "pulse" && (
+            <div
+              key={fx.n}
+              className={styles.pulseRing}
+              aria-hidden="true"
+              onAnimationEnd={(e) => {
+                e.stopPropagation();
+                setFx(null);
+              }}
             />
-          ) : (
-            <h1 className="text-[clamp(1.15rem,1rem+1.1vw,1.6rem)] leading-[1.5] font-normal">
-              {card.question}
-            </h1>
           )}
-
-          {revealed && (!solved || !clozeAnswerIsRedundant) && (
-            <motion.div
-              className="mt-7 pt-6 border-t border-line"
-              initial={reduced ? false : { opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={reduced ? { duration: 0 } : REVEAL_SPRING}
-            >
-              <p className="label mb-2">{solved ? "Note" : "Answer"}</p>
-              <p className="text-[clamp(1rem,0.95rem+0.5vw,1.2rem)] leading-[1.6] text-fg">
-                {card.answer}
-              </p>
-            </motion.div>
-          )}
-
-          {revealed && solved && clozeAnswerIsRedundant && (
-            <div className="mt-7 pt-6 border-t border-line" aria-hidden="true" />
-          )}
-        </motion.article>
+        </div>
       </main>
 
       <footer className="shrink-0 px-4 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))]">
@@ -519,7 +600,9 @@ export function ReviewSession() {
                     <span className="text-[12.5px] font-medium leading-none">
                       {g.label}
                     </span>
-                    <span className="text-[11px] text-fg-3 tnum leading-none">
+                    <span
+                      className={`text-[11px] text-fg-3 tnum leading-none ${styles.telem}`}
+                    >
                       {preview
                         ? `${preview.estimated ? "≈" : ""}${formatInterval(preview.days)}`
                         : "—"}
@@ -564,9 +647,11 @@ export function ReviewSkeleton() {
       </div>
       <main className="flex-1 flex flex-col justify-center px-5 sm:px-6 py-6">
         <div className="w-full max-w-[36rem] mx-auto">
-          <Skeleton className="h-3 w-36 mb-5" />
-          <Skeleton className="h-6 w-full mb-3" />
-          <Skeleton className="h-6 w-4/5" />
+          <div className={styles.card}>
+            <Skeleton className="h-[18px] w-40 mb-4 rounded-full" />
+            <Skeleton className="h-6 w-full mb-3" />
+            <Skeleton className="h-6 w-4/5" />
+          </div>
         </div>
       </main>
       <footer className="shrink-0 px-4 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))]">
@@ -638,7 +723,7 @@ function Summary({
                   value={held * 100}
                   format={formatPct}
                   delay={0.15}
-                  className="tnum-display text-[17px] font-semibold"
+                  className="tnum-display k-text text-[17px] font-semibold"
                 />
               </ProgressRing>
               <div className="min-w-0">
@@ -667,7 +752,7 @@ function Summary({
                     <AnimatedNumber
                       value={counts[i]}
                       delay={0.1 + i * 0.04}
-                      className="tnum-display"
+                      className="tnum-display k-text"
                     />
                   </div>
                   <div className="label mt-1.5">{g.label}</div>

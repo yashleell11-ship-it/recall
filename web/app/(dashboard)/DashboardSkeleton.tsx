@@ -84,6 +84,17 @@ export function DashboardSkeleton() {
             </div>
           </div>
 
+          {/* Constellation */}
+          <div className="panel shadow-elev-1 overflow-hidden">
+            <div className="flex items-center justify-between px-3 h-9 border-b border-line bg-sunken">
+              <Skeleton className="h-2.5 w-24" />
+              <Skeleton className="h-2.5 w-20" />
+            </div>
+            <div className="px-1.5 py-1.5">
+              <Skeleton className="w-full" style={{ height: 190 }} />
+            </div>
+          </div>
+
           <div className="panel shadow-elev-1 overflow-hidden">
             <div className="flex items-center px-3 h-9 border-b border-line bg-sunken">
               <Skeleton className="h-2.5 w-24" />

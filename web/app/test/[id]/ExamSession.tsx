@@ -26,6 +26,7 @@ import {
   type PaletteState,
 } from "./QuestionPalette";
 import { ResultView } from "./ResultView";
+import fx from "./challenge.module.css";
 
 /**
  * Worst to best, left to right, and keyed 1/2/3 so the fingers that learned the
@@ -146,6 +147,21 @@ export function ExamSession({ id }: { id: number }) {
   const spent = useRef<Record<number, number>>({});
   const submitted = useRef(false);
 
+  // Verdict feedback (§6.4): correct pulses, wrong shakes, both on the
+  // keypress itself. The classes are applied imperatively to a wrapper that
+  // persists across questions, so a repeated verdict replays from frame zero
+  // and the pulse-ring can finish breathing out while the next question
+  // arrives underneath it.
+  const fxRef = useRef<HTMLDivElement>(null);
+  const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    },
+    [],
+  );
+
   // Claimed while the paper is opening too, so the header does not flash in
   // and out between the loading line and the first question.
   useFocusMode(result === null && finished === null && loadError === null);
@@ -224,6 +240,12 @@ export function ExamSession({ id }: { id: number }) {
 
   const goTo = useCallback(
     (ordinal: number) => {
+      // Navigating by hand cancels any verdict-scheduled advance, so pressing
+      // an arrow right after grading never teleports you a second time.
+      if (advanceTimer.current) {
+        clearTimeout(advanceTimer.current);
+        advanceTimer.current = null;
+      }
       if (ordinal === current) return;
       spent.current[current] =
         (spent.current[current] ?? 0) + (Date.now() - enteredAt.current);
@@ -277,6 +299,20 @@ export function ExamSession({ id }: { id: number }) {
 
       setVerdicts((v) => ({ ...v, [ordinal]: verdict }));
       setRevealed((r) => new Set(r).add(ordinal));
+
+      // §6.4: the verdict paints optimistically, before the network. Correct
+      // is a single bio pulse-ring; wrong is a 4px, 240ms shake with a flare
+      // edge. Applied by hand (not through state) so the same class can
+      // restart from frame zero when an answer is changed.
+      const card = fxRef.current;
+      if (card) {
+        card.classList.remove(fx.right, fx.wrong);
+        if (!reduced && (verdict === "correct" || verdict === "wrong")) {
+          void card.offsetWidth; // flush, so the one-shot animation replays
+          card.classList.add(verdict === "correct" ? fx.right : fx.wrong);
+        }
+      }
+
       // One request per verdict, sent as it is given: a closed tab, a dead
       // battery or a train tunnel can then cost at most the current question.
       void postAnswer(id, ordinal, verdict, seconds)
@@ -297,9 +333,26 @@ export function ExamSession({ id }: { id: number }) {
           // success just keeps the quiet tick in the header lit.
           toast(`Answer not saved — ${errorMessage(err)}`, { variant: "error" });
         });
-      advance();
+
+      // The verdict needs a beat to land on the question it judged: the shake
+      // finishes (240ms) before the page turns; the pulse-ring keeps
+      // breathing out across the transition. Partial and skip move on at
+      // once, exactly as before.
+      if (advanceTimer.current) clearTimeout(advanceTimer.current);
+      const hold = reduced
+        ? 0
+        : verdict === "wrong"
+          ? 300
+          : verdict === "correct"
+            ? 200
+            : 0;
+      if (hold === 0) {
+        advance();
+      } else {
+        advanceTimer.current = setTimeout(advance, hold);
+      }
     },
-    [question, result, id, advance, toast],
+    [question, result, id, advance, toast, reduced],
   );
 
   const retrySaves = useCallback(() => {
@@ -641,7 +694,7 @@ export function ExamSession({ id }: { id: number }) {
     <>
       <div className="flex items-baseline justify-between gap-2 px-2.5 h-9 border-b border-line bg-sunken shrink-0">
         <h2 className="label">Questions</h2>
-        <span className="text-[11px] text-fg-3 tnum">
+        <span className="telemetry text-[11px] text-fg-3">
           {tally.answered + tally.skipped} / {questions.length}
         </span>
       </div>
@@ -672,7 +725,7 @@ export function ExamSession({ id }: { id: number }) {
             {submitting ? "Submitting…" : "Submit paper"}
             <Kbd>&crarr;</Kbd>
           </motion.button>
-          <p className="text-[11px] text-fg-3 mt-1.5 tnum">
+          <p className="telemetry text-[11px] text-fg-3 mt-1.5">
             {tally.attemptedMarks} of {totalMarks} marks attempted
           </p>
         </div>
@@ -698,7 +751,7 @@ export function ExamSession({ id }: { id: number }) {
           {PAPER_LABEL[paper.kind] ?? paper.kind}
         </span>
 
-        <span className="text-[11px] text-fg-3 tnum shrink-0">
+        <span className="telemetry text-[11px] text-fg-3 shrink-0">
           <span className="text-fg-2 font-medium">
             {tally.answered + tally.skipped}
           </span>
@@ -735,7 +788,7 @@ export function ExamSession({ id }: { id: number }) {
                 title={`${clock(remainingMs)} left of ${Math.round(
                   (limitS ?? 0) / 60,
                 )} minutes`}
-                className={`tnum text-[15px] leading-none tabular-nums transition-colors duration-500 ${
+                className={`telemetry text-[15px] leading-none transition-colors duration-500 ${
                   timeWarn ? "font-semibold" : "font-medium text-fg-2"
                 }`}
                 style={timeWarn ? { color: timeColor } : undefined}
@@ -777,14 +830,30 @@ export function ExamSession({ id }: { id: number }) {
           {/* my-auto rather than justify-center: it centres a short question
               and collapses to nothing when a long one has to scroll. */}
           <main className="flex-1 overflow-y-auto flex flex-col px-4 sm:px-6 py-5 sm:py-7">
+            {/* The verdict-feedback wrapper is not keyed: it outlives each
+                question, so the pulse-ring/shake it carries is never cut
+                short by the article remounting underneath it. */}
+            <div
+              ref={fxRef}
+              onAnimationEnd={(e) => {
+                // Hygiene only — both effects revert by themselves when the
+                // one-shot ends. Child reveals (anim-reveal) bubble their
+                // animationend up, so only the wrapper's own is acted on.
+                if (e.target === e.currentTarget) {
+                  e.currentTarget.classList.remove(fx.right, fx.wrong);
+                }
+              }}
+              className="w-full max-w-[38rem] mx-auto my-auto rounded-md"
+            >
             <motion.article
               key={question.ordinal}
               initial={reduced ? false : { opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.9 }}
-              className="w-full max-w-[38rem] mx-auto my-auto"
+              className="w-full"
             >
-              <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-fg-3 mb-4">
+              {/* Marks and provenance are telemetry: mono, tabular, quiet. */}
+              <div className="telemetry flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-fg-3 mb-4">
                 <span className="text-[13px] font-semibold text-fg tnum leading-none">
                   Q{question.ordinal}
                 </span>
@@ -811,16 +880,16 @@ export function ExamSession({ id }: { id: number }) {
                 )}
               </div>
 
+              {/* The question is knowledge, so it wears the scholar's face —
+                  Newsreader under Phosphor, the house sans under ember. */}
               {solved ? (
                 <ClozePrompt
                   segments={solved}
                   revealed={isRevealed}
-                  className="text-[clamp(1.1rem,1rem+0.9vw,1.45rem)] leading-[1.55]"
+                  className="k-question"
                 />
               ) : (
-                <h1 className="text-[clamp(1.1rem,1rem+0.9vw,1.45rem)] leading-[1.5] font-normal">
-                  {question.question}
-                </h1>
+                <h1 className="k-question">{question.question}</h1>
               )}
 
               {isRevealed && (!solved || !answerIsRedundant) && (
@@ -828,9 +897,7 @@ export function ExamSession({ id }: { id: number }) {
                   <p className="label mb-2">
                     {solved ? "Note" : "Model answer"}
                   </p>
-                  <p className="text-[clamp(0.95rem,0.9rem+0.4vw,1.1rem)] leading-[1.6]">
-                    {question.answer}
-                  </p>
+                  <p className="k-answer">{question.answer}</p>
                 </div>
               )}
 
@@ -859,6 +926,7 @@ export function ExamSession({ id }: { id: number }) {
                 </p>
               )}
             </motion.article>
+            </div>
           </main>
 
           {/* Driven by the queue, not by the last message: a question that was
@@ -1147,7 +1215,9 @@ function SubmitConfirm({
         initial={reduced ? false : { opacity: 0, y: 8, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.9 }}
-        className="elev-3 rounded-md w-full max-w-md outline-none overflow-hidden"
+        /* A transient overlay is one of the two places glass may exist; under
+           ember the same class is simply the solid overlay surface. */
+        className="glass rounded-md w-full max-w-md outline-none overflow-hidden"
       >
         <header className="px-3 h-9 border-b border-line bg-sunken flex items-center">
           <h2 className="label">Submit this paper</h2>
@@ -1166,7 +1236,7 @@ function SubmitConfirm({
                 className="flex items-baseline justify-between gap-3 py-[3px]"
               >
                 <dt className="text-fg-2">{label}</dt>
-                <dd className="tnum font-medium">{value}</dd>
+                <dd className="telemetry font-medium">{value}</dd>
               </div>
             ))}
           </dl>
@@ -1196,7 +1266,7 @@ function SubmitConfirm({
           )}
 
           {remainingMs !== null && (
-            <p className="text-[12px] text-fg-3 mt-2.5 tnum">
+            <p className="telemetry text-[12px] text-fg-3 mt-2.5">
               {clock(remainingMs)} still on the clock.
             </p>
           )}

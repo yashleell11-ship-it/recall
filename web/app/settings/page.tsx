@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "motion/react";
 import type { CSSProperties, ReactNode } from "react";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AnimatedNumber, Reveal, Skeleton, useToast } from "@/components/rich";
+import { useZen, ZenVisualizer } from "@/components/rich/ZenAudio";
 import { ErrorState } from "@/components/ui";
 import { errorMessage, getSettings, putSettings } from "@/lib/api";
 import type { Settings, SettingsPatch } from "@/lib/types";
@@ -92,6 +93,26 @@ const SLIDER_CSS = `
 .range-slider:active::-moz-range-thumb {
   transform: scale(1.15);
   border-color: var(--accent);
+}
+
+/* Under Phosphor the thumb is the ion itself — the travelled track and the
+   handle share one light. The bloom stays at the faint alpha (.08), well
+   inside the emission budget. */
+:root[data-skin="phosphor"] .range-slider::-webkit-slider-thumb {
+  background: var(--accent);
+  border-color: var(--accent-deep);
+  box-shadow: 0 0 10px var(--accent-glow-faint);
+}
+:root[data-skin="phosphor"] .range-slider:active::-webkit-slider-thumb {
+  box-shadow: 0 0 14px var(--accent-glow);
+}
+:root[data-skin="phosphor"] .range-slider::-moz-range-thumb {
+  background: var(--accent);
+  border-color: var(--accent-deep);
+  box-shadow: 0 0 10px var(--accent-glow-faint);
+}
+:root[data-skin="phosphor"] .range-slider:active::-moz-range-thumb {
+  box-shadow: 0 0 14px var(--accent-glow);
 }
 `;
 
@@ -295,7 +316,77 @@ export default function SettingsPage() {
         and the review history of each individual card, so a change here shifts
         every future interval rather than rescheduling what is already due.
       </p>
+
+      <DeepFocusSection />
     </main>
+  );
+}
+
+/**
+ * Deep focus: Zen mode's home. The switch is the only thing that can start
+ * the drone — it never autoplays, and the state deliberately does not
+ * persist across page loads. The six-bar visualizer beside the switch is
+ * the design system's single sanctioned continuous animation.
+ */
+function DeepFocusSection() {
+  const { on, toggle } = useZen();
+
+  return (
+    <Reveal delay={0.06}>
+      <h2 className="label mt-7 mb-2">Deep focus</h2>
+      <div className="panel divide-y divide-line">
+        <section className="px-3.5 py-4">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <span id="zen-label" className="text-[14px] font-semibold block">
+                Zen mode
+              </span>
+              <p className="text-[13px] text-fg-2 mt-1 leading-normal">
+                An ambient drone generated in the browser — two detuned low
+                tones under a slow bed of filtered noise, held far below
+                speech level. Nothing is downloaded and nothing autoplays: it
+                fades in only from this switch, and fades out when you turn
+                it off.
+              </p>
+            </div>
+            <div className="shrink-0 flex items-center gap-2.5 min-h-8">
+              <ZenVisualizer />
+              <button
+                type="button"
+                role="switch"
+                aria-checked={on}
+                aria-labelledby="zen-label"
+                onClick={toggle}
+                className="relative w-[34px] h-5 rounded-full border transition-colors duration-150 shrink-0"
+                style={{
+                  background: on ? "var(--accent-quiet)" : "var(--surface-hover)",
+                  borderColor: on ? "var(--accent)" : "var(--line-strong)",
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  className="absolute top-[2px] left-[2px] w-[14px] h-[14px] rounded-full transition-transform duration-150"
+                  style={{
+                    background: on ? "var(--accent)" : "var(--fg-3)",
+                    transform: on ? "translateX(14px)" : "translateX(0)",
+                  }}
+                />
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section className="px-3.5 py-4">
+          <span className="text-[14px] font-semibold block">Focus mode</span>
+          <p className="text-[13px] text-fg-2 mt-1 leading-normal">
+            Focus mode is automatic rather than a switch: the review screen
+            and a paper in progress drop the header and navigation so nothing
+            sits beside the card, and the chrome returns the moment the
+            session ends.
+          </p>
+        </section>
+      </div>
+    </Reveal>
   );
 }
 

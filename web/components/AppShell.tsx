@@ -14,6 +14,7 @@ import {
 import { MOCK } from "@/lib/api";
 import { hasModifier, isTypingTarget } from "@/lib/keys";
 import { buildDefaultActions } from "@/lib/palette";
+import { useSkin } from "@/lib/skin";
 import { CommandPalette, ToastProvider, useToast } from "./rich";
 import { ShortcutsOverlay } from "./Shortcuts";
 import { ThemeToggle, useThemeMode } from "./ThemeToggle";
@@ -75,6 +76,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
   const [help, setHelp] = useState(false);
   const [claimed, setClaimed] = useState(false);
   const { mode, cycle } = useThemeMode();
+  const { skin, toggle: toggleSkin } = useSkin();
 
   const pendingG = useRef(false);
   const gTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -94,15 +96,29 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
     [cycle, mode],
   );
 
-  const paletteActions = useMemo(
-    () =>
-      buildDefaultActions({
-        push: (href) => router.push(href),
-        setTheme,
-        toast,
-      }),
-    [router, setTheme, toast],
-  );
+  // Phosphor is committed-dark, so the light/dark actions vanish under it —
+  // exactly as the header's theme control does. The skin switcher itself is
+  // always on offer.
+  const paletteActions = useMemo(() => {
+    const base = buildDefaultActions({
+      push: (href) => router.push(href),
+      setTheme,
+      toast,
+    });
+    const actions =
+      skin === "phosphor" ? base.filter((a) => a.section !== "Theme") : base;
+    const other = skin === "phosphor" ? "ember" : "phosphor";
+    return [
+      ...actions,
+      {
+        id: "skin-switch",
+        title: `Switch skin — ${other}`,
+        section: "Theme",
+        keywords: "skin phosphor ember appearance design language look",
+        perform: () => toggleSkin(),
+      },
+    ];
+  }, [router, setTheme, toast, skin, toggleSkin]);
 
   // Six destinations do not fit across a phone, so the strip scrolls — and the
   // page you are on has to be the part of it you can see.
@@ -156,13 +172,16 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
       if (e.key === "t") {
         e.preventDefault();
         e.stopPropagation();
-        cycle();
+        // The binding survives every skin, but Phosphor is committed-dark:
+        // under it the theme toggle is inert, so `t` deliberately does
+        // nothing rather than silently cycling an invisible setting.
+        if (skin === "ember") cycle();
       }
     }
 
     window.addEventListener("keydown", onKey, { capture: true });
     return () => window.removeEventListener("keydown", onKey, { capture: true });
-  }, [router, cycle, help]);
+  }, [router, cycle, help, skin]);
 
   // Focus mode: the review screen carries no chrome at all, and a paper in
   // progress claims the same treatment for as long as it is being sat.
@@ -217,7 +236,18 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
                   mock data
                 </span>
               )}
-              <ThemeToggle mode={mode} onCycle={cycle} />
+              <button
+                onClick={toggleSkin}
+                title="Skin: phosphor, ember"
+                aria-label={`Skin: ${skin}. Click to switch.`}
+                className="h-6 px-1.5 rounded-xs border border-transparent
+                  hover:border-line text-[10px] font-medium tracking-[0.12em]
+                  text-fg-3 hover:text-fg-2 transition-colors duration-[90ms]"
+                style={{ fontFamily: "var(--font-mono)" }}
+              >
+                {skin === "phosphor" ? "PHOSPHOR" : "EMBER"}
+              </button>
+              {skin === "ember" && <ThemeToggle mode={mode} onCycle={cycle} />}
               <button
                 onClick={() => setHelp(true)}
                 title="Keyboard shortcuts (?)"

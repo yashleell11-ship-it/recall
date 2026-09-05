@@ -8,6 +8,7 @@ import { ActivityChart } from "@/app/(dashboard)/ActivityChart";
 import { DashboardSkeleton } from "@/app/(dashboard)/DashboardSkeleton";
 import { MetricStrip } from "@/app/(dashboard)/MetricStrip";
 import { ProgressRing, Reveal, Skeleton } from "@/components/rich";
+import { Constellation } from "@/components/rich/Constellation";
 import {
   EmptyState,
   ErrorState,
@@ -315,6 +316,19 @@ export default function DashboardPage() {
               >
                 <ActivityChart days={res.data.stats.last_14_days} cap={cap} />
               </Panel>
+
+              {/* Progress as a sky that fills in (Phosphor §6.2). Skin-
+                  agnostic — tokens do the theming, so ember gets it too. */}
+              {res.data.stats.by_topic.length > 0 && (
+                <Panel
+                  title="Constellation"
+                  aside="practice × retention"
+                  bodyClassName="px-1.5 py-1.5"
+                  className="shadow-elev-1"
+                >
+                  <Constellation stats={res.data.stats} />
+                </Panel>
+              )}
 
               {res.data.stats.by_topic.some((t) => (t.reviewed ?? 0) > 0) && (
                 <Panel

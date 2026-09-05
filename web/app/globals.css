@@ -80,6 +80,19 @@
   --skeleton: #edece4;
   --shimmer: rgba(255, 255, 255, 0.65);
   --grain-opacity: 0.025;
+
+  /* --- AI voice --------------------------------------------------------------
+     One color, in every skin, meaning exactly one thing: content the model
+     produced. Under ember it is a muted scholar's violet; Phosphor turns it
+     into synapse. Never spend it on anything the user does. */
+  --ai: #6b4fa3;
+  --ai-quiet: rgba(107, 79, 163, 0.07);
+  --ai-line: rgba(107, 79, 163, 0.3);
+  --ai-glow: rgba(107, 79, 163, 0.16);
+
+  /* Knowledge face: what questions/answers/explanations are set in.
+     Ember keeps its single sans voice; Phosphor swaps this to the serif. */
+  --k-face: var(--font-sans);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -132,6 +145,11 @@
     --skeleton: #26252d;
     --shimmer: rgba(255, 255, 255, 0.055);
     --grain-opacity: 0.035;
+
+    --ai: #9d8bcf;
+    --ai-quiet: rgba(157, 139, 207, 0.09);
+    --ai-line: rgba(157, 139, 207, 0.32);
+    --ai-glow: rgba(157, 139, 207, 0.18);
   }
 }
 
@@ -184,6 +202,119 @@
   --skeleton: #26252d;
   --shimmer: rgba(255, 255, 255, 0.055);
   --grain-opacity: 0.035;
+
+  --ai: #9d8bcf;
+  --ai-quiet: rgba(157, 139, 207, 0.09);
+  --ai-line: rgba(157, 139, 207, 0.32);
+  --ai-glow: rgba(157, 139, 207, 0.18);
+}
+
+/* ---------------------------------------------------------------------------
+   PHOSPHOR — Recall's Cyber-Academic skin.
+
+   A second complete identity, not a recolour of ember: blue-black void that
+   gets lighter *and cooler* as surfaces rise, an academic serif for anything
+   that is knowledge, mono for telemetry, and soft neon treated as emission —
+   light the interface gives off when something matters, never paint.
+
+   Applied as html[data-skin="phosphor"]. It redefines the same custom
+   properties ember defines, so nearly every component re-skins for free.
+   Phosphor is committed-dark: this block sits after (and at equal-or-higher
+   specificity than) both ember dark blocks, so it wins regardless of any
+   data-theme attribute — the light/dark toggle is inert under it by design.
+
+   Laws (from the Phosphor spec, binding):
+   - emission budget: accent light ≤ 8% of any viewport, glow alpha ≤ .35,
+     no two glows within 24px of each other
+   - glass ONLY on the command palette and transient overlays; 12px blur max;
+     always with a 1px hairline
+   - neon is never body text; ion = the user's light, synapse = the AI's, and
+     they never swap
+   - Newsreader for knowledge, Inter for interface, JetBrains Mono for
+     telemetry/labels/provenance
+--------------------------------------------------------------------------- */
+:root[data-skin="phosphor"] {
+  color-scheme: dark;
+
+  /* raw Phosphor vocabulary (defined only under this skin — components
+     should prefer the semantic tokens below, which exist in both skins) */
+  --void: #060810;
+  --layer-1: #0c101b;
+  --layer-2: #121828;
+  --layer-3: #171e31;
+  --glass: rgba(18, 24, 40, 0.72);
+  --ion: #7de3f4;
+  --ion-deep: #4ccfe8;
+  --ion-glow: rgba(77, 207, 232, 0.32);
+  --syn: #a78bfa;
+  --syn-glow: rgba(167, 139, 250, 0.28);
+  --bio: #6ee7a0;
+  --bio-glow: rgba(110, 231, 160, 0.3);
+  --flare: #fb7185;
+  --flare-glow: rgba(251, 113, 133, 0.3);
+  --amber: #fbbf24;
+
+  /* surfaces — the void scale */
+  --bg: var(--void);
+  --bg-sunken: #04060c;
+  --surface: var(--layer-1);
+  --surface-hover: var(--layer-2);
+  --surface-raised: var(--layer-2);
+  --surface-overlay: var(--layer-3);
+
+  /* hairlines — steel at 11%, brightening to 20% on hover/strong */
+  --line: rgba(158, 173, 210, 0.11);
+  --line-strong: rgba(158, 173, 210, 0.2);
+  --line-lumen: rgba(233, 237, 248, 0.05);
+
+  /* ink */
+  --fg: #e9edf8;
+  --fg-2: #a5aec7;
+  --fg-3: #67718d;
+
+  /* accent → ion, the user's light */
+  --accent: var(--ion);
+  --accent-hover: #9deaf8;
+  --accent-fg: #04222b;
+  --accent-quiet: rgba(77, 207, 232, 0.12);
+  --accent-deep: var(--ion-deep);
+  --accent-glow: var(--ion-glow);
+  --accent-glow-faint: rgba(77, 207, 232, 0.08);
+
+  /* grades — colour is the meaning: flare / amber / bio / ion */
+  --g-again: var(--flare);
+  --g-hard: var(--amber);
+  --g-good: var(--bio);
+  --g-easy: var(--ion);
+  --g-again-bg: rgba(251, 113, 133, 0.09);
+  --g-hard-bg: rgba(251, 191, 36, 0.09);
+  --g-good-bg: rgba(110, 231, 160, 0.09);
+  --g-easy-bg: rgba(125, 227, 244, 0.09);
+
+  /* depth — E2 soft 18px ambient, E3 36px; hairline does the lumen work */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.45);
+  --shadow-2: inset 0 1px 0 var(--line-lumen), 0 6px 18px rgba(0, 0, 0, 0.35);
+  --shadow-3: inset 0 1px 0 var(--line-lumen), 0 2px 8px rgba(0, 0, 0, 0.4),
+    0 14px 36px rgba(0, 0, 0, 0.5);
+
+  /* AI voice → synapse. Violet marks generated content and nothing else. */
+  --ai: var(--syn);
+  --ai-quiet: rgba(167, 139, 250, 0.08);
+  --ai-line: rgba(167, 139, 250, 0.35);
+  --ai-glow: var(--syn-glow);
+
+  /* feedback */
+  --scrim: rgba(4, 6, 12, 0.55);
+  --skeleton: #121828;
+  --shimmer: rgba(158, 173, 210, 0.07);
+  --grain-opacity: 0.025;
+
+  /* the three voices */
+  --font-sans: "Inter", ui-sans-serif, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono",
+    Menlo, Consolas, "Liberation Mono", monospace;
+  --k-face: var(--font-serif);
 }
 
 @theme inline {
@@ -218,6 +349,9 @@
   --color-good: var(--g-good);
   --color-easy: var(--g-easy);
 
+  /* The AI's colour, as a Tailwind colour: text-ai, border-ai, bg-ai. */
+  --color-ai: var(--ai);
+
   --radius-xs: var(--radius-xs);
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);
@@ -229,6 +363,9 @@
     Inter, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
     "Liberation Mono", monospace;
+  /* The scholar's voice. Only knowledge text wears it, and only Phosphor
+     activates it (through --k-face); ember never sees a serif. */
+  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
 }
 
 /* Base sits in @layer base on purpose: unlayered rules outrank every
@@ -452,6 +589,104 @@
     background: var(--scrim);
     -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
+  }
+
+  /* --- knowledge text --------------------------------------------------------
+     Anything that IS knowledge — questions, answers, explanations, big
+     display numerals — wears --k-face: the single sans under ember, the
+     Newsreader serif under Phosphor. Sizes hold across both skins. */
+  .k-text {
+    font-family: var(--k-face);
+  }
+  .k-question {
+    font-family: var(--k-face);
+    font-weight: 500;
+    font-size: clamp(21px, 1rem + 0.75vw, 26px);
+    line-height: 1.4;
+  }
+  .k-answer {
+    font-family: var(--k-face);
+    font-size: 17px;
+    line-height: 1.55;
+  }
+  .k-display {
+    font-family: var(--k-face);
+    font-weight: 500;
+    font-size: clamp(34px, 28px + 1.2vw, 44px);
+    line-height: 1.06;
+    letter-spacing: -0.01em;
+  }
+  /* The AI speaking in prose: serif italic. Colour stays ink — synapse is
+     for markers (chips, rails), never body text. */
+  .k-ai {
+    font-family: var(--k-face);
+    font-style: italic;
+  }
+
+  /* --- telemetry ---------------------------------------------------------------
+     Intervals, counts, stability, timestamps: mono, tabular, quiet. */
+  .telemetry {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  /* --- provenance chips --------------------------------------------------------
+     Every generated item is traceable. `.prov` is the neutral source chip
+     ("CSE111 · p14"); add `.prov--ai` when the model produced the item — the
+     one place violet is allowed to appear. */
+  .prov {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1;
+    padding: 3px 9px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--fg-3);
+    white-space: nowrap;
+  }
+  .prov--ai {
+    color: var(--ai);
+    border-color: var(--ai-line);
+    background: var(--ai-quiet);
+  }
+
+  /* --- glass ---------------------------------------------------------------------
+     The floating material. Under ember it is simply the overlay surface (no
+     blur — ember never had glass). Under Phosphor it becomes the one legal
+     blur: 12px, translucent layer-2, always with its 1px hairline. Use it
+     ONLY on the command palette and transient overlays, never on resting
+     content, and never more than two glass surfaces in a view (the scrim
+     counts as one). */
+  .glass {
+    background: var(--surface-overlay);
+    border: 1px solid var(--line-strong);
+    box-shadow: var(--shadow-3);
+  }
+  [data-skin="phosphor"] .glass {
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.55);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    [data-skin="phosphor"] .glass {
+      background: var(--surface-overlay);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+
+  /* Under Phosphor, labels join the telemetry voice: mono caps, wide-tracked. */
+  [data-skin="phosphor"] .label {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.12em;
   }
 }
 

@@ -104,15 +104,19 @@ function Cell({
   return (
     <div className="border-l border-t border-line px-3.5 py-2.5 min-w-0 flex items-center justify-between gap-3">
       <div className="min-w-0">
+        {/* Under Phosphor these numerals are the strip's emission: ion at
+            ≥18px (numerals only, per the spec's contrast table), with one
+            faint glow well under the .35 alpha ceiling. The topic table
+            below stays dense ink. Ember renders them exactly as before. */}
         <div
-          className={`leading-none text-fg ${
+          className={`leading-none text-fg [[data-skin=phosphor]_&]:text-accent [[data-skin=phosphor]_&]:[text-shadow:0_0_16px_var(--accent-glow)] ${
             emphasis ? "text-[26px] font-semibold" : "text-[22px] font-medium"
           }`}
         >
           <AnimatedNumber
             value={value}
             delay={index * 0.04}
-            className="tnum-display"
+            className="tnum-display k-text"
           />
         </div>
         <div className="label mt-1.5 truncate">{label}</div>

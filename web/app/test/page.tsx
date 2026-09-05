@@ -246,7 +246,7 @@ export default function TestPickerPage() {
                   )}
                 </p>
 
-                <p className="text-[12px] text-fg-3 mt-1.5 tnum">
+                <p className="telemetry text-[12px] text-fg-3 mt-1.5">
                   {p.limitMin === null
                     ? "no time limit"
                     : `${p.limitMin} minutes`}
@@ -342,13 +342,13 @@ export default function TestPickerPage() {
                           <td className="px-3 py-[7px] text-fg-2 hidden sm:table-cell truncate max-w-[1px]">
                             {t.label}
                           </td>
-                          <td className="px-3 py-[7px] text-right tnum text-fg-2">
+                          <td className="telemetry px-3 py-[7px] text-right text-fg-2">
                             {t.active.toLocaleString()}
                           </td>
-                          <td className="px-3 py-[7px] text-right tnum text-fg-2">
+                          <td className="telemetry px-3 py-[7px] text-right text-fg-2">
                             {Math.round(share * 100)}%
                           </td>
-                          <td className="px-3 py-[7px] text-right tnum font-medium">
+                          <td className="telemetry px-3 py-[7px] text-right font-medium">
                             {paper.target === null
                               ? t.active.toLocaleString()
                               : `≈ ${Math.round(paper.target * share)}`}
@@ -426,7 +426,7 @@ export default function TestPickerPage() {
                         {mediumDate(t.started_at)}
                       </span>
                     </span>
-                    <span className="tnum shrink-0 text-fg-2">
+                    <span className="telemetry text-[12px] shrink-0 text-fg-2">
                       {t.obtained_marks}/{t.total_marks}
                       {t.duration_s ? (
                         <span className="text-fg-3 ml-2">

@@ -20,7 +20,10 @@ import type { PaletteAction } from "@/lib/palette";
  * effects run first) and stops propagation, and everything typed lands in
  * the input, which the shell's shortcut handler already ignores.
  *
- * The scrim below carries the product's single permitted backdrop-blur.
+ * The scrim below carries ember's single permitted backdrop-blur; the panel
+ * itself is `.glass` — the overlay surface under ember, and under Phosphor
+ * the one legal 12px glass with its hairline. Tokens only: no colour here
+ * knows which skin is active.
  */
 
 const OPEN_EVENT = "recall:command-palette";
@@ -182,7 +185,7 @@ export function CommandPalette({ actions }: { actions: PaletteAction[] }) {
             role="dialog"
             aria-modal="true"
             aria-label="Command palette"
-            className="w-full max-w-[560px] elev-3 rounded-md overflow-hidden"
+            className="w-full max-w-[560px] glass rounded-md overflow-hidden"
             initial={reduced ? false : { opacity: 0, y: -8, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={

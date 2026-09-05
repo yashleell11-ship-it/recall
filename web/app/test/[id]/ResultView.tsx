@@ -20,6 +20,17 @@ function marks(n: number): string {
   return Number.isInteger(n) ? String(n) : n.toFixed(1);
 }
 
+/**
+ * The explanation rail opens with the AI's first sentence set apart in the
+ * scholar's italic. The split is presentational only: a text with no clean
+ * sentence break simply renders whole.
+ */
+function splitLead(text: string): { lead: string; rest: string } {
+  const m = /^[\s\S]*?[.!?]["')\]]*(?=\s|$)/.exec(text);
+  if (!m) return { lead: text, rest: "" };
+  return { lead: m[0], rest: text.slice(m[0].length).trim() };
+}
+
 export function ResultView({
   result,
   kind,
@@ -109,7 +120,9 @@ export function ResultView({
     <main className="mx-auto max-w-[46rem] px-4 sm:px-6 py-6 pb-16">
       <p className="label">{PAPER_LABEL[kind] ?? kind} · result</p>
 
-      <h1 className="text-[26px] font-semibold tnum leading-none mt-2">
+      {/* The session score is a display numeral — the one place a number
+          gets the scholar's face at full size. */}
+      <h1 className="k-display tnum mt-2">
         {marks(result.obtained_marks)}
         <span className="text-fg-3 font-normal"> / {result.total_marks}</span>
         <span className="text-[15px] font-medium text-fg-2 ml-3">
@@ -117,7 +130,7 @@ export function ResultView({
         </span>
       </h1>
 
-      <p className="text-[13px] text-fg-2 mt-2">
+      <p className="telemetry text-[12.5px] text-fg-2 mt-2">
         {formatDuration(result.duration_s * 1000)}
         {expired ? " — time expired" : ""}
         <span className="mx-1.5 text-fg-3">·</span>
@@ -164,10 +177,10 @@ export function ResultView({
                           {t.topic_code}
                         </span>
                       </td>
-                      <td className="px-3 py-[7px] text-right tnum text-fg-2">
+                      <td className="telemetry px-3 py-[7px] text-right text-fg-2">
                         {marks(t.obtained)}/{t.total}
                       </td>
-                      <td className="px-3 py-[7px] text-right tnum font-medium">
+                      <td className="telemetry px-3 py-[7px] text-right font-medium">
                         {Math.round(share * 100)}%
                       </td>
                       <td className="px-3 py-[7px]">
@@ -239,7 +252,7 @@ export function ResultView({
                       : "var(--g-again)",
                   }}
                 >
-                  <div className="flex items-center gap-2 text-[11px] text-fg-3 mb-1.5">
+                  <div className="telemetry flex items-center gap-2 text-[11px] text-fg-3 mb-1.5">
                     <span className="tnum text-fg-2 font-medium">
                       Q{m.q.ordinal}
                     </span>
@@ -255,10 +268,11 @@ export function ResultView({
                     </span>
                   </div>
 
-                  <p className="text-[14px] font-medium leading-snug">
+                  {/* Question and answer are knowledge — they wear --k-face. */}
+                  <p className="k-text text-[15px] font-medium leading-snug">
                     {m.q.question}
                   </p>
-                  <p className="text-[13px] text-fg-2 leading-normal mt-1.5">
+                  <p className="k-text text-[14px] text-fg-2 leading-normal mt-1.5">
                     {m.q.answer}
                   </p>
 
@@ -285,7 +299,7 @@ export function ResultView({
                   )}
 
                   {state?.loading && (
-                    <p className="mt-2.5 text-[12.5px] text-fg-3">
+                    <p className="k-ai mt-2.5 text-[13px] text-fg-3">
                       Reading {m.q.page_ref} of {m.q.topic_code}&hellip;
                     </p>
                   )}
@@ -313,39 +327,7 @@ export function ResultView({
                     </div>
                   )}
 
-                  {state?.data && (
-                    <div className="mt-3 pt-3 border-t border-line anim-reveal">
-                      {state.data.explanation
-                        .split(/\n{2,}/)
-                        .map((para, k) => (
-                          <p
-                            key={k}
-                            className="text-[13.5px] leading-[1.6] text-fg mt-0 [&+p]:mt-2.5"
-                          >
-                            {para}
-                          </p>
-                        ))}
-
-                      <figure className="mt-3 pl-3 border-l-2 border-l-line-strong">
-                        <blockquote className="text-[13px] text-fg-2 leading-relaxed">
-                          &ldquo;{state.data.source_quote}&rdquo;
-                        </blockquote>
-                        <figcaption className="text-[11px] text-fg-3 mt-1.5">
-                          <span className="font-semibold tracking-[0.05em]">
-                            {state.data.topic_code}
-                          </span>
-                          <span className="mx-1.5">·</span>
-                          {state.data.page_ref}
-                          {state.data.cached && (
-                            <>
-                              <span className="mx-1.5">·</span>
-                              cached, no new cost
-                            </>
-                          )}
-                        </figcaption>
-                      </figure>
-                    </div>
-                  )}
+                  {state?.data && <SynapseRail data={state.data} />}
                 </li>
               );
             })}
@@ -370,5 +352,51 @@ export function ResultView({
         </Link>
       </div>
     </main>
+  );
+}
+
+/**
+ * The synapse rail (Phosphor §6.4): a 2px violet edge and quiet violet fill
+ * mark the explanation as the AI's — the marker is coloured, the words stay
+ * ink. It opens with the AI's first sentence in the scholar's italic, and
+ * closes with the source quote inset, its page reference in mono.
+ */
+function SynapseRail({ data }: { data: Explanation }) {
+  const paras = data.explanation.split(/\n{2,}/);
+  const { lead, rest } = splitLead(paras[0] ?? "");
+  return (
+    <div
+      className="mt-3 anim-reveal rounded-r-sm border-l-2 border-l-ai px-3.5 py-3"
+      style={{ background: "var(--ai-quiet)" }}
+    >
+      <p className="text-[13.5px] leading-[1.6] text-fg">
+        <span className="k-ai text-[1.1em]">{lead}</span>
+        {rest ? <> {rest}</> : null}
+      </p>
+      {paras.slice(1).map((para, k) => (
+        <p key={k} className="text-[13.5px] leading-[1.6] text-fg mt-2.5">
+          {para}
+        </p>
+      ))}
+
+      <figure className="mt-3 pl-3 border-l-2 border-l-line-strong">
+        <blockquote className="k-text text-[13.5px] text-fg-2 leading-relaxed">
+          &ldquo;{data.source_quote}&rdquo;
+        </blockquote>
+        <figcaption className="telemetry text-[11px] text-fg-3 mt-1.5">
+          <span className="font-semibold tracking-[0.05em]">
+            {data.topic_code}
+          </span>
+          <span className="mx-1.5">·</span>
+          {data.page_ref}
+          {data.cached && (
+            <>
+              <span className="mx-1.5">·</span>
+              cached, no new cost
+            </>
+          )}
+        </figcaption>
+      </figure>
+    </div>
   );
 }
