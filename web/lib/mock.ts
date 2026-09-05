@@ -32,6 +32,7 @@ import type {
   TestResult,
   TestSummary,
   Topic,
+  TopicMeta,
   UploadResponse,
   Verdict,
 } from "./types";
@@ -63,7 +64,7 @@ const HTML_SRC = "html-semantics-and-forms.pdf";
 const ACTIVE_SEEDS: Seed[] = [
   // --- MATHS ---
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "qa",
     p: "p31",
     q: "State Rolle's theorem.",
@@ -71,7 +72,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "cloze",
     p: "p34",
     q: "Maclaurin series for e^x",
@@ -80,7 +81,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "qa",
     p: "p37",
     q: "What does a non-zero Wronskian at a point tell you about a set of solutions?",
@@ -88,7 +89,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "cloze",
     p: "p29",
     q: "Indeterminate forms for L'Hôpital",
@@ -97,7 +98,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "qa",
     p: "p42",
     q: "Give the integrating factor for dy/dx + P(x)·y = Q(x).",
@@ -105,7 +106,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "qa",
     p: "p12",
     q: "For any matrix, how do row rank and column rank relate?",
@@ -113,7 +114,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC2,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "cloze",
     p: "p14",
     q: "Invertibility and the determinant",
@@ -122,7 +123,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC2,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "qa",
     p: "p18-p19",
     q: "What is the geometric meaning of an eigenvector of A?",
@@ -130,7 +131,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC2,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "qa",
     p: "p22",
     q: "State the Cauchy–Schwarz inequality for real vectors.",
@@ -138,7 +139,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC2,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "cloze",
     p: "p27",
     q: "Derivative of arctan",
@@ -147,7 +148,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "qa",
     p: "p45",
     q: "What is the trace of a square matrix, and what does it equal?",
@@ -155,7 +156,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC2,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "qa",
     p: "p39",
     q: "When is a power series Σaₙ(x − a)ⁿ absolutely convergent?",
@@ -163,7 +164,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "cloze",
     p: "p16",
     q: "Rank–nullity",
@@ -455,7 +456,7 @@ const ACTIVE_SEEDS: Seed[] = [
 
   // --- HTML ---
   {
-    t: "HTML",
+    t: "CSE326",
     k: "qa",
     p: "p3",
     q: "When should you reach for <section> instead of <div>?",
@@ -463,7 +464,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: HTML_SRC,
   },
   {
-    t: "HTML",
+    t: "CSE326",
     k: "cloze",
     p: "p12",
     q: "Which box-sizing includes padding and border",
@@ -472,7 +473,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: HTML_SRC,
   },
   {
-    t: "HTML",
+    t: "CSE326",
     k: "qa",
     p: "p8",
     q: "What alt text does a purely decorative image need?",
@@ -480,7 +481,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: HTML_SRC,
   },
   {
-    t: "HTML",
+    t: "CSE326",
     k: "qa",
     p: "p17",
     q: "What does the shorthand flex: 1 expand to?",
@@ -488,7 +489,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: HTML_SRC,
   },
   {
-    t: "HTML",
+    t: "CSE326",
     k: "cloze",
     p: "p6",
     q: "Associating a label with an input",
@@ -497,7 +498,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: HTML_SRC,
   },
   {
-    t: "HTML",
+    t: "CSE326",
     k: "qa",
     p: "p7",
     q: "Why must a form control carry a name attribute?",
@@ -505,7 +506,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: HTML_SRC,
   },
   {
-    t: "HTML",
+    t: "CSE326",
     k: "cloze",
     p: "p14",
     q: "Default position value",
@@ -514,7 +515,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: HTML_SRC,
   },
   {
-    t: "HTML",
+    t: "CSE326",
     k: "qa",
     p: "p15",
     q: "How do display: none and visibility: hidden differ?",
@@ -525,7 +526,7 @@ const ACTIVE_SEEDS: Seed[] = [
 
 const PENDING_SEEDS: Seed[] = [
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "qa",
     p: "p47",
     q: "State the mean value theorem.",
@@ -533,7 +534,7 @@ const PENDING_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "cloze",
     p: "p48",
     q: "Second derivative test",
@@ -542,7 +543,7 @@ const PENDING_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "qa",
     p: "p50",
     q: "What is the determinant of a triangular matrix?",
@@ -550,7 +551,7 @@ const PENDING_SEEDS: Seed[] = [
     src: MATHS_SRC2,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "qa",
     p: "p51",
     q: "What is the sum of a convergent geometric series Σarⁿ from n = 0?",
@@ -558,7 +559,7 @@ const PENDING_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "cloze",
     p: "p52",
     q: "Orthogonal matrix inverse",
@@ -567,7 +568,7 @@ const PENDING_SEEDS: Seed[] = [
     src: MATHS_SRC2,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "qa",
     p: "p53",
     q: "When is an improper integral said to converge?",
@@ -575,7 +576,7 @@ const PENDING_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "qa",
     p: "p55",
     q: "What does it mean for a matrix to be positive definite?",
@@ -583,7 +584,7 @@ const PENDING_SEEDS: Seed[] = [
     src: MATHS_SRC2,
   },
   {
-    t: "MATHS",
+    t: "MTH174",
     k: "cloze",
     p: "p56",
     q: "Integration by parts",
@@ -766,7 +767,7 @@ const PENDING_SEEDS: Seed[] = [
     src: INT335_SRC,
   },
   {
-    t: "HTML",
+    t: "CSE326",
     k: "qa",
     p: "p19",
     q: "What is the purpose of the viewport meta tag?",
@@ -774,7 +775,7 @@ const PENDING_SEEDS: Seed[] = [
     src: HTML_SRC,
   },
   {
-    t: "HTML",
+    t: "CSE326",
     k: "cloze",
     p: "p21",
     q: "Landmark element for primary content",
@@ -783,7 +784,7 @@ const PENDING_SEEDS: Seed[] = [
     src: HTML_SRC,
   },
   {
-    t: "HTML",
+    t: "CSE326",
     k: "qa",
     p: "p22",
     q: "Why should heading levels not skip?",
@@ -791,7 +792,7 @@ const PENDING_SEEDS: Seed[] = [
     src: HTML_SRC,
   },
   {
-    t: "HTML",
+    t: "CSE326",
     k: "qa",
     p: "p24",
     q: "What is the difference between <button> and a <div> with a click handler?",
@@ -799,7 +800,7 @@ const PENDING_SEEDS: Seed[] = [
     src: HTML_SRC,
   },
   {
-    t: "HTML",
+    t: "CSE326",
     k: "cloze",
     p: "p26",
     q: "Which CSS units are relative to the root font size",
@@ -808,7 +809,7 @@ const PENDING_SEEDS: Seed[] = [
     src: HTML_SRC,
   },
   {
-    t: "HTML",
+    t: "CSE326",
     k: "qa",
     p: "p27",
     q: "What does the defer attribute on a script do?",
@@ -819,12 +820,111 @@ const PENDING_SEEDS: Seed[] = [
 
 /* --- state --------------------------------------------------------------- */
 
+/**
+ * The real LPU Semester-1 registry, mirroring `src/recall/lpu.py` verbatim.
+ * Schemes genuinely differ per subject — INT108 and CSE326 carry NO mid-term,
+ * so `createTest` refuses an mte40 for them exactly as the server does.
+ *
+ * NEXT_PUBLIC_MOCK_NO_META=1 withholds all of it (topics come back with
+ * `meta: null`), which is what an unseeded database looks like — the flag
+ * exists so the client's fallback path can be exercised against the fixture.
+ */
+const NO_META = process.env.NEXT_PUBLIC_MOCK_NO_META === "1";
+
+const LPU_META: Record<string, TopicMeta> = {
+  MTH174: {
+    full_name: "Engineering Mathematics",
+    credits: 4,
+    units: [
+      "Matrix Algebra",
+      "Linear Differential Equation-I",
+      "Linear Differential Equation-II",
+      "Fourier Series",
+      "Multivariate Calculus",
+      "Integral Calculus",
+    ],
+    scheme: { attendance: 5, ca: 25, mte: 20, ete: 50 },
+    ca_policy: "Best 2 of 3 · 30-mark subjective tests",
+    mte_exists: true,
+    exam_format: "subjective",
+  },
+  CSE111: {
+    full_name: "Orientation to Computing",
+    credits: 2,
+    units: [
+      "Computer Languages",
+      "Computer Fundamentals",
+      "Computer Hardware",
+      "Number Systems",
+      "Version Control",
+      "Modern AI Trends and Tools",
+    ],
+    scheme: { attendance: 5, ca: 95, mte: 0, ete: 0 },
+    ca_policy: "CA-driven low-credit course; unit-wise MCQ + subjective practice",
+    mte_exists: false,
+    exam_format: "mcq",
+  },
+  INT108: {
+    full_name: "Python Programming",
+    credits: 4,
+    units: [
+      "Environment, Variables, Expressions and Statements",
+      "Conditional and Iterative Statements",
+      "Strings, Lists, Tuples and Dictionaries",
+      "Functions and Recursion",
+      "Classes, Objects and OOP Terminology",
+      "Files, Exceptions and Regular Expressions",
+    ],
+    scheme: { attendance: 5, ca: 50, mte: 0, ete: 45 },
+    ca_policy: "Best 3 of 4 · code-based tests + programming practice",
+    mte_exists: false,
+    exam_format: "practical",
+  },
+  INT335: {
+    full_name: "Design Thinking",
+    credits: 3,
+    units: [
+      "Foundations of Learning, Creativity and Design Thinking",
+      "Empathy, Observation and Problem Identification",
+      "Ideation and Creative Problem Solving",
+      "Product Design and Prototyping",
+      "Testing, Validation and Customer Experience",
+      "Innovation Project, Re-Design and Product Presentation",
+    ],
+    scheme: { attendance: 5, ca: 25, mte: 20, ete: 50 },
+    ca_policy: "Best 2 of 3 · MCQ test, group project, situation assignment",
+    mte_exists: true,
+    exam_format: "mcq",
+  },
+  CSE326: {
+    full_name: "Internet Programming",
+    credits: 2,
+    units: [
+      "HTML Fundamentals",
+      "Semantic HTML and Forms",
+      "Cascading Style Sheets",
+      "JavaScript Fundamentals",
+      "Interactive Web Development",
+      "Web Application Development and Deployment",
+    ],
+    scheme: { attendance: 5, ca: 45, mte: 0, ete: 50 },
+    ca_policy: "Best 2 of 3 · project, MCQ test, BYOD practical + viva",
+    mte_exists: false,
+    exam_format: "mixed",
+  },
+};
+
+function metaFor(code: string): TopicMeta | null {
+  return NO_META ? null : (LPU_META[code] ?? null);
+}
+
+/** In code order, exactly as the server's `ORDER BY t.code` returns them. */
 const TOPIC_META: { code: string; label: string }[] = [
-  { code: "MATHS", label: "Engineering Mathematics II" },
-  { code: "CSE111", label: "Programming in C" },
+  { code: "CSE111", label: "Orientation to Computing" },
+  { code: "CSE326", label: "Internet Programming" },
   { code: "INT108", label: "Python Programming" },
-  { code: "INT335", label: "Linux and Shell Scripting" },
-  { code: "HTML", label: "Web Technologies" },
+  { code: "INT335", label: "Design Thinking" },
+  { code: "MTH174", label: "Engineering Mathematics" },
 ];
 
 /** Deterministic jitter, so the fixture is identical on every render. */
@@ -903,11 +1003,11 @@ function store(): MockState {
     againToday: 9,
     streak: 21,
     reviewedByTopic: {
-      MATHS: 24,
+      MTH174: 24,
       CSE111: 15,
       INT108: 11,
       INT335: 8,
-      HTML: 5,
+      CSE326: 5,
     },
     gradedIds: new Set(),
   };
@@ -917,11 +1017,11 @@ function store(): MockState {
 /* Counts the dashboard shows. The queue the mock actually serves is a slice of
    a larger backlog, exactly as the real endpoint's `limit` implies. */
 const BACKLOG = {
-  MATHS: { due: 31, new: 4, active: 402, pending: 8 },
+  MTH174: { due: 31, new: 4, active: 402, pending: 8 },
   CSE111: { due: 22, new: 3, active: 286, pending: 8 },
   INT108: { due: 17, new: 2, active: 241, pending: 7 },
   INT335: { due: 9, new: 2, active: 183, pending: 7 },
-  HTML: { due: 5, new: 1, active: 128, pending: 5 },
+  CSE326: { due: 5, new: 1, active: 128, pending: 5 },
 } as const;
 
 const delay = (ms = 130) => new Promise((r) => setTimeout(r, ms));
@@ -972,6 +1072,7 @@ export async function getTopics(): Promise<Topic[]> {
       new: Math.min(b.new, servedNew + 2),
       active: b.active,
       pending,
+      meta: metaFor(t.code),
     };
   });
 }
@@ -1132,6 +1233,7 @@ export async function getStats(): Promise<Stats> {
         active: b?.active ?? 0,
         pending: b?.pending ?? 0,
         reviewed: s.reviewedByTopic[t.code] ?? 0,
+        meta: metaFor(t.code),
       };
     }),
     last_14_days: last14,
@@ -1147,7 +1249,7 @@ const SOURCES: Omit<Source, "added_at">[] = [
   {
     id: 1,
     filename: MATHS_SRC,
-    topic_code: "MATHS",
+    topic_code: "MTH174",
     accepted: 84,
     rejected: 11,
     cost_estimate: 0.0412,
@@ -1155,7 +1257,7 @@ const SOURCES: Omit<Source, "added_at">[] = [
   {
     id: 2,
     filename: MATHS_SRC2,
-    topic_code: "MATHS",
+    topic_code: "MTH174",
     accepted: 61,
     rejected: 7,
     cost_estimate: 0.0298,
@@ -1211,7 +1313,7 @@ const SOURCES: Omit<Source, "added_at">[] = [
   {
     id: 9,
     filename: HTML_SRC,
-    topic_code: "HTML",
+    topic_code: "CSE326",
     accepted: 58,
     rejected: 12,
     cost_estimate: 0.0289,
@@ -1219,7 +1321,7 @@ const SOURCES: Omit<Source, "added_at">[] = [
   {
     id: 10,
     filename: "html-css-layout-workshop.pdf",
-    topic_code: "HTML",
+    topic_code: "CSE326",
     accepted: 44,
     rejected: 8,
     cost_estimate: 0.0213,
@@ -1227,7 +1329,7 @@ const SOURCES: Omit<Source, "added_at">[] = [
   {
     id: 11,
     filename: "maths-tutorial-sheet-07.pdf",
-    topic_code: "MATHS",
+    topic_code: "MTH174",
     accepted: 27,
     rejected: 31,
     cost_estimate: 0.0154,
@@ -1263,6 +1365,8 @@ export async function getSources(): Promise<Source[]> {
 const PAPERS: Record<TestKind, { target: number | null; limit: number | null }> =
   {
     class30: { target: 30, limit: 45 * 60 },
+    // LPU MTE: units 1–3, marked out of 40, 90 minutes.
+    mte40: { target: 40, limit: 90 * 60 },
     endterm100: { target: 100, limit: 180 * 60 },
     fullday: { target: null, limit: null },
   };
@@ -1375,6 +1479,20 @@ export async function createTest(
 ): Promise<TestPaper> {
   await delay(320);
   const s = store();
+
+  // Subjects without a mid-term at LPU must not offer one: same check, same
+  // message shape as testmode.service.create_test on the server.
+  if (kind === "mte40" && topicCode) {
+    const meta = metaFor(topicCode);
+    if (meta && meta.mte_exists === false) {
+      throw new ApiError(
+        422,
+        "/api/tests",
+        `${topicCode} has no MTE at LPU (${meta.ca_policy})`,
+      );
+    }
+  }
+
   const pool = topicCode
     ? s.queue.filter((c) => c.topic_code === topicCode)
     : s.queue.slice();

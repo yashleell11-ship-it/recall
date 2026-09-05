@@ -13,6 +13,10 @@ import { MAX_MARKS, PAPER_LABEL } from "@/lib/marks";
 import type { TestKind, TestSummary, Topic } from "@/lib/types";
 import { useResource } from "@/lib/useResource";
 import { HeightSpring } from "./HeightSpring";
+import { SubjectRail, type SubjectTopic } from "./SubjectRail";
+
+/** PAPER_LABEL plus the LPU-only kind, for resume links and past papers. */
+const KIND_LABEL: Record<string, string> = { ...PAPER_LABEL, mte40: "Mid term" };
 
 interface Paper {
   kind: TestKind;
@@ -70,6 +74,22 @@ export default function TestPickerPage() {
 
   const topics = useMemo(() => res.data?.topics ?? [], [res.data]);
 
+  /**
+   * Subjects the server sent LPU facts for. When none carry meta (an unseeded
+   * database), the page is exactly the old all-subjects picker.
+   */
+  const lpuTopics = useMemo(
+    () => topics.filter((t): t is SubjectTopic => t.meta != null),
+    [topics],
+  );
+  const lpu = lpuTopics.length > 0;
+
+  const [subjectStarting, setSubjectStarting] = useState<string | null>(null);
+  const [subjectError, setSubjectError] = useState<{
+    code: string;
+    message: string;
+  } | null>(null);
+
   /** The topics this paper will actually draw from. */
   const pool = useMemo(
     () => (topic ? topics.filter((t) => t.code === topic) : topics),
@@ -102,7 +122,7 @@ export default function TestPickerPage() {
   }, [paper.target, activeTotal]);
 
   const start = useCallback(() => {
-    if (starting || activeTotal === 0) return;
+    if (starting || subjectStarting || activeTotal === 0) return;
     setStarting(true);
     setStartError(null);
     createTest(kind, topic || undefined)
@@ -111,7 +131,26 @@ export default function TestPickerPage() {
         setStartError(errorMessage(err));
         setStarting(false);
       });
-  }, [kind, topic, router, starting, activeTotal]);
+  }, [kind, topic, router, starting, subjectStarting, activeTotal]);
+
+  /**
+   * A subject chip is its own start button. A refusal — the server's 422 for
+   * an MTE on a subject that has none — is shown verbatim on that card.
+   */
+  const startSubject = useCallback(
+    (paperKind: TestKind, code: string) => {
+      if (starting || subjectStarting) return;
+      setSubjectStarting(`${code}:${paperKind}`);
+      setSubjectError(null);
+      createTest(paperKind, code)
+        .then((p) => router.push(`/test/${p.test_id}`))
+        .catch((err: unknown) => {
+          setSubjectError({ code, message: errorMessage(err) });
+          setSubjectStarting(null);
+        });
+    },
+    [router, starting, subjectStarting],
+  );
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -144,20 +183,24 @@ export default function TestPickerPage() {
           </p>
         </div>
 
-        <select
-          value={topic}
-          onChange={(e) => setTopic(e.target.value)}
-          aria-label="Restrict the paper to one topic"
-          className="h-8 px-2 rounded-sm border border-line bg-surface text-[13px] text-fg-2
-            hover:border-line-strong transition-colors duration-[90ms]"
-        >
-          <option value="">All topics</option>
-          {topics.map((t) => (
-            <option key={t.id} value={t.code}>
-              {t.code}
-            </option>
-          ))}
-        </select>
+        {res.data && !lpu ? (
+          // Unseeded database: no subject cards, so the old per-topic
+          // restriction keeps its place on the papers themselves.
+          <select
+            value={topic}
+            onChange={(e) => setTopic(e.target.value)}
+            aria-label="Restrict the paper to one topic"
+            className="h-8 px-2 rounded-sm border border-line bg-surface text-[13px] text-fg-2
+              hover:border-line-strong transition-colors duration-[90ms]"
+          >
+            <option value="">All topics</option>
+            {topics.map((t) => (
+              <option key={t.id} value={t.code}>
+                {t.code}
+              </option>
+            ))}
+          </select>
+        ) : null}
       </div>
 
       {res.error && !res.data ? (
@@ -179,7 +222,7 @@ export default function TestPickerPage() {
                 href={`/test/${t.id}`}
                 className="link text-[13px]"
               >
-                Resume {PAPER_LABEL[t.kind] ?? t.kind} from{" "}
+                Resume {KIND_LABEL[t.kind] ?? t.kind} from{" "}
                 {mediumDate(t.started_at)}
               </Link>
             ))}
@@ -187,7 +230,47 @@ export default function TestPickerPage() {
         </div>
       )}
 
+      {/* --- pick a subject -------------------------------------------------
+          Each subject wears its real LPU assessment scheme, and its chips are
+          start buttons: CA always, MTE only where the university sets one,
+          ETE always. Absent on an unseeded database, where topics carry
+          meta: null and the page is exactly the old all-subjects picker. */}
+
+      {res.loading && !res.data ? (
+        <div
+          className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 mb-4"
+          aria-label="Reading your subjects"
+        >
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="panel px-3.5 py-3">
+              <Skeleton className="h-3 w-14" />
+              <Skeleton className="h-5 w-44 mt-2.5" />
+              <Skeleton className="h-[5px] w-full mt-3.5" />
+              <Skeleton className="h-3 w-3/4 mt-3" />
+              <div className="flex gap-1.5 mt-4">
+                <Skeleton className="h-6 w-28" />
+                <Skeleton className="h-6 w-32" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : lpu ? (
+        <SubjectRail
+          topics={lpuTopics}
+          startingKey={subjectStarting}
+          error={subjectError}
+          onStart={startSubject}
+        />
+      ) : null}
+
       {/* --- pick a paper --------------------------------------------------- */}
+
+      {lpu && (
+        <div className="flex items-center gap-3 mt-6 mb-3">
+          <h2 className="label">Across all subjects</h2>
+          <div className="h-px flex-1 bg-line" aria-hidden="true" />
+        </div>
+      )}
 
       <div className="grid gap-3 lg:grid-cols-3" role="radiogroup" aria-label="Paper">
         {PAPERS.map((p, i) => {
@@ -420,7 +503,7 @@ export default function TestPickerPage() {
                   >
                     <span className="min-w-0">
                       <span className="font-medium">
-                        {PAPER_LABEL[t.kind] ?? t.kind}
+                        {KIND_LABEL[t.kind] ?? t.kind}
                       </span>
                       <span className="text-fg-3 ml-2">
                         {mediumDate(t.started_at)}

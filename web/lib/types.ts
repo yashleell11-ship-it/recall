@@ -11,6 +11,32 @@ export type CardKind = "qa" | "cloze";
 /** 1 = again, 2 = hard, 3 = good, 4 = easy. */
 export type Grade = 1 | 2 | 3 | 4;
 
+/** One subject's assessment weight split, in marks out of 100. */
+export interface SubjectScheme {
+  attendance: number;
+  ca: number;
+  mte: number;
+  ete: number;
+}
+
+/**
+ * OPTIONAL / ADDITIVE. Real LPU subject facts, carried by GET /api/topics
+ * items once the database has been seeded with the programme registry
+ * (`recall.lpu`). An unseeded database sends null, and every consumer must
+ * degrade to code + label alone.
+ */
+export interface TopicMeta {
+  full_name: string;
+  credits: number;
+  /** The six syllabus units, in order. MTE covers 1–3; ETE covers all six. */
+  units: string[];
+  scheme: SubjectScheme;
+  ca_policy: string;
+  /** INT108 and CSE326 carry no mid-term at LPU; offering one is an error. */
+  mte_exists: boolean;
+  exam_format: string;
+}
+
 /** GET /api/topics */
 export interface Topic {
   id: number;
@@ -20,6 +46,8 @@ export interface Topic {
   new: number;
   active: number;
   pending: number;
+  /** OPTIONAL / ADDITIVE. See TopicMeta. */
+  meta?: TopicMeta | null;
 }
 
 export interface QueueCard {
@@ -117,6 +145,8 @@ export interface StatsTopic {
   pending: number;
   /** Not returned by the API today; kept optional for older mock fixtures. */
   reviewed?: number | null;
+  /** OPTIONAL / ADDITIVE. See TopicMeta. */
+  meta?: TopicMeta | null;
 }
 
 export interface StatsDay {
@@ -145,7 +175,11 @@ export interface Source {
 
 /* --- test mode ----------------------------------------------------------- */
 
-export type TestKind = "class30" | "endterm100" | "fullday";
+/**
+ * `mte40` is the LPU mid-term: 40 marks, 90 minutes, units 1–3. The server
+ * refuses it (422) for a topic whose meta says `mte_exists: false`.
+ */
+export type TestKind = "class30" | "mte40" | "endterm100" | "fullday";
 
 /** What the person claims about their own answer. `null` = not attempted yet. */
 export type Verdict = "correct" | "partial" | "wrong" | "skipped";

@@ -29,7 +29,8 @@ export function scoreFor(verdict: string | null, marks: number): number {
 }
 
 export const PAPER_LABEL: Record<string, string> = {
-  class30: "Class test",
+  class30: "CA test",
+  mte40: "Mid term",
   endterm100: "End term",
   fullday: "Full day",
 };
