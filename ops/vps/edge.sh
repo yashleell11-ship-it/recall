@@ -5,12 +5,25 @@
 # takes down minecraft.yashnas.xyz and manhwamaniacs.xyz too.
 set -euo pipefail
 
-HOST="${RECALL_HOST:-recall.yashnas.xyz}"
+HOST="${RECALL_HOST:-study.yashnas.xyz}"
+# Set to retire a previous hostname in the same run, so renaming does not
+# leave a dead vhost and a dead ingress rule behind in shared config.
+OLD_HOST="${RECALL_OLD_HOST:-}"
 CADDYFILE=/opt/mcbots/edge/Caddyfile
 CFCONF=/opt/mcbots/edge/cloudflared/config.yml
 STAMP="$(date +%Y%m%d-%H%M%S)"
 
 echo "==> host: $HOST"
+
+# ---------- retire a previous hostname ----------
+if [ -n "$OLD_HOST" ] && [ "$OLD_HOST" != "$HOST" ]; then
+  echo "==> retiring $OLD_HOST"
+  sudo cp "$CADDYFILE" "${CADDYFILE}.bak-retire-${STAMP}"
+  cp "$CFCONF" "${CFCONF}.bak-retire-${STAMP}"
+  sudo python3 /srv/recall/app/ops/vps/_retire_caddy.py "$CADDYFILE" "$OLD_HOST"
+  python3 /srv/recall/app/ops/vps/_retire_ingress.py "$CFCONF" "$OLD_HOST"
+  echo "==> $OLD_HOST removed from both files"
+fi
 
 # ---------- Caddy ----------
 if sudo grep -q "^${HOST}:80 {" "$CADDYFILE"; then
@@ -71,6 +84,10 @@ assert inserted, "catch-all 404 rule not found; refusing to guess where to inser
 open(path, "w").write("\n".join(out) + "\n")
 PY
   echo "==> cloudflared ingress added (backup: ${CFCONF}.bak-recall-${STAMP})"
+  NEEDS_CF_RESTART=1
+fi
+
+if [ -n "${NEEDS_CF_RESTART:-}" ] || [ -n "$OLD_HOST" ]; then
   echo "==> restarting cloudflared (~2s; briefly interrupts the other tunnelled hosts)"
   docker restart cloudflared >/dev/null
 fi
