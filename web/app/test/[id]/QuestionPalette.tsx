@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, useReducedMotion } from "motion/react";
 import type { TestQuestion, Verdict } from "@/lib/types";
 
 export interface PaletteState {
@@ -12,37 +13,39 @@ export interface PaletteState {
 function cellStyle(
   verdict: Verdict | null | undefined,
   visited: boolean,
-): React.CSSProperties {
+): { fill: string | null; frame: React.CSSProperties } {
   switch (verdict) {
     case "correct":
       return {
-        background: "var(--g-good-bg)",
-        borderColor: "var(--g-good)",
-        color: "var(--g-good)",
+        fill: "var(--g-good-bg)",
+        frame: { borderColor: "var(--g-good)", color: "var(--g-good)" },
       };
     case "partial":
       return {
-        background: "var(--g-hard-bg)",
-        borderColor: "var(--g-hard)",
-        color: "var(--g-hard)",
+        fill: "var(--g-hard-bg)",
+        frame: { borderColor: "var(--g-hard)", color: "var(--g-hard)" },
       };
     case "wrong":
       return {
-        background: "var(--g-again-bg)",
-        borderColor: "var(--g-again)",
-        color: "var(--g-again)",
+        fill: "var(--g-again-bg)",
+        frame: { borderColor: "var(--g-again)", color: "var(--g-again)" },
       };
     case "skipped":
       return {
-        background: "var(--bg-sunken)",
-        borderColor: "var(--line-strong)",
-        color: "var(--fg-3)",
-        textDecoration: "line-through",
+        fill: "var(--bg-sunken)",
+        frame: {
+          borderColor: "var(--line-strong)",
+          color: "var(--fg-3)",
+          textDecoration: "line-through",
+        },
       };
     default:
-      return visited
-        ? { borderColor: "var(--line-strong)", color: "var(--fg-2)" }
-        : { borderColor: "var(--line)", color: "var(--fg-3)" };
+      return {
+        fill: null,
+        frame: visited
+          ? { borderColor: "var(--line-strong)", color: "var(--fg-2)" }
+          : { borderColor: "var(--line)", color: "var(--fg-3)" },
+      };
   }
 }
 
@@ -64,6 +67,8 @@ export function QuestionPalette({
   current: number;
   onJump: (ordinal: number) => void;
 }) {
+  const reduced = useReducedMotion();
+
   return (
     <div
       className="grid gap-1 p-2.5"
@@ -75,6 +80,7 @@ export function QuestionPalette({
         const verdict = state.verdicts[q.ordinal];
         const isCurrent = q.ordinal === current;
         const isMarked = state.marked.has(q.ordinal);
+        const { fill, frame } = cellStyle(verdict, state.visited.has(q.ordinal));
         return (
           <button
             key={q.ordinal}
@@ -89,16 +95,38 @@ export function QuestionPalette({
               q.marks === 1 ? "mark" : "marks"
             }`}
             className="relative h-9 sm:h-8 rounded-xs border text-[12px] tnum font-medium
-              flex items-center justify-center transition-colors duration-[90ms]
-              hover:border-fg-2"
+              flex items-center justify-center overflow-hidden
+              transition-colors duration-[90ms] hover:border-fg-2"
             style={{
-              ...cellStyle(verdict, state.visited.has(q.ordinal)),
+              ...frame,
+              // Steady, breathing-free: the ring never animates, it is simply
+              // on the cell you are on.
               ...(isCurrent
-                ? { boxShadow: "inset 0 0 0 2px var(--fg)", color: "var(--fg)" }
+                ? {
+                    boxShadow: "inset 0 0 0 2px var(--accent)",
+                    color: "var(--fg)",
+                  }
                 : null),
             }}
           >
-            {q.ordinal}
+            {/* The verdict fill arrives with a quick spring; the key replays
+                it when an answer is changed. Transform and opacity only. */}
+            {fill && (
+              <motion.span
+                key={verdict}
+                aria-hidden="true"
+                className="absolute inset-0"
+                style={{ background: fill }}
+                initial={reduced ? false : { opacity: 0, scale: 0.55 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={
+                  reduced
+                    ? { duration: 0 }
+                    : { type: "spring", duration: 0.15, bounce: 0 }
+                }
+              />
+            )}
+            <span className="relative">{q.ordinal}</span>
             {isMarked && (
               <span
                 aria-hidden="true"

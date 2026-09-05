@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFocusMode } from "@/components/AppShell";
 import { ClozePrompt, clozeShowsAnswer } from "@/components/CardText";
+import { ProgressRing, Skeleton, useToast } from "@/components/rich";
 import { Kbd, KindTag } from "@/components/ui";
 import {
   errorMessage,
@@ -43,8 +45,13 @@ const VERDICTS: {
   { verdict: "correct", key: "3", label: "Correct", tone: "good", minMarks: 1 },
 ];
 
-/** Under five minutes the clock stops being furniture. */
-const URGENT_S = 300;
+/**
+ * The clock changes colour as it drains: amber when a fifth of the paper's
+ * time is left, the wrong-red when a twentieth is. Colour only — a countdown
+ * that pulses at you is an invigilator tapping the desk.
+ */
+const WARN_FRACTION = 0.2;
+const DANGER_FRACTION = 0.05;
 
 function clock(ms: number): string {
   const total = Math.max(0, Math.ceil(ms / 1000));
@@ -102,6 +109,8 @@ interface PendingAnswer {
 
 export function ExamSession({ id }: { id: number }) {
   const router = useRouter();
+  const reduced = useReducedMotion();
+  const toast = useToast();
   const [paper, setPaper] = useState<TestPaper | null>(null);
   const [startedMs, setStartedMs] = useState<number | null>(null);
   /** Set when this paper was already submitted before the page was opened. */
@@ -118,6 +127,8 @@ export function ExamSession({ id }: { id: number }) {
 
   const [unsaved, setUnsaved] = useState<PendingAnswer[]>([]);
   const [saveError, setSaveError] = useState<string | null>(null);
+  /** True once at least one verdict has reached the server. */
+  const [savedOnce, setSavedOnce] = useState(false);
 
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -274,6 +285,7 @@ export function ExamSession({ id }: { id: number }) {
           // the old one must leave the queue: replaying it on Retry would
           // overwrite the verdict the server has just accepted.
           setUnsaved((u) => u.filter((a) => a.ordinal !== ordinal));
+          setSavedOnce(true);
         })
         .catch((err: unknown) => {
           setUnsaved((u) => [
@@ -281,10 +293,13 @@ export function ExamSession({ id }: { id: number }) {
             { ordinal, verdict, seconds },
           ]);
           setSaveError(errorMessage(err));
+          // Failure is the only autosave news worth interrupting for;
+          // success just keeps the quiet tick in the header lit.
+          toast(`Answer not saved — ${errorMessage(err)}`, { variant: "error" });
         });
       advance();
     },
-    [question, result, id, advance],
+    [question, result, id, advance, toast],
   );
 
   const retrySaves = useCallback(() => {
@@ -293,11 +308,14 @@ export function ExamSession({ id }: { id: number }) {
     setSaveError(null);
     Promise.all(
       batch.map((a) => postAnswer(id, a.ordinal, a.verdict, a.seconds)),
-    ).catch((err: unknown) => {
-      setUnsaved(batch);
-      setSaveError(errorMessage(err));
-    });
-  }, [unsaved, id]);
+    )
+      .then(() => setSavedOnce(true))
+      .catch((err: unknown) => {
+        setUnsaved(batch);
+        setSaveError(errorMessage(err));
+        toast(`Still not saved — ${errorMessage(err)}`, { variant: "error" });
+      });
+  }, [unsaved, id, toast]);
 
   const toggleMark = useCallback(() => {
     if (!question) return;
@@ -495,9 +513,23 @@ export function ExamSession({ id }: { id: number }) {
   /* --- states ----------------------------------------------------------- */
 
   if (loading) {
+    // The skeleton is shaped like the question it stands in for — header
+    // line, prompt, verdict row — so nothing jumps when the paper arrives.
     return (
       <Centered>
-        <p className="text-[13px] text-fg-3">Opening the paper&hellip;</p>
+        <div aria-hidden="true">
+          <Skeleton className="h-3 w-44" />
+          <Skeleton className="h-6 w-full mt-6" />
+          <Skeleton className="h-6 w-3/4 mt-2.5" />
+          <div className="grid grid-cols-3 gap-1.5 mt-10">
+            <Skeleton className="h-[60px]" />
+            <Skeleton className="h-[60px]" />
+            <Skeleton className="h-[60px]" />
+          </div>
+        </div>
+        <p className="text-[13px] text-fg-3 mt-6" role="status">
+          Opening the paper&hellip;
+        </p>
       </Centered>
     );
   }
@@ -591,7 +623,19 @@ export function ExamSession({ id }: { id: number }) {
   const solved = question.cloze_text ? parseCloze(question.cloze_text) : null;
   const answerIsRedundant = !!solved && clozeShowsAnswer(solved, question.answer);
   const chosen = verdicts[question.ordinal] ?? null;
-  const urgent = remainingMs !== null && remainingMs <= URGENT_S * 1000;
+
+  /** Fraction of the paper's time still on the clock; null when untimed. */
+  const timeFrac =
+    remainingMs !== null && limitS
+      ? Math.min(1, Math.max(0, remainingMs / (limitS * 1000)))
+      : null;
+  const timeDanger = timeFrac !== null && timeFrac <= DANGER_FRACTION;
+  const timeWarn = timeFrac !== null && timeFrac <= WARN_FRACTION;
+  const timeColor = timeDanger
+    ? "var(--g-again)"
+    : timeWarn
+      ? "var(--g-hard)"
+      : "var(--accent)";
 
   const palette = (
     <>
@@ -615,9 +659,11 @@ export function ExamSession({ id }: { id: number }) {
       <div className="shrink-0">
         <PaletteLegend questions={questions} state={state} />
         <div className="px-2.5 pt-2.5 border-t border-line pb-[max(0.625rem,env(safe-area-inset-bottom))]">
-          <button
+          <motion.button
             onClick={() => setConfirming(true)}
             disabled={submitting}
+            whileTap={reduced ? undefined : { scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30 }}
             className="w-full inline-flex items-center justify-center gap-2 h-9 rounded-sm
               text-[13px] font-semibold bg-accent text-accent-fg border border-accent
               hover:bg-accent-hover hover:border-accent-hover transition-colors duration-[90ms]
@@ -625,7 +671,7 @@ export function ExamSession({ id }: { id: number }) {
           >
             {submitting ? "Submitting…" : "Submit paper"}
             <Kbd>&crarr;</Kbd>
-          </button>
+          </motion.button>
           <p className="text-[11px] text-fg-3 mt-1.5 tnum">
             {tally.attemptedMarks} of {totalMarks} marks attempted
           </p>
@@ -661,19 +707,41 @@ export function ExamSession({ id }: { id: number }) {
         </span>
 
         <div className="ml-auto flex items-center gap-2 sm:gap-3 shrink-0">
-          {remainingMs !== null ? (
-            <span
-              role="timer"
-              aria-live="off"
-              title={`${clock(remainingMs)} left of ${Math.round(
-                (limitS ?? 0) / 60,
-              )} minutes`}
-              className={`tnum text-[15px] leading-none tabular-nums ${
-                urgent ? "font-semibold" : "font-medium text-fg-2"
-              }`}
-              style={urgent ? { color: "var(--g-again)" } : undefined}
-            >
-              {clock(remainingMs)}
+          {/* Quiet, and only ever about success: failure gets a toast. */}
+          {savedOnce && unsaved.length === 0 && (
+            <span className="hidden md:flex items-center gap-1.5 text-[11px] text-fg-3">
+              <span
+                aria-hidden="true"
+                className="w-1 h-1 rounded-full"
+                style={{ background: "var(--g-good)" }}
+              />
+              saved
+            </span>
+          )}
+
+          {remainingMs !== null && timeFrac !== null ? (
+            <span className="flex items-center gap-2">
+              <ProgressRing
+                value={timeFrac}
+                size={20}
+                thickness={2.5}
+                color={timeColor}
+                label={`${Math.round(timeFrac * 100)}% of the time left`}
+                className="[&_circle]:transition-[stroke] [&_circle]:duration-500"
+              />
+              <span
+                role="timer"
+                aria-live="off"
+                title={`${clock(remainingMs)} left of ${Math.round(
+                  (limitS ?? 0) / 60,
+                )} minutes`}
+                className={`tnum text-[15px] leading-none tabular-nums transition-colors duration-500 ${
+                  timeWarn ? "font-semibold" : "font-medium text-fg-2"
+                }`}
+                style={timeWarn ? { color: timeColor } : undefined}
+              >
+                {clock(remainingMs)}
+              </span>
             </span>
           ) : (
             <span className="text-[11px] text-fg-3 hidden sm:inline">
@@ -709,9 +777,12 @@ export function ExamSession({ id }: { id: number }) {
           {/* my-auto rather than justify-center: it centres a short question
               and collapses to nothing when a long one has to scroll. */}
           <main className="flex-1 overflow-y-auto flex flex-col px-4 sm:px-6 py-5 sm:py-7">
-            <article
+            <motion.article
               key={question.ordinal}
-              className="w-full max-w-[38rem] mx-auto my-auto anim-advance"
+              initial={reduced ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.9 }}
+              className="w-full max-w-[38rem] mx-auto my-auto"
             >
               <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-fg-3 mb-4">
                 <span className="text-[13px] font-semibold text-fg tnum leading-none">
@@ -787,7 +858,7 @@ export function ExamSession({ id }: { id: number }) {
                       }. Pick again to change it.`}
                 </p>
               )}
-            </article>
+            </motion.article>
           </main>
 
           {/* Driven by the queue, not by the last message: a question that was
@@ -883,17 +954,19 @@ export function ExamSession({ id }: { id: number }) {
               </div>
 
               {!isRevealed ? (
-                <button
+                <motion.button
                   onClick={() =>
                     setRevealed((r) => new Set(r).add(question.ordinal))
                   }
+                  whileTap={reduced ? undefined : { scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   className="w-full min-h-[60px] rounded-sm border border-line bg-surface
                     hover:border-line-strong hover:bg-surface-hover transition-colors duration-[90ms]
                     flex items-center justify-center gap-2.5 text-[14px] font-medium"
                 >
                   Show answer
                   <Kbd>Space</Kbd>
-                </button>
+                </motion.button>
               ) : (
                 <div
                   className={`grid gap-1.5 ${
@@ -908,10 +981,16 @@ export function ExamSession({ id }: { id: number }) {
                       // warns about.
                       const edge = active ? `var(--g-${v.tone})` : "var(--line)";
                       return (
-                        <button
+                        <motion.button
                           key={v.verdict}
                           onClick={() => answer(v.verdict)}
                           aria-pressed={active}
+                          whileTap={reduced ? undefined : { scale: 0.98 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 30,
+                          }}
                           className="min-h-[60px] rounded-sm border bg-surface
                             hover:bg-surface-hover active:bg-surface-hover
                             transition-colors duration-[90ms]
@@ -935,7 +1014,7 @@ export function ExamSession({ id }: { id: number }) {
                             {marks(scoreFor(v.verdict, question.marks))} of{" "}
                             {question.marks}
                           </span>
-                        </button>
+                        </motion.button>
                       );
                     },
                   )}
@@ -966,11 +1045,14 @@ export function ExamSession({ id }: { id: number }) {
       </div>
 
       {paletteOpen && (
-        <div
+        <motion.div
           className="fixed inset-0 z-40 lg:hidden flex flex-col bg-surface"
           role="dialog"
           aria-modal="true"
           aria-label="Question palette"
+          initial={reduced ? false : { opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 420, damping: 36 }}
         >
           <div className="flex items-center justify-between px-3 h-11 border-b border-line shrink-0">
             <span className="text-[13px] font-semibold">
@@ -985,7 +1067,7 @@ export function ExamSession({ id }: { id: number }) {
             </button>
           </div>
           {palette}
-        </div>
+        </motion.div>
       )}
 
       {confirming && (
@@ -1037,26 +1119,35 @@ function SubmitConfirm({
   onSubmit: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
 
   useEffect(() => {
     ref.current?.focus({ preventScroll: true });
   }, []);
 
+  // Enter springs; leaving is instant by design — an exit animation racing a
+  // route change is how zombie overlays are made.
   return (
-    <div
+    <motion.div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ background: "color-mix(in srgb, var(--bg) 93%, transparent)" }}
+      initial={reduced ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.15, ease: "easeOut" }}
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onCancel();
       }}
     >
-      <div
+      <motion.div
         ref={ref}
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-label="Submit this paper"
-        className="panel w-full max-w-md outline-none"
+        initial={reduced ? false : { opacity: 0, y: 8, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.9 }}
+        className="elev-3 rounded-md w-full max-w-md outline-none overflow-hidden"
       >
         <header className="px-3 h-9 border-b border-line bg-sunken flex items-center">
           <h2 className="label">Submit this paper</h2>
@@ -1112,15 +1203,16 @@ function SubmitConfirm({
         </div>
 
         <footer className="px-3.5 py-2.5 border-t border-line flex items-center gap-2">
-          <button
+          <motion.button
             onClick={onSubmit}
-            className="inline-flex items-center gap-2.5 h-9 px-4 rounded-sm text-[13px] font-semibold
-              bg-accent text-accent-fg border border-accent hover:bg-accent-hover
-              hover:border-accent-hover transition-colors duration-[90ms]"
+            whileTap={reduced ? undefined : { scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            className="accent-grad glow-accent-hover inline-flex items-center gap-2.5 h-9 px-4
+              rounded-sm text-[13px] font-semibold border border-accent"
           >
             Submit and see the result
             <Kbd>&crarr;</Kbd>
-          </button>
+          </motion.button>
           <button
             onClick={onCancel}
             className="inline-flex items-center gap-2 h-9 px-3 rounded-sm text-[13px] font-medium
@@ -1131,7 +1223,7 @@ function SubmitConfirm({
             <Kbd>Esc</Kbd>
           </button>
         </footer>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

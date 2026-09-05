@@ -1,10 +1,13 @@
 "use client";
 
+import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatedNumber, Reveal, Skeleton, useToast } from "@/components/rich";
 import { ErrorState, Kbd, KindTag, Panel, TopicCode } from "@/components/ui";
 import {
   ACCEPTED_EXTENSIONS,
+  ApiError,
   errorMessage,
   generateCards,
   getSources,
@@ -19,12 +22,15 @@ import { useResource } from "@/lib/useResource";
 
 const MAX_MB = Math.round(MAX_UPLOAD_BYTES / (1024 * 1024));
 
+/** Enter spring for the small insets that appear inside a file card. */
+const INSET_SPRING = { type: "spring", stiffness: 380, damping: 30 } as const;
+
 type GenState =
   | { stage: "idle" }
   | { stage: "confirm" }
   | { stage: "running" }
   | { stage: "done"; data: GenerateResponse }
-  | { stage: "error"; message: string };
+  | { stage: "error"; message: string; status: number | null };
 
 interface Item {
   key: string;
@@ -58,6 +64,8 @@ async function fetchContext(): Promise<{ topics: Topic[]; sources: Source[] }> {
 
 export default function UploadPage() {
   const res = useResource("upload-context", fetchContext);
+  const toast = useToast();
+  const reduced = useReducedMotion();
 
   const [topic, setTopic] = useState("");
   const [newTopic, setNewTopic] = useState("");
@@ -173,12 +181,25 @@ export default function UploadPage() {
     (key: string, sourceId: number) => {
       patch(key, { gen: { stage: "running" } });
       generateCards(sourceId)
-        .then((data) => patch(key, { gen: { stage: "done", data } }))
+        .then((data) => {
+          patch(key, { gen: { stage: "done", data } });
+          toast(
+            `${data.accepted} ${plural(data.accepted, "card")} kept for ${usd(
+              data.cost_usd,
+            )}.`,
+          );
+        })
         .catch((err: unknown) =>
-          patch(key, { gen: { stage: "error", message: errorMessage(err) } }),
+          patch(key, {
+            gen: {
+              stage: "error",
+              message: errorMessage(err),
+              status: err instanceof ApiError ? err.status : null,
+            },
+          }),
         );
     },
-    [patch],
+    [patch, toast],
   );
 
   useEffect(() => {
@@ -205,21 +226,23 @@ export default function UploadPage() {
 
   return (
     <main className="mx-auto max-w-[1120px] px-4 py-5 pb-16">
-      <div className="mb-4">
-        <h1 className="text-[18px] font-semibold leading-none">Upload</h1>
-        <p className="text-[13px] text-fg-2 mt-1.5 max-w-prose">
-          Add a PDF, a text file, or a photo of a page. Uploading only pulls the
-          text out — it is free and costs no API calls. Making cards from it is
-          a separate step you press yourself.
-        </p>
-      </div>
+      <Reveal>
+        <div className="mb-4">
+          <h1 className="text-[18px] font-semibold leading-none">Upload</h1>
+          <p className="text-[13px] text-fg-2 mt-1.5 max-w-prose">
+            Add a PDF, a text file, or a photo of a page. Uploading only pulls the
+            text out — it is free and costs no API calls. Making cards from it is
+            a separate step you press yourself.
+          </p>
+        </div>
+      </Reveal>
 
       {res.error && !res.data ? (
         <ErrorState message={res.error} onRetry={res.reload} />
       ) : null}
 
       <div className="grid gap-4 lg:grid-cols-[1fr_320px] items-start">
-        <div>
+        <Reveal index={1} className="min-w-0">
           {/* --- topic ---------------------------------------------------- */}
 
           <div className="panel px-3.5 py-3">
@@ -255,6 +278,9 @@ export default function UploadPage() {
                   Use an existing topic
                 </button>
               </div>
+            ) : res.loading && !res.data ? (
+              // The select's exact footprint, so nothing jumps when topics land.
+              <Skeleton className="h-11 w-full sm:w-64" />
             ) : (
               <div className="flex flex-wrap items-center gap-2">
                 <select
@@ -309,12 +335,17 @@ export default function UploadPage() {
               setDragging(false);
               add(e.dataTransfer.files);
             }}
-            className="panel mt-3 px-3.5 py-3.5 transition-colors duration-[90ms]"
+            className={`elev-1 rounded-md mt-3 px-3.5 py-3.5
+              transition-[transform,box-shadow,border-color,background-color]
+              duration-150 ease-out
+              ${dragging ? "glow-accent" : ""}`}
             style={
               dragging
                 ? {
                     borderColor: "var(--accent)",
                     background: "var(--accent-quiet)",
+                    // Lift, not layout: transform only, and only when motion is welcome.
+                    transform: reduced ? undefined : "scale(1.01)",
                   }
                 : undefined
             }
@@ -346,21 +377,23 @@ export default function UploadPage() {
             />
 
             <div className="grid gap-2 sm:grid-cols-2">
-              <button
+              <motion.button
                 onClick={() => fileInput.current?.click()}
                 disabled={!ready}
-                className="min-h-[56px] px-4 rounded-sm text-[15px] font-semibold
-                  bg-accent text-accent-fg border border-accent hover:bg-accent-hover
-                  hover:border-accent-hover transition-colors duration-[90ms]
+                whileTap={reduced ? undefined : { scale: 0.98 }}
+                className="glow-behind accent-grad glow-accent-hover min-h-[56px] px-4 rounded-sm
+                  text-[15px] font-semibold border border-accent hover:border-accent-hover
+                  transition-colors duration-[90ms]
                   disabled:opacity-40 disabled:pointer-events-none
                   flex items-center justify-center gap-2.5"
               >
                 Choose files
                 <Kbd>f</Kbd>
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 onClick={() => cameraInput.current?.click()}
                 disabled={!ready}
+                whileTap={reduced ? undefined : { scale: 0.98 }}
                 className="min-h-[56px] px-4 rounded-sm text-[15px] font-medium
                   border border-line bg-surface hover:border-line-strong hover:bg-surface-hover
                   transition-colors duration-[90ms]
@@ -369,7 +402,7 @@ export default function UploadPage() {
               >
                 Take a photo
                 <Kbd>c</Kbd>
-              </button>
+              </motion.button>
             </div>
 
             <p className="text-[12px] text-fg-3 mt-2.5">
@@ -384,23 +417,31 @@ export default function UploadPage() {
           </div>
 
           {rejected && (
-            <p
-              className="mt-3 px-3 py-2 border-l-2 bg-surface text-[13px]"
-              style={{ borderLeftColor: "var(--g-again)" }}
+            <motion.p
+              initial={reduced ? false : { opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={INSET_SPRING}
+              className="mt-3 rounded-sm border border-l-2 px-3 py-2 text-[13px]"
+              style={{
+                background: "var(--g-again-bg)",
+                borderColor: "color-mix(in srgb, var(--g-again) 30%, transparent)",
+                borderLeftColor: "var(--g-again)",
+              }}
               role="alert"
             >
               {rejected}
-            </p>
+            </motion.p>
           )}
 
           {/* --- the queue ------------------------------------------------ */}
 
           {items.length > 0 && (
             <ul className="mt-3 grid gap-2">
-              {items.map((item) => (
+              {items.map((item, position) => (
                 <FileRow
                   key={item.key}
                   item={item}
+                  index={Math.min(position, 5)}
                   priorSources={priorSources}
                   priorSpend={spent}
                   onCancel={() => item.abort?.abort()}
@@ -424,7 +465,8 @@ export default function UploadPage() {
 
           {uploaded.length > 0 && (
             <p className="text-[12.5px] text-fg-2 mt-3.5">
-              {uploaded.length} {plural(uploaded.length, "file")} read.{" "}
+              <AnimatedNumber value={uploaded.length} />{" "}
+              {plural(uploaded.length, "file")} read.{" "}
               <Link href="/approve" className="link">
                 Approve queue
               </Link>{" "}
@@ -434,52 +476,58 @@ export default function UploadPage() {
               </Link>
             </p>
           )}
-        </div>
+        </Reveal>
 
         {/* --- the honest bit --------------------------------------------- */}
 
-        <div className="grid gap-4">
-          <Panel title="What happens" bodyClassName="px-3.5 py-3">
-            <ol className="text-[12.5px] text-fg-2 grid gap-2.5">
-              <li>
-                <span className="font-semibold text-fg">Upload</span> pulls the
-                text out and splits it into chunks. No API call, no cost, and it
-                works before any key is configured.
-              </li>
-              <li>
-                <span className="font-semibold text-fg">Generate cards</span>{" "}
-                sends each chunk to the model. This is the step that spends
-                money, which is why it is a separate press.
-              </li>
-              <li>
-                <span className="font-semibold text-fg">Approve</span> keeps the
-                cards worth keeping. Nothing enters your rotation until you say
-                so.
-              </li>
-            </ol>
-            {priorSources > 0 && (
-              <p className="text-[12px] text-fg-3 mt-3 pt-2.5 border-t border-line tnum">
-                {priorSources} {plural(priorSources, "source")} so far have cost{" "}
-                {usd(spent)} in all, {usd(spent / priorSources)} each.
-              </p>
-            )}
-          </Panel>
+        <Reveal index={2} className="min-w-0">
+          <div className="grid gap-4">
+            <Panel title="What happens" bodyClassName="px-3.5 py-3">
+              <ol className="text-[12.5px] text-fg-2 grid gap-2.5">
+                <li>
+                  <span className="font-semibold text-fg">Upload</span> pulls the
+                  text out and splits it into chunks. No API call, no cost, and it
+                  works before any key is configured.
+                </li>
+                <li>
+                  <span className="font-semibold text-fg">Generate cards</span>{" "}
+                  sends each chunk to the model. This is the step that spends
+                  money, which is why it is a separate press.
+                </li>
+                <li>
+                  <span className="font-semibold text-fg">Approve</span> keeps the
+                  cards worth keeping. Nothing enters your rotation until you say
+                  so.
+                </li>
+              </ol>
+              {res.loading && !res.data ? (
+                <div className="mt-3 pt-2.5 border-t border-line">
+                  <Skeleton className="h-3 w-52" />
+                </div>
+              ) : priorSources > 0 ? (
+                <p className="text-[12px] text-fg-3 mt-3 pt-2.5 border-t border-line tnum">
+                  {priorSources} {plural(priorSources, "source")} so far have cost{" "}
+                  {usd(spent)} in all, {usd(spent / priorSources)} each.
+                </p>
+              ) : null}
+            </Panel>
 
-          <Panel title="Photos and OCR" bodyClassName="px-3.5 py-3">
-            <p className="text-[12.5px] text-fg-2">
-              Images go through Tesseract on the CPU.{" "}
-              <span className="text-fg font-medium">
-                Printed slides, textbook pages and screenshots read well.
-              </span>{" "}
-              Handwriting reads badly — that is what CPU OCR does, not a bug.
-            </p>
-            <p className="text-[12px] text-fg-3 mt-2">
-              Shoot straight-on, fill the frame with the page, and keep the
-              light even. If the text that comes out looks too short for the
-              page, you will be told before you spend anything on it.
-            </p>
-          </Panel>
-        </div>
+            <Panel title="Photos and OCR" bodyClassName="px-3.5 py-3">
+              <p className="text-[12.5px] text-fg-2">
+                Images go through Tesseract on the CPU.{" "}
+                <span className="text-fg font-medium">
+                  Printed slides, textbook pages and screenshots read well.
+                </span>{" "}
+                Handwriting reads badly — that is what CPU OCR does, not a bug.
+              </p>
+              <p className="text-[12px] text-fg-3 mt-2">
+                Shoot straight-on, fill the frame with the page, and keep the
+                light even. If the text that comes out looks too short for the
+                page, you will be told before you spend anything on it.
+              </p>
+            </Panel>
+          </div>
+        </Reveal>
       </div>
     </main>
   );
@@ -489,6 +537,7 @@ export default function UploadPage() {
 
 function FileRow({
   item,
+  index,
   priorSources,
   priorSpend,
   onCancel,
@@ -499,6 +548,8 @@ function FileRow({
   onGenerate,
 }: {
   item: Item;
+  /** Position within its batch; 40ms of stagger apiece, capped upstream. */
+  index: number;
   priorSources: number;
   priorSpend: number;
   onCancel: () => void;
@@ -508,12 +559,22 @@ function FileRow({
   onCancelGenerate: () => void;
   onGenerate: () => void;
 }) {
+  const reduced = useReducedMotion();
   const pct = Math.round(item.progress * 100);
   const result = item.result;
 
   return (
-    <li
-      className="panel px-3.5 py-3 border-l-2"
+    <motion.li
+      initial={reduced ? false : { opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        type: "spring",
+        stiffness: 420,
+        damping: 34,
+        mass: 0.9,
+        delay: index * 0.04,
+      }}
+      className="elev-1 rounded-md px-3.5 py-3 border-l-2"
       style={{
         borderLeftColor:
           item.stage === "error"
@@ -523,7 +584,8 @@ function FileRow({
               : "var(--line-strong)",
       }}
     >
-      <div className="flex items-baseline gap-3">
+      <div className="flex items-center gap-2.5">
+        {item.stage === "done" && <SuccessTick reduced={reduced ?? false} />}
         <span className="text-[13.5px] font-medium truncate min-w-0">
           {item.file.name}
         </span>
@@ -539,18 +601,25 @@ function FileRow({
         {item.stage === "uploading" && <span className="tnum">{pct}%</span>}
         {result && (
           <span className="tnum">
-            {result.chunks} {plural(result.chunks, "chunk")} ·{" "}
-            {result.text_chars.toLocaleString()} characters
+            <AnimatedNumber value={result.chunks} />{" "}
+            {plural(result.chunks, "chunk")} ·{" "}
+            <AnimatedNumber value={result.text_chars} /> characters
           </span>
         )}
         <span className="ml-auto flex items-center gap-3">
           {item.stage === "uploading" && (
-            <button onClick={onCancel} className="link text-fg-3">
+            <button
+              onClick={onCancel}
+              className="link text-fg-3 px-1.5 py-2 -my-2 -mx-1.5"
+            >
               Cancel
             </button>
           )}
           {(item.stage === "done" || item.stage === "error") && (
-            <button onClick={onRemove} className="link text-fg-3">
+            <button
+              onClick={onRemove}
+              className="link text-fg-3 px-1.5 py-2 -my-2 -mx-1.5"
+            >
               Clear
             </button>
           )}
@@ -566,9 +635,12 @@ function FileRow({
           aria-valuemax={100}
           aria-label={`Uploading ${item.file.name}`}
         >
+          {/* scaleX, not width: the bar composites instead of relaying out. */}
           <div
-            className="h-full bg-fg transition-[width] duration-[90ms] ease-out"
-            style={{ width: `${item.stage === "queued" ? 0 : pct}%` }}
+            className="h-full w-full origin-left bg-accent transition-transform duration-[90ms] ease-out"
+            style={{
+              transform: `scaleX(${item.stage === "queued" ? 0 : item.progress})`,
+            }}
           />
         </div>
       )}
@@ -580,59 +652,81 @@ function FileRow({
       )}
 
       {item.error && (
-        <div className="mt-2 text-[12.5px]">
-          <p className="text-fg-2">{item.error}</p>
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={INSET_SPRING}
+          className="mt-2.5 rounded-sm border border-l-2 px-3 py-2 text-[12.5px]"
+          style={{
+            background: "var(--g-again-bg)",
+            borderColor: "color-mix(in srgb, var(--g-again) 30%, transparent)",
+            borderLeftColor: "var(--g-again)",
+          }}
+          role="alert"
+        >
+          <p className="text-fg">{item.error}</p>
           {item.stage === "error" && !refuse(item.file) && (
-            <button onClick={onRetry} className="link text-fg-2 mt-1">
+            <button
+              onClick={onRetry}
+              className="link text-fg-2 mt-1 px-1.5 py-2 -my-2 -mx-1.5"
+            >
               Try again
             </button>
           )}
-        </div>
+        </motion.div>
       )}
 
       {/* --- OCR honesty ------------------------------------------------- */}
 
       {result?.warning && (
-        <div
-          className="mt-2.5 pl-2.5 py-1 border-l-2"
-          style={{ borderColor: "var(--g-hard)" }}
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...INSET_SPRING, delay: 0.05 }}
+          className="mt-2.5 rounded-sm border border-l-2 px-3 py-2.5"
+          style={{
+            background: "var(--g-hard-bg)",
+            borderColor: "color-mix(in srgb, var(--g-hard) 35%, transparent)",
+            borderLeftColor: "var(--g-hard)",
+          }}
         >
-          <p
-            className="label"
-            style={{ color: "var(--g-hard)" }}
-          >
+          <p className="label" style={{ color: "var(--g-hard)" }}>
             Little text came out
           </p>
           <p className="text-[12.5px] text-fg-2 mt-1 leading-snug">
             {result.warning}
           </p>
-        </div>
+        </motion.div>
       )}
 
       {/* --- the step that spends money ----------------------------------- */}
 
       {result && (
-        <div className="mt-3 pt-2.5 border-t border-line">
+        <div className="mt-3 elev-2 rounded-md px-3.5 py-3">
           {item.gen.stage === "idle" && (
             <>
-              <button
-                onClick={onConfirmGenerate}
-                className="inline-flex items-center h-9 px-3.5 rounded-sm text-[13px] font-semibold
-                  bg-accent text-accent-fg border border-accent hover:bg-accent-hover
-                  hover:border-accent-hover transition-colors duration-[90ms]"
-              >
-                Generate cards
-              </button>
-              <p className="text-[12px] text-fg-3 mt-1.5">
-                {result.chunks} {plural(result.chunks, "chunk")}, one paid call
-                each.
+              <p className="text-[13px] text-fg">
+                <span className="tnum font-semibold">{result.chunks}</span>{" "}
+                {plural(result.chunks, "chunk")}, one paid call each.
+              </p>
+              <p className="text-[12px] text-fg-3 mt-0.5">
                 {priorSources > 0
-                  ? ` Your ${priorSources} earlier ${plural(
+                  ? `Your ${priorSources} earlier ${plural(
                       priorSources,
                       "source",
                     )} averaged ${usd(priorSpend / priorSources)}.`
-                  : " Nothing has been spent on this file yet."}
+                  : "Nothing has been spent on this file yet."}
               </p>
+              <motion.button
+                onClick={onConfirmGenerate}
+                whileTap={reduced ? undefined : { scale: 0.98 }}
+                className="accent-grad glow-accent-hover mt-2.5 inline-flex items-center
+                  min-h-[44px] px-4 rounded-sm text-[13.5px] font-semibold
+                  border border-accent hover:border-accent-hover
+                  transition-colors duration-[90ms]"
+              >
+                Generate cards
+              </motion.button>
             </>
           )}
 
@@ -642,59 +736,88 @@ function FileRow({
                 This calls the paid API {result.chunks}{" "}
                 {plural(result.chunks, "time")} and takes a minute or two.
               </p>
-              <div className="flex flex-wrap items-center gap-2 mt-2">
-                <button
+              <div className="flex flex-wrap items-center gap-2 mt-2.5">
+                <motion.button
                   onClick={onGenerate}
-                  className="inline-flex items-center h-9 px-3.5 rounded-sm text-[13px] font-semibold
-                    bg-accent text-accent-fg border border-accent hover:bg-accent-hover
-                    hover:border-accent-hover transition-colors duration-[90ms]"
+                  whileTap={reduced ? undefined : { scale: 0.98 }}
+                  className="accent-grad glow-accent-hover inline-flex items-center
+                    min-h-[44px] px-4 rounded-sm text-[13.5px] font-semibold
+                    border border-accent hover:border-accent-hover
+                    transition-colors duration-[90ms]"
                 >
                   Spend it
-                </button>
-                <button
+                </motion.button>
+                <motion.button
                   onClick={onCancelGenerate}
-                  className="inline-flex items-center h-9 px-3 rounded-sm text-[13px] font-medium
-                    border border-line bg-surface hover:border-line-strong hover:bg-surface-hover
+                  whileTap={reduced ? undefined : { scale: 0.98 }}
+                  className="inline-flex items-center min-h-[44px] px-3.5 rounded-sm
+                    text-[13.5px] font-medium border border-line bg-surface
+                    hover:border-line-strong hover:bg-surface-hover
                     transition-colors duration-[90ms]"
                 >
                   Not now
-                </button>
+                </motion.button>
               </div>
             </div>
           )}
 
           {item.gen.stage === "running" && (
-            <p className="text-[12.5px] text-fg-3">
-              Reading {result.chunks} {plural(result.chunks, "chunk")} and
-              writing cards&hellip; you can leave this page, it runs on the
-              server.
-            </p>
+            <div>
+              <p className="text-[12.5px] text-fg-3">
+                Reading {result.chunks} {plural(result.chunks, "chunk")} and
+                writing cards&hellip; you can leave this page, it runs on the
+                server.
+              </p>
+              {/* Where the cards will land: shimmer, never a spinner. The
+                  server reports no per-chunk progress, so the state is
+                  indeterminate by honest necessity. */}
+              <div className="mt-2.5 grid gap-1.5" aria-hidden="true">
+                <Skeleton className="h-10" />
+                <Skeleton className="h-10" />
+                <Skeleton className="h-10" />
+              </div>
+            </div>
           )}
 
           {item.gen.stage === "error" && (
-            <div className="text-[12.5px]">
-              <p
-                className="pl-2 border-l-2 text-fg-2"
-                style={{ borderColor: "var(--g-again)" }}
+            <div
+              className="rounded-sm border border-l-2 px-3 py-2.5 text-[12.5px]"
+              style={{
+                background: "var(--g-again-bg)",
+                borderColor: "color-mix(in srgb, var(--g-again) 30%, transparent)",
+                borderLeftColor: "var(--g-again)",
+              }}
+              role="alert"
+            >
+              <p className="text-fg">{item.gen.message}</p>
+              {item.gen.status === 503 && (
+                <p className="text-fg-2 mt-1.5">
+                  The model API key has not been added on the server yet, so
+                  card generation is switched off. Your file is already stored
+                  and read — that part is free — so once the key is configured,
+                  come back and press again. Nothing was spent.
+                </p>
+              )}
+              <button
+                onClick={onConfirmGenerate}
+                className="link text-fg-2 mt-1.5 px-1.5 py-2 -my-2 -mx-1.5"
               >
-                {item.gen.message}
-              </p>
-              <button onClick={onConfirmGenerate} className="link text-fg-2 mt-1.5">
                 Try again
               </button>
             </div>
           )}
 
           {item.gen.stage === "done" && (
-            <div className="text-[12.5px] anim-reveal">
+            <Reveal className="text-[12.5px]">
               <p className="text-fg">
-                <span className="tnum font-semibold">
-                  {item.gen.data.accepted}
-                </span>{" "}
+                <AnimatedNumber
+                  value={item.gen.data.accepted}
+                  className="font-semibold"
+                />{" "}
                 {plural(item.gen.data.accepted, "card")} kept,{" "}
-                <span className="tnum">{item.gen.data.rejected}</span> thrown out
-                by the groundedness check, for{" "}
-                <span className="tnum">{usd(item.gen.data.cost_usd)}</span>.
+                <AnimatedNumber value={item.gen.data.rejected} /> thrown out by
+                the groundedness check, for{" "}
+                <AnimatedNumber value={item.gen.data.cost_usd} format={usd} />.
               </p>
               {item.gen.data.stopped_early && (
                 <p className="text-fg-2 mt-1">
@@ -707,10 +830,41 @@ function FileRow({
                   Triage them
                 </Link>
               )}
-            </div>
+            </Reveal>
           )}
         </div>
       )}
-    </li>
+    </motion.li>
+  );
+}
+
+/** A tick that draws itself: scale pop, then the stroke sweeps through. */
+function SuccessTick({ reduced }: { reduced: boolean }) {
+  return (
+    <motion.span
+      initial={reduced ? false : { scale: 0.4, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ type: "spring", stiffness: 520, damping: 24 }}
+      className="inline-flex items-center justify-center w-4 h-4 rounded-full shrink-0"
+      style={{ background: "var(--g-good-bg)", color: "var(--g-good)" }}
+      aria-hidden="true"
+    >
+      <svg width="9" height="9" viewBox="0 0 10 10" fill="none">
+        <motion.path
+          d="M1.5 5.4 L4 7.7 L8.5 2.5"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          initial={reduced ? false : { pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={
+            reduced
+              ? { duration: 0 }
+              : { type: "spring", duration: 0.45, bounce: 0, delay: 0.08 }
+          }
+        />
+      </svg>
+    </motion.span>
   );
 }

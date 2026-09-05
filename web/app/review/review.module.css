@@ -1,0 +1,31 @@
+/* Review-screen material that globals.css does not carry.
+ *
+ * Cloze deletions flash the accent for a beat as they fill in, then let go —
+ * the eye is pulled to exactly what was being tested. The flash is an
+ * opacity-only animation on a pseudo-element: paint and compositing, never
+ * layout. The global reduced-motion block collapses it to nothing.
+ */
+
+.clozeFlash :global(.anim-reveal) {
+  position: relative;
+}
+
+.clozeFlash :global(.anim-reveal)::after {
+  content: "";
+  position: absolute;
+  inset: -0.12em -0.18em;
+  border-radius: 3px;
+  pointer-events: none;
+  background: var(--accent-quiet);
+  opacity: 0;
+  animation: clozeFill 700ms ease-out 1;
+}
+
+@keyframes clozeFill {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

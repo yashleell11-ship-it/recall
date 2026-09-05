@@ -51,6 +51,35 @@
   --radius-sm: 3px;
   --radius-md: 5px;
 
+  /* --- depth ---------------------------------------------------------------
+     Elevation is a system, not a garnish: bg -> surface -> raised -> overlay,
+     each step carrying a slightly stronger ambient shadow. On paper the steps
+     are all white — the shadow does the work. */
+  --surface-raised: #ffffff;
+  --surface-overlay: #ffffff;
+
+  /* Luminous top hairline for elevated surfaces. Invisible on paper by
+     design; it earns its keep in graphite. */
+  --line-lumen: rgba(255, 255, 255, 0.55);
+
+  --shadow-1: 0 1px 2px rgba(27, 26, 23, 0.05), 0 1px 1px rgba(27, 26, 23, 0.03);
+  --shadow-2: inset 0 1px 0 var(--line-lumen), 0 1px 2px rgba(27, 26, 23, 0.05),
+    0 4px 12px -2px rgba(27, 26, 23, 0.08);
+  --shadow-3: inset 0 1px 0 var(--line-lumen), 0 2px 6px rgba(27, 26, 23, 0.07),
+    0 16px 48px -12px rgba(27, 26, 23, 0.22);
+
+  /* --- accent ramp -----------------------------------------------------------
+     The ember may deepen within its own hue on a primary action, and it may
+     bloom faintly behind or around one. It still never leaks anywhere else. */
+  --accent-deep: #983a1c;
+  --accent-glow: rgba(176, 69, 37, 0.22);
+  --accent-glow-faint: rgba(176, 69, 37, 0.07);
+
+  /* --- feedback ------------------------------------------------------------ */
+  --scrim: rgba(27, 26, 23, 0.28);
+  --skeleton: #edece4;
+  --shimmer: rgba(255, 255, 255, 0.65);
+  --grain-opacity: 0.025;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -83,6 +112,26 @@
     --g-hard-bg: #2a2113;
     --g-good-bg: #16251a;
     --g-easy-bg: #15212c;
+
+    --surface-raised: #222129;
+    --surface-overlay: #282730;
+
+    --line-lumen: rgba(255, 255, 255, 0.06);
+
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.35);
+    --shadow-2: inset 0 1px 0 var(--line-lumen), 0 2px 8px rgba(0, 0, 0, 0.35),
+      0 8px 24px -12px rgba(0, 0, 0, 0.5);
+    --shadow-3: inset 0 1px 0 var(--line-lumen), 0 4px 16px rgba(0, 0, 0, 0.45),
+      0 24px 64px -16px rgba(0, 0, 0, 0.6);
+
+    --accent-deep: #c9653d;
+    --accent-glow: rgba(224, 122, 82, 0.24);
+    --accent-glow-faint: rgba(224, 122, 82, 0.08);
+
+    --scrim: rgba(0, 0, 0, 0.5);
+    --skeleton: #26252d;
+    --shimmer: rgba(255, 255, 255, 0.055);
+    --grain-opacity: 0.035;
   }
 }
 
@@ -115,6 +164,26 @@
   --g-hard-bg: #2a2113;
   --g-good-bg: #16251a;
   --g-easy-bg: #15212c;
+
+  --surface-raised: #222129;
+  --surface-overlay: #282730;
+
+  --line-lumen: rgba(255, 255, 255, 0.06);
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-2: inset 0 1px 0 var(--line-lumen), 0 2px 8px rgba(0, 0, 0, 0.35),
+    0 8px 24px -12px rgba(0, 0, 0, 0.5);
+  --shadow-3: inset 0 1px 0 var(--line-lumen), 0 4px 16px rgba(0, 0, 0, 0.45),
+    0 24px 64px -16px rgba(0, 0, 0, 0.6);
+
+  --accent-deep: #c9653d;
+  --accent-glow: rgba(224, 122, 82, 0.24);
+  --accent-glow-faint: rgba(224, 122, 82, 0.08);
+
+  --scrim: rgba(0, 0, 0, 0.5);
+  --skeleton: #26252d;
+  --shimmer: rgba(255, 255, 255, 0.055);
+  --grain-opacity: 0.035;
 }
 
 @theme inline {
@@ -125,6 +194,14 @@
 
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
+  --color-line-lumen: var(--line-lumen);
+
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-overlay: var(--surface-overlay);
+
+  --shadow-elev-1: var(--shadow-1);
+  --shadow-elev-2: var(--shadow-2);
+  --shadow-elev-3: var(--shadow-3);
 
   --color-fg: var(--fg);
   --color-fg-2: var(--fg-2);
@@ -134,6 +211,7 @@
   --color-accent-hover: var(--accent-hover);
   --color-accent-fg: var(--accent-fg);
   --color-accent-quiet: var(--accent-quiet);
+  --color-accent-deep: var(--accent-deep);
 
   --color-again: var(--g-again);
   --color-hard: var(--g-hard);
@@ -188,8 +266,16 @@
 
   :focus-visible {
     outline: 2px solid var(--accent);
-    outline-offset: 1px;
+    outline-offset: 2px;
     border-radius: 2px;
+  }
+
+  /* Large numerals: tabular so columns hold, and tracked in slightly —
+     digits set loose at display sizes read as a spreadsheet, not a product. */
+  .tnum-display {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+    letter-spacing: -0.02em;
   }
 
   /* Native controls follow the palette rather than the OS. */
@@ -253,6 +339,125 @@
   }
   .scroll-x::-webkit-scrollbar {
     display: none;
+  }
+
+  /* --- elevation ----------------------------------------------------------
+     Three steps above the page. Each bundles surface + border + shadow so a
+     screen never has to compose them by hand (and never composes them
+     inconsistently). */
+  .elev-1 {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-1);
+  }
+  .elev-2 {
+    background: var(--surface-raised);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-2);
+  }
+  .elev-3 {
+    background: var(--surface-overlay);
+    border: 1px solid var(--line-strong);
+    box-shadow: var(--shadow-3);
+  }
+
+  /* The header floats a hair above the page it pins. */
+  .header-elevated {
+    box-shadow: var(--shadow-1);
+  }
+
+  /* --- material ------------------------------------------------------------
+     Film grain over the whole viewport. Imperceptible until it is removed;
+     pointer-events: none so it is never in anyone's way. Mounted once, by the
+     shell. */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    pointer-events: none;
+    opacity: var(--grain-opacity);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 140px 140px;
+  }
+
+  /* --- glow ----------------------------------------------------------------
+     The ember is allowed to bloom, faintly, around the one thing on a screen
+     that matters. Box-shadow only: paint, never layout. */
+  .glow-accent {
+    box-shadow: 0 8px 28px -8px var(--accent-glow);
+  }
+  .glow-accent-hover {
+    transition: box-shadow 140ms ease-out;
+  }
+  .glow-accent-hover:hover,
+  .glow-accent-hover:focus-visible {
+    box-shadow: 0 8px 28px -6px var(--accent-glow);
+  }
+
+  /* A barely-there radial bloom behind the page's primary action. */
+  .glow-behind {
+    position: relative;
+    isolation: isolate;
+  }
+  .glow-behind::before {
+    content: "";
+    position: absolute;
+    inset: -32px -48px;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse closest-side,
+      var(--accent-glow-faint),
+      transparent 72%
+    );
+  }
+
+  /* Primary-action gradient: ember into deeper ember, one hue family. */
+  .accent-grad {
+    background-color: var(--accent);
+    background-image: linear-gradient(to bottom, var(--accent), var(--accent-deep));
+    color: var(--accent-fg);
+  }
+  .accent-grad:hover {
+    background-image: linear-gradient(
+      to bottom,
+      var(--accent-hover),
+      var(--accent-deep)
+    );
+  }
+
+  /* --- skeleton ------------------------------------------------------------
+     Every loading state shimmers; none of them spin. The sweep is a
+     transform on a pseudo-element — paint and compositing only — and the
+     global reduced-motion block freezes it into a plain block. */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: var(--skeleton);
+    border-radius: var(--radius-sm);
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, var(--shimmer), transparent);
+    animation: shimmer-sweep 1.6s ease-in-out infinite;
+  }
+
+  /* --- overlay scrim ---------------------------------------------------------
+     The command palette's backdrop: the one and only backdrop-blur in the
+     product. */
+  .scrim-blur {
+    background: var(--scrim);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+}
+
+@keyframes shimmer-sweep {
+  to {
+    transform: translateX(100%);
   }
 }
 

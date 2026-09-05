@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { AnimatedNumber, Reveal, Skeleton } from "@/components/rich";
 import { ErrorState, Kbd, Panel, TopicCode } from "@/components/ui";
 import { createTest, errorMessage, getTests, getTopics } from "@/lib/api";
 import { formatDuration, mediumDate, plural } from "@/lib/format";
@@ -10,6 +12,7 @@ import { hasModifier, isTypingTarget } from "@/lib/keys";
 import { MAX_MARKS, PAPER_LABEL } from "@/lib/marks";
 import type { TestKind, TestSummary, Topic } from "@/lib/types";
 import { useResource } from "@/lib/useResource";
+import { HeightSpring } from "./HeightSpring";
 
 interface Paper {
   kind: TestKind;
@@ -57,6 +60,7 @@ function isOpen(t: TestSummary): boolean {
 
 export default function TestPickerPage() {
   const router = useRouter();
+  const reduced = useReducedMotion();
   const res = useResource("test-picker", fetchPicker);
 
   const [kind, setKind] = useState<TestKind>("class30");
@@ -189,66 +193,79 @@ export default function TestPickerPage() {
         {PAPERS.map((p, i) => {
           const selected = p.kind === kind;
           return (
-            <button
-              key={p.kind}
-              role="radio"
-              aria-checked={selected}
-              onClick={() => setKind(p.kind)}
-              className={`panel text-left px-3.5 py-3 transition-colors duration-[90ms]
-                ${
-                  selected
-                    ? "border-fg bg-surface"
-                    : "hover:border-line-strong hover:bg-surface-hover"
-                }`}
-            >
-              <div className="flex items-baseline gap-2">
-                <Kbd>{i + 1}</Kbd>
-                <h2
-                  className={`text-[14px] ${
-                    selected ? "font-semibold text-fg" : "font-medium text-fg-2"
+            <Reveal key={p.kind} index={i}>
+              <motion.button
+                role="radio"
+                aria-checked={selected}
+                onClick={() => setKind(p.kind)}
+                whileHover={reduced ? undefined : { y: -2 }}
+                whileTap={reduced ? undefined : { scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 460, damping: 32 }}
+                className={`w-full text-left px-3.5 py-3 rounded-md border
+                  transition-[border-color,background-color,box-shadow] duration-[140ms]
+                  ${
+                    selected
+                      ? "bg-surface-raised border-accent"
+                      : "panel hover:border-line-strong hover:bg-surface-hover"
                   }`}
-                >
-                  {p.name}
-                </h2>
-              </div>
+                style={
+                  selected
+                    ? {
+                        boxShadow:
+                          "var(--shadow-2), 0 8px 28px -8px var(--accent-glow)",
+                      }
+                    : undefined
+                }
+              >
+                <div className="flex items-baseline gap-2">
+                  <Kbd>{i + 1}</Kbd>
+                  <h2
+                    className={`text-[14px] ${
+                      selected ? "font-semibold text-fg" : "font-medium text-fg-2"
+                    }`}
+                  >
+                    {p.name}
+                  </h2>
+                </div>
 
-              <p className="text-[19px] font-medium tnum mt-2.5 leading-none">
-                {p.target === null ? (
-                  <>
-                    {activeTotal.toLocaleString()}{" "}
-                    <span className="text-[13px] text-fg-2 font-normal">
-                      cards
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    {p.target}{" "}
-                    <span className="text-[13px] text-fg-2 font-normal">
-                      marks
-                    </span>
-                  </>
-                )}
-              </p>
+                <p className="text-[19px] font-medium tnum mt-2.5 leading-none">
+                  {p.target === null ? (
+                    <>
+                      <AnimatedNumber value={activeTotal} />{" "}
+                      <span className="text-[13px] text-fg-2 font-normal">
+                        cards
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <AnimatedNumber value={p.target} />{" "}
+                      <span className="text-[13px] text-fg-2 font-normal">
+                        marks
+                      </span>
+                    </>
+                  )}
+                </p>
 
-              <p className="text-[12px] text-fg-3 mt-1.5 tnum">
-                {p.limitMin === null
-                  ? "no time limit"
-                  : `${p.limitMin} minutes`}
-                <span className="mx-1.5">·</span>
-                {p.target === null
-                  ? `${activeTotal * 1}–${activeTotal * MAX_MARKS} marks`
-                  : bounds.minQ === bounds.maxQ
-                    ? `${bounds.maxQ} questions`
-                    : `${Math.ceil(p.target / MAX_MARKS)}–${Math.min(
-                        p.target,
-                        activeTotal,
-                      )} questions`}
-              </p>
+                <p className="text-[12px] text-fg-3 mt-1.5 tnum">
+                  {p.limitMin === null
+                    ? "no time limit"
+                    : `${p.limitMin} minutes`}
+                  <span className="mx-1.5">·</span>
+                  {p.target === null
+                    ? `${activeTotal * 1}–${activeTotal * MAX_MARKS} marks`
+                    : bounds.minQ === bounds.maxQ
+                      ? `${bounds.maxQ} questions`
+                      : `${Math.ceil(p.target / MAX_MARKS)}–${Math.min(
+                          p.target,
+                          activeTotal,
+                        )} questions`}
+                </p>
 
-              <p className="text-[12.5px] text-fg-2 mt-2.5 leading-snug">
-                {p.character}
-              </p>
-            </button>
+                <p className="text-[12.5px] text-fg-2 mt-2.5 leading-snug">
+                  {p.character}
+                </p>
+              </motion.button>
+            </Reveal>
           );
         })}
       </div>
@@ -256,102 +273,112 @@ export default function TestPickerPage() {
       {/* --- what it will contain ------------------------------------------- */}
 
       <div className="grid gap-4 lg:grid-cols-[1fr_340px] items-start mt-4">
-        <Panel
-          title="What this paper will contain"
-          aside={topic ? `${topic} only` : `${pool.length} topics`}
-        >
-          {res.loading && !res.data ? (
-            <p className="px-3 py-6 text-[13px] text-fg-3">
-              Reading your deck&hellip;
-            </p>
-          ) : activeTotal === 0 ? (
-            <div className="px-3 py-8 max-w-prose">
-              <p className="text-[13px] text-fg-2">
-                {topic
-                  ? `${topic} has no active cards yet, so there is nothing to examine. Approve some of its pending cards first.`
-                  : "You have no active cards yet. Upload a source, generate cards from it, and approve the ones worth keeping."}
-              </p>
-              <div className="mt-3 flex gap-4 text-[13px]">
-                <Link href="/upload" className="link">
-                  Upload a source
-                </Link>
-                <Link href="/approve" className="link text-fg-2">
-                  Approve queue
-                </Link>
+        <HeightSpring>
+          <Panel
+            title="What this paper will contain"
+            aside={topic ? `${topic} only` : `${pool.length} topics`}
+          >
+            {res.loading && !res.data ? (
+              <div className="px-3 py-3" aria-label="Reading your deck">
+                {[0, 1, 2, 3].map((i) => (
+                  <div key={i} className="flex items-center gap-4 py-2">
+                    <Skeleton className="h-3 w-14" />
+                    <Skeleton className="h-3 flex-1 hidden sm:block" />
+                    <Skeleton className="h-3 w-10" />
+                    <Skeleton className="h-3 w-8" />
+                    <Skeleton className="h-3 w-12" />
+                  </div>
+                ))}
               </div>
-            </div>
-          ) : (
-            <>
-              <table className="w-full text-[13px]">
-                <thead>
-                  <tr className="border-b border-line">
-                    <th className="label text-left font-semibold px-3 py-1.5">
-                      Topic
-                    </th>
-                    <th className="label text-left font-semibold px-3 py-1.5 hidden sm:table-cell">
-                      Course
-                    </th>
-                    <th className="label text-right font-semibold px-3 py-1.5 w-16">
-                      Active
-                    </th>
-                    <th className="label text-right font-semibold px-3 py-1.5 w-16">
-                      Share
-                    </th>
-                    <th className="label text-right font-semibold px-3 py-1.5 w-20">
-                      {paper.target === null ? "Questions" : "Marks"}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pool.map((t) => {
-                    const share = t.active / activeTotal;
-                    return (
-                      <tr
-                        key={t.id}
-                        className="border-b border-line last:border-b-0"
-                      >
-                        <td className="px-3 py-[7px]">
-                          <TopicCode code={t.code} />
-                        </td>
-                        <td className="px-3 py-[7px] text-fg-2 hidden sm:table-cell truncate max-w-[1px]">
-                          {t.label}
-                        </td>
-                        <td className="px-3 py-[7px] text-right tnum text-fg-2">
-                          {t.active.toLocaleString()}
-                        </td>
-                        <td className="px-3 py-[7px] text-right tnum text-fg-2">
-                          {Math.round(share * 100)}%
-                        </td>
-                        <td className="px-3 py-[7px] text-right tnum font-medium">
-                          {paper.target === null
-                            ? t.active.toLocaleString()
-                            : `≈ ${Math.round(paper.target * share)}`}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-
-              <div className="border-t border-line px-3 py-2.5 text-[12.5px] text-fg-2 max-w-prose">
-                <p>
-                  Questions are drawn in proportion to each topic&rsquo;s active
-                  cards, weighted toward the ones you are weakest on — high
-                  difficulty, low stability, due or overdue — with some settled
-                  cards mixed in so the paper is not purely punishment.
+            ) : activeTotal === 0 ? (
+              <div className="px-3 py-8 max-w-prose">
+                <p className="text-[13px] text-fg-2">
+                  {topic
+                    ? `${topic} has no active cards yet, so there is nothing to examine. Approve some of its pending cards first.`
+                    : "You have no active cards yet. Upload a source, generate cards from it, and approve the ones worth keeping."}
                 </p>
-                {bounds.short && (
-                  <p className="mt-2 pl-2 border-l-2 border-l-line-strong">
-                    Your deck cannot fill this paper. {activeTotal.toLocaleString()}{" "}
-                    active {plural(activeTotal, "card")} is at most{" "}
-                    {bounds.ceiling} marks, so a {paper.target}-mark paper will
-                    come up short and will say so when you submit it.
-                  </p>
-                )}
+                <div className="mt-3 flex gap-4 text-[13px]">
+                  <Link href="/upload" className="link">
+                    Upload a source
+                  </Link>
+                  <Link href="/approve" className="link text-fg-2">
+                    Approve queue
+                  </Link>
+                </div>
               </div>
-            </>
-          )}
-        </Panel>
+            ) : (
+              <div key={`${kind}-${topic}`} className="anim-reveal">
+                <table className="w-full text-[13px]">
+                  <thead>
+                    <tr className="border-b border-line">
+                      <th className="label text-left font-semibold px-3 py-1.5">
+                        Topic
+                      </th>
+                      <th className="label text-left font-semibold px-3 py-1.5 hidden sm:table-cell">
+                        Course
+                      </th>
+                      <th className="label text-right font-semibold px-3 py-1.5 w-16">
+                        Active
+                      </th>
+                      <th className="label text-right font-semibold px-3 py-1.5 w-16">
+                        Share
+                      </th>
+                      <th className="label text-right font-semibold px-3 py-1.5 w-20">
+                        {paper.target === null ? "Questions" : "Marks"}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pool.map((t) => {
+                      const share = t.active / activeTotal;
+                      return (
+                        <tr
+                          key={t.id}
+                          className="border-b border-line last:border-b-0"
+                        >
+                          <td className="px-3 py-[7px]">
+                            <TopicCode code={t.code} />
+                          </td>
+                          <td className="px-3 py-[7px] text-fg-2 hidden sm:table-cell truncate max-w-[1px]">
+                            {t.label}
+                          </td>
+                          <td className="px-3 py-[7px] text-right tnum text-fg-2">
+                            {t.active.toLocaleString()}
+                          </td>
+                          <td className="px-3 py-[7px] text-right tnum text-fg-2">
+                            {Math.round(share * 100)}%
+                          </td>
+                          <td className="px-3 py-[7px] text-right tnum font-medium">
+                            {paper.target === null
+                              ? t.active.toLocaleString()
+                              : `≈ ${Math.round(paper.target * share)}`}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+
+                <div className="border-t border-line px-3 py-2.5 text-[12.5px] text-fg-2 max-w-prose">
+                  <p>
+                    Questions are drawn in proportion to each topic&rsquo;s active
+                    cards, weighted toward the ones you are weakest on — high
+                    difficulty, low stability, due or overdue — with some settled
+                    cards mixed in so the paper is not purely punishment.
+                  </p>
+                  {bounds.short && (
+                    <p className="mt-2 pl-2 border-l-2 border-l-line-strong">
+                      Your deck cannot fill this paper. {activeTotal.toLocaleString()}{" "}
+                      active {plural(activeTotal, "card")} is at most{" "}
+                      {bounds.ceiling} marks, so a {paper.target}-mark paper will
+                      come up short and will say so when you submit it.
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </Panel>
+        </HeightSpring>
 
         <div className="grid gap-4">
           <Panel title="Scoring" bodyClassName="px-3 py-2.5">
@@ -428,17 +455,18 @@ export default function TestPickerPage() {
       {/* --- start ---------------------------------------------------------- */}
 
       <div className="flex flex-wrap items-center gap-3 mt-5">
-        <button
+        <motion.button
           onClick={start}
           disabled={starting || activeTotal === 0 || res.loading}
-          className="inline-flex items-center gap-2.5 h-9 px-4 rounded-sm text-[13px] font-semibold
-            bg-accent text-accent-fg border border-accent hover:bg-accent-hover
-            hover:border-accent-hover transition-colors duration-[90ms]
+          whileTap={reduced ? undefined : { scale: 0.98 }}
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          className="glow-behind accent-grad glow-accent-hover inline-flex items-center gap-2.5
+            h-9 px-4 rounded-sm text-[13px] font-semibold border border-accent
             disabled:opacity-40 disabled:pointer-events-none"
         >
           {starting ? "Assembling…" : `Start ${paper.name.toLowerCase()}`}
           <span className="opacity-55 text-[12px] leading-none">&crarr;</span>
-        </button>
+        </motion.button>
         <p className="text-[12px] text-fg-3">
           {paper.limitMin === null
             ? "The clock does not run. Leave and come back."

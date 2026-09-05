@@ -7,13 +7,17 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
 import { MOCK } from "@/lib/api";
 import { hasModifier, isTypingTarget } from "@/lib/keys";
+import { buildDefaultActions } from "@/lib/palette";
+import { CommandPalette, ToastProvider, useToast } from "./rich";
 import { ShortcutsOverlay } from "./Shortcuts";
 import { ThemeToggle, useThemeMode } from "./ThemeToggle";
+import type { ThemeMode } from "./ThemeToggle";
 import { Kbd } from "./ui";
 
 const NAV = [
@@ -56,8 +60,18 @@ export function useFocusMode(active: boolean) {
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  return (
+    <ToastProvider>
+      <AppShellInner>{children}</AppShellInner>
+    </ToastProvider>
+  );
+}
+
+/** Everything below the toast layer, so the shell itself can raise toasts. */
+function AppShellInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const toast = useToast();
   const [help, setHelp] = useState(false);
   const [claimed, setClaimed] = useState(false);
   const { mode, cycle } = useThemeMode();
@@ -67,6 +81,28 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const activeNav = useRef<HTMLAnchorElement>(null);
 
   const closeHelp = useCallback(() => setHelp(false), []);
+
+  // The palette names theme states outright; the store only knows how to
+  // cycle. Stepping the cycle the right number of times keeps the store —
+  // and everything subscribed to it — honest.
+  const setTheme = useCallback(
+    (target: ThemeMode) => {
+      const order: ThemeMode[] = ["system", "light", "dark"];
+      let steps = (order.indexOf(target) - order.indexOf(mode) + 3) % 3;
+      while (steps-- > 0) cycle();
+    },
+    [cycle, mode],
+  );
+
+  const paletteActions = useMemo(
+    () =>
+      buildDefaultActions({
+        push: (href) => router.push(href),
+        setTheme,
+        toast,
+      }),
+    [router, setTheme, toast],
+  );
 
   // Six destinations do not fit across a phone, so the strip scrolls — and the
   // page you are on has to be the part of it you can see.
@@ -134,8 +170,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <FocusContext.Provider value={setClaimed}>
+      <div aria-hidden="true" className="grain" />
+
       {!focus && (
-        <header className="border-b border-line bg-surface sticky top-0 z-30">
+        <header className="border-b border-line bg-surface sticky top-0 z-30 header-elevated">
           <div className="mx-auto max-w-[1120px] px-4 h-11 flex items-center gap-5">
             <Link
               href="/"
@@ -196,6 +234,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {children}
 
       {help && <ShortcutsOverlay onClose={closeHelp} />}
+
+      <CommandPalette actions={paletteActions} />
     </FocusContext.Provider>
   );
 }

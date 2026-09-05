@@ -1,9 +1,17 @@
 "use client";
 
+import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ClozePrompt, clozeShowsAnswer } from "@/components/CardText";
+import {
+  AnimatedNumber,
+  ProgressRing,
+  Reveal,
+  Skeleton,
+  useToast,
+} from "@/components/rich";
 import { Kbd } from "@/components/ui";
 import { errorMessage, getQueue, getSettings, postReview } from "@/lib/api";
 import { parseCloze } from "@/lib/cloze";
@@ -11,6 +19,7 @@ import { formatDuration, plural } from "@/lib/format";
 import { formatInterval, previewIntervals, type MemoryState } from "@/lib/fsrs";
 import { hasModifier, isTypingTarget } from "@/lib/keys";
 import type { Grade, QueueCard } from "@/lib/types";
+import styles from "./review.module.css";
 
 const GRADES: {
   grade: Grade;
@@ -23,15 +32,52 @@ const GRADES: {
   { grade: 4, label: "Easy", tone: "easy" },
 ];
 
+/** How long the graded card takes to fade and lift out before the next enters. */
+const ADVANCE_MS = 240;
+
+/** The card's entrance: fade + 12px lift on a quick spring. */
+const ENTER_SPRING = {
+  type: "spring",
+  stiffness: 380,
+  damping: 32,
+  mass: 0.9,
+} as const;
+
+/** The answer region's unmask: snappier, settles in about 200ms. */
+const REVEAL_SPRING = {
+  type: "spring",
+  stiffness: 560,
+  damping: 38,
+  mass: 0.8,
+} as const;
+
+const TAP = { scale: 0.98 };
+
 interface LogEntry {
   card: QueueCard;
   grade: Grade;
+}
+
+/**
+ * OPTIONAL / ADDITIVE, matching the convention in lib/types.ts: the contract
+ * does not promise leech fields, but when the server sends them the card wears
+ * a quiet amber tag. Absent fields simply mean no tag.
+ */
+interface LeechSignals {
+  is_leech?: boolean | null;
+  lapses?: number | null;
+}
+
+function formatPct(n: number): string {
+  return `${Math.round(n)}%`;
 }
 
 export function ReviewSession() {
   const router = useRouter();
   const params = useSearchParams();
   const topic = params.get("topic") ?? undefined;
+  const toast = useToast();
+  const reduced = useReducedMotion();
 
   const [queue, setQueue] = useState<QueueCard[]>([]);
   const [index, setIndex] = useState(0);
@@ -43,11 +89,14 @@ export function ReviewSession() {
 
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [saveError, setSaveError] = useState<string | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [startedAt, setStartedAt] = useState(0);
   const [endedAt, setEndedAt] = useState(0);
   const [reloadNonce, setReloadNonce] = useState(0);
+
+  // The graded card is fading out; inputs wait for the next one to arrive.
+  const [leaving, setLeaving] = useState(false);
+  const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Memory state learned from the server as the session goes, so a card that
   // comes back after "Again" is priced exactly rather than estimated.
@@ -77,6 +126,14 @@ export function ReviewSession() {
       live = false;
     };
   }, [topic, reloadNonce]);
+
+  // The advance timer only choreographs the visual hand-off; the review
+  // itself is recorded at press time, so an unmount mid-flight loses nothing.
+  useEffect(() => {
+    return () => {
+      if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    };
+  }, []);
 
   const retryLoad = useCallback(() => {
     setLoading(true);
@@ -122,15 +179,16 @@ export function ReviewSession() {
 
   const grade = useCallback(
     (g: Grade) => {
+      if (leaving) return;
       const current = queue[index];
       if (!current) return;
 
+      // Record and save immediately — the exit animation is presentation,
+      // never a window in which a grade can be lost.
       setLog((l) => [...l, { card: current, grade: g }]);
       // "Again" puts the card back at the end of this session, the way a
       // relearning step does.
       if (g === 1) setQueue((q) => [...q, current]);
-      setIndex((i) => i + 1);
-      setRevealed(false);
       setEndedAt(Date.now());
 
       void postReview(current.id, g)
@@ -140,25 +198,43 @@ export function ReviewSession() {
             [current.id]: { stability: r.stability, difficulty: r.difficulty },
           }));
         })
-        .catch((err) => {
+        .catch((err: unknown) => {
           setUnsaved((prev) => [...prev, { card: current, grade: g }]);
-          setSaveError(errorMessage(err));
+          toast(errorMessage(err), { variant: "error" });
         });
+
+      const advance = () => {
+        setIndex((i) => i + 1);
+        setRevealed(false);
+        setLeaving(false);
+      };
+
+      if (reduced) {
+        advance();
+        return;
+      }
+      setLeaving(true);
+      advanceTimer.current = setTimeout(() => {
+        advanceTimer.current = null;
+        advance();
+      }, ADVANCE_MS);
     },
-    [index, queue],
+    [index, queue, leaving, reduced, toast],
   );
 
   const retrySaves = useCallback(() => {
     const batch = unsaved;
+    if (batch.length === 0) return;
     setUnsaved([]);
-    setSaveError(null);
-    Promise.all(batch.map((e) => postReview(e.card.id, e.grade))).catch(
-      (err) => {
+    Promise.all(batch.map((e) => postReview(e.card.id, e.grade)))
+      .then(() => {
+        toast(`Saved ${batch.length} ${plural(batch.length, "review")}.`);
+      })
+      .catch((err: unknown) => {
         setUnsaved(batch);
-        setSaveError(errorMessage(err));
-      },
-    );
-  }, [unsaved]);
+        toast(errorMessage(err), { variant: "error" });
+      });
+  }, [unsaved, toast]);
 
   /* --- keyboard ---------------------------------------------------------- */
 
@@ -207,30 +283,28 @@ export function ReviewSession() {
   /* --- states ------------------------------------------------------------ */
 
   if (loading) {
-    return (
-      <Centered>
-        <p className="text-[13px] text-fg-3">Building the queue&hellip;</p>
-      </Centered>
-    );
+    return <ReviewSkeleton />;
   }
 
   if (loadError) {
     return (
       <Centered>
-        <p
-          className="text-[14px] pl-3 border-l-2"
-          style={{ borderColor: "var(--g-again)" }}
-        >
-          {loadError}
-        </p>
-        <div className="flex gap-4 mt-5 text-[13px]">
-          <button onClick={retryLoad} className="link">
-            Try again
-          </button>
-          <Link href="/" className="link text-fg-2">
-            Back to today
-          </Link>
-        </div>
+        <Reveal>
+          <p
+            className="text-[14px] pl-3 border-l-2"
+            style={{ borderColor: "var(--g-again)" }}
+          >
+            {loadError}
+          </p>
+          <div className="flex gap-4 mt-5 text-[13px]">
+            <button onClick={retryLoad} className="link">
+              Try again
+            </button>
+            <Link href="/" className="link text-fg-2">
+              Back to today
+            </Link>
+          </div>
+        </Reveal>
       </Centered>
     );
   }
@@ -238,24 +312,26 @@ export function ReviewSession() {
   if (queue.length === 0) {
     return (
       <Centered>
-        <p className="text-[15px] text-fg">
-          {topic
-            ? `Nothing is due in ${topic} right now.`
-            : "Nothing is due right now."}
-        </p>
-        <p className="text-[13px] text-fg-2 mt-2 max-w-sm">
-          Cards come back when the scheduler decides you are about to forget
-          them. To bring work forward, approve some pending cards or ingest a
-          new source.
-        </p>
-        <div className="flex gap-4 mt-5 text-[13px]">
-          <Link href="/" className="link">
-            Back to today
-          </Link>
-          <Link href="/approve" className="link text-fg-2">
-            Approve queue
-          </Link>
-        </div>
+        <Reveal>
+          <p className="text-[15px] text-fg">
+            {topic
+              ? `Nothing is due in ${topic} right now.`
+              : "Nothing is due right now."}
+          </p>
+          <p className="text-[13px] text-fg-2 mt-2 max-w-sm">
+            Cards come back when the scheduler decides you are about to forget
+            them. To bring work forward, approve some pending cards or ingest a
+            new source.
+          </p>
+          <div className="flex gap-4 mt-5 text-[13px]">
+            <Link href="/" className="link">
+              Back to today
+            </Link>
+            <Link href="/approve" className="link text-fg-2">
+              Approve queue
+            </Link>
+          </div>
+        </Reveal>
       </Centered>
     );
   }
@@ -277,13 +353,15 @@ export function ReviewSession() {
   if (!card) return null;
 
   const position = index + 1;
-  const progress = (index / queue.length) * 100;
+  const progress = index / queue.length;
   const solved = card.cloze_text ? parseCloze(card.cloze_text) : null;
-  const clozeAnswerIsRedundant = !!solved && clozeShowsAnswer(solved, card.answer);
+  const clozeAnswerIsRedundant =
+    !!solved && clozeShowsAnswer(solved, card.answer);
+  const leech = card as QueueCard & LeechSignals;
 
   return (
     <div className="min-h-dvh flex flex-col">
-      {/* progress: two pixels, monochrome, no percentage label */}
+      {/* progress: two pixels, monochrome — the fill springs, scaleX only */}
       <div
         className="h-[2px] w-full bg-line shrink-0"
         role="progressbar"
@@ -291,9 +369,15 @@ export function ReviewSession() {
         aria-valuemin={0}
         aria-valuemax={queue.length}
       >
-        <div
-          className="h-full bg-fg transition-[width] duration-[90ms] ease-out"
-          style={{ width: `${progress}%` }}
+        <motion.div
+          className="h-full bg-fg origin-left"
+          initial={false}
+          animate={{ scaleX: progress }}
+          transition={
+            reduced
+              ? { duration: 0 }
+              : { type: "spring", stiffness: 210, damping: 30 }
+          }
         />
       </div>
 
@@ -301,6 +385,16 @@ export function ReviewSession() {
         <span className="tnum">
           {position} / {queue.length}
         </span>
+        {unsaved.length > 0 && (
+          <button
+            onClick={retrySaves}
+            className="hover:opacity-80 transition-opacity duration-[90ms]"
+            style={{ color: "var(--g-again)" }}
+          >
+            {unsaved.length} {plural(unsaved.length, "review")} unsaved —
+            retry
+          </button>
+        )}
         <Link
           href="/"
           className="flex items-center gap-1.5 hover:text-fg-2 transition-colors duration-[90ms]"
@@ -311,7 +405,19 @@ export function ReviewSession() {
       </div>
 
       <main className="flex-1 flex flex-col justify-center px-5 sm:px-6 py-6">
-        <article key={`${card.id}-${index}`} className="w-full max-w-[36rem] mx-auto anim-advance">
+        <motion.article
+          key={`${card.id}-${index}`}
+          className="w-full max-w-[36rem] mx-auto"
+          initial={reduced ? false : { opacity: 0, y: 12 }}
+          animate={leaving ? { opacity: 0, y: -12 } : { opacity: 1, y: 0 }}
+          transition={
+            reduced
+              ? { duration: 0 }
+              : leaving
+                ? { duration: ADVANCE_MS / 1000 - 0.02, ease: "easeIn" }
+                : ENTER_SPRING
+          }
+        >
           <p className="text-[11px] text-fg-3 tracking-[0.05em] mb-4">
             <span className="font-semibold text-fg-2">{card.topic_code}</span>
             <span className="mx-1.5">·</span>
@@ -322,13 +428,26 @@ export function ReviewSession() {
                 new
               </>
             )}
+            {leech.is_leech && (
+              <span
+                className="ml-2 inline-flex items-center rounded-xs px-1.5 py-px align-middle font-medium tracking-normal"
+                style={{
+                  color: "var(--g-hard)",
+                  background: "var(--g-hard-bg)",
+                }}
+              >
+                {typeof leech.lapses === "number"
+                  ? `${leech.lapses} ${plural(leech.lapses, "lapse")}`
+                  : "leech"}
+              </span>
+            )}
           </p>
 
           {solved ? (
             <ClozePrompt
               segments={solved}
               revealed={revealed}
-              className="text-[clamp(1.15rem,1rem+1.1vw,1.6rem)] leading-[1.55] font-normal"
+              className={`text-[clamp(1.15rem,1rem+1.1vw,1.6rem)] leading-[1.55] font-normal ${styles.clozeFlash}`}
             />
           ) : (
             <h1 className="text-[clamp(1.15rem,1rem+1.1vw,1.6rem)] leading-[1.5] font-normal">
@@ -337,63 +456,58 @@ export function ReviewSession() {
           )}
 
           {revealed && (!solved || !clozeAnswerIsRedundant) && (
-            <div className="mt-7 pt-6 border-t border-line anim-reveal">
+            <motion.div
+              className="mt-7 pt-6 border-t border-line"
+              initial={reduced ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={reduced ? { duration: 0 } : REVEAL_SPRING}
+            >
               <p className="label mb-2">{solved ? "Note" : "Answer"}</p>
               <p className="text-[clamp(1rem,0.95rem+0.5vw,1.2rem)] leading-[1.6] text-fg">
                 {card.answer}
               </p>
-            </div>
+            </motion.div>
           )}
 
           {revealed && solved && clozeAnswerIsRedundant && (
             <div className="mt-7 pt-6 border-t border-line" aria-hidden="true" />
           )}
-        </article>
+        </motion.article>
       </main>
-
-      {saveError && (
-        <div className="shrink-0 px-4 sm:px-6 pb-2">
-          <div className="max-w-[36rem] mx-auto flex items-baseline gap-3 text-[12px]">
-            <span
-              className="pl-2 border-l-2 text-fg-2"
-              style={{ borderColor: "var(--g-again)" }}
-            >
-              {unsaved.length} {plural(unsaved.length, "review")} not saved —{" "}
-              {saveError}
-            </span>
-            <button onClick={retrySaves} className="link text-fg-2 shrink-0">
-              Retry
-            </button>
-          </div>
-        </div>
-      )}
 
       <footer className="shrink-0 px-4 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <div className="max-w-[36rem] mx-auto">
           {!revealed ? (
-            <button
+            <motion.button
               onClick={() => setRevealed(true)}
-              className="w-full min-h-[64px] sm:min-h-[60px] rounded-sm border border-line bg-surface
-                hover:border-line-strong hover:bg-surface-hover transition-colors duration-[90ms]
+              whileTap={reduced ? undefined : TAP}
+              className="glow-behind w-full min-h-[64px] sm:min-h-[60px] rounded-sm border border-line bg-surface
+                shadow-elev-1 hover:border-line-strong hover:bg-surface-hover transition-colors duration-[90ms]
                 flex items-center justify-center gap-2.5 text-[14px] font-medium"
             >
               Show answer
               <Kbd>Space</Kbd>
-            </button>
+            </motion.button>
           ) : (
-            <div className="grid grid-cols-4 gap-1.5">
+            <motion.div
+              className="grid grid-cols-4 gap-1.5"
+              initial={reduced ? false : { opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={reduced ? { duration: 0 } : REVEAL_SPRING}
+            >
               {GRADES.map((g, i) => {
                 const preview = previews[i];
                 return (
-                  <button
+                  <motion.button
                     key={g.grade}
                     onClick={() => grade(g.grade)}
+                    whileTap={reduced ? undefined : TAP}
                     title={
                       preview?.estimated
                         ? "Estimated: the server did not send this card's memory state"
                         : undefined
                     }
-                    className="min-h-[64px] sm:min-h-[60px] rounded-sm border border-line bg-surface
+                    className="min-h-[64px] sm:min-h-[60px] rounded-sm border border-line bg-surface shadow-elev-1
                       hover:bg-surface-hover active:bg-surface-hover transition-colors duration-[90ms]
                       flex flex-col items-center justify-center gap-1 px-1"
                     style={{
@@ -410,10 +524,10 @@ export function ReviewSession() {
                         ? `${preview.estimated ? "≈" : ""}${formatInterval(preview.days)}`
                         : "—"}
                     </span>
-                  </button>
+                  </motion.button>
                 );
               })}
-            </div>
+            </motion.div>
           )}
         </div>
       </footer>
@@ -427,6 +541,39 @@ function Centered({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center px-6">
       <div className="w-full max-w-[36rem]">{children}</div>
+    </div>
+  );
+}
+
+/**
+ * The queue-building state, shaped exactly like the card screen it becomes:
+ * hairline, counter row, prompt lines, one big button. Nothing moves when the
+ * real thing arrives.
+ */
+export function ReviewSkeleton() {
+  return (
+    <div
+      className="min-h-dvh flex flex-col"
+      aria-busy="true"
+      aria-label="Building the queue"
+    >
+      <div className="h-[2px] w-full bg-line shrink-0" />
+      <div className="shrink-0 px-4 sm:px-6 h-9 flex items-center justify-between">
+        <Skeleton className="h-3 w-12" />
+        <Skeleton className="h-3 w-16" />
+      </div>
+      <main className="flex-1 flex flex-col justify-center px-5 sm:px-6 py-6">
+        <div className="w-full max-w-[36rem] mx-auto">
+          <Skeleton className="h-3 w-36 mb-5" />
+          <Skeleton className="h-6 w-full mb-3" />
+          <Skeleton className="h-6 w-4/5" />
+        </div>
+      </main>
+      <footer className="shrink-0 px-4 sm:px-6 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="max-w-[36rem] mx-auto">
+          <Skeleton className="h-[64px] sm:h-[60px] w-full" />
+        </div>
+      </footer>
     </div>
   );
 }
@@ -448,6 +595,7 @@ function Summary({
   loadingMore: boolean;
   onMore: () => void;
 }) {
+  const reduced = useReducedMotion();
   const counts = GRADES.map(
     (g) => log.filter((e) => e.grade === g.grade).length,
   );
@@ -468,79 +616,121 @@ function Summary({
   return (
     <div className="min-h-dvh flex items-center justify-center px-5 py-10">
       <div className="w-full max-w-[36rem]">
-        <h1 className="text-[18px] font-semibold">Session complete</h1>
-        <p className="text-[13px] text-fg-2 mt-1.5">
-          {total} {plural(total, "review")} across {distinct}{" "}
-          {plural(distinct, "card")} in {elapsed}
-          {total > 1 ? `, ${perMin.toFixed(1)} a minute` : ""}.
-        </p>
+        <Reveal>
+          <h1 className="text-[18px] font-semibold">Session complete</h1>
+          <p className="text-[13px] text-fg-2 mt-1.5">
+            {total} {plural(total, "review")} across {distinct}{" "}
+            {plural(distinct, "card")} in {elapsed}
+            {total > 1 ? `, ${perMin.toFixed(1)} a minute` : ""}.
+          </p>
+        </Reveal>
 
-        <div className="panel mt-5 overflow-hidden">
-          <div className="grid grid-cols-4 -ml-px">
-            {GRADES.map((g, i) => (
-              <div key={g.grade} className="border-l border-line px-3 py-2.5">
-                <div
-                  className="text-[22px] font-medium tnum leading-none"
-                  style={{ color: counts[i] > 0 ? `var(--g-${g.tone})` : undefined }}
-                >
-                  {counts[i]}
-                </div>
-                <div className="label mt-1.5">{g.label}</div>
+        <Reveal index={1}>
+          <div className="elev-2 rounded-md mt-5 overflow-hidden">
+            <div className="flex items-center gap-5 px-4 py-4">
+              <ProgressRing
+                value={held}
+                size={76}
+                thickness={5}
+                label={`Held ${Math.round(held * 100)}% of what you saw`}
+              >
+                <AnimatedNumber
+                  value={held * 100}
+                  format={formatPct}
+                  delay={0.15}
+                  className="tnum-display text-[17px] font-semibold"
+                />
+              </ProgressRing>
+              <div className="min-w-0">
+                <p className="text-[13px] font-medium">
+                  You held{" "}
+                  <span className="tnum">{Math.round(held * 100)}%</span> of
+                  what you saw.
+                </p>
+                <p className="text-[12.5px] text-fg-2 mt-1">
+                  {counts[0] > 0
+                    ? `${counts[0]} ${plural(counts[0], "card")} came back and will be due again soon.`
+                    : "Nothing lapsed."}
+                </p>
               </div>
-            ))}
-          </div>
+            </div>
 
-          <div className="border-t border-line px-3 py-2.5 text-[12.5px] text-fg-2">
-            You held {Math.round(held * 100)}% of what you saw.{" "}
-            {counts[0] > 0
-              ? `${counts[0]} ${plural(counts[0], "card")} came back and will be due again soon.`
-              : "Nothing lapsed."}
-          </div>
-
-          {byTopic.size > 0 && (
-            <div className="border-t border-line px-3 py-2.5 flex flex-wrap gap-x-4 gap-y-1 text-[12px]">
-              {[...byTopic.entries()].map(([code, n]) => (
-                <span key={code} className="text-fg-2">
-                  <span className="font-semibold text-fg tracking-[0.05em]">
-                    {code}
-                  </span>{" "}
-                  <span className="tnum">{n}</span>
-                </span>
+            <div className="grid grid-cols-4 -ml-px border-t border-line">
+              {GRADES.map((g, i) => (
+                <div key={g.grade} className="border-l border-line px-3 py-2.5">
+                  <div
+                    className="text-[22px] font-medium leading-none"
+                    style={{
+                      color: counts[i] > 0 ? `var(--g-${g.tone})` : undefined,
+                    }}
+                  >
+                    <AnimatedNumber
+                      value={counts[i]}
+                      delay={0.1 + i * 0.04}
+                      className="tnum-display"
+                    />
+                  </div>
+                  <div className="label mt-1.5">{g.label}</div>
+                </div>
               ))}
             </div>
-          )}
-        </div>
 
-        <p className="text-[12.5px] text-fg-2 mt-4">
-          {remaining > 0
-            ? capReached
-              ? `${remaining} more ${plural(remaining, "card")} fit under today's cap.`
-              : `${remaining} more ${plural(remaining, "card")} are waiting.`
-            : "That is everything scheduled for today."}
-        </p>
+            {byTopic.size > 0 && (
+              <div className="border-t border-line px-3 py-2.5 flex flex-wrap gap-x-4 gap-y-1 text-[12px]">
+                {[...byTopic.entries()].map(([code, n], i) => (
+                  <Reveal key={code} delay={0.2 + Math.min(i, 6) * 0.04}>
+                    <span className="text-fg-2">
+                      <span className="font-semibold text-fg tracking-[0.05em]">
+                        {code}
+                      </span>{" "}
+                      <span className="tnum">{n}</span>
+                    </span>
+                  </Reveal>
+                ))}
+              </div>
+            )}
+          </div>
+        </Reveal>
 
-        <div className="flex flex-wrap items-center gap-2 mt-4">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2.5 h-9 px-4 rounded-sm text-[13px] font-semibold
-              bg-accent text-accent-fg border border-accent hover:bg-accent-hover
-              hover:border-accent-hover transition-colors duration-[90ms]"
-          >
-            Back to today
-            <span className="opacity-55 text-[12px] leading-none">&crarr;</span>
-          </Link>
-          {remaining > 0 && (
-            <button
-              onClick={onMore}
-              disabled={loadingMore}
-              className="inline-flex items-center h-9 px-3 rounded-sm text-[13px] font-medium
-                border border-line bg-surface hover:border-line-strong hover:bg-surface-hover
-                transition-colors duration-[90ms] disabled:opacity-45"
+        <Reveal index={2}>
+          <p className="text-[12.5px] text-fg-2 mt-4">
+            {remaining > 0
+              ? capReached
+                ? `${remaining} more ${plural(remaining, "card")} fit under today's cap.`
+                : `${remaining} more ${plural(remaining, "card")} are waiting.`
+              : "That is everything scheduled for today."}
+          </p>
+
+          <div className="flex flex-wrap items-center gap-2 mt-4">
+            <motion.div
+              className="glow-behind inline-flex"
+              whileTap={reduced ? undefined : TAP}
             >
-              {loadingMore ? "Loading…" : "Keep going"}
-            </button>
-          )}
-        </div>
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2.5 h-9 px-4 rounded-sm text-[13px] font-semibold
+                  accent-grad glow-accent-hover border border-transparent"
+              >
+                Back to today
+                <span className="opacity-55 text-[12px] leading-none">
+                  &crarr;
+                </span>
+              </Link>
+            </motion.div>
+            {remaining > 0 && (
+              <motion.button
+                onClick={onMore}
+                disabled={loadingMore}
+                whileTap={reduced ? undefined : TAP}
+                className="inline-flex items-center h-9 px-3 rounded-sm text-[13px] font-medium
+                  border border-line bg-surface hover:border-line-strong hover:bg-surface-hover
+                  transition-colors duration-[90ms] disabled:opacity-45"
+              >
+                {loadingMore ? "Loading…" : "Keep going"}
+              </motion.button>
+            )}
+          </div>
+        </Reveal>
       </div>
     </div>
   );
