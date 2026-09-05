@@ -66,7 +66,9 @@ export default function DashboardPage() {
 
   return (
     <main className="mx-auto max-w-[1120px] px-4 py-5">
-      <div className="flex items-end justify-between gap-4 mb-3.5">
+      {/* Wraps rather than squeezing: on a phone the actions drop to their own
+          line instead of breaking the date across two. */}
+      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2 mb-3.5">
         <div>
           <h1 className="text-[18px] font-semibold leading-none">Today</h1>
           <p className="text-[13px] text-fg-2 mt-1.5 min-h-[1.25rem]">
@@ -74,22 +76,31 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {willFit > 0 ? (
+        <div className="flex items-center gap-4 shrink-0 ml-auto">
           <Link
-            href="/review"
-            className="inline-flex items-center gap-2.5 h-9 px-4 rounded-sm text-[13px] font-semibold
-              bg-accent text-accent-fg border border-accent hover:bg-accent-hover
-              hover:border-accent-hover transition-colors duration-[90ms]"
+            href="/test"
+            className="text-[13px] link text-fg-2 hover:text-fg whitespace-nowrap"
           >
-            Start review
-            <span className="tnum opacity-70">{willFit}</span>
-            <span className="opacity-55 text-[12px] leading-none">&crarr;</span>
+            Sit a test
           </Link>
-        ) : (
-          <span className="text-[13px] text-fg-3 h-9 flex items-center">
-            {res.loading ? "" : "Nothing to review"}
-          </span>
-        )}
+
+          {willFit > 0 ? (
+            <Link
+              href="/review"
+              className="inline-flex items-center gap-2.5 h-9 px-4 rounded-sm text-[13px] font-semibold
+                bg-accent text-accent-fg border border-accent hover:bg-accent-hover
+                hover:border-accent-hover transition-colors duration-[90ms]"
+            >
+              Start review
+              <span className="tnum opacity-70">{willFit}</span>
+              <span className="opacity-55 text-[12px] leading-none">&crarr;</span>
+            </Link>
+          ) : (
+            <span className="text-[13px] text-fg-3 h-9 flex items-center">
+              {res.loading ? "" : "Nothing to review"}
+            </span>
+          )}
+        </div>
       </div>
 
       {res.error && !res.data ? (

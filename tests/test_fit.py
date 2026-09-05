@@ -520,6 +520,30 @@ def test_load_latest_params_falls_back_on_an_unusable_row(tmp_path, params_json)
     assert load_latest_params(conn) == DEFAULT_PARAMS
 
 
+def test_load_latest_params_falls_back_on_out_of_bounds_weights(tmp_path):
+    """Finite, well-formed, and still unusable: a weight outside PARAM_BOUNDS.
+
+    Nothing `save_fit` writes can land outside the box, so such a row means the
+    table was hand-edited or corrupted. The promise is that the scheduler keeps
+    working — and without the bounds check it does not: `fsrs.next_state`
+    overflows, so every review of an already-seen card would raise.
+    """
+    absurd = list(DEFAULT_PARAMS)
+    absurd[8] = 1e6  # exp(w8) inside the success branch
+    with pytest.raises(OverflowError):
+        fsrs.next_state(fsrs.MemoryState(5.0, 5.0), 3, 5.0, absurd)
+
+    conn = make_db(tmp_path)
+    conn.execute("INSERT INTO fit_runs (ran_at,n_reviews,params_json,val_logloss)"
+                 " VALUES ('2026-08-01T00:00:00+00:00',900,?,0.3)",
+                 (json.dumps(absurd),))
+    conn.commit()
+
+    params = load_latest_params(conn)
+    assert params == DEFAULT_PARAMS
+    fsrs.next_state(fsrs.initial_state(3, params), 3, 5.0, params)  # must not raise
+
+
 def test_a_saved_fit_can_be_scheduled_with(tmp_path):
     """Whatever comes back must be usable by the model without special-casing."""
     conn = make_db(tmp_path)

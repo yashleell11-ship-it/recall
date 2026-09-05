@@ -1,3 +1,4 @@
+import hashlib
 import io
 import json
 
@@ -198,6 +199,19 @@ def test_file_with_no_extension_is_rejected(client):
     assert upload(client, "scan", b"whatever").status_code == 422
 
 
+@pytest.mark.parametrize("name", ["IMG_0431.PNG", "Scan.PDF", "Notes.TXT"])
+def test_uppercase_extensions_are_accepted(client, name):
+    """Phones and scanner apps produce these. Case is not a file format."""
+    payload = pdf_bytes(["Some text."]) if name.endswith(".PDF") else (
+        image_bytes() if name.endswith(".PNG") else b"Some text.")
+    assert upload(client, name, payload).status_code == 200
+
+
+def test_the_stored_filename_is_a_name_not_a_path(client, db_path):
+    upload(client, "../../etc/notes.txt", b"Recursion needs a base case.")
+    assert query(db_path, "SELECT filename FROM sources")[0]["filename"] == "notes.txt"
+
+
 def test_oversize_upload_is_rejected(client, monkeypatch):
     assert upload_routes.MAX_UPLOAD_BYTES == 25 * 1024 * 1024
     monkeypatch.setattr(upload_routes, "MAX_UPLOAD_BYTES", 1024)
@@ -243,6 +257,42 @@ def test_the_same_file_uploaded_twice_creates_one_source(client, db_path):
     assert "uploaded before" in second["warning"]
 
 
+def test_a_concurrent_second_upload_still_creates_one_source(client, db_path,
+                                                             monkeypatch):
+    """Two uploads in flight at once — a double-tapped Upload button.
+
+    Both requests can pass the dedupe SELECT before either one INSERTs, so the
+    UNIQUE(user_id, sha256) constraint is what actually holds the line. The
+    losing request must return the winner's source, not a 500.
+    """
+    data = image_bytes()
+    sha = hashlib.sha256(data).hexdigest()
+    real_store = upload_routes._store
+
+    def store_then_lose_the_race(payload, digest, ext):
+        # A different connection commits the same file mid-request, which is
+        # what a second in-flight upload does. Everything else stays real,
+        # including the recovery lookup after the constraint fires.
+        other = connect(db_path)
+        other.execute(
+            "INSERT INTO sources (user_id, topic_id, filename, kind, sha256,"
+            " added_at) VALUES (1, 1, 'board.png', 'image', ?, '2026-01-01T00:00:00Z')",
+            (digest,),
+        )
+        other.commit()
+        other.close()
+        return real_store(payload, digest, ext)
+
+    monkeypatch.setattr(upload_routes, "_store", store_then_lose_the_race)
+    resp = upload(client, "board.png", data)
+
+    assert resp.status_code == 200
+    sources = query(db_path, "SELECT id, sha256 FROM sources")
+    assert len(sources) == 1
+    assert sources[0]["sha256"] == sha
+    assert resp.json()["source_id"] == sources[0]["id"]
+
+
 def test_a_different_photo_is_a_different_source(client, db_path):
     upload(client, "a.png", image_bytes(size=(1200, 900)))
     upload(client, "b.png", image_bytes(size=(1201, 900)))
@@ -283,9 +333,15 @@ def test_upload_makes_zero_llm_calls(client, llm):
     def no_key():
         raise AssertionError("upload must work before any API key exists")
 
+    # An empty double blows up on any call at all. Proven on a throwaway rather
+    # than on `llm` itself, whose call log is the assertion below.
+    with pytest.raises(AssertionError):
+        FakeLlmClient([]).complete_json("system", "user")
+
     client.app.dependency_overrides[upload_routes.get_config] = no_key
     assert upload(client, "notes.png", image_bytes()).status_code == 200
     assert upload(client, "notes.pdf", pdf_bytes(["Some text."])).status_code == 200
+    assert upload(client, "notes.txt", b"Some text.").status_code == 200
     assert llm.calls == []
 
 
@@ -436,3 +492,67 @@ def test_generate_without_an_api_key_says_so(client, monkeypatch):
     resp = client.post(f"/api/sources/{source_id}/generate")
     assert resp.status_code == 503
     assert "DEEPSEEK_API_KEY" in resp.json()["detail"]
+
+
+# --- resuming a run that stopped on the cost cap -------------------------------
+
+LONG_TEXT = " ".join(
+    f"Sentence number {i} explains a concept about pointers and memory."
+    for i in range(120)
+)
+
+
+def test_resuming_a_stopped_run_keeps_one_gen_run_per_source(client, db_path):
+    """A source that hit the cost cap is generated again — one row, not two.
+
+    /api/sources LEFT JOINs gen_runs without aggregating, so a second row for
+    the same source lists that source twice, each showing half the real totals.
+    """
+    source_id = upload(client, "big.txt", LONG_TEXT.encode()).json()["source_id"]
+    assert len(query(db_path, "SELECT id FROM chunks")) >= 2
+
+    # A cap this small stops after the first chunk, leaving the rest ungenerated.
+    capped = load_config({"DEEPSEEK_API_KEY": "k", "RECALL_MAX_COST_USD": "0.000001"})
+    client.app.dependency_overrides[upload_routes.get_config] = lambda: capped
+    responses = accept_all("What does a pointer store?", "an address",
+                           "Sentence number 0 explains a concept about pointers")
+    client.app.dependency_overrides[upload_routes.get_llm_client] = \
+        lambda: FakeLlmClient(responses * 40)
+
+    first = client.post(f"/api/sources/{source_id}/generate").json()
+    assert first["stopped_early"] is True
+    assert query(db_path, "SELECT COUNT(*) AS n FROM chunks"
+                          " WHERE generated_at IS NULL")[0]["n"] > 0
+
+    client.app.dependency_overrides[upload_routes.get_llm_client] = \
+        lambda: FakeLlmClient(responses * 40)
+    second = client.post(f"/api/sources/{source_id}/generate").json()
+
+    runs = query(db_path, "SELECT prompt_tokens, cost_estimate, cards_accepted,"
+                          " cards_rejected FROM gen_runs")
+    assert len(runs) == 1, "a resumed run must not add a second gen_run row"
+    # The one row carries both passes, so the sources page shows the true bill.
+    cards = query(db_path, "SELECT state FROM cards")
+    assert runs[0]["cards_accepted"] + runs[0]["cards_rejected"] == len(cards)
+    # abs, not rel: each response rounds its own cost to 6 places.
+    assert runs[0]["cost_estimate"] == pytest.approx(
+        first["cost_usd"] + second["cost_usd"], abs=2e-6)
+    assert runs[0]["cost_estimate"] > first["cost_usd"]
+
+
+def test_a_file_that_cannot_be_read_leaves_nothing_on_disk(client, tmp_path):
+    """A 25 MB photo that fails to decode must not sit in uploads/ forever."""
+    def boom(path):
+        raise ValueError("not a picture")
+
+    client.app.dependency_overrides[upload_routes.get_ocr] = lambda: boom
+    assert upload(client, "bad.png", image_bytes()).status_code == 422
+    uploads = tmp_path / "uploads"
+    left = list(uploads.iterdir()) if uploads.exists() else []
+    assert left == [], f"unreadable upload left behind: {left}"
+
+
+def test_a_readable_file_is_kept_on_disk(client, tmp_path):
+    """The stored original is how a vision API re-reads the photo later."""
+    upload(client, "notes.png", image_bytes())
+    assert len(list((tmp_path / "uploads").iterdir())) == 1

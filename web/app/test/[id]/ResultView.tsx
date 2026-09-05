@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Kbd, KindTag } from "@/components/ui";
 import { errorMessage, postExplain } from "@/lib/api";
 import { formatDuration, plural } from "@/lib/format";
@@ -30,10 +30,13 @@ export function ResultView({
   expired: boolean;
 }) {
   // Wrong before partial: a question you missed entirely is the one to read first.
-  const missed: { q: TestQuestion; partial: boolean }[] = [
-    ...result.wrong.map((q) => ({ q, partial: false })),
-    ...result.partial.map((q) => ({ q, partial: true })),
-  ];
+  const missed = useMemo<{ q: TestQuestion; partial: boolean }[]>(
+    () => [
+      ...result.wrong.map((q) => ({ q, partial: false })),
+      ...result.partial.map((q) => ({ q, partial: true })),
+    ],
+    [result.wrong, result.partial],
+  );
 
   const [explain, setExplain] = useState<Record<number, ExplainState>>({});
   const [cursor, setCursor] = useState(0);
@@ -44,11 +47,18 @@ export function ResultView({
       ? (result.obtained_marks / result.total_marks) * 100
       : 0;
 
+  // The de-duplication guard has to sit out here rather than inside the state
+  // updater: returning `prev` from an updater does not stop the request below,
+  // so holding `e` down on a row would have fired a paid call per keypress.
+  const asked = useRef<Set<number>>(new Set());
+
   const ask = useCallback((cardId: number) => {
-    setExplain((prev) => {
-      if (prev[cardId]?.loading || prev[cardId]?.data) return prev;
-      return { ...prev, [cardId]: { loading: true, data: null, error: null } };
-    });
+    if (asked.current.has(cardId)) return;
+    asked.current.add(cardId);
+    setExplain((prev) => ({
+      ...prev,
+      [cardId]: { loading: true, data: null, error: null },
+    }));
     postExplain(cardId)
       .then((data) =>
         setExplain((prev) => ({
@@ -56,12 +66,14 @@ export function ResultView({
           [cardId]: { loading: false, data, error: null },
         })),
       )
-      .catch((err: unknown) =>
+      .catch((err: unknown) => {
+        // Released, so "Try again" can genuinely try again.
+        asked.current.delete(cardId);
         setExplain((prev) => ({
           ...prev,
           [cardId]: { loading: false, data: null, error: errorMessage(err) },
-        })),
-      );
+        }));
+      });
   }, []);
 
   useEffect(() => {
@@ -200,9 +212,10 @@ export function ResultView({
           </div>
           <p className="text-[13px] text-fg-2 mt-2 pl-3 max-w-prose">
             Each explanation is written from the same page the card came from,
-            and has to quote it. Read the {missed.length}{" "}
-            {plural(missed.length, "one")} below before the next session — these
-            are already scheduled to come back soon.
+            and has to quote it. Read{" "}
+            {missed.length === 1 ? "it" : `all ${missed.length}`} before the next
+            session — {plural(missed.length, "this is", "these are")} already
+            scheduled to come back soon.
           </p>
 
           <ul className="panel mt-3.5 overflow-hidden">

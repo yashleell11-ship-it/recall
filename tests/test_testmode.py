@@ -1,3 +1,6 @@
+import random
+import threading
+import time
 from datetime import datetime, timedelta, timezone
 
 import pytest
@@ -6,6 +9,7 @@ from fastapi.testclient import TestClient
 from recall.api import tests_routes
 from recall.api.app import create_app, get_conn
 from recall.db import connect, init_db
+from recall.testmode import service
 from recall.testmode.assembly import CandidateCard, assemble
 from recall.testmode.marks import marks_for_card
 
@@ -54,8 +58,9 @@ def seed(db_path: str, topics: list[tuple[str, int]]) -> None:
 
 
 def make_client(db_path: str) -> TestClient:
+    # The real app, wired as it ships: if app.py ever stops including the test
+    # router, these tests must fail rather than quietly mount it themselves.
     app = create_app()
-    app.include_router(tests_routes.router)  # what the real app does
 
     def override():
         conn = connect(db_path)
@@ -186,6 +191,75 @@ def test_a_deck_with_no_one_mark_cards_still_lands_on_the_target():
     assert paper.short is False
     ids = [c.card_id for c in paper.cards]
     assert len(ids) == len(set(ids))
+
+
+def test_a_paper_needing_two_questions_swapped_still_lands_on_the_target():
+    """1,1,5,5 marks against 10: greedy fills 1+1+5 = 7 and no single swap saves
+    it, but 5+5 is sitting right there."""
+    deck = [CandidateCard(1, "A", 1), CandidateCard(2, "A", 1),
+            CandidateCard(3, "A", 5), CandidateCard(4, "A", 5)]
+    paper = assemble(deck, 10, now=now())
+    assert paper.total_marks == 10
+    assert paper.short is False
+    assert sorted(c.card_id for c in paper.cards) == [3, 4]
+
+
+def test_landing_on_the_target_never_costs_a_topic_its_place():
+    """Greedy stalls on this deck and the swap that lands it on 10 marks can be
+    paid for by dropping T2 entirely. Buying the last mark with a subject is not
+    a trade worth making."""
+    deck = [CandidateCard(1, "T0", 1), CandidateCard(2, "T0", 2),
+            CandidateCard(3, "T1", 2), CandidateCard(4, "T1", 5),
+            CandidateCard(5, "T2", 2), CandidateCard(6, "T2", 5)]
+    paper = assemble(deck, 10, now=now())
+    assert paper.total_marks == 10
+    assert {c.topic_code for c in paper.cards} == {"T0", "T1", "T2"}
+
+
+def test_a_big_deck_is_assembled_exactly_and_fast():
+    """The exact search is bounded by the target, not by the size of the deck."""
+    deck = ([CandidateCard(i, "A", 2) for i in range(1, 4001)]
+            + [CandidateCard(i, "B", 5) for i in range(4001, 8001)])
+    started = time.perf_counter()
+    paper = assemble(deck, 101, now=now())  # odd target: needs 2s and 5s together
+    assert paper.total_marks == 101
+    assert time.perf_counter() - started < 2.0
+
+
+def test_assembly_hits_every_reachable_target_on_random_decks():
+    """The property that matters: exact whenever the deck allows, never over,
+    never a repeat. Seeded, so a failure is reproducible."""
+    rng = random.Random(20260905)
+    for _ in range(200):
+        cid, deck = 0, []
+        for topic in range(rng.randint(1, 4)):
+            for _ in range(rng.randint(0, 20)):
+                cid += 1
+                deck.append(CandidateCard(
+                    cid, f"T{topic}", rng.choice([1, 1, 2, 5]),
+                    stability=rng.choice([None, 0.4, 3.0, 300.0]),
+                    difficulty=rng.choice([None, 1.2, 5.0, 9.8]),
+                    due_at=ago(rng.uniform(-30, 30))))
+        target = rng.choice([7, 13, 30, 100])
+        paper = assemble(deck, target, now=now())
+        ids = [c.card_id for c in paper.cards]
+
+        assert len(ids) == len(set(ids)), "a card may never be asked twice"
+        assert sum(c.marks for c in paper.cards) == paper.total_marks
+        assert paper.total_marks <= target, "a paper never overshoots its target"
+        assert paper.short is (paper.total_marks < target)
+        if paper.short and reachable([c.marks for c in deck], target):
+            raise AssertionError(
+                f"stopped at {paper.total_marks} of {target} though the deck "
+                f"can make it: {sorted(c.marks for c in deck)}")
+
+
+def reachable(marks: list[int], target: int) -> bool:
+    """Independent check: can any subset of these marks sum to the target?"""
+    sums = {0}
+    for m in marks:
+        sums |= {s + m for s in sums if s + m <= target}
+    return target in sums
 
 
 def test_a_target_no_subset_can_make_is_reported_short():
@@ -575,6 +649,48 @@ def test_submitting_twice_does_not_double_count(client, db_path):
     assert second == first
     assert reviews(db_path) == after_first
     assert len(after_first) == 1
+
+
+def test_two_submits_landing_at_once_record_one_round_of_reviews(db_path):
+    """A double tap on the button over a slow connection puts two submits in
+    flight together. Reading submitted_at and then writing it would let both
+    decide they were first and grade the paper into the scheduler twice."""
+    conn = connect(db_path)
+    paper = service.create_test(conn, 1, "class30")
+    tid = paper["test_id"]
+    answered = paper["questions"][:4]
+    for q in answered:
+        service.record_answer(conn, 1, tid, q["ordinal"], "correct", 5)
+    conn.close()
+
+    start = threading.Barrier(4)
+    results, errors = [], []
+
+    def submit():
+        own = connect(db_path)
+        try:
+            start.wait()
+            results.append(service.submit_test(own, 1, tid))
+        except Exception as exc:  # reported, not swallowed
+            errors.append(repr(exc))
+        finally:
+            own.close()
+
+    threads = [threading.Thread(target=submit) for _ in range(4)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+
+    expected = float(sum(q["marks"] for q in answered))
+    assert errors == []
+    assert len(results) == 4
+    assert {r["obtained_marks"] for r in results} == {expected}
+    assert len(reviews(db_path)) == len(answered), "one round of reviews, not four"
+    conn = connect(db_path)
+    reps = [r["reps"] for r in conn.execute("SELECT reps FROM card_state")]
+    conn.close()
+    assert reps == [1] * len(answered), "a card must not be graded twice"
 
 
 def test_answering_after_submitting_is_refused(client):

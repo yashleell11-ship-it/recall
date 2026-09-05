@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { MOCK } from "@/lib/api";
 import { hasModifier, isTypingTarget } from "@/lib/keys";
 import { ShortcutsOverlay } from "./Shortcuts";
@@ -11,7 +18,9 @@ import { Kbd } from "./ui";
 
 const NAV = [
   { href: "/", label: "Today" },
+  { href: "/test", label: "Test" },
   { href: "/approve", label: "Approve" },
+  { href: "/upload", label: "Upload" },
   { href: "/sources", label: "Sources" },
   { href: "/settings", label: "Settings" },
 ];
@@ -20,21 +29,50 @@ const NAV = [
 const GOTO: Record<string, string> = {
   d: "/",
   r: "/review",
+  t: "/test",
   a: "/approve",
+  u: "/upload",
   o: "/sources",
   s: "/settings",
 };
+
+const FocusContext = createContext<((on: boolean) => void) | null>(null);
+
+/**
+ * Claim the whole viewport while the calling component is mounted with
+ * `active`: the header hides, exactly as it does on /review.
+ *
+ * A route cannot decide this on its own because /test/[id] is two screens —
+ * the paper, which wants nothing around it, and the result afterwards, which
+ * wants the nav back.
+ */
+export function useFocusMode(active: boolean) {
+  const claim = useContext(FocusContext);
+  useEffect(() => {
+    if (!claim) return;
+    claim(active);
+    return () => claim(false);
+  }, [claim, active]);
+}
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [help, setHelp] = useState(false);
+  const [claimed, setClaimed] = useState(false);
   const { mode, cycle } = useThemeMode();
 
   const pendingG = useRef(false);
   const gTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const activeNav = useRef<HTMLAnchorElement>(null);
 
   const closeHelp = useCallback(() => setHelp(false), []);
+
+  // Six destinations do not fit across a phone, so the strip scrolls — and the
+  // page you are on has to be the part of it you can see.
+  useEffect(() => {
+    activeNav.current?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }, [pathname]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -90,11 +128,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("keydown", onKey, { capture: true });
   }, [router, cycle, help]);
 
-  // Focus mode: the review screen carries no chrome at all.
-  const focus = pathname === "/review";
+  // Focus mode: the review screen carries no chrome at all, and a paper in
+  // progress claims the same treatment for as long as it is being sat.
+  const focus = pathname === "/review" || claimed;
 
   return (
-    <>
+    <FocusContext.Provider value={setClaimed}>
       {!focus && (
         <header className="border-b border-line bg-surface sticky top-0 z-30">
           <div className="mx-auto max-w-[1120px] px-4 h-11 flex items-center gap-5">
@@ -115,6 +154,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <Link
                     key={item.href}
                     href={item.href}
+                    ref={active ? activeNav : undefined}
                     aria-current={active ? "page" : undefined}
                     className={`px-2 h-11 flex items-center text-[13px] whitespace-nowrap
                       border-b-2 -mb-px transition-colors duration-[90ms]
@@ -156,6 +196,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {children}
 
       {help && <ShortcutsOverlay onClose={closeHelp} />}
-    </>
+    </FocusContext.Provider>
   );
 }

@@ -242,3 +242,61 @@ def test_service_raises_lookup_error_for_an_unknown_card(db_path):
         explain_card(conn, FakeLlmClient([ok_body()]), user_id=1, card_id=999,
                      model="m")
     conn.close()
+
+
+def test_a_verbatim_quote_from_a_different_chunk_is_rejected(make_client):
+    """Grounded means grounded in THIS card's chunk. OTHER_QUOTE is verbatim
+    text from chunk 2, so a check that searched the whole source, or any chunk,
+    would pass it for a card built from chunk 1."""
+    client, _ = make_client([ok_body(quote=OTHER_QUOTE)])
+    r = client.post("/api/teach/explain", json={"card_id": 1})
+    assert r.status_code == 422
+    assert r.json()["detail"] == "cited quote does not appear in the source passage"
+
+
+def real_client(db_path):
+    """A client with only the connection overridden, so the route's own get_llm
+    and DeferredClient run. Every other test in this file overrides get_llm,
+    which leaves the production wiring untested."""
+    app = FastAPI()
+    app.include_router(router)
+
+    def override_conn():
+        conn = connect(db_path)
+        try:
+            yield conn
+        finally:
+            conn.close()
+
+    app.dependency_overrides[get_conn] = override_conn
+    return TestClient(app, raise_server_exceptions=False)
+
+
+def test_a_cached_explanation_is_served_without_an_api_key(db_path, monkeypatch):
+    """The whole point of deferring the client: a card you already paid for
+    must come back on a machine with no key and no network."""
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    conn = connect(db_path)
+    conn.execute(
+        "INSERT INTO card_explanations (card_id, explanation, source_quote,"
+        " model, created_at) VALUES (1,?,?,'deepseek-chat','2026-09-01')",
+        (PROSE, QUOTE))
+    conn.commit()
+    conn.close()
+
+    r = real_client(db_path).post("/api/teach/explain", json={"card_id": 1})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["cached"] is True
+    assert body["explanation"] == PROSE
+    assert body["page_ref"] == "p7"
+
+
+def test_a_missing_api_key_is_503_with_a_reason_not_a_bare_500(db_path,
+                                                               monkeypatch):
+    """An uncached card does need the key. Say which key, with a detail body —
+    the contract forbids answering an error with anything else."""
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    r = real_client(db_path).post("/api/teach/explain", json={"card_id": 1})
+    assert r.status_code == 503
+    assert "DEEPSEEK_API_KEY" in r.json()["detail"]

@@ -43,7 +43,15 @@ class DeferredClient:
 
     def complete_json(self, system: str, user: str) -> LlmResponse:
         if self._inner is None:
-            self._inner = DeepSeekClient(load_config())
+            try:
+                cfg = load_config()
+            except RuntimeError as exc:
+                # Deferring the client means this route, unlike the upload
+                # routes, cannot fail the missing key at dependency time. Say
+                # so plainly instead of letting it become a bare 500 with a
+                # plain-text body, which the contract forbids.
+                raise HTTPException(status_code=503, detail=str(exc)) from exc
+            self._inner = DeepSeekClient(cfg)
         return self._inner.complete_json(system, user)
 
 

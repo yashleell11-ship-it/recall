@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { ClozePrompt, clozeShowsAnswer } from "@/components/CardText";
 import { Kbd } from "@/components/ui";
 import { errorMessage, getQueue, getSettings, postReview } from "@/lib/api";
 import { parseCloze } from "@/lib/cloze";
@@ -278,12 +279,7 @@ export function ReviewSession() {
   const position = index + 1;
   const progress = (index / queue.length) * 100;
   const solved = card.cloze_text ? parseCloze(card.cloze_text) : null;
-  const clozeAnswerIsRedundant =
-    !!solved &&
-    solved
-      .map((s) => s.text)
-      .join("")
-      .includes(card.answer.trim());
+  const clozeAnswerIsRedundant = !!solved && clozeShowsAnswer(solved, card.answer);
 
   return (
     <div className="min-h-dvh flex flex-col">
@@ -329,39 +325,11 @@ export function ReviewSession() {
           </p>
 
           {solved ? (
-            <p className="text-[clamp(1.15rem,1rem+1.1vw,1.6rem)] leading-[1.55] font-normal">
-              {solved.map((seg, i) =>
-                seg.kind === "text" ? (
-                  <span key={i}>{seg.text}</span>
-                ) : revealed ? (
-                  <span
-                    key={i}
-                    className="border-b-2 border-fg font-medium anim-reveal"
-                  >
-                    {seg.text}
-                  </span>
-                ) : (
-                  <span
-                    key={i}
-                    className="inline-block border-b-2 border-fg-3 align-bottom text-center"
-                    style={{
-                      minWidth: `${Math.min(
-                        16,
-                        Math.max(3.5, seg.text.length * 0.6),
-                      )}ch`,
-                    }}
-                  >
-                    {seg.hint ? (
-                      <span className="text-fg-3 italic text-[0.8em]">
-                        {seg.hint}
-                      </span>
-                    ) : (
-                      <span aria-label="blank">&nbsp;</span>
-                    )}
-                  </span>
-                ),
-              )}
-            </p>
+            <ClozePrompt
+              segments={solved}
+              revealed={revealed}
+              className="text-[clamp(1.15rem,1rem+1.1vw,1.6rem)] leading-[1.55] font-normal"
+            />
           ) : (
             <h1 className="text-[clamp(1.15rem,1rem+1.1vw,1.6rem)] leading-[1.5] font-normal">
               {card.question}

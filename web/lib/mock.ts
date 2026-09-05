@@ -1404,6 +1404,7 @@ function toPaper(t: MockTest): TestPaper {
 
 export async function getTest(id: number): Promise<TestPaper> {
   await delay();
+  seedPast();
   const t = tests.get(id);
   if (!t) throw new ApiError(404, `/api/tests/${id}`, "No such test.");
   return toPaper(t);
@@ -1478,40 +1479,80 @@ export async function submitTest(id: number): Promise<TestResult> {
   };
 }
 
-/** Two finished papers from earlier in the term, plus whatever this tab made. */
-const PAST_TESTS: TestSummary[] = [
-  {
-    id: 39,
-    kind: "class30",
-    started_at: `${isoDay(-9)}T09:12:00+05:30`,
-    obtained_marks: 21,
-    total_marks: 30,
-    duration_s: 1985,
-  },
-  {
-    id: 40,
-    kind: "endterm100",
-    started_at: `${isoDay(-3)}T14:05:00+05:30`,
-    obtained_marks: 68.5,
-    total_marks: 100,
-    duration_s: 8760,
-  },
-];
+/**
+ * Two finished papers from earlier in the term.
+ *
+ * They are entries in the same map a live paper lives in, not summary rows, so
+ * `GET /api/tests/{id}` answers for them exactly as the server does: the paper
+ * comes back with its verdicts, and the client can see it was already
+ * submitted rather than offering to sit it again.
+ */
+const PAST: { id: number; kind: TestKind; startedAt: string; duration: number; seed: number }[] =
+  [
+    {
+      id: 39,
+      kind: "class30",
+      startedAt: `${isoDay(-9)}T09:12:00+05:30`,
+      duration: 1985,
+      seed: 7,
+    },
+    {
+      id: 40,
+      kind: "endterm100",
+      startedAt: `${isoDay(-3)}T14:05:00+05:30`,
+      duration: 8760,
+      seed: 13,
+    },
+  ];
+
+let seeded = false;
+
+function seedPast() {
+  if (seeded) return;
+  seeded = true;
+  const s = store();
+  for (const p of PAST) {
+    const questions = assemble(s.queue.slice(), PAPERS[p.kind].target);
+    // Deterministic, and roughly the shape of a real attempt: mostly right,
+    // a handful missed, one or two never attempted.
+    const rand = lcg(p.seed);
+    let obtained = 0;
+    for (const q of questions) {
+      const r = rand();
+      const verdict: Verdict =
+        r < 0.17 ? "wrong" : r < 0.3 && q.marks >= 2 ? "partial" : r < 0.34 ? "skipped" : "correct";
+      q.verdict = verdict;
+      obtained += scoreFor(verdict, q.marks);
+    }
+    tests.set(p.id, {
+      id: p.id,
+      kind: p.kind,
+      started_at: p.startedAt,
+      startedMs: Date.parse(p.startedAt),
+      time_limit_s: PAPERS[p.kind].limit,
+      questions,
+      seconds: {},
+      submitted: true,
+      obtained,
+      duration_s: p.duration,
+    });
+  }
+}
 
 export async function getTests(): Promise<TestSummary[]> {
   await delay();
-  const live: TestSummary[] = [...tests.values()].map((t) => ({
-    id: t.id,
-    kind: t.kind,
-    started_at: t.started_at,
-    obtained_marks: t.obtained,
-    total_marks: t.questions.reduce((n, q) => n + q.marks, 0),
-    duration_s: t.duration_s,
-  }));
+  seedPast();
   // Newest first, exactly as a server ordering by started_at desc would.
-  return [...live, ...PAST_TESTS].sort((a, b) =>
-    a.started_at < b.started_at ? 1 : -1,
-  );
+  return [...tests.values()]
+    .map((t) => ({
+      id: t.id,
+      kind: t.kind,
+      started_at: t.started_at,
+      obtained_marks: t.obtained,
+      total_marks: t.questions.reduce((n, q) => n + q.marks, 0),
+      duration_s: t.duration_s,
+    }))
+    .sort((a, b) => (a.started_at < b.started_at ? 1 : -1));
 }
 
 /* --- teaching ------------------------------------------------------------ */

@@ -103,6 +103,18 @@ export function percent(value: number, digits = 0): string {
   return `${(value * 100).toFixed(digits)}%`;
 }
 
+/**
+ * 812 kB. Binary units under decimal names, the way a phone's file manager
+ * writes them — and the way the 25 MB upload limit is actually enforced, so
+ * "25.4 MB" on screen really is over the line.
+ */
+export function fileSize(bytes: number): string {
+  if (!Number.isFinite(bytes) || bytes < 0) return "—";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} kB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export function plural(n: number, one: string, many = `${one}s`): string {
   return n === 1 ? one : many;
 }

@@ -10,10 +10,12 @@ stability, overdue — because those are the ones you cannot yet answer. But eve
 fourth pick is taken from the strong end instead. A paper made only of your worst
 cards is punishment, not assessment, and its score means nothing.
 
-**Exactness.** The fill is greedy and hits the mark target exactly whenever the
-deck allows it: a card that would overshoot the remaining budget is stepped over,
-not forced in. When the deck genuinely cannot reach the target the paper comes
-back short and says so, rather than being padded with repeats.
+**Exactness.** The paper hits its mark target exactly whenever any subset of the
+deck can. The stratified fill is greedy — a card that would overshoot the
+remaining budget is stepped over, not forced in — and when greedy stalls short a
+subset-sum finishes the job, swapping out as few of its questions as it can.
+When the deck genuinely cannot reach the target the paper comes back short and
+says so, rather than being padded with repeats.
 
 This module is pure: it takes candidates and returns a selection. No database.
 """
@@ -21,6 +23,7 @@ This module is pure: it takes candidates and returns a selection. No database.
 from __future__ import annotations
 
 import math
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -154,48 +157,97 @@ def _top_up(orders: dict[str, list[CandidateCard]], used: set[int],
     return picked, gap
 
 
-def _exact_fill(pool: list[CandidateCard], need: int,
-                now: datetime) -> list[CandidateCard] | None:
-    """The weakest subset of `pool` summing to exactly `need`, or None.
+def _prune(deck: list[CandidateCard], target: int,
+           score: Callable[[CandidateCard], tuple[int, float]],
+           ) -> list[CandidateCard]:
+    """Keep only the cards an exact-sum paper could ever want.
 
-    Marks are small integers and `need` is at most a paper's worth of them, so a
-    subset-sum pass over the leftovers is cheap and settles exactness where the
-    greedy fill cannot see it.
+    A subset summing to `target` holds at most `target // marks` cards of any one
+    mark value, and swapping a lower-scoring card for a higher-scoring one of the
+    same value never makes the paper worse. So the best `target // marks` of each
+    value are enough, and the search below stays the same size on a deck of
+    twenty thousand cards as on a deck of two hundred.
     """
-    # best[sum] = (total weakness, indices into pool)
-    best: dict[int, tuple[float, tuple[int, ...]]] = {0: (0.0, ())}
-    for idx, card in enumerate(pool):
-        value = weakness(card, now)
-        # Descending, over a snapshot, so each card is used at most once.
+    by_marks: dict[int, list[CandidateCard]] = {}
+    for card in deck:
+        by_marks.setdefault(card.marks, []).append(card)
+    kept: list[CandidateCard] = []
+    for marks, cards in sorted(by_marks.items()):
+        cards.sort(key=lambda c: (-score(c)[0], -score(c)[1], c.card_id))
+        kept.extend(cards[:target // marks])
+    return kept
+
+
+def _subset(deck: list[CandidateCard], target: int,
+            score: Callable[[CandidateCard], tuple[int, float]],
+            ) -> list[CandidateCard] | None:
+    """The highest-scoring subset of `deck` summing to exactly `target`.
+
+    Marks are small integers and a paper is a few dozen of them, so this settles
+    exactness outright instead of adding another layer of guessing. Returns None
+    when no subset sums to the target at all — arithmetic, not a bug.
+    """
+    # best[marks so far] = (score, the cards that got there)
+    best: dict[int, tuple[tuple[int, float], tuple[CandidateCard, ...]]] = {
+        0: ((0, 0.0), ())}
+    for card in _prune(deck, target, score):
+        kept_here, weak_here = score(card)
+        # Descending, over a snapshot: every sum written this pass is above every
+        # sum still to be read, so no card is ever used twice.
         for reached in sorted(best, reverse=True):
             total = reached + card.marks
-            if total > need:
+            if total > target:
                 continue
-            scored = best[reached][0] + value
+            (kept, weak), chosen = best[reached]
+            scored = (kept + kept_here, weak + weak_here)
             if total not in best or scored > best[total][0]:
-                best[total] = (scored, best[reached][1] + (idx,))
-    if need not in best:
+                best[total] = (scored, chosen + (card,))
+    if target not in best:
         return None
-    return [pool[i] for i in best[need][1]]
+    return list(best[target][1])
 
 
-def _repair(picked: list[CandidateCard], pool: list[CandidateCard], gap: int,
-            now: datetime) -> tuple[list[CandidateCard], int]:
-    """Close a small gap by dropping one question and refilling the hole exactly.
+def _anchors(picked: list[CandidateCard], now: datetime) -> list[CandidateCard]:
+    """The one question each topic on the greedy paper keeps no matter what."""
+    strongest_claim: dict[str, CandidateCard] = {}
+    for card in sorted(picked, key=lambda c: (-weakness(c, now), c.card_id)):
+        strongest_claim.setdefault(card.topic_code, card)
+    return [strongest_claim[code] for code in sorted(strongest_claim)]
 
-    Greedy fill can stall a few marks short on a deck with no 1-mark cards: a gap
-    of 1 cannot be paid for out of 2- and 5-mark leftovers. Dropping the question
-    we least needed to ask opens a hole those leftovers often fit exactly, which
-    is the difference between a 30-mark paper and a 29-mark one. One drop is
-    enough for the marks this app issues; if it is not, the paper is short and
-    says so rather than quietly missing the target.
+
+def _exact_paper(picked: list[CandidateCard], pool: list[CandidateCard],
+                 target: int, now: datetime) -> list[CandidateCard] | None:
+    """The greedy paper, adjusted to land exactly on `target`, or None.
+
+    Greedy fill can stall short, and not only by a mark it could pay off: a deck
+    of 1,1,5,5 marks fills to 7 against a target of 10 and then no single swap
+    reaches it, though 5+5 sits right there.
+
+    Two things have to survive that adjustment. Each topic the greedy paper
+    reached keeps its weakest question, anchored, because buying the last mark by
+    dropping a subject off the paper is not a trade worth making. Beyond the
+    anchors the score keeps as many of the greedy paper's other questions as it
+    can, and prefers weak cards to break ties, so the paper that comes back is the
+    one it built with the fewest questions swapped out.
+
+    Only if no anchored paper hits the target at all does the search run again
+    unanchored: an exact paper that is thin on one topic still beats a short one.
     """
-    for drop in sorted(picked, key=lambda c: (weakness(c, now), c.card_id)):
-        chosen = _exact_fill(pool, gap + drop.marks, now)
-        if chosen is not None:
-            kept = [c for c in picked if c.card_id != drop.card_id]
-            return kept + chosen, 0
-    return picked, gap
+    on_paper = {c.card_id for c in picked}
+
+    def score(card: CandidateCard) -> tuple[int, float]:
+        return (1 if card.card_id in on_paper else 0, weakness(card, now))
+
+    deck = picked + pool
+    anchors = _anchors(picked, now)
+    anchored_marks = sum(c.marks for c in anchors)
+    if anchored_marks <= target:
+        held = {c.card_id for c in anchors}
+        rest = _subset([c for c in deck if c.card_id not in held],
+                       target - anchored_marks, score)
+        if rest is not None:
+            return anchors + rest
+    return _subset(deck, target, score)
 
 
 def shortfall_note(total: int, target: int, count: int) -> str | None:
@@ -240,7 +292,9 @@ def assemble(candidates: list[CandidateCard], target_marks: int | None, *,
     picked.extend(extra)
     if gap > 0:
         pool = [c for c in candidates if c.card_id not in used]
-        picked, gap = _repair(picked, pool, gap, now)
+        exact = _exact_paper(picked, pool, target_marks, now)
+        if exact is not None:
+            picked, gap = exact, 0
     total = target_marks - gap
 
     return _paper(_ordered(picked), total, target_marks)

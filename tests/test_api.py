@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -322,3 +324,42 @@ def test_new_cards_are_never_leeches(client):
     assert card["is_new"] is True
     assert card["is_leech"] is False
     assert card["lapses"] == 0
+
+
+def test_startup_adds_tables_a_newer_release_introduced(tmp_path):
+    """A database created before a feature shipped must gain that feature's tables
+    on boot, not 500 on the first request that touches them."""
+    import sqlite3
+
+    from fastapi.testclient import TestClient
+
+    from recall.api.app import create_app
+    from recall.db import connect
+
+    db = str(tmp_path / "old.db")
+    conn = connect(db)
+    conn.executescript(
+        "CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL UNIQUE);"
+        "INSERT INTO users (id, name) VALUES (1, 'yash');"
+    )
+    conn.commit()
+    conn.close()
+
+    before = connect(db)
+    with pytest.raises(sqlite3.OperationalError):
+        before.execute("SELECT 1 FROM card_explanations").fetchall()
+    before.close()
+
+    os.environ["RECALL_DB"] = db
+    try:
+        with TestClient(create_app()):
+            pass  # entering the context runs startup
+    finally:
+        os.environ.pop("RECALL_DB", None)
+
+    after = connect(db)
+    tables = {r["name"] for r in after.execute(
+        "SELECT name FROM sqlite_master WHERE type='table'").fetchall()}
+    assert {"card_explanations", "tests", "test_questions"} <= tables
+    # and the pre-existing row survived
+    assert after.execute("SELECT name FROM users").fetchone()["name"] == "yash"

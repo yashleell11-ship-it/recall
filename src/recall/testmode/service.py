@@ -165,24 +165,35 @@ def submit_test(conn, user_id: int, test_id: int) -> dict:
     test = _test_row(conn, user_id, test_id)
     rows = conn.execute(_QUESTION_SQL, (test_id,)).fetchall()
 
+    obtained = sum(_score(r) for r in rows)
+    # Time spent answering, not wall clock: a fullday paper is meant to be put
+    # down and picked up again, and the days in between are not the exam.
+    duration_s = sum(r["seconds"] or 0 for r in rows)
+
+    # Claiming the paper and storing its result is one guarded UPDATE. Reading
+    # submitted_at and then writing it would let two submits arriving together
+    # -- a double tap on the button over a slow connection -- both decide they
+    # were first and record the whole paper's reviews twice. Exactly one of them
+    # sees rowcount 1; the other reads back what the winner wrote.
+    claimed = False
     if test["submitted_at"] is None:
+        claimed = conn.execute(
+            "UPDATE tests SET submitted_at = ?, duration_s = ?, obtained_marks = ?"
+            " WHERE id = ? AND submitted_at IS NULL",
+            (iso(utc_now()), duration_s, obtained, test_id)).rowcount == 1
+        conn.commit()
+
+    if claimed:
         for row in rows:
             grade = GRADE_FOR_VERDICT.get(row["verdict"])
             if grade is not None:
                 record_review(conn, user_id, row["card_id"], grade)
-        obtained = sum(_score(r) for r in rows)
-        # Time spent answering, not wall clock: a fullday paper is meant to be
-        # put down and picked up again, and the days in between are not the exam.
-        duration_s = sum(r["seconds"] or 0 for r in rows)
-        conn.execute(
-            "UPDATE tests SET submitted_at = ?, duration_s = ?, obtained_marks = ?"
-            " WHERE id = ?", (iso(utc_now()), duration_s, obtained, test_id))
-        conn.commit()
     else:
         # Re-submitting shows the paper again; it does not re-grade it and must
         # not record a second round of reviews.
-        obtained = test["obtained_marks"] or 0.0
-        duration_s = test["duration_s"] or 0
+        settled = _test_row(conn, user_id, test_id)
+        obtained = settled["obtained_marks"] or 0.0
+        duration_s = settled["duration_s"] or 0
 
     total = test["total_marks"]
     by_topic: dict[str, dict] = {}

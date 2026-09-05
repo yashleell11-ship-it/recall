@@ -7,6 +7,7 @@ separate, explicit endpoint because it costs money and takes time.
 
 import hashlib
 import os
+import sqlite3
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
@@ -143,6 +144,18 @@ def _topic_id(conn, topic_code: str) -> int:
     return row["id"]
 
 
+def _discard(stored: Path, conn, sha: str) -> None:
+    """Drop stored bytes that nothing will ever reference.
+
+    A failed extraction writes no source row and no chunks, so the file left
+    behind is unreachable — up to 25 MB of it per attempt, and a phone retrying
+    a photo that will not OCR repeats the attempt. Guarded by the dedupe lookup
+    so a concurrent upload of the same file that *did* succeed keeps its copy.
+    """
+    if _existing_source(conn, sha) is None:
+        stored.unlink(missing_ok=True)
+
+
 def _existing_source(conn, sha: str) -> dict | None:
     row = conn.execute(
         "SELECT id, filename, kind FROM sources WHERE user_id = ? AND sha256 = ?",
@@ -191,9 +204,11 @@ def upload_source(file: UploadFile = File(...), topic_code: str = Form(...),
     try:
         pages = extract_pages(str(stored), ext, ocr=ocr)
     except OcrUnavailable as exc:
+        _discard(stored, conn, sha)
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     except (UnidentifiedImageError, Image.DecompressionBombError, OSError,
             ValueError, RuntimeError) as exc:
+        _discard(stored, conn, sha)
         raise HTTPException(
             status_code=422,
             detail=f"could not read '{filename}' as a {file_kind(ext)} file: {exc}",
@@ -208,11 +223,21 @@ def upload_source(file: UploadFile = File(...), topic_code: str = Form(...),
                    + (" — a scanned PDF has no selectable text, so photograph "
                       "the pages and upload those instead" if ext == ".pdf" else ""))
 
-    cur = conn.execute(
-        "INSERT INTO sources (user_id, topic_id, filename, kind, sha256, added_at)"
-        " VALUES (?,?,?,?,?,?)",
-        (USER_ID, topic_id, filename, file_kind(ext), sha, _now()),
-    )
+    try:
+        cur = conn.execute(
+            "INSERT INTO sources (user_id, topic_id, filename, kind, sha256, added_at)"
+            " VALUES (?,?,?,?,?,?)",
+            (USER_ID, topic_id, filename, file_kind(ext), sha, _now()),
+        )
+    except sqlite3.IntegrityError:
+        # A concurrent upload of the same file won the race between the check
+        # above and this insert. A phone double-tapping Upload does exactly
+        # that, and the promise is the same either way: one photo, one source.
+        conn.rollback()
+        duplicate = _existing_source(conn, sha)
+        if duplicate is None:
+            raise
+        return duplicate
     source_id = cur.lastrowid
     chunks = chunk_pages(pages)
     for ch in chunks:
@@ -288,16 +313,35 @@ def generate_for_source(conn, cfg: Config, client, *, source_id: int, topic_id: 
         conn.commit()
 
     cost = _cost(cfg, prompt_tokens, completion_tokens)
-    # No run row when there was nothing to generate: a second click on Generate
-    # is not a run, and /api/sources joins one gen_run per source.
+    # Exactly one gen_run row per source, accumulated across resumed runs.
+    # /api/sources LEFT JOINs gen_runs without aggregating, so a second row
+    # lists the source twice with half its totals each — and a resume is not
+    # hypothetical: hitting max_cost_usd_per_source leaves chunks ungenerated
+    # and the whole point of `stopped_early` is that Generate is pressed again.
+    # No row at all when there was nothing to generate: that is not a run.
     if rows:
-        conn.execute(
-            "INSERT INTO gen_runs (source_id, ran_at, model, prompt_tokens,"
-            " completion_tokens, cost_estimate, cards_accepted, cards_rejected)"
-            " VALUES (?,?,?,?,?,?,?,?)",
-            (source_id, _now(), cfg.model, prompt_tokens, completion_tokens, cost,
-             accepted, rejected),
-        )
+        existing = conn.execute(
+            "SELECT id FROM gen_runs WHERE source_id = ?", (source_id,)
+        ).fetchone()
+        if existing is None:
+            conn.execute(
+                "INSERT INTO gen_runs (source_id, ran_at, model, prompt_tokens,"
+                " completion_tokens, cost_estimate, cards_accepted, cards_rejected)"
+                " VALUES (?,?,?,?,?,?,?,?)",
+                (source_id, _now(), cfg.model, prompt_tokens, completion_tokens,
+                 cost, accepted, rejected),
+            )
+        else:
+            conn.execute(
+                "UPDATE gen_runs SET ran_at = ?, model = ?,"
+                " prompt_tokens = prompt_tokens + ?,"
+                " completion_tokens = completion_tokens + ?,"
+                " cost_estimate = cost_estimate + ?,"
+                " cards_accepted = cards_accepted + ?,"
+                " cards_rejected = cards_rejected + ? WHERE id = ?",
+                (_now(), cfg.model, prompt_tokens, completion_tokens, cost,
+                 accepted, rejected, existing["id"]),
+            )
         conn.commit()
     return IngestResult(source_id, accepted, rejected, cost, stopped_early)
 

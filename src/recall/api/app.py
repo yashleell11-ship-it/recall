@@ -1,6 +1,7 @@
 """HTTP API. Thin routes over recall.api.scheduling — logic lives in the service."""
 
 import os
+from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -37,8 +38,26 @@ class SettingsIn(BaseModel):
     desired_retention: float | None = Field(default=None, ge=0.70, le=0.99)
 
 
+@asynccontextmanager
+async def _lifespan(app: FastAPI):
+    """Bring the schema up to date on boot.
+
+    schema.sql is CREATE TABLE IF NOT EXISTS throughout, so this adds tables that
+    a newer release introduced and never touches existing data. Without it, a
+    database created before a feature landed 500s on that feature's first request
+    — which is exactly what happened when test mode and explanations shipped.
+    """
+    try:
+        conn = connect(os.environ.get("RECALL_DB", "recall.db"))
+        init_db(conn)
+        conn.close()
+    except Exception as exc:  # noqa: BLE001 - never let this stop the server booting
+        print(f"warning: could not ensure schema on startup: {exc}")
+    yield
+
+
 def create_app() -> FastAPI:
-    app = FastAPI(title="Recall", version="0.1.0")
+    app = FastAPI(title="Recall", version="0.1.0", lifespan=_lifespan)
     # Private single-user app served over loopback: any localhost port is the
     # dev server, and pinning one port only breaks when that port is taken.
     app.add_middleware(

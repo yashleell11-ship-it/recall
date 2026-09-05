@@ -23,7 +23,9 @@ export const SHORTCUT_GROUPS: ShortcutGroup[] = [
       { keys: ["Esc"], description: "Close this list" },
       { keys: ["g", "d"], joiner: "then", description: "Go to today" },
       { keys: ["g", "r"], joiner: "then", description: "Start a review session" },
+      { keys: ["g", "t"], joiner: "then", description: "Go to test" },
       { keys: ["g", "a"], joiner: "then", description: "Go to the approve queue" },
+      { keys: ["g", "u"], joiner: "then", description: "Go to upload" },
       { keys: ["g", "o"], joiner: "then", description: "Go to sources" },
       { keys: ["g", "s"], joiner: "then", description: "Go to settings" },
       { keys: ["t"], description: "Cycle theme: system, light, dark" },
@@ -58,6 +60,44 @@ export const SHORTCUT_GROUPS: ShortcutGroup[] = [
       { keys: ["Enter"], description: "Commit every marked card" },
       { keys: ["Home", "End"], joiner: "/", description: "First / last card" },
       { keys: ["Esc"], description: "Clear marks and selection" },
+    ],
+  },
+  {
+    title: "Pick a paper",
+    rows: [
+      { keys: ["1", "3"], joiner: "…", description: "Choose class, end term, full day" },
+      { keys: ["Enter"], description: "Start the paper" },
+    ],
+  },
+  {
+    title: "Sitting a paper",
+    rows: [
+      { keys: ["Space"], description: "Reveal the answer" },
+      { keys: ["1"], description: "Wrong" },
+      { keys: ["2"], description: "Partial — only on 2+ mark questions" },
+      { keys: ["3"], description: "Correct" },
+      { keys: ["s"], description: "Skip: no marks, and no review recorded" },
+      { keys: ["m"], description: "Mark for review, and unmark" },
+      { keys: ["j", "k"], joiner: "/", description: "Next / previous question" },
+      { keys: ["←", "→"], joiner: "/", description: "Next / previous question" },
+      { keys: ["Home", "End"], joiner: "/", description: "First / last question" },
+      { keys: ["p"], description: "Open the question palette" },
+      { keys: ["Enter"], description: "Submit the paper" },
+      { keys: ["Esc"], description: "Leave — every answer is already saved" },
+    ],
+  },
+  {
+    title: "After a paper",
+    rows: [
+      { keys: ["j", "k"], joiner: "/", description: "Move through what you missed" },
+      { keys: ["e"], description: "Explain the focused question" },
+    ],
+  },
+  {
+    title: "Upload",
+    rows: [
+      { keys: ["f"], description: "Choose files" },
+      { keys: ["c"], description: "Take a photo" },
     ],
   },
   {

@@ -370,10 +370,16 @@ def save_fit(conn: sqlite3.Connection, result: FitResult) -> int:
 def load_latest_params(conn: sqlite3.Connection) -> tuple[float, ...]:
     """Weights from the most recent fit, or ``DEFAULT_PARAMS`` if there is none.
 
-    Anything unreadable — no runs yet, malformed JSON, the wrong number of
-    weights, a non-finite value — falls back to the defaults. A scheduler that
-    refuses to start because a fit row is corrupt is worse than one that
-    schedules like everyone else.
+    Anything unusable — no runs yet, malformed JSON, the wrong number of
+    weights, a non-finite value, a weight outside `PARAM_BOUNDS` — falls back to
+    the defaults. A scheduler that refuses to start because a fit row is corrupt
+    is worse than one that schedules like everyone else.
+
+    The bounds check is not belt-and-braces. Every review of an already-seen card
+    goes through ``fsrs.next_state``, whose ``exp(w8)`` overflows for a large
+    enough w8, so a single hand-edited or corrupted row would otherwise turn every
+    review into a 500 rather than into a slightly-wrong interval. Nothing this
+    module writes can land outside the box, so no legitimate fit is refused here.
     """
     row = conn.execute(
         "SELECT params_json FROM fit_runs ORDER BY ran_at DESC, id DESC LIMIT 1"
@@ -388,5 +394,7 @@ def load_latest_params(conn: sqlite3.Connection) -> tuple[float, ...]:
     if len(params) != len(DEFAULT_PARAMS):
         return DEFAULT_PARAMS
     if not all(math.isfinite(v) for v in params):
+        return DEFAULT_PARAMS
+    if any(v < low or v > high for v, (low, high) in zip(params, PARAM_BOUNDS)):
         return DEFAULT_PARAMS
     return params
