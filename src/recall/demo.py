@@ -8,15 +8,15 @@ SAMPLE_SOURCE = "sample-data (not from your syllabus)"
 
 # (topic_code, kind, question, answer, cloze_text)
 SAMPLE_CARDS: list[tuple[str, str, str, str, str | None]] = [
-    ("MATHS", "qa", "What two conditions does Rolle's theorem require on [a, b]?",
+    ("MTH174", "qa", "What two conditions does Rolle's theorem require on [a, b]?",
      "Continuous on [a, b] and differentiable on (a, b), with f(a) = f(b)", None),
-    ("MATHS", "cloze", "Derivative of sin x", "cos x",
+    ("MTH174", "cloze", "Derivative of sin x", "cos x",
      "The derivative of sin x with respect to x is {{c1::cos x}}."),
-    ("MATHS", "qa", "When is a square matrix invertible?",
+    ("MTH174", "qa", "When is a square matrix invertible?",
      "Exactly when its determinant is non-zero", None),
-    ("MATHS", "cloze", "Rank-nullity theorem", "rank(A) + nullity(A) = n",
+    ("MTH174", "cloze", "Rank-nullity theorem", "rank(A) + nullity(A) = n",
      "For an m x n matrix A, {{c1::rank(A) + nullity(A) = n}}."),
-    ("MATHS", "qa", "What does L'Hopital's rule apply to?",
+    ("MTH174", "qa", "What does L'Hopital's rule apply to?",
      "Limits of indeterminate form 0/0 or infinity/infinity", None),
 
     ("CSE111", "qa", "What does the sizeof operator return for an array in C?",
@@ -48,14 +48,14 @@ SAMPLE_CARDS: list[tuple[str, str, str, str, str | None]] = [
     ("INT335", "qa", "What permission value does chmod 755 grant the owner?",
      "Read, write and execute", None),
 
-    ("HTML", "qa", "Which HTML element groups the navigation links of a page?",
+    ("CSE326", "qa", "Which HTML element groups the navigation links of a page?",
      "<nav>", None),
-    ("HTML", "cloze", "Alt attribute", "screen readers and when the image fails to load",
+    ("CSE326", "cloze", "Alt attribute", "screen readers and when the image fails to load",
      "The alt attribute on an image is used by {{c1::screen readers and when the "
      "image fails to load}}."),
-    ("HTML", "qa", "What is the difference between a block and an inline element?",
+    ("CSE326", "qa", "What is the difference between a block and an inline element?",
      "A block element starts on a new line and fills the width; inline does not", None),
-    ("HTML", "qa", "Which attribute associates a label with a form control?",
+    ("CSE326", "qa", "Which attribute associates a label with a form control?",
      "for, matching the control's id", None),
 ]
 

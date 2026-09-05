@@ -13,12 +13,12 @@ def test_parser_accepts_ingest_arguments():
     assert args.path == "notes.pdf"
 
 
-def test_init_creates_all_five_topics(tmp_path):
+def test_init_creates_the_lpu_subjects(tmp_path):
     cfg = cfg_for(tmp_path)
     assert cmd_init(build_parser().parse_args(["init"]), cfg) == 0
     codes = {r["code"] for r in connect(cfg.db_path)
              .execute("SELECT code FROM topics").fetchall()}
-    assert codes == {"MATHS", "CSE111", "INT108", "INT335", "HTML"}
+    assert codes == {"MTH174", "CSE111", "INT108", "INT335", "CSE326"}
 
 
 def test_init_is_idempotent(tmp_path):

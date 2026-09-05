@@ -363,3 +363,25 @@ def test_startup_adds_tables_a_newer_release_introduced(tmp_path):
     assert {"card_explanations", "tests", "test_questions"} <= tables
     # and the pre-existing row survived
     assert after.execute("SELECT name FROM users").fetchone()["name"] == "yash"
+
+
+def test_topics_carry_lpu_meta_when_seeded(client, db_path):
+    from recall.db import connect
+    from recall.seed import seed_topics
+
+    conn = connect(db_path)
+    seed_topics(conn)
+    conn.close()
+
+    topics = client.get("/api/topics").json()
+    mth = next(t for t in topics if t["code"] == "MTH174")
+    assert mth["meta"]["full_name"] == "Engineering Mathematics"
+    assert len(mth["meta"]["units"]) == 6
+    assert mth["meta"]["scheme"]["ete"] == 50
+    int108 = next(t for t in topics if t["code"] == "INT108")
+    assert int108["meta"]["mte_exists"] is False
+
+
+def test_topics_meta_is_null_when_absent(client):
+    topics = client.get("/api/topics").json()
+    assert all(t["meta"] is None for t in topics)

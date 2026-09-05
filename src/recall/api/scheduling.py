@@ -213,9 +213,11 @@ def record_review(conn, user_id: int, card_id: int, grade: int) -> ReviewOutcome
 
 
 def topic_summary(conn, user_id: int) -> list[dict]:
+    import json
+
     now = iso(utc_now())
     rows = conn.execute(
-        "SELECT t.id, t.code, t.label,"
+        "SELECT t.id, t.code, t.label, t.meta,"
         " SUM(CASE WHEN c.state='active' AND cs.due_at IS NOT NULL"
         "          AND cs.due_at <= ? THEN 1 ELSE 0 END) AS due,"
         " SUM(CASE WHEN c.state='active' AND cs.card_id IS NULL THEN 1 ELSE 0 END)"
@@ -228,9 +230,13 @@ def topic_summary(conn, user_id: int) -> list[dict]:
         " WHERE t.user_id = ? GROUP BY t.id ORDER BY t.code",
         (now, user_id, user_id),
     ).fetchall()
-    return [{k: (r[k] or 0) if k in ("due", "new", "active", "pending") else r[k]
-             for k in ("id", "code", "label", "due", "new", "active", "pending")}
-            for r in rows]
+    out = []
+    for r in rows:
+        item = {k: (r[k] or 0) if k in ("due", "new", "active", "pending") else r[k]
+                for k in ("id", "code", "label", "due", "new", "active", "pending")}
+        item["meta"] = json.loads(r["meta"]) if r["meta"] else None
+        out.append(item)
+    return out
 
 
 def stats(conn, user_id: int) -> dict:

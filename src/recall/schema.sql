@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS topics (
   user_id INTEGER NOT NULL REFERENCES users(id),
   code    TEXT NOT NULL,
   label   TEXT NOT NULL,
+  meta    TEXT,  -- JSON: full_name, credits, units[], scheme{}, ca_policy, mte_exists, exam_format
   UNIQUE(user_id, code)
 );
 
@@ -106,7 +107,7 @@ CREATE TABLE IF NOT EXISTS fit_runs (
 CREATE TABLE IF NOT EXISTS tests (
   id             INTEGER PRIMARY KEY,
   user_id        INTEGER NOT NULL REFERENCES users(id),
-  kind           TEXT NOT NULL CHECK (kind IN ('class30','endterm100','fullday')),
+  kind           TEXT NOT NULL CHECK (kind IN ('class30','mte40','endterm100','fullday')),
   topic_id       INTEGER REFERENCES topics(id),
   target_marks   INTEGER NOT NULL,
   total_marks    INTEGER NOT NULL,

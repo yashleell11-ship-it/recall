@@ -736,3 +736,40 @@ def test_history_reports_each_paper(client):
     assert sat["duration_s"] == 9
     unsat = next(r for r in rows if r["id"] != tid)
     assert unsat["obtained_marks"] is None
+
+
+def test_mte_kind_builds_a_40_mark_90_minute_paper(db_path):
+    conn = connect(db_path)
+    test = service.create_test(conn, 1, "mte40")
+    assert test["target_marks"] == 40
+    assert test["time_limit_s"] == 90 * 60
+    conn.close()
+
+
+def test_mte_refused_for_subjects_that_have_none_at_lpu(db_path):
+    """INT108 and CSE326 carry no mid-term in the LPU scheme."""
+    import json as _json
+
+    conn = connect(db_path)
+    conn.execute(
+        "UPDATE topics SET meta = ? WHERE code = 'CSE111'",
+        (_json.dumps({"mte_exists": False, "ca_policy": "CA + practical ETE only"}),),
+    )
+    conn.commit()
+    with pytest.raises(ValueError) as exc:
+        service.create_test(conn, 1, "mte40", topic_code="CSE111")
+    assert "no MTE" in str(exc.value)
+    conn.close()
+
+
+def test_mte_allowed_when_meta_permits_or_is_absent(db_path):
+    import json as _json
+
+    conn = connect(db_path)
+    test = service.create_test(conn, 1, "mte40", topic_code="CSE111")  # no meta yet
+    assert test["kind"] == "mte40"
+    conn.execute("UPDATE topics SET meta = ? WHERE code = 'MATHS'",
+                 (_json.dumps({"mte_exists": True}),))
+    conn.commit()
+    assert service.create_test(conn, 1, "mte40", topic_code="MATHS")["kind"] == "mte40"
+    conn.close()

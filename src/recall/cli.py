@@ -5,14 +5,7 @@ from recall.config import load_config
 from recall.db import connect, init_db
 from recall.demo import clear_demo, seed_demo
 from recall.export.anki import export_apkg
-
-TOPICS = {
-    "MATHS": "Mathematics",
-    "CSE111": "CSE111",
-    "INT108": "INT108",
-    "INT335": "INT335",
-    "HTML": "HTML",
-}
+from recall.seed import seed_topics
 
 
 def _conn(cfg):
@@ -24,13 +17,11 @@ def cmd_init(args, cfg) -> int:
     init_db(conn)
     conn.execute("INSERT OR IGNORE INTO users (id, name) VALUES (1, ?)", (args.user,))
     conn.execute("INSERT OR IGNORE INTO settings (user_id) VALUES (1)")
-    for code, label in TOPICS.items():
-        conn.execute(
-            "INSERT OR IGNORE INTO topics (user_id, code, label) VALUES (1, ?, ?)",
-            (code, label),
-        )
-    conn.commit()
-    print(f"initialised {cfg.db_path} with topics: {', '.join(TOPICS)}")
+    result = seed_topics(conn)
+    from recall.lpu import SUBJECTS
+    print(f"initialised {cfg.db_path} with LPU subjects: {', '.join(SUBJECTS)}")
+    if result["renamed"]:
+        print(f"renamed legacy topics: {', '.join(result['renamed'])}")
     return 0
 
 
@@ -44,7 +35,8 @@ def cmd_ingest(args, cfg) -> int:
         "SELECT id FROM topics WHERE user_id = 1 AND code = ?", (args.topic,)
     ).fetchone()
     if row is None:
-        print(f"unknown topic {args.topic}; known: {', '.join(TOPICS)}",
+        from recall.lpu import SUBJECTS
+        print(f"unknown topic {args.topic}; known: {', '.join(SUBJECTS)}",
               file=sys.stderr)
         return 2
     result = ingest_source(conn, cfg, DeepSeekClient(cfg), user_id=1,

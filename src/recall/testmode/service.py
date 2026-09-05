@@ -17,6 +17,9 @@ from recall.testmode.marks import PARTIAL_MIN_MARKS, marks_for_card
 # active card, sat over as many sittings as it takes.
 KINDS: dict[str, tuple[int | None, int | None]] = {
     "class30": (30, 45 * 60),
+    # LPU MTE: covers units 1-3, paper marked out of 40 (scaled to the course's
+    # MTE weight afterwards), 90 minutes.
+    "mte40": (40, 90 * 60),
     "endterm100": (100, 180 * 60),
     "fullday": (None, None),
 }
@@ -92,11 +95,23 @@ def create_test(conn, user_id: int, kind: str,
         raise ValueError(f"kind must be one of {', '.join(KINDS)}")
     topic_id = None
     if topic_code is not None:
-        row = conn.execute("SELECT id FROM topics WHERE user_id = ? AND code = ?",
-                           (user_id, topic_code)).fetchone()
+        row = conn.execute(
+            "SELECT id, meta FROM topics WHERE user_id = ? AND code = ?",
+            (user_id, topic_code)).fetchone()
         if row is None:
             raise LookupError(f"no topic {topic_code!r}")
         topic_id = row["id"]
+        # Subjects without a mid-term at LPU must not offer one here: sitting a
+        # paper the university will never set is practice for nothing.
+        if kind == "mte40" and row["meta"]:
+            import json as _json
+
+            meta = _json.loads(row["meta"])
+            if meta.get("mte_exists") is False:
+                raise ValueError(
+                    f"{topic_code} has no MTE at LPU "
+                    f"({meta.get('ca_policy', 'CA/ETE only')})"
+                )
 
     target, time_limit_s = KINDS[kind]
     paper = assemble(_candidates(conn, user_id, topic_code), target, now=utc_now())
