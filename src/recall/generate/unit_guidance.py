@@ -1666,6 +1666,394 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
             ),
         ),
     ),
+    "MEC103": (
+        # --- 1 ---------------------------------------------------------
+        UnitGuidance(
+            guidance=(
+                "Treat this unit as the subject's store of conventions and "
+                "numbers, because none of its constructions can be performed "
+                "on a card. Favour: the mm size of a named A-series sheet; "
+                "the order of pencil grades and the grades used for technical "
+                "drawing; which line type carries a given job (visible "
+                "outline, hidden edge, centre line, cutting plane, hatching); "
+                "the height-to-width ratios of single-stroke vertical Gothic "
+                "lettering; aligned versus unidirectional dimensioning and "
+                "the numbered dimensioning rules; the Ø and R prefixes; "
+                "one-step RF and length-of-scale calculations that carry "
+                "their own numbers; how many decimal places a plain and a "
+                "diagonal scale each read to; and eccentricity values and "
+                "cutting planes for the conics. Ask 'What are the dimensions "
+                "of an A3 sheet in mm?' or 'If 1 m is represented by 2.5 cm, "
+                "what is the RF?'. Never ask the student to construct, letter "
+                "or draw anything."
+            ),
+            traps=(
+                "A-series sheet sizes must be exactly A0 841 × 1189 mm, A1 "
+                "594 × 841, A2 420 × 594, A3 297 × 420, A4 210 × 297 (all "
+                "mm), each obtained by halving the next larger size across "
+                "its longer side. Pencil grades run 9H (hardest) through H, "
+                "F, HB, B to 7B (softest), with H, 2H and HB recommended for "
+                "technical drawing. Reject transposed or invented sheet "
+                "figures, and reject any card making 9H the softest, 7B the "
+                "hardest, extending the range to 9B, or calling HB harder "
+                "than H.",
+                "Line-type assignments must not be swapped: visible outlines "
+                "are continuous thick; hidden edges are dashed (short "
+                "dashes), never a chain line; centre lines, lines of symmetry "
+                "and pitch circles are long-dash dotted (chain) thin; the "
+                "cutting-plane line is chain thin with thick ends; hatching "
+                "and dimension, extension and leader lines are continuous "
+                "thin. Reject 'hatching is drawn with thick lines' and reject "
+                "a hidden edge shown as a chain line.",
+                "Aligned and unidirectional dimensioning must not be "
+                "interchanged: aligned places the figure above and parallel "
+                "to the dimension line so it reads from the bottom or the "
+                "right-hand side; unidirectional places every figure to read "
+                "from the bottom edge only, inserted by breaking the "
+                "dimension line, and the two systems are never mixed on one "
+                "drawing. Chain (continuous) dimensioning is "
+                "arrowhead-to-arrowhead in series; parallel (progressive) "
+                "dimensioning takes every dimension from one common reference "
+                "line. Ø prefixes a diameter and R a radius. Reject swapped "
+                "definitions of any of these pairs.",
+                "Reject any card stating that the unit (mm) is written after "
+                "each dimension — the rule is that the unit is stated once in "
+                "a note below the drawing — and reject cards allowing two "
+                "dimension lines between the same pair of extension lines, "
+                "crossing dimension lines, or repeated (redundant) "
+                "dimensions. Single-stroke vertical Gothic lettering has "
+                "uniform stroke thickness; the height-to-width ratio is 7:5 "
+                "for all letters except I, J, L, M and W, 7:4 for all "
+                "numerals except 1, 7:1 for I, 7:3 for the numeral 1, 7:4 for "
+                "L and J, 7:6 for M and 7:8 for W. Reject any other ratio and "
+                "reject 'Gothic lettering uses thick and thin strokes'.",
+                "RF is a pure ratio and both lengths must be converted to the "
+                "same unit before dividing — reject any RF carrying a unit or "
+                "dividing unlike units, e.g. '2.5 cm / 1 m = 2.5' instead of "
+                "2.5 cm / 100 cm = 1/40. Length of scale is RF × the maximum "
+                "length the scale must measure (1/40 × 6 m = 1/40 × 600 cm = "
+                "15 cm), not RF × the object's actual length. A plain scale "
+                "shows two units and reads to one decimal place; a diagonal "
+                "scale shows three units and reads to two, and rests on "
+                "similar triangles. A reducing scale has RF < 1 and an "
+                "enlarging scale RF > 1; full scale is 1:1. Reject any swap "
+                "and reject '1:2 means twice actual size'.",
+                "Eccentricity values must be exact: circle e = 0, ellipse e < "
+                "1, parabola e = 1, hyperbola e > 1, e being the distance "
+                "from the focus divided by the distance from the directrix. "
+                "Cone-section origins must match: a plane parallel to the "
+                "base gives a circle; a plane inclined to the axis cutting "
+                "all generators gives an ellipse; a plane parallel to one "
+                "generator gives a parabola; a plane making a smaller angle "
+                "with the axis than the generator does gives a hyperbola; a "
+                "plane through the apex gives a triangle. For an ellipse the "
+                "SUM of the distances from the two foci is constant and equal "
+                "to the major axis; the constant difference belongs to the "
+                "hyperbola. The normal to an involute of a circle is tangent "
+                "to the base circle, and the base length of an involute of a "
+                "circle of diameter d is πd; one arc of a cycloid has base "
+                "length πd and height d, the diameter, with its normal "
+                "passing through the instantaneous point of contact of the "
+                "rolling circle and the directing line. An epicycloid is "
+                "traced by a point on a circle rolling OUTSIDE a directing "
+                "circle and a hypocycloid INSIDE. Reject any swap of these, "
+                "any inverted eccentricity ratio, 'equal to the minor axis', "
+                "2πd, πr, and a height given as the radius.",
+            ),
+        ),
+        # --- 2 ---------------------------------------------------------
+        UnitGuidance(
+            guidance=(
+                "Ask when a view is true, never how to draw it, and pitch "
+                "these at mid-term standard since this unit is examinable "
+                "there. Favour: where a point's front and top views sit for "
+                "each position relative to the HP and VP, including a point "
+                "lying in either plane; the condition for true length, so a "
+                "line parallel to the HP is true length in the top view and "
+                "one parallel to the VP in the front view; what a line "
+                "perpendicular to a plane projects as on that plane; that a "
+                "line inclined to both shows true length in neither view and "
+                "that both apparent inclinations exceed the true ones; the "
+                "definitions of horizontal and vertical trace and when a line "
+                "has none; and that a plane shows true shape only when "
+                "parallel to a plane of projection. Keep every answer to one "
+                "condition or one term."
+            ),
+            traps=(
+                "For a point in the first quadrant the front view lies above "
+                "XY by its height above the HP and the top view lies below XY "
+                "by its distance in front of the VP. A point lying IN the HP "
+                "has its front view ON XY; a point lying IN the VP has its "
+                "top view ON XY. Reject cards that swap which view falls on "
+                "XY, and reject a first-quadrant point whose top view is "
+                "placed above XY.",
+                "A line shows true length only in the view on the plane it is "
+                "parallel to: parallel to the HP gives a true-length top "
+                "view, parallel to the VP a true-length front view, parallel "
+                "to both gives true length in both views. Reject any card "
+                "claiming true length in a view for a line inclined to that "
+                "plane.",
+                "A line perpendicular to a plane projects as a POINT on that "
+                "plane and as a true-length line perpendicular to XY on the "
+                "other plane. Reject cards that make a perpendicular line "
+                "project as a line on the plane it is perpendicular to.",
+                "For a line inclined to both planes, both views are shorter "
+                "than the true length, the apparent inclinations α and β are "
+                "each GREATER than the true inclinations θ and φ, and θ + φ "
+                "can never exceed 90°. Reject 'the apparent angle is smaller' "
+                "and reject any pair of true inclinations summing above 90°.",
+                "The horizontal trace is where the line, produced if "
+                "necessary, meets the HP, and the vertical trace where it "
+                "meets the VP; a line parallel to the HP has no HT and a line "
+                "parallel to the VP has no VT; a line parallel to both has "
+                "neither. Reject swapped definitions and reject 'a line "
+                "parallel to the HP has no VT'.",
+                "A plane appears as a straight line (edge view) in the view "
+                "on the plane it is perpendicular to, and shows true shape "
+                "only in a view on a plane it is parallel to; a plane "
+                "inclined to both shows true shape in neither view. Reject 'a "
+                "plane perpendicular to the HP shows true shape in the top "
+                "view' and reject any card promising true shape for a plane "
+                "inclined to the plane of projection.",
+            ),
+        ),
+        # --- 3 ---------------------------------------------------------
+        UnitGuidance(
+            guidance=(
+                "This unit carries the single highest-value distinction in "
+                "the subject and it sits in the mid-term, so drill first- "
+                "versus third-angle projection from several directions rather "
+                "than once. Favour view placement: in first angle the top "
+                "view goes below the front view and the view from the left "
+                "goes to its right; third angle is the mirror of all four. "
+                "Ask it as a placement question, as a cloze on one view, and "
+                "as 'Which angle of projection does India follow?'. Also ask "
+                "what makes a projection orthographic, which plane carries "
+                "the front, top and side view, the alternative names "
+                "elevation, plan and end view, why the second and fourth "
+                "quadrants are unused, and which view of a solid is drawn "
+                "first for a given axis position. Never ask for a drawn view."
+            ),
+            traps=(
+                "First-angle placement must be exact: top view BELOW the "
+                "front view, bottom view above, the view from the left placed "
+                "on the RIGHT and the view from the right on the LEFT. Third "
+                "angle is the mirror of all four. Reject any card that gives "
+                "first angle the third-angle arrangement or vice versa.",
+                "India follows first-angle projection (BIS convention); the "
+                "USA and Canada use third angle. Reject any card that assigns "
+                "third angle to India or to BIS/IS practice. The projection "
+                "symbol is a frustum of a cone shown in two views — reject "
+                "any card that identifies the angle of projection by whether "
+                "the larger or smaller circle is drawn on the left or the "
+                "right, because sources disagree on that layout.",
+                "In first angle the object lies between the observer and the "
+                "plane of projection; in third angle the plane, assumed "
+                "transparent, lies between the observer and the object. "
+                "Reject the swap and reject 'the object is behind the plane "
+                "in first angle'.",
+                "The second and fourth quadrants are unused because on "
+                "rotating the horizontal plane into the vertical plane the "
+                "two views would overlap or coincide. Reject cards claiming "
+                "they are unused because the object cannot be placed there, "
+                "or that all four quadrants are in use.",
+                "Orthographic projection has parallel projectors "
+                "perpendicular to the plane of projection — reject "
+                "descriptions of projectors converging at the observer's eye "
+                "(perspective) or parallel but oblique to the plane (oblique "
+                "projection). The front view is projected onto the vertical "
+                "plane, the top view onto the horizontal plane and the side "
+                "view onto the profile plane; elevation = front view, plan = "
+                "top view, end view = side view. Reject swapped plane-to-view "
+                "assignments.",
+                "For a solid, the view on the plane the axis is perpendicular "
+                "to is drawn FIRST: top view first when the axis is "
+                "perpendicular to the HP (a solid resting on its base on the "
+                "HP), front view first when the axis is perpendicular to the "
+                "VP. Reject the reverse order. Solid nomenclature must also "
+                "hold: a right regular prism has two identical polygonal ends "
+                "and n rectangular faces, a pyramid has n triangular faces "
+                "meeting at an apex, a tetrahedron has four equal equilateral "
+                "triangular faces, and a hexagonal prism has 8 faces, 18 "
+                "edges and 12 vertices. A frustum is what remains after a cut "
+                "PARALLEL to the base; a truncated solid is cut by an "
+                "inclined plane — reject that swap.",
+            ),
+        ),
+        # --- 4 ---------------------------------------------------------
+        UnitGuidance(
+            guidance=(
+                "Aim at sectioning conventions and terminology; the sectioned "
+                "views themselves cannot be produced on a card. Favour: what "
+                "distinguishes a full, half, offset, revolved and removed "
+                "section; that hatching is continuous thin at 45°, evenly "
+                "spaced, and reversed or respaced for adjacent parts; which "
+                "features stay unhatched when the cutting plane passes along "
+                "their length; the cutting-plane line's own line type and "
+                "what its arrows mean; which portion of the object is treated "
+                "as removed; where the true shape of a section appears; and "
+                "that hidden lines are normally omitted in a sectional view. "
+                "Ask 'Which features are never hatched when the cutting plane "
+                "passes along their length?' or 'At what angle are section "
+                "lines normally drawn?'. Never ask the student to section a "
+                "solid or to draw the resulting view."
+            ),
+            traps=(
+                "Section (hatching) lines are continuous THIN, drawn at 45° "
+                "to the principal outline and evenly spaced, with adjacent "
+                "parts hatched in opposite directions or at different "
+                "spacing; where a 45° line would run parallel to the outline, "
+                "30° or 60° is used instead. Reject thick hatching, reject "
+                "'adjacent parts are hatched identically', and reject any "
+                "angle offered as the normal one other than 45°.",
+                "Ribs, webs, spokes, shafts, bolts, nuts, screws, keys, pins "
+                "and rivets are NOT hatched when the cutting plane passes "
+                "ALONG their length; they are hatched normally when cut "
+                "across. Reject 'webs are hatched in longitudinal section' "
+                "and reject any card that lists a shaft or a bolt as hatched "
+                "when sectioned lengthwise.",
+                "A full section has the cutting plane pass right through the "
+                "object; a half section removes one QUARTER of a symmetrical "
+                "object so half appears in section and half in outside view, "
+                "the two halves separated by a centre line, not a solid line; "
+                "an offset section uses a stepped cutting plane to catch "
+                "features not in one straight line; a revolved section is "
+                "drawn in place on the view; a removed section is drawn away "
+                "from it. Reject 'a half section removes half the object' and "
+                "reject any swap among these five.",
+                "The cutting-plane line is a long-dash dotted (chain) thin "
+                "line made thick at its ends and at every change of "
+                "direction, with arrows at the ends showing the direction of "
+                "SIGHT, lettered with capitals and named as, for example, "
+                "SECTION A-A. Reject a continuous thick or dashed "
+                "cutting-plane line, and reject 'the arrows point away from "
+                "the retained portion'.",
+                "The material between the observer and the cutting plane is "
+                "removed; hatching is applied only where the plane actually "
+                "cuts material, so holes, voids and the space beyond a cut "
+                "stay unhatched. Reject any card that hatches a hole or the "
+                "whole outline of the view.",
+                "The true shape of a section appears in a view projected on a "
+                "plane PARALLEL to the cutting plane — reject 'perpendicular "
+                "to the cutting plane'. Hidden lines behind the cutting plane "
+                "are normally omitted in the sectional view, while the "
+                "remaining, unsectioned views of the object are still drawn "
+                "complete. Reject cards claiming hidden lines must be shown "
+                "in a sectional view or that the other views are also cut.",
+            ),
+        ),
+        # --- 5 ---------------------------------------------------------
+        UnitGuidance(
+            guidance=(
+                "Only the formulas, the method-to-solid mapping and a few "
+                "definitions survive on a card here, so aim squarely at "
+                "those. Favour: which development method suits prisms and "
+                "cylinders as against pyramids and cones, and which suits "
+                "transition pieces; that every line in a development is a "
+                "true length and a development shows the surface's true area; "
+                "the πd × h rectangle for a cylinder; the base-perimeter × "
+                "height rectangle for a prism; the cone's sector of radius "
+                "equal to the slant height with θ = (r/L) × 360°; that a "
+                "pyramid develops into triangles built on the true length of "
+                "the slant edge; and that a sphere is not truly developable. "
+                "Ask for a formula, a method name or a definition, and never "
+                "for a laid-out development."
+            ),
+            traps=(
+                "Method-to-solid mapping must hold: parallel-line development "
+                "suits prisms and cylinders, radial-line development suits "
+                "pyramids and cones, and triangulation suits transition "
+                "pieces and oblique forms. Reject the parallel/radial swap. A "
+                "sphere and other double-curved surfaces are NOT truly "
+                "developable and are only approximated (zone or lune methods) "
+                "— reject any card claiming an exact development of a sphere.",
+                "A cylinder's lateral development is a rectangle πd wide by h "
+                "high, where d is the diameter. Reject 2πd, πr, πd² or πdh "
+                "given as the width.",
+                "A right prism's lateral development is a rectangle whose "
+                "length equals the base PERIMETER (number of sides × side "
+                "length) and whose height equals the prism's height, divided "
+                "by fold lines at the vertical edges. Reject a length based "
+                "on one side, on the base area, or on the diagonal.",
+                "A cone's lateral development is a sector of radius equal to "
+                "the SLANT height L, with included angle θ = (r/L) × 360°, "
+                "where r is the base radius. Reject the use of the vertical "
+                "height in place of the slant height, reject θ = (L/r) × "
+                "360°, and reject a sector radius equal to r or to the axis "
+                "length.",
+                "A pyramid develops into triangles whose sloping sides are "
+                "the TRUE LENGTH of the slant edge — not the vertical height "
+                "and not the slant height of a face unless the face's "
+                "altitude is what is being asked. For a truncated or cut "
+                "solid, the true lengths of the cut edges must be obtained by "
+                "rotating them parallel to a plane of projection; reject any "
+                "card that reads those lengths straight off the front view.",
+                "Every line in a development is a true length and the "
+                "development represents the true area of the surface; it is "
+                "laid out from a single seam, conventionally the shortest "
+                "edge, and covers the LATERAL surface only unless the ends "
+                "are explicitly included. Reject 'a development may be drawn "
+                "to a reduced length for the sloping edges' and reject any "
+                "card asserting that the base and top are always part of the "
+                "development.",
+            ),
+        ),
+        # --- 6 ---------------------------------------------------------
+        UnitGuidance(
+            guidance=(
+                "Isometric is unusually card-friendly because it rests on "
+                "fixed numbers — use them. Favour: the three axes 120° apart "
+                "with two of them 30° to the horizontal and one vertical; the "
+                "isometric scale ratio 0.816; the difference between an "
+                "isometric view, drawn to true lengths, and an isometric "
+                "projection, drawn to the isometric scale and therefore the "
+                "smaller of the two; isometric versus non-isometric lines and "
+                "why an inclined line cannot be measured directly; that "
+                "angles never appear in true size; that a circle becomes an "
+                "ellipse drawn by the four-centre method; and where isometric "
+                "sits among the axonometric and oblique projections. Ask for "
+                "a number, a ratio or a one-word distinction, never for a "
+                "pictorial view."
+            ),
+            traps=(
+                "The three isometric axes are 120° apart, with two of them at "
+                "30° to the horizontal and the third vertical. Reject 90°, "
+                "60° or 45° in either statement, and reject '45° to the "
+                "horizontal'.",
+                "The isometric scale ratio is 0.816 (≈ 9/11, from √2/√3) of "
+                "true length. Reject 0.866, 0.707 and 0.5, and reject any "
+                "card that inverts it.",
+                "An isometric VIEW (isometric drawing) is made with true "
+                "lengths; an isometric PROJECTION is made with the isometric "
+                "scale and is therefore about 0.816 times the view, the view "
+                "being about 1.22 times the projection. Reject the swap and "
+                "reject 'the isometric projection is the larger of the two'.",
+                "Only lines PARALLEL to the isometric axes (isometric lines) "
+                "are drawn to measured length; non-isometric lines — inclined "
+                "edges, diagonals — are not true length and must be located "
+                "by their end points using offsets along the axes. Angles "
+                "never appear in true size in isometric, so reject any card "
+                "that has an angle set off with a protractor or a 60° corner "
+                "drawn as 60°.",
+                "A circle on an isometric plane appears as an ELLIPSE, "
+                "normally constructed by the four-centre method, with its "
+                "minor axis along the isometric axis normal to that face and "
+                "its major axis perpendicular to it. In an isometric "
+                "projection of a circle of diameter D the ellipse has major "
+                "axis D and minor axis 0.577D; in an isometric drawing these "
+                "become about 1.22D and 0.7D. Reject a circle drawn as a "
+                "circle on an isometric face, and reject a major axis placed "
+                "along the normal axis.",
+                "Isometric is the axonometric case with all three axes "
+                "equally inclined and equally foreshortened; dimetric has two "
+                "equal and trimetric none. It is NOT oblique projection — "
+                "cavalier and cabinet keep one face true and set the receding "
+                "axis at an angle, cabinet halving its depth. Reject any card "
+                "that calls isometric a form of oblique or perspective "
+                "projection, or that gives isometric unequal foreshortening.",
+            ),
+        ),
+    ),
 }
 
 
