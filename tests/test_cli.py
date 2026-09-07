@@ -1,5 +1,8 @@
+import json
+
 from recall.cli import (
     build_parser,
+    cmd_ingest_corpus,
     cmd_approve,
     cmd_init,
     cmd_queue,
@@ -153,3 +156,92 @@ def test_recheck_ignores_already_rejected_cards(tmp_path, capsys):
     conn.commit()
     cmd_recheck(build_parser().parse_args(["recheck"]), cfg)
     assert "0 cards checked, all still pass" in capsys.readouterr().out
+
+
+def _corpus(tmp_path, entries, files=None):
+    """A manifest plus the files it names. `files` maps path -> bytes; a path
+    the caller does not supply simply is not created, which is the case the
+    command has to survive."""
+    root = tmp_path / "corpus"
+    root.mkdir()
+    for rel, data in (files or {}).items():
+        p = root / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(data)
+    (root / "manifest.jsonl").write_text(
+        "\n".join(json.dumps(e) for e in entries) + "\n", encoding="utf-8")
+    return root / "manifest.jsonl"
+
+
+def _html(body: str) -> bytes:
+    return f"<html><body><p>{body}</p></body></html>".encode()
+
+
+def test_ingest_corpus_dry_run_spends_nothing_and_prices_the_work(tmp_path, capsys):
+    cfg = cfg_for(tmp_path)
+    cmd_init(build_parser().parse_args(["init"]), cfg)
+    manifest = _corpus(
+        tmp_path,
+        [{"path": "MTH165/a.html", "subject": "MTH165", "units": [1]}],
+        {"MTH165/a.html": _html("The rank of a matrix is the number of "
+                                "linearly independent rows. " * 40)},
+    )
+    cmd_ingest_corpus(
+        build_parser().parse_args(
+            ["ingest-corpus", "--manifest", str(manifest), "--dry-run"]), cfg)
+    out = capsys.readouterr().out
+    assert "1 files in the manifest" in out
+    assert "chunks, roughly $" in out
+    assert "dry run; nothing spent" in out
+    # Nothing was written: a dry run that creates a source is not a dry run.
+    assert connect(cfg.db_path).execute(
+        "SELECT count(*) c FROM sources").fetchone()["c"] == 0
+
+
+def test_ingest_corpus_reports_every_kind_of_bad_line(tmp_path, capsys):
+    cfg = cfg_for(tmp_path)
+    cmd_init(build_parser().parse_args(["init"]), cfg)
+    manifest = _corpus(
+        tmp_path,
+        [{"path": "MTH165/there.html", "subject": "MTH165"},
+         {"path": "MTH165/gone.html", "subject": "MTH165"},
+         {"path": "X/y.html", "subject": "NOSUCH"},
+         {"path": "MTH165/z.zip", "subject": "MTH165"}],
+        {"MTH165/there.html": _html("Something worth a card. " * 40),
+         "MTH165/z.zip": b"PK\x03\x04not really"},
+    )
+    cmd_ingest_corpus(
+        build_parser().parse_args(
+            ["ingest-corpus", "--manifest", str(manifest), "--dry-run"]), cfg)
+    out = capsys.readouterr().out
+    assert "file is missing" in out
+    assert "no topic 'NOSUCH'" in out
+    assert "cannot read .zip" in out
+    assert "1 files in the manifest" in out
+
+
+def test_ingest_corpus_filters_by_subject(tmp_path, capsys):
+    cfg = cfg_for(tmp_path)
+    cmd_init(build_parser().parse_args(["init"]), cfg)
+    manifest = _corpus(
+        tmp_path,
+        [{"path": "MTH165/a.html", "subject": "MTH165"},
+         {"path": "INT108/b.html", "subject": "INT108"}],
+        {"MTH165/a.html": _html("Matrices. " * 60),
+         "INT108/b.html": _html("Lists. " * 60)},
+    )
+    cmd_ingest_corpus(
+        build_parser().parse_args(
+            ["ingest-corpus", "--manifest", str(manifest),
+             "--subject", "INT108", "--dry-run"]), cfg)
+    assert "1 files in the manifest" in capsys.readouterr().out
+
+
+def test_ingest_corpus_says_so_when_there_is_no_manifest(tmp_path, capsys):
+    cfg = cfg_for(tmp_path)
+    cmd_init(build_parser().parse_args(["init"]), cfg)
+    code = cmd_ingest_corpus(
+        build_parser().parse_args(
+            ["ingest-corpus", "--manifest", str(tmp_path / "nope.jsonl")]), cfg)
+    assert code == 2
+    assert "no manifest at" in capsys.readouterr().err

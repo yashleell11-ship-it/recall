@@ -1,4 +1,5 @@
 import argparse
+import pathlib
 import sys
 
 from recall.config import load_config
@@ -184,6 +185,152 @@ def cmd_recheck(args, cfg) -> int:
         )
     conn.commit()
     print(f"\nrejected {len(failures)} cards")
+    return 0
+
+
+def cmd_ingest_corpus(args, cfg) -> int:
+    """Ingest a whole collected corpus, one manifest line at a time.
+
+    The corpus is a directory of freely-licensed course material plus a
+    `manifest.jsonl` saying, per file, which subject and which units it serves
+    (see /home/yash/recall-corpus/BRIEF.md for the shape). This walks it.
+
+    Three things make it safe to point at a thousand files:
+
+    - **It costs what it says it will.** A dry run reads every file locally,
+      counts the chunks a real run would generate, and prices them from what
+      generation has actually cost so far. Nothing is spent until you have
+      seen that number.
+    - **It stops.** --max-cost is a hard ceiling across the whole run, checked
+      before each file, not after.
+    - **It resumes.** ingest_source keys on the file's sha256, so a file
+      already ingested is a no-op and re-running continues where it stopped.
+      Interrupt it whenever you like.
+    """
+    import json as _json
+
+    from recall.ingest.chunk import chunk_pages
+    from recall.ingest.pdf import DOCUMENT_SUFFIXES, read_document
+    from recall.llm.client import DeepSeekClient, LlmUnavailable
+    from recall.pipeline import _cost, ingest_source
+
+    manifest = pathlib.Path(args.manifest).expanduser()
+    if not manifest.exists():
+        print(f"no manifest at {manifest}", file=sys.stderr)
+        return 2
+    root = manifest.parent
+
+    conn = _conn(cfg)
+    topics = {r["code"]: r["id"] for r in conn.execute(
+        "SELECT id, code FROM topics WHERE user_id = 1")}
+
+    entries, skipped = [], []
+    for line in manifest.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            e = _json.loads(line)
+        except _json.JSONDecodeError:
+            skipped.append((line[:60], "not valid json"))
+            continue
+        code = str(e.get("subject", "")).upper()
+        path = (root / str(e.get("path", ""))).resolve()
+        if code not in topics:
+            skipped.append((e.get("path"), f"no topic {code!r}"))
+        elif not path.is_file():
+            skipped.append((e.get("path"), "file is missing"))
+        elif path.suffix.lower() not in DOCUMENT_SUFFIXES:
+            skipped.append((e.get("path"), f"cannot read {path.suffix}"))
+        else:
+            entries.append((code, path, e))
+
+    if args.subject:
+        want = {c.strip().upper() for c in args.subject.split(",")}
+        entries = [x for x in entries if x[0] in want]
+
+    if args.limit:
+        entries = entries[: args.limit]
+
+    for what, why in skipped[:10]:
+        print(f"  skipped {what}: {why}")
+    if len(skipped) > 10:
+        print(f"  ... and {len(skipped) - 10} more skipped")
+    if not entries:
+        print("nothing to ingest")
+        return 0
+
+    # Already ingested? ingest_source would no-op, but say so up front rather
+    # than in a progress line, because it changes the estimate.
+    have = {r["sha256"] for r in conn.execute(
+        "SELECT sha256 FROM sources WHERE user_id = 1")}
+    from recall.ingest.pdf import file_sha256
+
+    fresh = [(c, p, e) for c, p, e in entries if file_sha256(str(p)) not in have]
+    done = len(entries) - len(fresh)
+
+    print(f"{len(entries)} files in the manifest"
+          + (f", {done} already ingested" if done else ""))
+    if not fresh:
+        print("nothing new to do")
+        return 0
+
+    # Price it from what this database has actually paid per chunk, which
+    # beats a constant guessed at the time this was written: the real figure
+    # moves with the model, the prices and how long the prompts have grown.
+    # `chunks.generated_at` is set exactly once per chunk the pipeline has
+    # paid for, so the two numbers line up.
+    row = conn.execute(
+        "SELECT (SELECT SUM(cost_estimate) FROM gen_runs) AS spent,"
+        " (SELECT COUNT(*) FROM chunks WHERE generated_at IS NOT NULL) AS n"
+    ).fetchone()
+    if row["n"] and row["spent"]:
+        per_chunk = row["spent"] / row["n"]
+        basis = f"measured over {row['n']} chunks already generated"
+    else:
+        per_chunk = 0.0035
+        basis = "a default, since nothing has been generated here yet"
+    chunks_total = 0
+    for _code, path, _e in fresh:
+        try:
+            chunks_total += len(chunk_pages(read_document(str(path))))
+        except Exception as exc:  # noqa: BLE001 — an unreadable file is data
+            print(f"  unreadable, will be skipped: {path.name} ({exc})")
+    estimate = chunks_total * per_chunk
+    print(f"{len(fresh)} new files, {chunks_total} chunks, roughly "
+          f"${estimate:.2f} at ${per_chunk:.4f}/chunk ({basis})"
+          f" — the cap is ${args.max_cost:.2f}")
+    if args.dry_run:
+        print("dry run; nothing spent")
+        return 0
+
+    client = DeepSeekClient(cfg)
+    spent = 0.0
+    ingested = failed = 0
+    for code, path, e in fresh:
+        if spent >= args.max_cost:
+            print(f"stopped at the ${args.max_cost:.2f} cap; run again to continue")
+            break
+        try:
+            result = ingest_source(conn, cfg, client, user_id=1,
+                                   topic_id=topics[code], path=str(path))
+        except LlmUnavailable as exc:
+            print(f"  {path.name}: {exc.detail}")
+            print("stopping — every remaining file would fail the same way")
+            break
+        except Exception as exc:  # noqa: BLE001 — one bad file must not end the run
+            print(f"  {path.name}: skipped ({exc})")
+            failed += 1
+            continue
+        spent += result.cost_usd
+        ingested += 1
+        print(f"  [{code}] {path.name}: +{result.accepted} kept, "
+              f"{result.rejected} rejected, ${result.cost_usd:.4f}"
+              + ("  (hit the per-source cap)" if result.stopped_early else ""))
+
+    print(f"\ningested {ingested} files"
+          + (f", {failed} failed" if failed else "")
+          + f", spent ${spent:.4f}")
     return 0
 
 
@@ -395,6 +542,15 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--user", default="yash")
     s.add_argument("--email", required=True)
     s.set_defaults(func=cmd_set_email)
+
+    s = sub.add_parser("ingest-corpus",
+                       help="ingest a collected corpus from its manifest")
+    s.add_argument("--manifest", default="~/recall-corpus/manifest.jsonl")
+    s.add_argument("--subject", help="only these codes, comma separated")
+    s.add_argument("--max-cost", type=float, default=5.0)
+    s.add_argument("--limit", type=int, help="only the first N files")
+    s.add_argument("--dry-run", action="store_true")
+    s.set_defaults(func=cmd_ingest_corpus)
 
     s = sub.add_parser("recheck",
                        help="re-run the free gates over cards already in the deck")

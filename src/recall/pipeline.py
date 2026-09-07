@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from recall.config import Config
 from recall.generate.generate import Candidate, generate_cards
 from recall.ingest.chunk import Chunk, chunk_pages
-from recall.ingest.pdf import file_sha256, read_pdf
+from recall.ingest.pdf import document_kind, file_sha256, read_document
 from recall.verify.dedupe import dedupe, embed_texts
 from recall.verify.heuristics import check_answerable, check_atomic
 from recall.verify.judges import check_closed_book, check_grounded
@@ -92,11 +92,11 @@ def ingest_source(conn, cfg: Config, client, *, user_id: int, topic_id: int,
     cur = conn.execute(
         "INSERT INTO sources (user_id, topic_id, filename, kind, sha256, added_at)"
         " VALUES (?,?,?,?,?,?)",
-        (user_id, topic_id, path, "pdf", sha, _now()),
+        (user_id, topic_id, path, document_kind(path), sha, _now()),
     )
     source_id = cur.lastrowid
 
-    for ch in chunk_pages(read_pdf(path)):
+    for ch in chunk_pages(read_document(path)):
         conn.execute(
             "INSERT INTO chunks (source_id, ordinal, text, page_ref) VALUES (?,?,?,?)",
             (source_id, ch.ordinal, ch.text, ch.page_ref),
