@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { errorMessage } from "./api";
-import { cache, inflight } from "./cache";
+import { cache, fresh, inflight, put } from "./cache";
 
 export interface Resource<T> {
   data: T | null;
@@ -42,12 +42,14 @@ export function useResource<T>(
   key: string,
   fetcher: () => Promise<T>,
 ): Resource<T> {
-  const cached = cache.get(key) as T | undefined;
+  const cached = cache.get(key)?.data as T | undefined;
   const [state, setState] = useState<State<T>>({
     data: cached ?? null,
     error: null,
     loading: cached === undefined,
-    revalidating: cached !== undefined,
+    // Fresh means the effect below will not re-fetch, so nothing is on the
+    // way and this must not claim otherwise.
+    revalidating: cached !== undefined && !fresh(key),
   });
   const [nonce, setNonce] = useState(0);
 
@@ -58,17 +60,22 @@ export function useResource<T>(
   const [shownKey, setShownKey] = useState(key);
   if (shownKey !== key) {
     setShownKey(key);
-    const next = cache.get(key) as T | undefined;
+    const next = cache.get(key)?.data as T | undefined;
     setState({
       data: next ?? null,
       error: null,
       loading: next === undefined,
-      revalidating: next !== undefined,
+      revalidating: next !== undefined && !fresh(key),
     });
   }
 
   useEffect(() => {
     let live = true;
+
+    // Just-arrived data is not revalidated. On a cold load the shell has
+    // already prefetched this key; asking again a moment later would double
+    // every request on the slowest path in the app.
+    if (fresh(key) && !inflight.has(key)) return;
 
     // Two components asking for the same thing at the same time is one
     // request, not two — the dashboard and the shell both want the topic
@@ -84,7 +91,7 @@ export function useResource<T>(
 
     request
       .then((data) => {
-        cache.set(key, data);
+        put(key, data);
         if (live) setState({ data, error: null, loading: false,
                             revalidating: false });
       })

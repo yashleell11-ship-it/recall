@@ -12,6 +12,7 @@ import {
   useState,
 } from "react";
 import { getMe, MOCK, postLogout } from "@/lib/api";
+import { prefetchFor } from "@/lib/resources";
 import { hasModifier, isTypingTarget } from "@/lib/keys";
 import { buildDefaultActions } from "@/lib/palette";
 import { useNavCollapsed } from "@/lib/nav";
@@ -139,6 +140,10 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (isPublic || user) return;
     let cancelled = false;
+    // Not awaited, and deliberately started before the identity is known:
+    // see lib/resources.ts. This is the difference between one round trip
+    // and two before the first number lands.
+    prefetchFor(pathname);
     getMe()
       .then((me) => {
         if (!cancelled) setUser(me);
@@ -152,7 +157,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [isPublic, user]);
+  }, [isPublic, user, pathname]);
 
   const signOut = useCallback(async () => {
     try {

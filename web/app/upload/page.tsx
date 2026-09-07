@@ -10,14 +10,13 @@ import {
   ApiError,
   errorMessage,
   generateCards,
-  getSources,
-  getTopics,
   MAX_UPLOAD_BYTES,
   uploadSource,
 } from "@/lib/api";
 import { fileSize, plural, usd } from "@/lib/format";
 import { hasModifier, isTypingTarget } from "@/lib/keys";
-import type { GenerateResponse, Source, Topic, UploadResponse } from "@/lib/types";
+import type { GenerateResponse, UploadResponse } from "@/lib/types";
+import { fetchUploadContext } from "@/lib/resources";
 import { useResource } from "@/lib/useResource";
 
 const MAX_MB = Math.round(MAX_UPLOAD_BYTES / (1024 * 1024));
@@ -57,13 +56,8 @@ function refuse(file: File): string | null {
   return null;
 }
 
-async function fetchContext(): Promise<{ topics: Topic[]; sources: Source[] }> {
-  const [topics, sources] = await Promise.all([getTopics(), getSources()]);
-  return { topics, sources };
-}
-
 export default function UploadPage() {
-  const res = useResource("upload-context", fetchContext);
+  const res = useResource("upload-context", fetchUploadContext);
   const toast = useToast();
   const reduced = useReducedMotion();
 

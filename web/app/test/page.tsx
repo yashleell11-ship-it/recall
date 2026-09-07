@@ -9,14 +9,13 @@ import { ErrorState, Kbd, Panel, TopicCode } from "@/components/ui";
 import {
   createTest,
   errorMessage,
-  getTests,
-  getTopics,
   sitPaper,
 } from "@/lib/api";
 import { formatDuration, mediumDate, plural } from "@/lib/format";
 import { hasModifier, isTypingTarget } from "@/lib/keys";
 import { MAX_MARKS, PAPER_LABEL } from "@/lib/marks";
-import type { TestKind, TestSummary, Topic } from "@/lib/types";
+import { fetchPicker } from "@/lib/resources";
+import type { TestKind, TestSummary } from "@/lib/types";
 import { useResource } from "@/lib/useResource";
 import { HeightSpring } from "./HeightSpring";
 import { SubjectRail, type SubjectTopic } from "./SubjectRail";
@@ -57,11 +56,6 @@ const PAPERS: Paper[] = [
       "Every active card, no clock. Close the tab and pick it up tomorrow.",
   },
 ];
-
-async function fetchPicker(): Promise<{ topics: Topic[]; tests: TestSummary[] }> {
-  const [topics, tests] = await Promise.all([getTopics(), getTests()]);
-  return { topics, tests };
-}
 
 /** A paper with no duration recorded was started and never submitted. */
 function isOpen(t: TestSummary): boolean {

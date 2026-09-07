@@ -11,8 +11,34 @@
  * module. `clearCache` exists for the day that stops being true.
  */
 
-export const cache = new Map<string, unknown>();
+export interface Entry {
+  data: unknown;
+  /** When it landed, so a caller can decide it is too fresh to re-fetch. */
+  at: number;
+}
+
+export const cache = new Map<string, Entry>();
 export const inflight = new Map<string, Promise<unknown>>();
+
+/**
+ * How long a cached value is treated as current enough to skip the network.
+ *
+ * Not a staleness policy — every write invalidates the whole cache, so a value
+ * can only be stale if something changed outside this tab. It exists to stop
+ * one cold load making the same request twice: the shell prefetches, the page
+ * mounts a moment later, and without this it would immediately revalidate
+ * data that arrived two hundred milliseconds ago.
+ */
+export const FRESH_MS = 15_000;
+
+export function put(key: string, data: unknown): void {
+  cache.set(key, { data, at: Date.now() });
+}
+
+export function fresh(key: string): boolean {
+  const e = cache.get(key);
+  return e !== undefined && Date.now() - e.at < FRESH_MS;
+}
 
 /** Drop cached responses. No arguments means all of them. */
 export function invalidate(...keys: string[]): void {

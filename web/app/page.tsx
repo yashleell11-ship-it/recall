@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { ActivityChart } from "@/app/(dashboard)/ActivityChart";
 import { DashboardSkeleton } from "@/app/(dashboard)/DashboardSkeleton";
 import { MetricStrip } from "@/app/(dashboard)/MetricStrip";
@@ -16,9 +16,9 @@ import {
   Panel,
   TopicCode,
 } from "@/components/ui";
-import { getSettings, getStats, getTopics } from "@/lib/api";
 import { longDate, plural } from "@/lib/format";
 import { hasModifier, isTypingTarget } from "@/lib/keys";
+import { fetchDashboard } from "@/lib/resources";
 import { useResource } from "@/lib/useResource";
 
 const MotionLink = motion.create(Link);
@@ -26,15 +26,6 @@ const MotionLink = motion.create(Link);
 export default function DashboardPage() {
   const router = useRouter();
   const reduced = useReducedMotion();
-
-  const fetchDashboard = useCallback(async () => {
-    const [topics, stats, settings] = await Promise.all([
-      getTopics(),
-      getStats(),
-      getSettings(),
-    ]);
-    return { topics, stats, settings };
-  }, []);
 
   const res = useResource("dashboard", fetchDashboard);
 
