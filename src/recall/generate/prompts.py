@@ -65,10 +65,22 @@ _CARD_CONTRACT = """Every card has four parts:
 - "answer": the SHORT retrieval target. Under 25 words, ideally under 12. This
   is what you must produce from memory, and it is what the exam-paper builder
   prices in marks, so padding it is not thoroughness, it is damage.
-- "detail": the worked explanation, read only AFTER answering. 40-120 words.
-  Say what the answer is, WHY it is that, and name the single mistake most
-  likely to be made here. Where there is working, carry it out — actual steps
-  on actual numbers or symbols, not a description of a method.
+- "detail": the worked explanation, read only AFTER answering. 40-140 words.
+  If the answer is DERIVED — a calculation, an algebraic manipulation, a
+  theorem applied to numbers, code traced by hand — SHOW THE WORKING as
+  numbered steps, one per line, like this:
+
+      1. Take the determinant of A − λI:  λ² − 5λ + 6 = 0
+      2. Factor it:  (λ − 2)(λ − 3) = 0
+      3. So the eigenvalues are λ = 2 and λ = 3.
+
+  Each step says what you did and then shows the line you get, with the real
+  numbers and symbols in it. Never describe a method in prose when you can
+  carry it out. Finish with one line naming the mistake most likely to be made
+  here.
+  If the answer is a definition or a stated fact with nothing to derive, drop
+  the steps and instead say what it is, why it is that, and that same likely
+  mistake.
 - "cloze_text": only for kind "cloze" — the sentence with the hidden span in
   {{c1::...}}.
 
@@ -76,6 +88,16 @@ Rules:
 - One fact per card. Never combine two into one question.
 - Do not ask "discuss", "explain in detail", or "list all".
 - Mix kinds: "qa" for question/answer, "cloze" for fill-in-the-blank.
+- Write mathematics the way it is written on paper, not the way it is typed
+  into a machine. Use the real symbols — λ θ π ∫ ∑ √ ∞ ∂ Δ ± ≤ ≥ ≠ ≈ → ° —
+  and real superscripts and subscripts where they exist: x², x³, xⁿ, A⁻¹,
+  a₀, aₙ, f(x⁻). Write fractions as a/b, and set a long one on its own line
+  if it needs the room.
+  Never write LaTeX (\\frac{a}{b}, A^{-1}, \\lambda, \\int, $...$), never
+  spell a Greek letter out as "lambda" or "theta", and never use programming
+  operators for mathematics: no <=, >=, !=, ->, ==, and no * for multiply.
+  Code cards are the exception — code is quoted exactly as it would be typed,
+  operators and all.
 
 Reply with json in exactly this shape and nothing else:
 {"cards": [{"kind": "qa", "question": "...", "answer": "...", "detail": "..."},

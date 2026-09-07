@@ -134,22 +134,81 @@ def cmd_set_email(args, cfg) -> int:
     return 0
 
 
+def cmd_recheck(args, cfg) -> int:
+    """Re-run the free gates over cards that are already in the deck.
+
+    A gate added today does nothing for a card generated last week, and the
+    card that motivated the dangling-reference gate — "What is the formula for
+    the elements of the 3x3 matrix A in Q1?" — was sitting in a real deck,
+    being reviewed, unanswerable, while the gate that would have caught it ran
+    only on new work.
+
+    Costs nothing: these are the regex gates, not the judges. Prints what it
+    would do and changes nothing unless --apply is passed, because rejecting a
+    card a student has been reviewing is not a thing to do silently.
+    """
+    from recall.generate.generate import Candidate
+    from recall.verify.heuristics import check_answerable, check_atomic
+
+    conn = _conn(cfg)
+    rows = conn.execute(
+        "SELECT c.id, c.kind, c.question, c.answer, c.cloze_text, c.state, t.code"
+        " FROM cards c JOIN topics t ON t.id = c.topic_id"
+        " WHERE c.state IN ('active','pending','suspended') AND t.user_id = 1"
+        " ORDER BY c.id"
+    ).fetchall()
+
+    failures = []
+    for r in rows:
+        c = Candidate(r["kind"], r["question"], r["answer"], r["cloze_text"])
+        reason = check_answerable(c) or check_atomic(c)
+        if reason:
+            failures.append((r, reason))
+
+    if not failures:
+        print(f"{len(rows)} cards checked, all still pass")
+        return 0
+
+    print(f"{len(failures)} of {len(rows)} cards no longer pass:")
+    for r, reason in failures:
+        print(f"  [{r['id']}] {r['code']}: {reason}")
+        print(f"        {r['question']}")
+    if not args.apply:
+        print("\nnothing changed. Re-run with --apply to reject these.")
+        return 0
+
+    for r, reason in failures:
+        conn.execute(
+            "UPDATE cards SET state = 'rejected', reject_reason = ? WHERE id = ?",
+            (f"recheck: {reason}", r["id"]),
+        )
+    conn.commit()
+    print(f"\nrejected {len(failures)} cards")
+    return 0
+
+
 def cmd_backfill_detail(args, cfg) -> int:
     """Write the worked explanation onto cards that predate the detail field.
 
     One paid call per card, so it prints what it will cost before spending
-    anything and stops at --max-cost. Resumable: it only ever picks up cards
-    where detail IS NULL, so re-running continues where it stopped.
+    anything and stops at --max-cost. Resumable: by default it only picks up
+    cards where detail IS NULL, so re-running continues where it stopped.
+    --rewrite redoes cards that already have one, which is what you want after
+    the explanation prompt changes.
     """
     from recall.llm.client import DeepSeekClient
     from recall.teach.prompts import EXPLAIN_KNOWLEDGE_SYSTEM, EXPLAIN_KNOWLEDGE_USER
     from recall.pipeline import _cost
 
     conn = _conn(cfg)
+    # --rewrite is for the day the explanation prompt changes: the details
+    # already on the cards were written to the old contract, and only a
+    # re-run replaces them. Without it this stays resumable and cheap.
+    have = "" if args.rewrite else " c.detail IS NULL AND"
     rows = conn.execute(
         "SELECT c.id, c.question, c.answer, t.code FROM cards c"
         " JOIN topics t ON t.id = c.topic_id"
-        " WHERE c.detail IS NULL AND c.state IN ('active','pending')"
+        f" WHERE{have} c.state IN ('active','pending')"
         " AND t.user_id = 1 ORDER BY c.id"
     ).fetchall()
     if not rows:
@@ -337,10 +396,18 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--email", required=True)
     s.set_defaults(func=cmd_set_email)
 
+    s = sub.add_parser("recheck",
+                       help="re-run the free gates over cards already in the deck")
+    s.add_argument("--apply", action="store_true",
+                   help="actually reject what fails (default is a dry run)")
+    s.set_defaults(func=cmd_recheck)
+
     s = sub.add_parser("backfill-detail",
                        help="write the worked explanation onto older cards")
     s.add_argument("--max-cost", type=float, default=0.50)
     s.add_argument("--dry-run", action="store_true")
+    s.add_argument("--rewrite", action="store_true",
+                   help="redo cards that already have a detail")
     s.set_defaults(func=cmd_backfill_detail)
 
     s = sub.add_parser("ingest", help="turn a PDF into candidate cards")

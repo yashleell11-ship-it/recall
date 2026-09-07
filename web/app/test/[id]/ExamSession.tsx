@@ -6,6 +6,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFocusMode } from "@/components/AppShell";
 import { ClozePrompt, clozeShowsAnswer } from "@/components/CardText";
+import { Provenance } from "@/components/Provenance";
 import { ProgressRing, Skeleton, useToast } from "@/components/rich";
 import { Kbd, KindTag } from "@/components/ui";
 import {
@@ -894,10 +895,23 @@ export function ExamSession({ id }: { id: number }) {
 
               {isRevealed && (!solved || !answerIsRedundant) && (
                 <div className="mt-6 pt-5 border-t border-line anim-reveal">
-                  <p className="label mb-2">
-                    {solved ? "Note" : "Model answer"}
-                  </p>
+                  <div className="flex items-center gap-2 mb-2">
+                    <p className="label">{solved ? "Note" : "Model answer"}</p>
+                    <Provenance origin={question.origin} variant="chip" />
+                  </div>
                   <p className="k-answer">{question.answer}</p>
+                  {/* The working, not just the verdict. A paper you cannot
+                      learn from is a paper you sat, not a paper you studied —
+                      and this is the screen where you find out you were
+                      wrong. */}
+                  {question.detail && (
+                    <p
+                      className="mt-4 text-[13.5px] leading-relaxed text-fg-2
+                        max-w-[62ch] whitespace-pre-line"
+                    >
+                      {question.detail}
+                    </p>
+                  )}
                 </div>
               )}
 

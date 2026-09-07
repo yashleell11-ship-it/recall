@@ -35,7 +35,7 @@ _SCORE_FRACTION = {"correct": 1.0, "partial": 0.5, "wrong": 0.0, "skipped": 0.0}
 
 _QUESTION_SQL = (
     "SELECT q.ordinal, q.card_id, q.marks, q.verdict, q.seconds,"
-    " c.kind, c.question, c.answer, c.cloze_text,"
+    " c.kind, c.question, c.answer, c.cloze_text, c.detail, c.origin,"
     " t.code AS topic_code, ch.page_ref"
     " FROM test_questions q"
     " JOIN cards c ON c.id = q.card_id"
@@ -49,6 +49,7 @@ def _question(row) -> dict:
     return {"ordinal": row["ordinal"], "card_id": row["card_id"],
             "kind": row["kind"], "question": row["question"],
             "answer": row["answer"], "cloze_text": row["cloze_text"],
+            "detail": row["detail"], "origin": row["origin"],
             "marks": row["marks"], "topic_code": row["topic_code"],
             "page_ref": row["page_ref"], "verdict": row["verdict"]}
 

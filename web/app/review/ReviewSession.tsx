@@ -535,8 +535,15 @@ export function ReviewSession() {
                         retrieval it would be a spoiler, read after it is
                         the teaching. Quieter and smaller than the answer,
                         because the answer is the thing being tested. */}
+                    {/* whitespace-pre-line: the working comes back as
+                        numbered lines, and collapsing them would turn a
+                        derivation back into the paragraph it was written to
+                        replace. */}
                     {card.detail && (
-                      <p className="mt-4 text-[13.5px] leading-relaxed text-fg-2 max-w-[62ch]">
+                      <p
+                        className="mt-4 text-[13.5px] leading-relaxed text-fg-2
+                          max-w-[62ch] whitespace-pre-line"
+                      >
                         {card.detail}
                       </p>
                     )}

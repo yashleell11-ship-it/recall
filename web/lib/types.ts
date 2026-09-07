@@ -221,6 +221,10 @@ export interface TestQuestion {
   topic_code: string;
   page_ref: string;
   verdict: Verdict | null;
+  /** OPTIONAL / ADDITIVE. The worked steps, shown once the answer is out. */
+  detail?: string | null;
+  /** OPTIONAL / ADDITIVE: absent on servers older than knowledge mode. */
+  origin?: CardOrigin;
 }
 
 /** POST /api/tests and GET /api/tests/{id} */

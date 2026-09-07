@@ -31,11 +31,18 @@ import type {
 } from "./types";
 
 import { API_BASE, ApiError, errorMessage, MOCK } from "./http";
+import { invalidate } from "./cache";
 
 // Re-exported so this stays the one module the rest of the app imports from.
 export { API_BASE, ApiError, errorMessage, MOCK };
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  // Any write makes every cached read suspect. Invalidating the lot is blunt
+  // and correct: there are four cached keys in the whole app, they are cheap
+  // to refetch, and the alternative — a hand-maintained map from endpoint to
+  // the screens it affects — is a stale-data bug waiting to be written.
+  const writes = !!init?.method && init.method.toUpperCase() !== "GET";
+
   let res: Response;
   try {
     res = await fetch(`${API_BASE}${path}`, {
@@ -55,6 +62,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   } catch {
     throw new ApiError(0, path, `Could not reach the API at ${API_BASE}.`);
   }
+
+  if (writes && res.ok) invalidate();
 
   if (!res.ok) {
     // The contract promises {"detail": "..."} on every error.

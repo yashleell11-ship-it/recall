@@ -330,7 +330,11 @@ def test_class30_paper_is_exactly_thirty_marks_and_timed(client):
 def test_created_questions_carry_the_contract_shape(client):
     q = client.post("/api/tests", json={"kind": "class30"}).json()["questions"][0]
     assert set(q) == {"ordinal", "card_id", "kind", "question", "answer",
-                      "cloze_text", "marks", "topic_code", "page_ref", "verdict"}
+                      "cloze_text", "marks", "topic_code", "page_ref", "verdict",
+                      # A paper you cannot learn from is a paper you sat, not
+                      # one you studied: the working travels with the answer,
+                      # and so does whether the card had a source at all.
+                      "detail", "origin"}
     assert q["ordinal"] == 1
     assert q["verdict"] is None
     assert q["page_ref"]

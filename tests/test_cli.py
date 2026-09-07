@@ -1,4 +1,10 @@
-from recall.cli import build_parser, cmd_approve, cmd_init, cmd_queue
+from recall.cli import (
+    build_parser,
+    cmd_approve,
+    cmd_init,
+    cmd_queue,
+    cmd_recheck,
+)
 from recall.config import load_config
 from recall.db import connect
 from recall.lpu import SUBJECTS
@@ -70,3 +76,80 @@ def test_fit_parser_defaults():
     args = build_parser().parse_args(["fit"])
     assert args.min_reviews == 200
     assert args.dry_run is False
+
+
+def _card(conn, cid, question, answer="A short answer", state="active"):
+    conn.execute("INSERT INTO cards (id,chunk_id,topic_id,kind,question,answer,"
+                 "cloze_text,arm,state,created_at) VALUES "
+                 "(?,1,1,'qa',?,?,NULL,'learned',?,'2026-09-07')",
+                 (cid, question, answer, state))
+
+
+def _deck(cfg):
+    """A source, a chunk, and nothing else — the fixture every card needs."""
+    conn = connect(cfg.db_path)
+    conn.execute("INSERT INTO sources (id,user_id,topic_id,filename,kind,sha256,"
+                 "added_at) VALUES (1,1,1,'f.pdf','pdf','abc','2026-09-07')")
+    conn.execute("INSERT INTO chunks (id,source_id,ordinal,text,page_ref) "
+                 "VALUES (1,1,0,'t','p1')")
+    return conn
+
+
+def test_recheck_finds_cards_a_later_gate_would_have_caught(tmp_path, capsys):
+    """The four cards that motivated the dangling-reference gate were already
+    in a real deck when it was written. A gate that only runs on new work
+    leaves them there."""
+    cfg = cfg_for(tmp_path)
+    cmd_init(build_parser().parse_args(["init"]), cfg)
+    conn = _deck(cfg)
+    _card(conn, 1, "What is the formula for the elements of the matrix A in Q1?")
+    _card(conn, 2, "What is the rank of a 3x3 identity matrix?")
+    conn.commit()
+
+    cmd_recheck(build_parser().parse_args(["recheck"]), cfg)
+    out = capsys.readouterr().out
+    assert "1 of 2 cards no longer pass" in out
+    # A dry run by default: a card being reviewed is not deleted on a whim.
+    states = {r["id"]: r["state"] for r in
+              connect(cfg.db_path).execute("SELECT id, state FROM cards")}
+    assert states == {1: "active", 2: "active"}
+
+
+def test_recheck_apply_rejects_only_the_failures(tmp_path, capsys):
+    cfg = cfg_for(tmp_path)
+    cmd_init(build_parser().parse_args(["init"]), cfg)
+    conn = _deck(cfg)
+    _card(conn, 1, "In Q6, what is the expression for A^n?")
+    _card(conn, 2, "What is the rank of a 3x3 identity matrix?")
+    conn.commit()
+
+    cmd_recheck(build_parser().parse_args(["recheck", "--apply"]), cfg)
+    rows = {r["id"]: (r["state"], r["reject_reason"]) for r in
+            connect(cfg.db_path).execute(
+                "SELECT id, state, reject_reason FROM cards")}
+    assert rows[1][0] == "rejected"
+    assert rows[1][1].startswith("recheck: ")
+    assert rows[2] == ("active", None)
+
+
+def test_recheck_leaves_a_clean_deck_alone(tmp_path, capsys):
+    cfg = cfg_for(tmp_path)
+    cmd_init(build_parser().parse_args(["init"]), cfg)
+    conn = _deck(cfg)
+    _card(conn, 1, "What is the rank of a 3x3 identity matrix?")
+    conn.commit()
+    cmd_recheck(build_parser().parse_args(["recheck", "--apply"]), cfg)
+    assert "all still pass" in capsys.readouterr().out
+    assert connect(cfg.db_path).execute(
+        "SELECT state FROM cards WHERE id = 1").fetchone()["state"] == "active"
+
+
+def test_recheck_ignores_already_rejected_cards(tmp_path, capsys):
+    """Re-running must not re-report what it already dealt with."""
+    cfg = cfg_for(tmp_path)
+    cmd_init(build_parser().parse_args(["init"]), cfg)
+    conn = _deck(cfg)
+    _card(conn, 1, "What is the matrix A in Q1?", state="rejected")
+    conn.commit()
+    cmd_recheck(build_parser().parse_args(["recheck"]), cfg)
+    assert "0 cards checked, all still pass" in capsys.readouterr().out
