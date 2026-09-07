@@ -45,21 +45,24 @@ _ORIGINS = ("upload", "knowledge")
 
 
 def keep_state(origin: str) -> str:
-    """What a surviving card is worth on the way in — and it depends on how
-    thoroughly it was checked.
+    """What a surviving card is worth on the way in.
 
-    An upload-grounded card cleared five gates, including one that made the
-    model quote the source verbatim and then checked that quote in Python. It
-    has earned its way straight into rotation; making someone read thirty of
-    those before they can study is work done at the moment they have the least
-    information, and a bad one is caught in review anyway — graded 'again',
-    surfaced as a leech, suspended with one key.
+    Always 'active' now: there is no approval queue. Triage before use was
+    judgement exercised at the moment you had the least information — thirty
+    cards to read before you could study any of them, and no way to tell the
+    good from the bad until you had actually tried to answer them.
 
-    A knowledge-mode card cleared three, and the two it skipped are precisely
-    the ones that check it against reality. Nothing has verified it. So that
-    one still stops at the approval queue, which is the only check it has.
+    The checking did not go away, it moved into the pipeline. Upload-grounded
+    cards clear five gates including a Python-verified verbatim quote.
+    Knowledge cards have no passage to quote, so they clear a fact check
+    instead (recall.verify.judges.check_facts) — the model reading its own
+    batch back and dropping what it can see is wrong. Whatever survives that
+    is still marked "no source" on screen, still gets graded 'again' when it
+    is bad, still surfaces as a leech, and can still be suspended with one
+    key. The evidence for a card is how it behaves in review; that is where
+    the judgement belongs.
     """
-    return "pending" if origin == "knowledge" else "active"
+    return "active"
 
 
 def _insert_card(conn, chunk_id, topic_id, c: Candidate, state, reason, arm,

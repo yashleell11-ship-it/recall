@@ -50,6 +50,17 @@ def body(cards: list[dict]) -> str:
     return json.dumps({"cards": cards})
 
 
+def all_ok(n: int) -> str:
+    """A fact-check response passing n cards. Knowledge mode makes TWO calls
+    per unit — generate, then fact-check — so a fake client needs both."""
+    return json.dumps({"verdicts": [{"i": i, "status": "ok"} for i in range(n)]})
+
+
+def gen(cards: list[dict]) -> list[str]:
+    """The response pair for one generate_for_unit call."""
+    return [body(cards), all_ok(len(cards))]
+
+
 def qa(question: str, answer: str = "A real answer of some substance") -> dict:
     return {"kind": "qa", "question": question, "answer": answer}
 
@@ -79,17 +90,17 @@ def run(conn, client, *, unit_index=0, n=5, embed=orthogonal_embed):
 
 
 def test_cards_are_written_with_origin_knowledge(conn):
-    client = FakeLlmClient([body([
+    client = FakeLlmClient(gen([
         qa("What is the rank of a matrix?"),
         qa("When is a square matrix invertible?"),
-    ])])
+    ]))
     result = run(conn, client)
     assert result.accepted == 2
     rows = conn.execute("SELECT origin, state FROM cards").fetchall()
     assert [r["origin"] for r in rows] == ["knowledge", "knowledge"]
-    # Knowledge cards skipped the two gates that check them against reality,
-    # so they still stop for a human. Upload-grounded cards do not.
-    assert {r["state"] for r in rows} == {"pending"}
+    # Straight into rotation. There is no approval queue any more — the
+    # fact check is what stands in for the reader who used to be there.
+    assert {r["state"] for r in rows} == {"active"}
 
 
 def test_uploaded_cards_keep_origin_upload(conn):
@@ -109,17 +120,18 @@ def test_uploaded_cards_keep_origin_upload(conn):
     assert origin == "upload"
 
 
-def test_only_one_paid_call_and_no_judge_calls(conn):
-    """Grounding and closed-book judges are dropped, so a unit costs exactly
-    one completion however many cards come back."""
-    client = FakeLlmClient([body([qa(f"Question number {i} about rank?")
-                                  for i in range(5)])])
+def test_a_unit_costs_two_calls_however_many_cards_come_back(conn):
+    """Grounding and closed-book are dropped; generation and one batch fact
+    check remain. Neither scales with the number of cards."""
+    client = FakeLlmClient(gen([qa(f"Question number {i} about rank?")
+                                for i in range(5)]))
     run(conn, client)
-    assert len(client.calls) == 1
+    # One generation call and one batch fact check — not one call per card.
+    assert len(client.calls) == 2
 
 
 def test_the_prompt_names_the_unit_and_course(conn):
-    client = FakeLlmClient([body([qa("What is the rank of a matrix?")])])
+    client = FakeLlmClient(gen([qa("What is the rank of a matrix?")]))
     run(conn, client, unit_index=1)
     _system, user = client.calls[0]
     assert "Differential Calculus and Its Applications" in user
@@ -129,11 +141,11 @@ def test_the_prompt_names_the_unit_and_course(conn):
 
 def test_heuristic_gates_still_run(conn):
     """Answerability and atomicity never needed a passage, so they survive."""
-    client = FakeLlmClient([body([
+    client = FakeLlmClient(gen([
         qa("Discuss the whole of linear algebra."),          # essay opener
         qa("Short?"),                                        # too short
         qa("What is the rank of a matrix?"),                 # keeper
-    ])])
+    ]))
     result = run(conn, client)
     assert result.accepted == 1
     reasons = [r["reject_reason"] for r in conn.execute(
@@ -143,7 +155,7 @@ def test_heuristic_gates_still_run(conn):
 
 
 def test_a_synthetic_source_and_chunk_satisfy_the_foreign_key(conn):
-    client = FakeLlmClient([body([qa("What is the rank of a matrix?")])])
+    client = FakeLlmClient(gen([qa("What is the rank of a matrix?")]))
     run(conn, client)
     src = conn.execute(
         "SELECT id, kind, sha256 FROM sources WHERE user_id = 1").fetchone()
@@ -159,10 +171,9 @@ def test_a_synthetic_source_and_chunk_satisfy_the_foreign_key(conn):
 
 
 def test_generating_twice_reuses_one_source_and_one_chunk_per_unit(conn):
-    client = FakeLlmClient([
-        body([qa("What is the rank of a matrix?")]),
-        body([qa("When is a square matrix invertible?")]),
-    ])
+    client = FakeLlmClient(
+        gen([qa("What is the rank of a matrix?")])
+        + gen([qa("When is a square matrix invertible?")]))
     run(conn, client)
     run(conn, client)
     assert conn.execute("SELECT COUNT(*) n FROM sources").fetchone()["n"] == 1
@@ -170,10 +181,9 @@ def test_generating_twice_reuses_one_source_and_one_chunk_per_unit(conn):
 
 
 def test_each_unit_gets_its_own_chunk(conn):
-    client = FakeLlmClient([
-        body([qa("What is the rank of a matrix?")]),
-        body([qa("What does Rolle's theorem require?")]),
-    ])
+    client = FakeLlmClient(
+        gen([qa("What is the rank of a matrix?")])
+        + gen([qa("What does Rolle's theorem require?")]))
     run(conn, client, unit_index=0)
     run(conn, client, unit_index=1)
     refs = {r["page_ref"] for r in conn.execute(
@@ -185,11 +195,10 @@ def test_each_unit_gets_its_own_chunk(conn):
 def test_a_repeat_press_does_not_flood_the_unit_with_duplicates(conn):
     """The upload path cannot hit this — a chunk generates exactly once — but
     this button can be pressed all day against the same unit."""
-    client = FakeLlmClient([
-        body([qa("Rank of a matrix, what is it?")]),
-        body([qa("Rank of a matrix, what is it?"),     # same first word: collides
-              qa("Eigenvalues, what are they?")]),     # genuinely new
-    ])
+    client = FakeLlmClient(
+        gen([qa("Rank of a matrix, what is it?")])
+        + gen([qa("Rank of a matrix, what is it?"),   # same first word: collides
+               qa("Eigenvalues, what are they?")]))   # genuinely new
     first = run(conn, client)
     assert first.accepted == 1
     second = run(conn, client)
@@ -199,7 +208,7 @@ def test_a_repeat_press_does_not_flood_the_unit_with_duplicates(conn):
         "SELECT reject_reason FROM cards WHERE state='rejected'").fetchone()
     assert "duplicate of" in reason["reject_reason"]
     kept = [r["question"] for r in conn.execute(
-        "SELECT question FROM cards WHERE state='pending' ORDER BY id").fetchall()]
+        "SELECT question FROM cards WHERE state='active' ORDER BY id").fetchall()]
     assert kept == ["Rank of a matrix, what is it?", "Eigenvalues, what are they?"]
 
 
@@ -207,10 +216,9 @@ def test_cost_is_recorded_on_one_accumulating_gen_run(conn):
     # Distinct first words: orthogonal_embed keys on those, so same-word
     # questions would (correctly) be deduped against each other and the
     # second run would accept nothing.
-    client = FakeLlmClient([
-        body([qa("Rank of a matrix, what is it?")]),
-        body([qa("Eigenvalues, what are they for?")]),
-    ])
+    client = FakeLlmClient(
+        gen([qa("Rank of a matrix, what is it?")])
+        + gen([qa("Eigenvalues, what are they for?")]))
     run(conn, client)
     run(conn, client)
     rows = conn.execute("SELECT cost_estimate, cards_accepted FROM gen_runs").fetchall()
@@ -221,7 +229,7 @@ def test_cost_is_recorded_on_one_accumulating_gen_run(conn):
 
 def test_n_is_capped_server_side(conn):
     """The prompt asks; this is what actually bounds one press."""
-    client = FakeLlmClient([body([qa("What is the rank of a matrix?")])])
+    client = FakeLlmClient(gen([qa("What is the rank of a matrix?")]))
     run(conn, client, n=10_000)
     _system, user = client.calls[0]
     assert f"at most {MAX_CARDS_PER_CALL} flashcards" in user
@@ -242,10 +250,10 @@ def test_a_knowledge_card_is_explained_without_a_citation(conn):
     dropped rather than faked — and the empty quote is the signal."""
     from recall.teach.explain import explain_card
 
-    client = FakeLlmClient([body([qa("What is the rank of a matrix?")])])
+    client = FakeLlmClient(gen([qa("What is the rank of a matrix?")]))
     run(conn, client)
     card_id = conn.execute(
-        "SELECT id FROM cards WHERE state='pending'").fetchone()["id"]
+        "SELECT id FROM cards WHERE state='active'").fetchone()["id"]
 
     teacher = FakeLlmClient([json.dumps({
         "explanation": "The rank is the number of linearly independent rows. "
@@ -281,3 +289,58 @@ def test_an_uploaded_card_still_requires_its_verbatim_quote(conn):
         "quote": "a sentence that is nowhere in the passage"})])
     with pytest.raises(ValueError, match="does not appear in the source"):
         explain_card(conn, teacher, user_id=1, card_id=55, model="fake-model")
+
+
+# --- the fact check, which replaced the human reader -------------------------
+
+def test_a_card_the_fact_check_calls_wrong_never_enters_the_deck(conn):
+    """Nothing reads these before a student does, so this gate is the only
+    thing between a confidently wrong model and a deck."""
+    client = FakeLlmClient([
+        body([qa("What is the rank of a matrix?"),
+              qa("What is the determinant of a singular matrix?", "seventeen")]),
+        json.dumps({"verdicts": [
+            {"i": 0, "status": "ok"},
+            {"i": 1, "status": "wrong", "why": "a singular matrix has determinant 0"},
+        ]}),
+    ])
+    result = run(conn, client)
+    assert result.accepted == 1
+    row = conn.execute(
+        "SELECT question, reject_reason FROM cards WHERE state='rejected'").fetchone()
+    assert "determinant" in row["question"]
+    assert "fact check" in row["reject_reason"]
+
+
+def test_a_card_the_fact_check_cannot_verify_is_also_kept_out(conn):
+    client = FakeLlmClient([
+        body([qa("What is the rank of a matrix?")]),
+        json.dumps({"verdicts": [{"i": 0, "status": "unsure"}]}),
+    ])
+    result = run(conn, client)
+    assert result.accepted == 0
+    reason = conn.execute(
+        "SELECT reject_reason r FROM cards WHERE state='rejected'").fetchone()["r"]
+    assert "could not be verified" in reason
+
+
+def test_a_broken_fact_check_keeps_the_cards_rather_than_binning_them(conn):
+    """Fails OPEN on an outage: the student already paid for the generation,
+    and losing all of it to a transient error is the worse outcome."""
+    client = FakeLlmClient([
+        body([qa("What is the rank of a matrix?")]),
+        "not json at all",
+    ])
+    result = run(conn, client)
+    assert result.accepted == 1
+    assert conn.execute(
+        "SELECT COUNT(*) n FROM cards WHERE state='rejected'").fetchone()["n"] == 0
+
+
+def test_the_fact_check_is_one_call_for_the_whole_batch(conn):
+    client = FakeLlmClient(gen([qa(f"Question number {i} about rank?")
+                                for i in range(12)]))
+    run(conn, client, n=12)
+    assert len(client.calls) == 2, "one generation, one batch check"
+    _system, user = client.calls[1]
+    assert "[0]" in user and "[11]" in user, "every card must be in the one call"

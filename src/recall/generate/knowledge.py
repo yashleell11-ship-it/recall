@@ -48,6 +48,7 @@ from recall.pipeline import (
 )
 from recall.verify.dedupe import dedupe, embed_texts
 from recall.verify.heuristics import check_answerable, check_atomic
+from recall.verify.judges import check_facts
 
 # One request per unit, so ask for a deck's worth rather than a chunk's worth.
 DEFAULT_CARDS_PER_UNIT = 12
@@ -189,6 +190,26 @@ def generate_for_unit(conn, cfg: Config, client, *, user_id: int, topic_id: int,
         "SELECT question FROM cards WHERE topic_id = ? AND chunk_id = ?"
         " AND state != 'rejected'", (topic_id, chunk_id)
     ).fetchall()]
+
+    # The fact check. Upload-grounded cards are verified against their own
+    # passage; these have none, and no longer a human reading them either, so
+    # this is the only thing that looks at them before they enter the deck.
+    # One call for the batch — the cost of the whole check is a fraction of
+    # the generation that produced it.
+    checked, pt, ct = check_facts(
+        client, survivors, topic_code=topic_code, full_name=full_name,
+        unit_name=unit_name,
+    )
+    prompt_tokens += pt
+    completion_tokens += ct
+    survivors = []
+    for candidate, reason in checked:
+        if reason is None:
+            survivors.append(candidate)
+        else:
+            _insert_card(conn, chunk_id, topic_id, candidate, "rejected", reason,
+                         "learned", origin="knowledge")
+            rejected += 1
 
     kept, dropped = dedupe(survivors, embed=embed, seed_texts=seen)
     for c, reason in dropped:

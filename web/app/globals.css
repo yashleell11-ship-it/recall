@@ -317,6 +317,85 @@
   --k-face: var(--font-serif);
 }
 
+/* --- github: GitHub's dark default -------------------------------------------
+   A third skin, and the plainest of the three. Where Phosphor emits and Ember
+   is paper, this is a working tool at 2am: GitHub's own dark palette, the one
+   a developer already has muscle memory for.
+
+   It redefines exactly the same semantic tokens as the other skins, so every
+   component works untouched. Colour meanings are preserved rather than
+   re-invented — grades still map to danger/attention/success, and the AI mark
+   still takes the one violet (GitHub's "done" purple, which is the closest
+   thing its palette has to the synapse tone).
+   ---------------------------------------------------------------------------- */
+:root[data-skin="github"] {
+  color-scheme: dark;
+
+  /* surfaces — canvas.inset / default / subtle / overlay */
+  --bg: #0d1117;
+  --bg-sunken: #010409;
+  --surface: #0d1117;
+  --surface-hover: #161b22;
+  --surface-raised: #161b22;
+  --surface-overlay: #1c2128;
+
+  /* hairlines — border.default and border.muted */
+  --line: #21262d;
+  --line-strong: #30363d;
+  --line-lumen: rgba(240, 246, 252, 0.04);
+
+  /* ink — fg.default / fg.muted / fg.subtle */
+  --fg: #e6edf3;
+  --fg-2: #7d8590;
+  --fg-3: #6e7681;
+
+  /* accent — GitHub blue */
+  --accent: #2f81f7;
+  --accent-hover: #58a6ff;
+  --accent-fg: #ffffff;
+  --accent-quiet: rgba(47, 129, 247, 0.12);
+  --accent-deep: #1f6feb;
+  --accent-glow: rgba(47, 129, 247, 0.28);
+  --accent-glow-faint: rgba(47, 129, 247, 0.08);
+
+  /* grades — danger / attention / success / accent, same meanings as ever */
+  --g-again: #f85149;
+  --g-hard: #d29922;
+  --g-good: #3fb950;
+  --g-easy: #58a6ff;
+  --g-again-bg: rgba(248, 81, 73, 0.1);
+  --g-hard-bg: rgba(210, 153, 34, 0.1);
+  --g-good-bg: rgba(63, 185, 80, 0.1);
+  --g-easy-bg: rgba(88, 166, 255, 0.1);
+
+  /* depth — GitHub is flat: borders do the work, shadows barely exist */
+  --shadow-1: 0 1px 0 rgba(1, 4, 9, 0.85);
+  --shadow-2: 0 3px 6px rgba(1, 4, 9, 0.6);
+  --shadow-3: 0 8px 24px rgba(1, 4, 9, 0.75);
+
+  /* AI voice → done.fg, the one purple in GitHub's palette */
+  --ai: #a371f7;
+  --ai-quiet: rgba(163, 113, 247, 0.1);
+  --ai-line: rgba(163, 113, 247, 0.4);
+  --ai-glow: rgba(163, 113, 247, 0.25);
+
+  /* feedback */
+  --scrim: rgba(1, 4, 9, 0.8);
+  --skeleton: #161b22;
+  --shimmer: rgba(240, 246, 252, 0.06);
+  /* No film grain: GitHub's surfaces are clean, and grain would read as a
+     rendering fault rather than as texture. */
+  --grain-opacity: 0;
+
+  /* type — GitHub's own stack, and no serif: knowledge text sits in the same
+     system face as everything else, which is what the real thing does. */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+  --k-face: var(--font-sans);
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-sunken: var(--bg-sunken);
@@ -724,5 +803,47 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* --- the sidebar ------------------------------------------------------------
+   One system owns the sidebar's geometry: its width, whether it is off-canvas,
+   and how much room the content leaves for it. Mixing these rules with
+   Tailwind utilities on the element meant two sources of truth for the same
+   measurement, and they drifted — content rendering underneath the nav.
+
+   Two attributes on <html>, both written by React:
+     data-nav    = "full" | "rail"   the remembered wide-screen preference
+     data-drawer = "open" | absent   the phone drawer, transient
+   The breakpoint stays in CSS, where the browser can answer it without a
+   hydration round trip.
+   ---------------------------------------------------------------------------- */
+:root {
+  --nav-w: 13rem;
+  --nav-w-rail: 3.25rem;
+}
+
+/* Narrow: off-canvas, full width when pulled out, content uses the lot. */
+.nav-aside {
+  width: var(--nav-w);
+  translate: -100% 0;
+}
+html[data-drawer="open"] .nav-aside {
+  translate: 0 0;
+}
+
+/* Wide: always in view, never translated, and the content reserves its width. */
+@media (min-width: 768px) {
+  .nav-aside {
+    translate: none;
+  }
+  html[data-nav="rail"] .nav-aside {
+    width: var(--nav-w-rail);
+  }
+  .nav-content {
+    padding-left: var(--nav-w);
+  }
+  html[data-nav="rail"] .nav-content {
+    padding-left: var(--nav-w-rail);
   }
 }

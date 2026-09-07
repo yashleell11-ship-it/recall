@@ -47,6 +47,12 @@ def cards_body(unit_hint: str, n: int) -> str:
     ]})
 
 
+def unit_calls(unit_hint: str, n: int) -> list[str]:
+    """One unit's worth of responses: generate, then the batch fact check."""
+    return [cards_body(unit_hint, n),
+            json.dumps({"verdicts": [{"i": i, "status": "ok"} for i in range(n)]})]
+
+
 @pytest.fixture
 def db_path(tmp_path):
     path = str(tmp_path / "paper.db")
@@ -118,7 +124,7 @@ def test_a_bigger_paper_needs_more_cards_per_unit():
 
 def test_a_paper_on_an_empty_deck_comes_back_with_questions(db_path):
     """The whole point. This request used to return an empty paper."""
-    llm = FakeLlmClient([cards_body(f"unit{i}", 14) for i in range(3)])
+    llm = FakeLlmClient([r for i in range(3) for r in unit_calls(f"unit{i}", 14)])
     client = make_client(db_path, llm)
 
     r = client.post("/api/topics/MTH165/paper", json={"kind": "mte40"})
@@ -134,7 +140,7 @@ def test_a_paper_on_an_empty_deck_comes_back_with_questions(db_path):
 def test_the_generated_questions_are_real_cards_in_the_deck(db_path):
     """Not a throwaway document: they enter the deck, so answering them
     records real reviews and moves the scheduler."""
-    llm = FakeLlmClient([cards_body(f"unit{i}", 14) for i in range(3)])
+    llm = FakeLlmClient([r for i in range(3) for r in unit_calls(f"unit{i}", 14)])
     client = make_client(db_path, llm)
     paper = client.post("/api/topics/MTH165/paper", json={"kind": "mte40"}).json()
 
@@ -152,7 +158,7 @@ def test_the_generated_questions_are_real_cards_in_the_deck(db_path):
 
 def test_sitting_the_same_paper_again_does_not_pay_twice(db_path):
     """Only the shortfall is generated, so a covered unit costs nothing."""
-    llm = FakeLlmClient([cards_body(f"unit{i}", 14) for i in range(3)])
+    llm = FakeLlmClient([r for i in range(3) for r in unit_calls(f"unit{i}", 14)])
     client = make_client(db_path, llm)
     first = client.post("/api/topics/MTH165/paper", json={"kind": "mte40"}).json()
     assert first["generated"]["cards"] > 0

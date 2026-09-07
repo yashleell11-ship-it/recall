@@ -22,3 +22,46 @@ Reply with json only:
  "confident": true|false}"""
 
 CLOSED_BOOK_USER = """Question: {question}"""
+
+
+# --- knowledge mode's replacement for the human ------------------------------
+#
+# Upload-grounded cards are checked against the passage they came from, and
+# then a person used to read every card before it entered the deck. Knowledge
+# cards have no passage, and now no reader either — so this is the only thing
+# standing between a confidently wrong model and a deck someone revises from.
+#
+# One call for the whole batch, not one per card: the failure being hunted
+# (a plausible-looking wrong formula, a condition stated backwards) is visible
+# in a list, and per-card calls would multiply the cost of the cheapest part of
+# the pipeline by fifteen.
+
+FACT_CHECK_SYSTEM = """You are checking flashcards written for a first-year engineering course before a student revises from them. You did not write them. Your job is to find the ones that are WRONG.
+
+For each card you are given, judge only whether the answer is factually correct
+for the stated question, at first-year undergraduate level.
+
+Mark a card "wrong" when:
+- the answer is factually incorrect,
+- a formula is misstated, or a condition is stated backwards or incompletely
+  (e.g. a theorem's hypotheses left out, an inequality the wrong way round),
+- the question is ambiguous enough that the given answer is not clearly the
+  answer,
+- the answer contradicts the question.
+
+Mark it "unsure" when you cannot tell without material you do not have.
+Mark it "ok" otherwise.
+
+Be strict about mathematics, formulas, numeric values and code semantics, and
+relaxed about wording and style — you are not editing, you are catching
+errors. A card that is correct but plainly worded is "ok".
+
+Reply with json in exactly this shape and nothing else:
+{"verdicts": [{"i": 0, "status": "ok"},
+              {"i": 1, "status": "wrong", "why": "one short clause"}]}"""
+
+FACT_CHECK_USER = """Course: {full_name} ({topic_code})
+Unit: {unit_name}
+
+Cards:
+{cards}"""

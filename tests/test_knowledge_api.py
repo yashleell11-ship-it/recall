@@ -34,6 +34,13 @@ def body(*questions):
         for q in questions]})
 
 
+def gen(*questions):
+    """Knowledge mode makes two calls per unit: generate, then fact-check."""
+    return [body(*questions),
+            json.dumps({"verdicts": [{"i": i, "status": "ok"}
+                                     for i in range(len(questions))]})]
+
+
 @pytest.fixture
 def db_path(tmp_path):
     path = str(tmp_path / "kapi.db")
@@ -73,7 +80,7 @@ def make_client(db_path, llm):
 
 
 def test_generating_a_unit_returns_the_same_shape_as_upload_generation(db_path):
-    client = make_client(db_path, FakeLlmClient([body("What is the rank of a matrix?")]))
+    client = make_client(db_path, FakeLlmClient(gen("What is the rank of a matrix?")))
     r = client.post("/api/topics/MTH165/generate", json={"unit": 1})
     assert r.status_code == 200
     assert r.json() == {"accepted": 1, "rejected": 0,
@@ -82,33 +89,33 @@ def test_generating_a_unit_returns_the_same_shape_as_upload_generation(db_path):
 
 
 def test_a_topic_that_is_not_yours_is_a_404(db_path):
-    client = make_client(db_path, FakeLlmClient([body("q?")]))
+    client = make_client(db_path, FakeLlmClient(gen("q?")))
     assert client.post("/api/topics/NOPE/generate",
                        json={"unit": 1}).status_code == 404
 
 
 def test_a_topic_with_no_syllabus_units_is_refused_clearly(db_path):
-    client = make_client(db_path, FakeLlmClient([body("q?")]))
+    client = make_client(db_path, FakeLlmClient(gen("q?")))
     r = client.post("/api/topics/BARE/generate", json={"unit": 1})
     assert r.status_code == 422
     assert "no syllabus units" in r.json()["detail"]
 
 
 def test_a_unit_past_the_end_of_the_syllabus_is_refused(db_path):
-    client = make_client(db_path, FakeLlmClient([body("q?")]))
+    client = make_client(db_path, FakeLlmClient(gen("q?")))
     r = client.post("/api/topics/MTH165/generate", json={"unit": 9})
     assert r.status_code == 422
     assert "has 2 units" in r.json()["detail"]
 
 
 def test_count_is_bounded_by_the_schema(db_path):
-    client = make_client(db_path, FakeLlmClient([body("q?")]))
+    client = make_client(db_path, FakeLlmClient(gen("q?")))
     assert client.post("/api/topics/MTH165/generate",
                        json={"unit": 1, "count": 500}).status_code == 422
 
 
 def test_spend_is_recorded_against_the_user_and_the_day(db_path):
-    client = make_client(db_path, FakeLlmClient([body("What is the rank of a matrix?")]))
+    client = make_client(db_path, FakeLlmClient(gen("What is the rank of a matrix?")))
     client.post("/api/topics/MTH165/generate", json={"unit": 1})
     conn = connect(db_path)
     row = conn.execute("SELECT user_id, cost_usd FROM usage_daily").fetchone()
@@ -127,7 +134,7 @@ def test_a_user_over_their_daily_cap_is_refused_before_any_paid_call(db_path,
     conn.commit()
     conn.close()
 
-    llm = FakeLlmClient([body("What is the rank of a matrix?")])
+    llm = FakeLlmClient(gen("What is the rank of a matrix?"))
     client = make_client(db_path, llm)
     r = client.post("/api/topics/MTH165/generate", json={"unit": 1})
     assert r.status_code == 429
@@ -149,7 +156,7 @@ def test_the_cap_also_covers_upload_generation(db_path, monkeypatch):
     conn.commit()
     conn.close()
 
-    llm = FakeLlmClient([body("q?")])
+    llm = FakeLlmClient(gen("q?"))
     client = make_client(db_path, llm)
     r = client.post("/api/sources/4/generate")
     assert r.status_code == 429

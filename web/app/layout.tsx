@@ -21,10 +21,10 @@ export const viewport: Viewport = {
  * Applied before first paint so a stored preference never flashes the other
  * palette — or the other skin. Theme: `system` deliberately writes no
  * attribute, leaving the CSS media query in charge. Skin: the server already
- * renders data-skin="phosphor" (the default), so only a stored "ember"
+ * renders data-skin="phosphor" (the default), so only a stored non-default
  * actually changes anything here.
  */
-const THEME_BOOTSTRAP = `(function(){try{var m=localStorage.getItem("recall.theme");if(m==="light"||m==="dark"){document.documentElement.setAttribute("data-theme",m);}var s=localStorage.getItem("recall.skin");if(s==="phosphor"||s==="ember"){document.documentElement.setAttribute("data-skin",s);}}catch(e){}})();`;
+const THEME_BOOTSTRAP = `(function(){try{var m=localStorage.getItem("recall.theme");if(m==="light"||m==="dark"){document.documentElement.setAttribute("data-theme",m);}var s=localStorage.getItem("recall.skin");if(s==="phosphor"||s==="ember"||s==="github"){document.documentElement.setAttribute("data-skin",s);}}catch(e){}})();`;
 
 /**
  * Phosphor's three voices, loaded as a plain stylesheet link (deliberately

@@ -9,6 +9,8 @@ import { useCallback, useSyncExternalStore } from "react";
  *              serif knowledge text, emission accents. The default.
  * "ember"    — the original paper/graphite system, which keeps its own
  *              light/dark/system theme behaviour.
+ * "github"   — GitHub's dark default. Flat, bordered, no grain, no serif:
+ *              the palette a developer already has muscle memory for.
  *
  * Same shape as the theme store in ThemeToggle: localStorage is an external
  * store, read through useSyncExternalStore, applied to the <html> element as
@@ -16,7 +18,10 @@ import { useCallback, useSyncExternalStore } from "react";
  * choice before first paint, so there is never a flash of the other skin.
  */
 
-export type Skin = "phosphor" | "ember";
+export type Skin = "phosphor" | "ember" | "github";
+
+/** Cycle order for the header control. */
+export const SKINS: readonly Skin[] = ["phosphor", "github", "ember"] as const;
 
 export const SKIN_KEY = "recall.skin";
 export const DEFAULT_SKIN: Skin = "phosphor";
@@ -28,7 +33,7 @@ export function applySkin(skin: Skin): void {
 function readStored(): Skin {
   try {
     const v = localStorage.getItem(SKIN_KEY);
-    if (v === "phosphor" || v === "ember") return v;
+    if (v && (SKINS as readonly string[]).includes(v)) return v as Skin;
   } catch {
     /* private mode, or storage disabled */
   }
@@ -68,7 +73,8 @@ export function setSkin(next: Skin): void {
 export function useSkin() {
   const skin = useSyncExternalStore(subscribeSkin, getSkin, getServerSnapshot);
   const toggle = useCallback(() => {
-    setSkin(getSkin() === "phosphor" ? "ember" : "phosphor");
+    const i = SKINS.indexOf(getSkin());
+    setSkin(SKINS[(i + 1) % SKINS.length]);
   }, []);
   return { skin, setSkin, toggle };
 }

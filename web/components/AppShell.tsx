@@ -14,6 +14,7 @@ import {
 import { getMe, MOCK, postLogout } from "@/lib/api";
 import { hasModifier, isTypingTarget } from "@/lib/keys";
 import { buildDefaultActions } from "@/lib/palette";
+import { useNavCollapsed } from "@/lib/nav";
 import { useSkin } from "@/lib/skin";
 import type { AuthUser } from "@/lib/types";
 import { CommandPalette, ToastProvider, useToast } from "./rich";
@@ -22,10 +23,19 @@ import { ThemeToggle, useThemeMode } from "./ThemeToggle";
 import type { ThemeMode } from "./ThemeToggle";
 import { Kbd } from "./ui";
 
+/**
+ * The destinations, in the order a day actually uses them.
+ *
+ * Approve is deliberately absent. Cards used to queue for triage before they
+ * could be studied; they are now checked in the pipeline (grounded against
+ * the source they came from, or fact-checked when there is no source) and go
+ * straight into rotation. A bad one is caught where the evidence is — in
+ * review, where you press one key to suspend it.
+ */
 const NAV = [
   { href: "/", label: "Today" },
+  { href: "/review", label: "Review" },
   { href: "/test", label: "Test" },
-  { href: "/approve", label: "Approve" },
   { href: "/upload", label: "Upload" },
   { href: "/sources", label: "Sources" },
   { href: "/settings", label: "Settings" },
@@ -36,11 +46,31 @@ const GOTO: Record<string, string> = {
   d: "/",
   r: "/review",
   t: "/test",
-  a: "/approve",
   u: "/upload",
   o: "/sources",
   s: "/settings",
 };
+
+/**
+ * Publishes the sidebar state to CSS as `data-nav` on <html>.
+ *
+ * The widths live in globals.css against a media query, so the browser owns
+ * the breakpoint and React owns only the preference. Writing an attribute is
+ * the whole job — no layout measurement crosses into JS, which is what kept
+ * the content sliding under the sidebar when it did.
+ */
+function NavState({ collapsed, drawerOpen }: {
+  collapsed: boolean;
+  drawerOpen: boolean;
+}) {
+  useEffect(() => {
+    const el = document.documentElement;
+    el.setAttribute("data-nav", collapsed ? "rail" : "full");
+    if (drawerOpen) el.setAttribute("data-drawer", "open");
+    else el.removeAttribute("data-drawer");
+  }, [collapsed, drawerOpen]);
+  return null;
+}
 
 /** The only screens that render without a session. */
 const PUBLIC_ROUTES = new Set(["/login", "/signup"]);
@@ -87,6 +117,15 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
   const activeNav = useRef<HTMLAnchorElement>(null);
 
   const closeHelp = useCallback(() => setHelp(false), []);
+
+  /* --- the sidebar ------------------------------------------------------
+     Two independent things, because they answer different questions.
+     `collapsed` is a remembered preference on a wide screen — rail or
+     labels. `navOpen` is transient: on a phone the sidebar is off-canvas,
+     and this is whether it is currently pulled out. Every nav link closes
+     it on click, so it never hangs over the page you just opened. */
+  const { collapsed, toggle: toggleCollapsed } = useNavCollapsed();
+  const [navOpen, setNavOpen] = useState(false);
 
   /* --- session ----------------------------------------------------------
      Every page here is a client component that fetches its own data, so the
@@ -208,6 +247,13 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      if (e.key === "\\") {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleCollapsed();
+        return;
+      }
+
       if (e.key === "t") {
         e.preventDefault();
         e.stopPropagation();
@@ -220,7 +266,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
 
     window.addEventListener("keydown", onKey, { capture: true });
     return () => window.removeEventListener("keydown", onKey, { capture: true });
-  }, [router, cycle, help, skin]);
+  }, [router, cycle, help, skin, toggleCollapsed]);
 
   // Focus mode: the review screen carries no chrome at all, and a paper in
   // progress claims the same treatment for as long as it is being sat.
@@ -252,18 +298,51 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
   return (
     <FocusContext.Provider value={setClaimed}>
       <div aria-hidden="true" className="grain" />
+      <NavState collapsed={collapsed} drawerOpen={navOpen} />
 
       {!focus && (
-        <header className="border-b border-line bg-surface sticky top-0 z-30 header-elevated">
-          <div className="mx-auto max-w-[1120px] px-4 h-11 flex items-center gap-5">
-            <Link
-              href="/"
-              className="text-[11px] font-bold tracking-[0.16em] text-fg shrink-0"
-            >
-              RECALL
-            </Link>
+        <>
+          {/* The scrim only exists on small screens, where the sidebar
+              overlays the page instead of sitting beside it. */}
+          {navOpen && (
+            <button
+              aria-label="Close navigation"
+              onClick={() => setNavOpen(false)}
+              className="fixed inset-0 z-30 md:hidden"
+              style={{ background: "var(--scrim)" }}
+            />
+          )}
 
-            <nav className="flex items-center gap-1 min-w-0 scroll-x">
+          <aside
+            aria-label="Main"
+            className="nav-aside fixed inset-y-0 left-0 z-40 flex flex-col
+              border-r border-line bg-surface"
+          >
+            <div className="h-11 flex items-center gap-2 px-3 border-b border-line">
+              <Link
+                href="/"
+                onClick={() => setNavOpen(false)}
+                className="text-[11px] font-bold tracking-[0.16em] text-fg
+                  whitespace-nowrap overflow-hidden"
+                title="Recall"
+              >
+                {collapsed ? "R" : "RECALL"}
+              </Link>
+              <button
+                onClick={toggleCollapsed}
+                aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+                title={`${collapsed ? "Expand" : "Collapse"} sidebar (\\)`}
+                className="ml-auto hidden md:grid place-items-center h-6 w-6 rounded-xs
+                  text-fg-3 hover:text-fg hover:bg-surface-hover
+                  transition-colors duration-[90ms]"
+              >
+                <span aria-hidden="true" className="text-[13px] leading-none">
+                  {collapsed ? "›" : "‹"}
+                </span>
+              </button>
+            </div>
+
+            <nav className="flex-1 overflow-y-auto py-2">
               {NAV.map((item) => {
                 const active =
                   item.href === "/"
@@ -275,66 +354,107 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
                     href={item.href}
                     ref={active ? activeNav : undefined}
                     aria-current={active ? "page" : undefined}
-                    className={`px-2 h-11 flex items-center text-[13px] whitespace-nowrap
-                      border-b-2 -mb-px transition-colors duration-[90ms]
+                    onClick={() => setNavOpen(false)}
+                    title={collapsed ? item.label : undefined}
+                    className={`relative flex items-center gap-2.5 h-9 px-3 mx-1.5 rounded-sm
+                      text-[13px] whitespace-nowrap overflow-hidden
+                      transition-colors duration-[90ms]
                       ${
                         active
-                          ? "text-fg font-semibold border-fg"
-                          : "text-fg-2 font-normal border-transparent hover:text-fg"
+                          ? "text-fg font-semibold bg-surface-hover"
+                          : "text-fg-2 font-normal hover:text-fg hover:bg-surface-hover"
                       }`}
                   >
-                    {item.label}
+                    <span
+                      aria-hidden="true"
+                      className="shrink-0 w-1 h-4 rounded-full"
+                      style={{
+                        background: active ? "var(--accent)" : "transparent",
+                      }}
+                    />
+                    <span className={collapsed ? "md:hidden" : ""}>
+                      {item.label}
+                    </span>
                   </Link>
                 );
               })}
             </nav>
 
-            <div className="ml-auto flex items-center gap-2 shrink-0">
-              {MOCK && (
+            <div className="border-t border-line p-1.5 flex flex-col gap-1">
+              {MOCK && !collapsed && (
                 <span
-                  className="label hidden sm:inline border border-line rounded-xs px-1.5 py-px"
+                  className="label border border-line rounded-xs px-1.5 py-px self-start"
                   title="Serving fixture data from lib/mock.ts"
                 >
                   mock data
                 </span>
               )}
-              <button
-                onClick={toggleSkin}
-                title="Skin: phosphor, ember"
-                aria-label={`Skin: ${skin}. Click to switch.`}
-                className="h-6 px-1.5 rounded-xs border border-transparent
-                  hover:border-line text-[10px] font-medium tracking-[0.12em]
-                  text-fg-3 hover:text-fg-2 transition-colors duration-[90ms]"
-                style={{ fontFamily: "var(--font-mono)" }}
+              <div
+                className={`flex items-center gap-1 ${
+                  collapsed ? "md:flex-col" : ""
+                }`}
               >
-                {skin === "phosphor" ? "PHOSPHOR" : "EMBER"}
-              </button>
-              {skin === "ember" && <ThemeToggle mode={mode} onCycle={cycle} />}
-              <button
-                onClick={() => setHelp(true)}
-                title="Keyboard shortcuts (?)"
-                aria-label="Keyboard shortcuts"
-                className="hidden sm:block"
-              >
-                <Kbd>?</Kbd>
-              </button>
+                <button
+                  onClick={toggleSkin}
+                  title={`Skin: ${skin}. Click for the next one.`}
+                  aria-label={`Skin: ${skin}. Click to switch.`}
+                  className="h-6 px-1.5 rounded-xs border border-transparent
+                    hover:border-line text-[10px] font-medium tracking-[0.12em]
+                    text-fg-3 hover:text-fg-2 transition-colors duration-[90ms]
+                    overflow-hidden"
+                  style={{ fontFamily: "var(--font-mono)" }}
+                >
+                  {collapsed ? skin.slice(0, 1).toUpperCase() : skin.toUpperCase()}
+                </button>
+                {skin === "ember" && <ThemeToggle mode={mode} onCycle={cycle} />}
+                {!collapsed && (
+                  <button
+                    onClick={() => setHelp(true)}
+                    title="Keyboard shortcuts (?)"
+                    aria-label="Keyboard shortcuts"
+                    className="hidden sm:block"
+                  >
+                    <Kbd>?</Kbd>
+                  </button>
+                )}
+              </div>
               <button
                 onClick={signOut}
                 title={`Signed in as ${user.name} — sign out`}
                 aria-label={`Signed in as ${user.name}. Sign out.`}
                 className="h-6 px-1.5 rounded-xs border border-transparent
                   hover:border-line text-[10px] font-medium tracking-[0.12em]
-                  text-fg-3 hover:text-fg-2 transition-colors duration-[90ms]"
+                  text-fg-3 hover:text-fg-2 transition-colors duration-[90ms]
+                  text-left overflow-hidden"
                 style={{ fontFamily: "var(--font-mono)" }}
               >
-                SIGN OUT
+                {collapsed ? "⏻" : `SIGN OUT · ${user.name}`}
               </button>
             </div>
-          </div>
-        </header>
+          </aside>
+
+          {/* The one control that has to exist on a phone, where the sidebar
+              is off-canvas: something to pull it back. */}
+          <button
+            onClick={() => setNavOpen(true)}
+            aria-label="Open navigation"
+            className="md:hidden fixed top-2 left-2 z-20 h-8 w-8 grid place-items-center
+              rounded-sm border border-line bg-surface text-fg-2
+              hover:text-fg transition-colors duration-[90ms]"
+          >
+            <span aria-hidden="true" className="text-[14px] leading-none">≡</span>
+          </button>
+        </>
       )}
 
-      {children}
+      <div
+        // No transition on the padding: animating a layout property makes
+        // the whole page reflow every frame, and the design system's motion
+        // rule is paint-only. The sidebar slides; the content just moves.
+        className={focus ? "" : "nav-content"}
+      >
+        {children}
+      </div>
 
       {help && <ShortcutsOverlay onClose={closeHelp} />}
 
