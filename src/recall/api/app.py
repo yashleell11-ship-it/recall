@@ -97,7 +97,8 @@ def create_app() -> FastAPI:
         args: tuple = (topic,) if topic else ()
         rows = conn.execute(
             "SELECT c.id, c.kind, c.question, c.answer, c.cloze_text, c.origin,"
-            " t.code AS topic_code, ch.page_ref, s.filename AS source_filename"
+            " c.detail, t.code AS topic_code, ch.page_ref,"
+            " s.filename AS source_filename"
             " FROM cards c JOIN topics t ON t.id = c.topic_id"
             " JOIN chunks ch ON ch.id = c.chunk_id"
             " JOIN sources s ON s.id = ch.source_id"

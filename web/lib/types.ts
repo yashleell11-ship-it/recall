@@ -70,6 +70,11 @@ export interface QueueCard {
   /** OPTIONAL / ADDITIVE: absent on servers older than knowledge mode. */
   origin?: CardOrigin;
   /**
+   * OPTIONAL / ADDITIVE. The worked explanation, shown AFTER the answer is
+   * revealed. Null on every card written before this field existed.
+   */
+  detail?: string | null;
+  /**
    * OPTIONAL / ADDITIVE. Present in `card_state` server-side. When the API
    * includes them the grade buttons show exact intervals; otherwise they show
    * estimates, marked with a leading "≈".
@@ -113,6 +118,8 @@ export interface PendingCard {
   source_filename: string;
   /** OPTIONAL / ADDITIVE: absent on servers older than knowledge mode. */
   origin?: CardOrigin;
+  /** OPTIONAL / ADDITIVE. The worked explanation, shown after the answer. */
+  detail?: string | null;
 }
 
 /** GET /api/pending */

@@ -1,18 +1,101 @@
-GENERATE_SYSTEM = """You write spaced-repetition flashcards from course material.
+"""Prompts for writing cards.
+
+Two shapes, one card contract. Both ask for the same JSON, and both hold the
+same line on what each field is for:
+
+  question — what you are asked, cold.
+  answer   — the RETRIEVAL TARGET. Short on purpose. `check_answerable`
+             rejects anything over 40 words, and testmode/marks.py prices a
+             question by this field's word count (<=4 words -> 1 mark,
+             <=12 -> 2, longer -> 5). A long answer here does not read as
+             "more thorough", it re-prices every paper the app assembles: make
+             every answer 60 words and a 40-mark MTE becomes eight questions.
+  detail   — the worked explanation, read AFTER the answer is revealed. This
+             is where depth belongs, because by then retrieval has already
+             been attempted and elaboration costs nothing.
+
+Both come back in ONE completion, so detail is free — no second paid call.
+"""
+
+# --- what the paper actually looks like -------------------------------------
+#
+# A card for an objective mid-term and a card for a Python practical are not
+# the same object, and a generic prompt writes the average of the two, which
+# resembles neither. `exam_format` comes from the LPU subject registry.
+
+_FORMAT_GUIDANCE = {
+    "mcq": (
+        "This paper is OBJECTIVE (MCQ). Favour cards with one exact, "
+        "checkable answer: a definition, a value, a condition, the one term "
+        "that names a thing, the single distinction between two lookalikes. "
+        "Avoid anything whose answer is a paragraph."
+    ),
+    "practical": (
+        "This is a PROGRAMMING course examined on code. Favour cards that "
+        "run code in the head: what does this expression evaluate to, what "
+        "does this snippet print, which error does this raise, what is the "
+        "value after this line, what is the type. Put the snippet in the "
+        "question. Prefer real semantics over vocabulary."
+    ),
+    "mixed": (
+        "This paper mixes objective and subjective questions. Write both: "
+        "exact-recall cards for the objective half, and cards whose answer is "
+        "a stated condition, a formula with its symbols named, or the key "
+        "step of a derivation for the subjective half."
+    ),
+    "subjective": (
+        "This paper is written by hand. Favour cards that ask for a statement "
+        "worth marks: a theorem's exact conditions, the formula and what each "
+        "symbol means, the step that makes a derivation work."
+    ),
+}
+
+_DEFAULT_GUIDANCE = _FORMAT_GUIDANCE["mixed"]
+
+
+def format_guidance(exam_format: str | None) -> str:
+    """The paper-shape paragraph for a subject, or the mixed default."""
+    return _FORMAT_GUIDANCE.get((exam_format or "").strip().lower(),
+                                _DEFAULT_GUIDANCE)
+
+
+_CARD_CONTRACT = """Every card has four parts:
+- "question": what you are asked, cold. Self-contained — it must make sense
+  with no passage in front of you.
+- "answer": the SHORT retrieval target. Under 25 words, ideally under 12. This
+  is what you must produce from memory, and it is what the exam-paper builder
+  prices in marks, so padding it is not thoroughness, it is damage.
+- "detail": the worked explanation, read only AFTER answering. 40-120 words.
+  Say what the answer is, WHY it is that, and name the single mistake most
+  likely to be made here. Where there is working, carry it out — actual steps
+  on actual numbers or symbols, not a description of a method.
+- "cloze_text": only for kind "cloze" — the sentence with the hidden span in
+  {{c1::...}}.
 
 Rules:
-- Every card must be answerable using ONLY the passage given. Never use outside knowledge.
-- One fact per card. Never combine two facts into one question.
-- Prefer precise, short answers: a definition, a formula, a condition, a name.
+- One fact per card. Never combine two into one question.
 - Do not ask "discuss", "explain in detail", or "list all".
 - Mix kinds: "qa" for question/answer, "cloze" for fill-in-the-blank.
-- For cloze cards, put the hidden span in {{c1::...}} inside cloze_text.
 
 Reply with json in exactly this shape and nothing else:
-{"cards": [{"kind": "qa", "question": "...", "answer": "..."},
+{"cards": [{"kind": "qa", "question": "...", "answer": "...", "detail": "..."},
            {"kind": "cloze", "question": "...", "answer": "...",
-            "cloze_text": "... {{c1::hidden}} ..."}]}
-"""
+            "detail": "...", "cloze_text": "... {{c1::hidden}} ..."}]}"""
+
+
+GENERATE_SYSTEM = """You write spaced-repetition flashcards from course material.
+
+""" + _CARD_CONTRACT + """
+
+GROUNDING — the rule that separates this from guessing:
+Every FACT you state, in the answer and in the detail, must come from the
+passage. Do not bring in facts the passage does not contain.
+
+That is a rule about facts, not about thinking. You may carry out the working
+the passage implies — do the algebra, take the derivative, run the loop, apply
+the definition it gave you to the case it is asking about — even when the
+passage does not spell that step out. Showing the work is wanted. Importing an
+outside fact is not."""
 
 GENERATE_USER = """Passage (from {page_ref}):
 \"\"\"
@@ -22,33 +105,26 @@ GENERATE_USER = """Passage (from {page_ref}):
 Write at most {n} flashcards from this passage."""
 
 
-# Knowledge mode: no passage exists, so the model writes from its own subject
-# knowledge of a named syllabus unit. The rules deliberately diverge from
-# GENERATE_SYSTEM's: "answerable from the passage alone" is the one rule that
-# cannot survive here, and in its place stands an explicit instruction to
-# stay inside what the model is actually confident about.
+# --- knowledge mode: no passage exists --------------------------------------
+
 KNOWLEDGE_GENERATE_SYSTEM = """You write spaced-repetition flashcards for a university course, from your own subject knowledge. No source passage is provided.
 
-Rules:
-- Write exam-accurate cards at undergraduate engineering depth.
-- One fact, definition, formula, condition, or derivation step per card. Never combine two.
-- Answers must have real substance: a full definition, a stated condition, a formula with its variables named. Not a bare word.
-- Do not ask "discuss", "explain in detail", or "list all".
-- Mix kinds: "qa" for question/answer, "cloze" for fill-in-the-blank.
-- For cloze cards, put the hidden span in {{c1::...}} inside cloze_text.
-- State only what you are confident is correct for this subject. Never invent
-  a citation, a date, a named theorem, or an attribution to pad a card. If you
-  are unsure of a fact, leave it out and write a different card instead.
+""" + _CARD_CONTRACT + """
 
-Reply with json in exactly this shape and nothing else:
-{"cards": [{"kind": "qa", "question": "...", "answer": "..."},
-           {"kind": "cloze", "question": "...", "answer": "...",
-            "cloze_text": "... {{c1::hidden}} ..."}]}
-"""
+Because nothing here can be checked against a source, accuracy is entirely on
+you:
+- State only what you are confident is correct for this course at this level.
+- Never invent a citation, a date, a named theorem, or an attribution to make
+  a card look authoritative.
+- If you are unsure of a fact, leave it out and write a different card. A
+  short deck of correct cards beats a long one with three wrong ones in it —
+  a student will memorise whatever you write, mistakes included."""
 
 KNOWLEDGE_GENERATE_USER = """Course: {full_name} ({topic_code})
 Unit {unit_number}: {unit_name}
 
+{format_guidance}
+
 Write at most {n} flashcards covering the core concepts, definitions, formulas
-and standard exam questions of THIS UNIT ONLY, at the depth a {exam_format}
-university paper would demand."""
+and standard exam questions of THIS UNIT ONLY, at the depth this paper
+demands."""

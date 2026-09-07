@@ -62,6 +62,68 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def cmd_backfill_detail(args, cfg) -> int:
+    """Write the worked explanation onto cards that predate the detail field.
+
+    One paid call per card, so it prints what it will cost before spending
+    anything and stops at --max-cost. Resumable: it only ever picks up cards
+    where detail IS NULL, so re-running continues where it stopped.
+    """
+    from recall.llm.client import DeepSeekClient
+    from recall.teach.prompts import EXPLAIN_KNOWLEDGE_SYSTEM, EXPLAIN_KNOWLEDGE_USER
+    from recall.pipeline import _cost
+
+    conn = _conn(cfg)
+    rows = conn.execute(
+        "SELECT c.id, c.question, c.answer, t.code FROM cards c"
+        " JOIN topics t ON t.id = c.topic_id"
+        " WHERE c.detail IS NULL AND c.state IN ('active','pending')"
+        " AND t.user_id = 1 ORDER BY c.id"
+    ).fetchall()
+    if not rows:
+        print("every card already has a detail; nothing to do")
+        return 0
+
+    print(f"{len(rows)} cards need a detail. Roughly ${len(rows) * 0.0004:.3f} "
+          f"at current prices, stopping at ${args.max_cost:.2f}.")
+    if args.dry_run:
+        return 0
+
+    client = DeepSeekClient(cfg)
+    pt = ct = 0
+    written = 0
+    for r in rows:
+        if _cost(cfg, pt, ct) >= args.max_cost:
+            print(f"stopped at the ${args.max_cost:.2f} cap; run again to continue")
+            break
+        try:
+            resp = client.complete_json(
+                EXPLAIN_KNOWLEDGE_SYSTEM,
+                EXPLAIN_KNOWLEDGE_USER.format(topic_code=r["code"],
+                                              question=r["question"],
+                                              answer=r["answer"]),
+            )
+        except Exception as exc:  # noqa: BLE001 — one bad card must not end the run
+            print(f"  [{r['id']}] skipped: {exc}")
+            continue
+        pt += resp.prompt_tokens
+        ct += resp.completion_tokens
+        import json as _json
+        try:
+            detail = (_json.loads(resp.content) or {}).get("explanation")
+        except _json.JSONDecodeError:
+            detail = None
+        if not isinstance(detail, str) or not detail.strip():
+            print(f"  [{r['id']}] skipped: model returned no explanation")
+            continue
+        conn.execute("UPDATE cards SET detail = ? WHERE id = ?",
+                     (detail.strip(), r["id"]))
+        conn.commit()  # per card, so an interrupted run keeps what it paid for
+        written += 1
+    print(f"wrote {written} details, cost ${_cost(cfg, pt, ct):.4f}")
+    return 0
+
+
 def cmd_ingest(args, cfg) -> int:
     # Imported here so the rest of the CLI works without network deps loaded.
     from recall.llm.client import DeepSeekClient
@@ -191,6 +253,12 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--password", default=None,
                    help="omit to be prompted (avoids the value landing in shell history)")
     s.set_defaults(func=cmd_claim_owner)
+
+    s = sub.add_parser("backfill-detail",
+                       help="write the worked explanation onto older cards")
+    s.add_argument("--max-cost", type=float, default=0.50)
+    s.add_argument("--dry-run", action="store_true")
+    s.set_defaults(func=cmd_backfill_detail)
 
     s = sub.add_parser("ingest", help="turn a PDF into candidate cards")
     s.add_argument("--topic", required=True)

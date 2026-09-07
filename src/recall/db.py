@@ -89,6 +89,10 @@ def _migrate(conn: sqlite3.Connection) -> None:
     if card_cols:
         conn.execute("CREATE INDEX IF NOT EXISTS idx_cards_origin ON cards(origin)")
 
+    # cards.detail (2026-09-07): the worked explanation shown after the answer.
+    if card_cols and "detail" not in card_cols:
+        conn.execute("ALTER TABLE cards ADD COLUMN detail TEXT")
+
     # users.email/password_hash/created_at (2026-09-07, open registration).
     # No CHECK constraint on any of these, so a plain ADD COLUMN is legal SQL
     # — unlike the tests.kind CHECK below, this needs no table rebuild.

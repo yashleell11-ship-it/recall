@@ -13,6 +13,10 @@ class Candidate:
     question: str
     answer: str
     cloze_text: str | None = None
+    #: The worked explanation, shown after the answer is revealed. Optional:
+    #: cards written before this field existed simply do not have one, and a
+    #: model that omits it still produces a usable card.
+    detail: str | None = None
 
 
 def _parse(raw: str) -> list[Candidate]:
@@ -31,11 +35,12 @@ def _parse(raw: str) -> list[Candidate]:
         question = (item.get("question") or "").strip()
         answer = (item.get("answer") or "").strip()
         cloze_text = (item.get("cloze_text") or "").strip() or None
+        detail = (item.get("detail") or "").strip() or None
         if kind not in _VALID_KINDS or not question or not answer:
             continue
         if kind == "cloze" and not cloze_text:
             continue
-        out.append(Candidate(kind, question, answer, cloze_text))
+        out.append(Candidate(kind, question, answer, cloze_text, detail))
     return out
 
 

@@ -1,3 +1,5 @@
+import pytest
+
 from recall.generate.generate import Candidate
 from recall.verify.heuristics import check_answerable, check_atomic
 
@@ -46,3 +48,39 @@ def test_cloze_with_multiple_deletions_is_not_atomic():
 def test_cloze_with_one_deletion_is_atomic():
     c = Candidate("cloze", "question here", "a", "The {{c1::only}} one.")
     assert check_atomic(c) is None
+
+
+# --- questions that point at something not on the card ----------------------
+
+@pytest.mark.parametrize("question", [
+    # All four of these are REAL cards from the first deck this app ever built
+    # from a real tutorial sheet. Every one passed every other gate, was
+    # approved, and was studied — and none of them can be answered without the
+    # sheet open beside you.
+    "What is the formula for the elements of the 3×3 matrix A in Q1?",
+    "In Q6, what is the expression for A^n when A = [[cos θ, sin θ], [-sin θ, cos θ]]?",
+    "In Q12, what are the unit sale prices of products x, y, and z?",
+    "What is the index of nilpotency for the matrix B in the passage?",
+    # and the same failure in its other common shapes
+    "According to the text, what is the rank of A?",
+    "What does the figure above illustrate?",
+])
+def test_a_question_that_points_off_the_card_is_rejected(question):
+    reason = check_answerable(Candidate("qa", question, "an answer"))
+    assert reason is not None
+    assert "not on the card" in reason
+
+
+@pytest.mark.parametrize("question", [
+    "State the rank-nullity theorem for an n-column matrix A.",
+    "When is a square matrix invertible?",
+    # "Q" as a term of art, not a pointer — QR decomposition, and the first
+    # quartile. The gate keys on a pointer ENDING its clause, so these survive.
+    "What does the Q in a QR decomposition represent?",
+    "What is the value of Q1 in a five-number summary?",
+    "In Python, what does len('hello') return?",
+    "Which HTTP status code means Created?",
+    "In a binary search tree, which traversal yields sorted order?",
+])
+def test_a_self_contained_question_survives(question):
+    assert check_answerable(Candidate("qa", question, "an answer")) is None

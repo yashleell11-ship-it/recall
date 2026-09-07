@@ -70,10 +70,10 @@ def _insert_card(conn, chunk_id, topic_id, c: Candidate, state, reason, arm,
         raise ValueError(f"origin must be one of {_ORIGINS}")
     conn.execute(
         "INSERT INTO cards (chunk_id, topic_id, kind, question, answer, cloze_text,"
-        " arm, state, reject_reason, created_at, origin)"
-        " VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+        " arm, state, reject_reason, created_at, origin, detail)"
+        " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
         (chunk_id, topic_id, c.kind, c.question, c.answer, c.cloze_text,
-         arm, state, reason, _now(), origin),
+         arm, state, reason, _now(), origin, c.detail),
     )
 
 

@@ -36,6 +36,7 @@ from recall.generate.generate import Candidate, _parse
 from recall.generate.prompts import (
     KNOWLEDGE_GENERATE_SYSTEM,
     KNOWLEDGE_GENERATE_USER,
+    format_guidance,
 )
 from recall.pipeline import (
     IngestResult,
@@ -113,7 +114,8 @@ def generate_knowledge_cards(client, *, topic_code: str, full_name: str,
     resp = client.complete_json(
         KNOWLEDGE_GENERATE_SYSTEM,
         KNOWLEDGE_GENERATE_USER.format(
-            topic_code=topic_code, full_name=full_name, exam_format=exam_format,
+            topic_code=topic_code, full_name=full_name,
+            format_guidance=format_guidance(exam_format),
             unit_name=unit_name, unit_number=unit_number, n=n,
         ),
     )

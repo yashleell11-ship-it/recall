@@ -83,7 +83,7 @@ def build_queue(conn, user_id: int, topic_code: str | None = None,
     topic_args: tuple = (topic_code,) if topic_code else ()
 
     due_rows = conn.execute(
-        "SELECT c.id, c.kind, c.question, c.answer, c.cloze_text, c.origin,"
+        "SELECT c.id, c.kind, c.question, c.answer, c.cloze_text, c.origin, c.detail,"
         " t.code AS topic_code,"
         " ch.page_ref, cs.due_at, cs.stability, cs.difficulty, cs.lapses,"
         " (SELECT MAX(reviewed_at) FROM reviews r"
@@ -108,7 +108,7 @@ def build_queue(conn, user_id: int, topic_code: str | None = None,
     # card_state on this user, so it can only ever return cards they have
     # personally studied.
     new_rows = conn.execute(
-        "SELECT c.id, c.kind, c.question, c.answer, c.cloze_text, c.origin,"
+        "SELECT c.id, c.kind, c.question, c.answer, c.cloze_text, c.origin, c.detail,"
         " t.code AS topic_code, ch.page_ref"
         " FROM cards c"
         " JOIN topics t ON t.id = c.topic_id"
@@ -136,7 +136,7 @@ def build_queue(conn, user_id: int, topic_code: str | None = None,
             )
         return {"id": row["id"], "kind": row["kind"], "question": row["question"],
                 "answer": row["answer"], "cloze_text": row["cloze_text"],
-                "origin": row["origin"],
+                "origin": row["origin"], "detail": row["detail"],
                 "topic_code": row["topic_code"], "page_ref": row["page_ref"],
                 "is_new": is_new, "stability": stability, "difficulty": difficulty,
                 "elapsed_days": round(elapsed, 4),

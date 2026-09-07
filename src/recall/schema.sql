@@ -91,7 +91,16 @@ CREATE TABLE IF NOT EXISTS cards (
   --               with no source to check it against. The UI must say which,
   --               because the two carry very different warranties.
   origin        TEXT NOT NULL DEFAULT 'upload'
-                CHECK (origin IN ('upload','knowledge'))
+                CHECK (origin IN ('upload','knowledge')),
+  -- The full explanation, shown AFTER the answer is revealed.
+  --
+  -- Deliberately not part of `answer`: answer is the retrieval target you
+  -- must produce cold, and testmode/marks.py prices a question by its answer's
+  -- word count (<=4 words -> 1 mark, <=12 -> 2, longer -> 5). Fattening
+  -- `answer` with detail would silently make every card a 5-marker and turn a
+  -- 40-mark MTE into eight questions. Detail lives here, where depth costs
+  -- nothing: it is read after retrieval has already been attempted.
+  detail        TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_cards_state ON cards(state);
 CREATE INDEX IF NOT EXISTS idx_cards_topic ON cards(topic_id);

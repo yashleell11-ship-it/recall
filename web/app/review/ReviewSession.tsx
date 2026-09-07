@@ -530,6 +530,16 @@ export function ReviewSession() {
                   >
                     <p className="label mb-2">{solved ? "Note" : "Answer"}</p>
                     <p className="k-answer text-fg">{card.answer}</p>
+                    {/* The worked explanation. It appears only after the
+                        answer, which is the whole point: read before
+                        retrieval it would be a spoiler, read after it is
+                        the teaching. Quieter and smaller than the answer,
+                        because the answer is the thing being tested. */}
+                    {card.detail && (
+                      <p className="mt-4 text-[13.5px] leading-relaxed text-fg-2 max-w-[62ch]">
+                        {card.detail}
+                      </p>
+                    )}
                   </motion.div>
                 )}
 
