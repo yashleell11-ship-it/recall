@@ -186,11 +186,29 @@ the target exactly; if the deck cannot reach the target, the paper is short and 
 
 | Method | Path | Request | Response |
 |---|---|---|---|
-| POST | `/api/tests` | `{kind, topic_code?}` | `{test_id, kind, total_marks, time_limit_s, questions: [TestQuestion]}` |
+| POST | `/api/tests` | `{kind, topic_code?, units?}` | `{test_id, kind, topic_code, units, total_marks, time_limit_s, questions: [TestQuestion]}` |
 | GET | `/api/tests/{id}` | — | same shape, plus recorded verdicts, for resuming |
 | POST | `/api/tests/{id}/answer` | `{ordinal, verdict, seconds}` | `{ok: true}` |
 | POST | `/api/tests/{id}/submit` | — | `TestResult` |
-| GET | `/api/tests` | — | `[{id, kind, started_at, obtained_marks, total_marks, duration_s}]` |
+| DELETE | `/api/tests/{id}` | — | `{ok: true}`. Closes an unfinished paper. **409** if it has already been submitted — that is a graded result, not clutter — and **404** for a paper that is not yours, which reads identically to one that does not exist. |
+| GET | `/api/tests` | — | `[{id, kind, started_at, submitted_at, obtained_marks, total_marks, duration_s, topic_code, units}]` |
+
+**`units`** is a list of **0-based** syllabus unit indices — the paper was
+scoped to those units — or `null` for one drawn from the whole subject.
+Scoping requires a `topic_code`: "unit 3" means nothing across five courses
+that each have one. An index outside the subject's unit list is refused (422)
+rather than clamped.
+
+A unit-scoped paper draws only from cards whose unit is actually **known**,
+which means knowledge-mode cards: their chunk is the per-unit chunk of the
+topic's synthetic knowledge source and its `ordinal` is the unit index. Cards
+from an uploaded PDF are chunked by page, and a page maps to no unit, so they
+are left out of a unit paper rather than claimed for a unit nobody checked.
+
+**`submitted_at`** is the honest answer to "is this paper finished".
+`duration_s` was only ever a proxy for it and is wrong in one real case: a
+paper submitted having answered nothing records `duration_s = 0`, which reads
+as falsy and left the paper looking permanently unfinished.
 
 ```
 TestQuestion = {ordinal, card_id, kind, question, answer, cloze_text, marks,
@@ -261,7 +279,7 @@ function so a vision-capable API can replace it later without touching anything 
 | Method | Path | Request | Response |
 |---|---|---|---|
 | POST | `/api/topics/{code}/generate` | `{unit, count?}` (`unit` is 1-based; `count` ≤ 25, default 12) | `{accepted, rejected, cost_usd, stopped_early}` — the same shape as upload generation |
-| POST | `/api/topics/{code}/paper` | `{kind}` | A full `TestPaper`, plus `generated: {cards, rejected, cost_usd, units, deck_already_covered_it}`. Works out which units the paper draws from (MTE → units 1-3, class test → 1-2, ETE → all), generates only the shortfall, then assembles normally. This is what the subject chips on `/test` call: `POST /api/tests` assembles from what exists and hands back an empty paper when the deck is empty, which is the "This paper has no questions" dead end. |
+| POST | `/api/topics/{code}/paper` | `{kind, units?}` | A full `TestPaper`, plus `generated: {cards, rejected, cost_usd, units, deck_already_covered_it}`. Works out which units the paper draws from (MTE → units 1-3, class test → 1-2, ETE → all), generates only the shortfall, then assembles normally. This is what the subject chips on `/test` call: `POST /api/tests` assembles from what exists and hands back an empty paper when the deck is empty, which is the "This paper has no questions" dead end. Pass `units` — **1-based** here, the numbers a student reads off a timetable, unlike the 0-based indices `POST /api/tests` takes — to examine only what was covered in class; the marks target is then spread across just those units, so asking for one unit gets a paper's worth of it. |
 
 Writes cards for one syllabus unit from the model's own knowledge, for the case
 where the student has uploaded nothing. `422` when the topic carries no unit
