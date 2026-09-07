@@ -1,11 +1,14 @@
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Mapping
 
 
 @dataclass(frozen=True)
 class Config:
-    api_key: str
+    # repr=False so the key cannot ride out inside a traceback, a log line, or
+    # anything that prints the config. Nothing does today — this is here so
+    # that stays true after someone adds a debug print in a hurry.
+    api_key: str = field(repr=False)
     base_url: str
     model: str
     db_path: str
