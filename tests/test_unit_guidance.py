@@ -7,11 +7,14 @@ that it reaches the prompt, and that the traps reach the fact checker and NOT
 the writer.
 """
 
+import json
+
 import pytest
 
 from recall.generate.prompts import KNOWLEDGE_GENERATE_SYSTEM, KNOWLEDGE_GENERATE_USER
 from recall.generate.unit_guidance import (
     _UNITS,
+    examples_text,
     guidance_for,
     guidance_text,
     traps_text,
@@ -80,10 +83,23 @@ def test_the_prompt_actually_carries_the_guidance():
         full_name="Mathematics for Engineers", topic_code="MTH165",
         unit_number=6, unit_name="Fourier Series",
         format_guidance="(paper shape)",
-        unit_guidance=guidance_text("MTH165", 6), n=10,
+        unit_guidance=guidance_text("MTH165", 6),
+        unit_examples=examples_text("MTH165", 6), n=10,
     )
     assert "Dirichlet" in prompt
     assert "(paper shape)" in prompt
+
+
+def test_the_prompt_carries_the_worked_examples_too():
+    prompt = KNOWLEDGE_GENERATE_USER.format(
+        full_name="x", topic_code="MTH165", unit_number=1, unit_name="x",
+        format_guidance="x", unit_guidance="",
+        unit_examples=examples_text("MTH165", 1), n=5,
+    )
+    ex = guidance_for("MTH165", 1).examples
+    assert ex, "MTH165 unit 1 should carry worked examples once populated"
+    assert ex[0].question in prompt
+    assert ex[0].answer in prompt
 
 
 def test_the_traps_do_not_reach_the_writer():
@@ -127,3 +143,61 @@ def test_no_subject_smuggles_in_latex():
             blob = unit.guidance + " " + " ".join(unit.traps)
             for token in ("\\frac", "\\int", "\\sum", "\\alpha", "$$"):
                 assert token not in blob, f"{code} unit {i}: {token!r}"
+
+
+def test_every_guided_unit_has_exactly_two_examples():
+    """WorkedExample.examples's own docstring states the invariant: exactly
+    two, not more — enough to fix a level without enough room for the model
+    to start reproducing subject matter instead of shape."""
+    for code, units in _UNITS.items():
+        for i, unit in enumerate(units, 1):
+            assert len(unit.examples) == 2, f"{code} unit {i}: {len(unit.examples)}"
+
+
+def test_worked_examples_follow_the_card_contract():
+    """A calibration example that violates the contract teaches the model to
+    violate it everywhere the example is shown."""
+    for code, units in _UNITS.items():
+        for i, unit in enumerate(units, 1):
+            for j, ex in enumerate(unit.examples, 1):
+                where = f"{code} unit {i} example {j}"
+                assert ex.question.strip(), where
+                assert ex.answer.strip(), where
+                assert len(ex.answer.split()) <= 25, f"{where}: answer too long"
+                assert ex.detail.strip(), where
+
+
+def test_cse111_unit_seven_is_covered():
+    """Profile Creation was added to the registry after the first guidance
+    pass over CSE111 had already run against a six-unit list — the seventh
+    entry easily could have been silently dropped on the floor."""
+    from recall.lpu import SUBJECTS
+
+    assert len(SUBJECTS["CSE111"]["units"]) == 7
+    g = guidance_for("CSE111", 7)
+    assert g is not None
+    assert len(g.examples) == 2
+
+
+def test_examples_text_preserves_multiline_code_and_steps():
+    """A splicing bug once collapsed every embedded newline to a space before
+    this could be caught by inspection — a numbered derivation and a
+    multi-line code snippet both depend on real line breaks surviving into
+    the prompt."""
+    text = examples_text("INT108", 1)
+    ex = guidance_for("INT108", 1).examples[0]
+    assert "\n" in ex.question or "\n" in ex.detail
+    # The exact original string, newlines and all, must appear in the
+    # rendered prompt block — not a version with every "\n" turned into " ".
+    assert json.dumps(ex.question) in text or ex.question in text
+    assert ex.detail in text or json.dumps(ex.detail) in text
+
+
+def test_examples_text_is_valid_json_after_the_header_line():
+    """The block is shown to the model as literal JSON, not prose describing
+    JSON — so it has to actually parse."""
+    text = examples_text("MTH165", 1)
+    payload = text[text.index("[") : text.rindex("]") + 1]
+    parsed = json.loads(payload)
+    assert len(parsed) == 2
+    assert set(parsed[0]) == {"question", "answer", "detail"}

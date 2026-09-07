@@ -38,7 +38,7 @@ from recall.generate.prompts import (
     KNOWLEDGE_GENERATE_USER,
     format_guidance,
 )
-from recall.generate.unit_guidance import guidance_text
+from recall.generate.unit_guidance import examples_text, guidance_text
 from recall.pipeline import (
     IngestResult,
     _cost,
@@ -119,6 +119,7 @@ def generate_knowledge_cards(client, *, topic_code: str, full_name: str,
             topic_code=topic_code, full_name=full_name,
             format_guidance=format_guidance(exam_format),
             unit_guidance=guidance_text(topic_code, unit_number),
+            unit_examples=examples_text(topic_code, unit_number),
             unit_name=unit_name, unit_number=unit_number, n=n,
         ),
     )

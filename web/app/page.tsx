@@ -18,7 +18,7 @@ import {
 } from "@/components/ui";
 import { longDate, plural } from "@/lib/format";
 import { hasModifier, isTypingTarget } from "@/lib/keys";
-import { fetchDashboard } from "@/lib/resources";
+import { fetchDashboard, prefetchReviewQueue } from "@/lib/resources";
 import { useResource } from "@/lib/useResource";
 
 const MotionLink = motion.create(Link);
@@ -54,6 +54,9 @@ export default function DashboardPage() {
       if (isTypingTarget(e) || hasModifier(e)) return;
       if (e.key === "Enter" && willFit > 0) {
         e.preventDefault();
+        // Enter has no hover step to warm the queue with, so start the fetch
+        // in the same tick as the navigation it triggers.
+        prefetchReviewQueue();
         router.push("/review");
       }
     }
@@ -109,6 +112,8 @@ export default function DashboardPage() {
           ) : willFit > 0 ? (
             <MotionLink
               href="/review"
+              onMouseEnter={() => prefetchReviewQueue()}
+              onFocus={() => prefetchReviewQueue()}
               whileTap={reduced ? undefined : { scale: 0.98 }}
               className="glow-behind glow-accent-hover accent-grad inline-flex items-center gap-2.5
                 h-9 px-4 rounded-sm text-[13px] font-semibold"
@@ -221,13 +226,18 @@ export default function DashboardPage() {
                             mass: 0.9,
                             delay: 0.06 + Math.min(i, 6) * 0.04,
                           }}
-                          onClick={() => router.push(`/review?topic=${t.code}`)}
+                          onMouseEnter={() => prefetchReviewQueue(t.code)}
+                          onClick={() => {
+                            prefetchReviewQueue(t.code);
+                            router.push(`/review?topic=${t.code}`);
+                          }}
                           className="border-b border-line last:border-b-0 cursor-pointer hover:bg-surface-hover transition-colors duration-[90ms]"
                         >
                           <td className="px-3 py-[7px]">
                             <Link
                               href={`/review?topic=${t.code}`}
                               onClick={(e) => e.stopPropagation()}
+                              onMouseEnter={() => prefetchReviewQueue(t.code)}
                               className="hover:underline underline-offset-2"
                             >
                               <TopicCode code={t.code} />

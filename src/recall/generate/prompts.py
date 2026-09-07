@@ -147,6 +147,9 @@ Unit {unit_number}: {unit_name}
 
 {format_guidance}
 {unit_guidance}
+{unit_examples}
 Write at most {n} flashcards covering the core concepts, definitions, formulas
 and standard exam questions of THIS UNIT ONLY, at the depth this paper
-demands."""
+demands. Match the calibration examples above in depth and difficulty if any
+were given — do not write something easier because it is more comfortable to
+generate."""

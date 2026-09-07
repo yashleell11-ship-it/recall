@@ -19,6 +19,7 @@ a student's memory. Where research found nothing solid, there is no entry —
 falls back to the paper-shape guidance alone.
 """
 
+import json
 from dataclasses import dataclass
 
 
@@ -40,6 +41,36 @@ class UnitGuidance:
     than incorrect, so the checker will pass it. Every exclusion belongs in
     `guidance`, where the writer reads it. A verification pass caught exactly
     that mistake sitting in INT335's list."""
+
+    examples: tuple["WorkedExample", ...] = ()
+    """Two genuinely hard worked examples for this unit, shown to the writer
+    as few-shot calibration.
+
+    A paragraph can describe difficulty; only an example can show it. Telling
+    the model "favour multi-step derivations" produces a card that mentions
+    steps. Showing it one real multi-step derivation, done correctly, at the
+    depth an end-term actually demands, produces cards that look like it.
+
+    Exactly two per unit, not more: enough to fix a level without being long
+    enough for the model to start reproducing their SUBJECT MATTER rather than
+    their SHAPE — a card about eigenvalues of THIS matrix teaches nothing
+    about eigenvalues of a different one if the model just varies numbers, so
+    the examples are deliberately drawn from different corners of the unit."""
+
+
+@dataclass(frozen=True)
+class WorkedExample:
+    """One hard card, in the exact shape a real one takes.
+
+    This is not a description of a good card, it IS one — question, short
+    answer, and the numbered-steps detail — because it is spliced into the
+    prompt as a few-shot example. Every field follows the same contract
+    `_CARD_CONTRACT` states, and violating that contract here would teach the
+    model to violate it everywhere this example is shown."""
+
+    question: str
+    answer: str
+    detail: str
 
 
 # Keyed by topic code, indexed by unit number - 1, so the tuple's length must
@@ -114,6 +145,47 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "complex eigenvalues\" — [[0, −1], [1, 0]] has trace 0 and "
                 "determinant 1 and no real eigenvalue at all.",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "For the system x + y + z = 6, x + 2y + 3z = 14, 2x + 3y + kz = 20, find the value of k for which the solution is not unique, and state how many solutions the system has for that k."
+                    ),
+                    answer=(
+                        "k = 4; the system is then consistent with infinitely many solutions (one free parameter)."
+                    ),
+                    detail=(
+                        "1. Coefficient matrix A = [[1, 1, 1], [1, 2, 3], [2, 3, k]]. Expand det A along the first row: 1(2k − 9) − 1(k − 6) + 1(3 − 4).\n"
+                        "2. Simplify: det A = 2k − 9 − k + 6 − 1 = k − 4.\n"
+                        "3. A square system has a unique solution only when det A ≠ 0, so uniqueness can fail only at k = 4.\n"
+                        "4. Put k = 4 and row-reduce the augmented matrix [A | b] = [[1, 1, 1 | 6], [1, 2, 3 | 14], [2, 3, 4 | 20]].\n"
+                        "5. R2 → R2 − R1 gives [0, 1, 2 | 8]; R3 → R3 − 2R1 gives [0, 1, 2 | 8]; then R3 → R3 − R2 gives [0, 0, 0 | 0].\n"
+                        "6. So rank A = 2 and rank [A | b] = 2. They are equal, so the system is consistent — a solution exists.\n"
+                        "7. Now compare that common rank with n, the number of unknowns: n = 3 and r = 2, so r < n and there are n − r = 1 free parameters. Infinitely many solutions.\n"
+                        "8. Explicitly, take z = t: then y = 8 − 2t and x = 6 − y − z = −2 + t. Check in equation 2: (−2 + t) + 2(8 − 2t) + 3t = 14 for every t. ✓\n"
+                        "Most likely mistake: seeing rank A = rank [A | b] at k = 4 and calling the solution unique. Consistency only says a solution exists; uniqueness needs r = n as well."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "Using the Cayley–Hamilton theorem, find A⁻¹ for the square matrix A = [[1, 2, 3], [2, 4, 5], [3, 5, 6]]."
+                    ),
+                    answer=(
+                        "A⁻¹ = [[1, −3, 2], [−3, 3, −1], [2, −1, 0]]"
+                    ),
+                    detail=(
+                        "1. S₁ = trace A = 1 + 4 + 6 = 11.\n"
+                        "2. S₂ = sum of the three principal 2×2 minors = (4·6 − 5·5) + (1·6 − 3·3) + (1·4 − 2·2) = (−1) + (−3) + 0 = −4.\n"
+                        "3. S₃ = det A = 1(24 − 25) − 2(12 − 15) + 3(10 − 12) = −1 + 6 − 6 = −1. This is non-zero, so A is non-singular and A⁻¹ exists — without that check the last step below is invalid.\n"
+                        "4. Characteristic equation λ³ − S₁λ² + S₂λ − S₃ = 0, i.e. λ³ − 11λ² − 4λ + 1 = 0 (note −S₃ = +1).\n"
+                        "5. Cayley–Hamilton says A satisfies its own characteristic equation: A³ − 11A² − 4A + I = O.\n"
+                        "6. Multiply throughout by A⁻¹: A² − 11A − 4I + A⁻¹ = O, hence A⁻¹ = −A² + 11A + 4I.\n"
+                        "7. A² = [[14, 25, 31], [25, 45, 56], [31, 56, 70]].\n"
+                        "8. Form −A² + 11A + 4I entry by entry: (1,1) = −14 + 11 + 4 = 1, (1,2) = −25 + 22 = −3, (1,3) = −31 + 33 = 2, (2,2) = −45 + 44 + 4 = 3, (2,3) = −56 + 55 = −1, (3,3) = −70 + 66 + 4 = 0, and A⁻¹ is symmetric like A.\n"
+                        "9. A⁻¹ = [[1, −3, 2], [−3, 3, −1], [2, −1, 0]]. Check row 1 of A·A⁻¹: (1 − 6 + 6, −3 + 6 − 3, 2 − 2 + 0) = (1, 0, 0). ✓\n"
+                        "Most likely mistake: dropping S₂ or flipping the alternating signs in λ³ − S₁λ² + S₂λ − S₃ = 0. Here S₃ = −1, so the constant term is +1; that constant term is exactly what the A⁻¹ step divides by, and it vanishes precisely when det A = 0."
+                    ),
+                ),
+            ),
         ),
         # --- 2 ---------------------------------------------------------
         UnitGuidance(
@@ -166,6 +238,45 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "particular y — it holds for y = sin⁻¹x, and for "
                 "y = e^(a·sin⁻¹x) the n² becomes n² + a². Unattached, it is "
                 "not true of anything.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "Evaluate lim(x→0) (sin x / x)^(1/x²)."
+                    ),
+                    answer=(
+                        "e^(−1/6)"
+                    ),
+                    detail=(
+                        "1. As x → 0 the base sin x / x → 1 and the exponent 1/x² → ∞, so this is the form 1^∞. L'Hospital's rule applies only to 0/0 or ∞/∞, so it cannot be used on this expression as it stands.\n"
+                        "2. Put L = lim(x→0) (sin x / x)^(1/x²) and take logarithms: ln L = lim(x→0) ln(sin x / x) / x². Now the numerator → ln 1 = 0 and the denominator → 0, a genuine 0/0.\n"
+                        "3. Differentiate numerator and denominator SEPARATELY (not with the quotient rule): d/dx[ln sin x − ln x] = cot x − 1/x, and d/dx[x²] = 2x.\n"
+                        "4. ln L = lim(x→0) (cot x − 1/x)/(2x) = lim(x→0) (x cos x − sin x)/(2x² sin x), still 0/0.\n"
+                        "5. Apply L'Hospital again: d/dx[x cos x − sin x] = cos x − x sin x − cos x = −x sin x, and d/dx[2x² sin x] = 4x sin x + 2x² cos x.\n"
+                        "6. ln L = lim(x→0) (−x sin x)/(4x sin x + 2x² cos x) = lim(x→0) (−sin x)/(4 sin x + 2x cos x) after cancelling one x.\n"
+                        "7. Divide numerator and denominator by x and use (sin x)/x → 1: ln L = −1/(4 + 2) = −1/6.\n"
+                        "8. Therefore L = e^(−1/6) ≈ 0.8465.\n"
+                        "Most likely mistake: differentiating the power form directly without first taking logarithms, or getting ln L = −1/6 and reporting −1/6 as the answer instead of exponentiating back."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "For the curve x = a cos³θ, y = a sin³θ with a > 0, find d²y/dx² at θ = π/4."
+                    ),
+                    answer=(
+                        "d²y/dx² = 4√2/(3a)"
+                    ),
+                    detail=(
+                        "1. Differentiate each coordinate with respect to the parameter: dx/dθ = −3a cos²θ sin θ and dy/dθ = 3a sin²θ cos θ.\n"
+                        "2. dy/dx = (dy/dθ)/(dx/dθ) = (3a sin²θ cos θ)/(−3a cos²θ sin θ) = −sin θ/cos θ = −tan θ, valid wherever dx/dθ ≠ 0, i.e. sin θ cos θ ≠ 0.\n"
+                        "3. The second derivative is d²y/dx² = [d/dθ(dy/dx)]/(dx/dθ). It is NOT (d²y/dθ²)/(d²x/dθ²).\n"
+                        "4. d/dθ(−tan θ) = −sec²θ.\n"
+                        "5. d²y/dx² = (−sec²θ)/(−3a cos²θ sin θ) = sec²θ/(3a cos²θ sin θ) = 1/(3a cos⁴θ sin θ).\n"
+                        "6. At θ = π/4: cos θ = sin θ = 1/√2, so cos⁴θ = 1/4 and the denominator is 3a·(1/4)·(1/√2) = 3a/(4√2).\n"
+                        "7. Hence d²y/dx² = 4√2/(3a) ≈ 1.8856/a, which is positive, so the curve is concave up there.\n"
+                        "Most likely mistake: writing d²y/dx² as (d²y/dθ²)/(d²x/dθ²). The first derivative must be re-differentiated with respect to θ and then divided by dx/dθ once more."
+                    ),
+                ),
             ),
         ),
         # --- 3 ---------------------------------------------------------
@@ -221,6 +332,46 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "Justifying ∫tan x dx = −ln|cos x| + C as \"f′/f with "
                 "f = cos x\". With f = cos x the integrand is −f′/f, hence the "
                 "minus sign. The clean f′/f drill is ∫cot x dx = ln|sin x| + C.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "Evaluate ∫₀^π x sin x/(1 + cos²x) dx."
+                    ),
+                    answer=(
+                        "π²/4"
+                    ),
+                    detail=(
+                        "1. Call the integral I. King's property on a general interval is ∫ₐᵇ f(x) dx = ∫ₐᵇ f(a + b − x) dx; here a = 0 and b = π, so x is replaced by π − x — not by −x.\n"
+                        "2. sin(π − x) = sin x and cos(π − x) = −cos x, so cos²(π − x) = cos²x. Only the factor x changes.\n"
+                        "3. I = ∫₀^π (π − x) sin x/(1 + cos²x) dx.\n"
+                        "4. Add the two expressions for I: 2I = ∫₀^π [x + (π − x)]·sin x/(1 + cos²x) dx = π∫₀^π sin x/(1 + cos²x) dx.\n"
+                        "5. In the remaining integral substitute u = cos x, so du = −sin x dx, and convert the limits: x = 0 gives u = 1, x = π gives u = −1. Convert the limits and stop — do not go back to x.\n"
+                        "6. ∫₀^π sin x/(1 + cos²x) dx = −∫ du/(1 + u²) from u = 1 to u = −1 = ∫ du/(1 + u²) from u = −1 to u = 1 = [tan⁻¹u] from −1 to 1 = π/4 − (−π/4) = π/2.\n"
+                        "7. So 2I = π·(π/2) = π²/2, giving I = π²/4 ≈ 2.4674. No + C: the integral is definite.\n"
+                        "Most likely mistake: using f(a − x) = f(−x) instead of f(a + b − x) = f(π − x), or evaluating the u-antiderivative tan⁻¹u at the original x-limits 0 and π."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "Evaluate ∫₀¹ dx/((x + 1)(x + 2)²)."
+                    ),
+                    answer=(
+                        "ln(4/3) − 1/6  (≈ 0.1210)"
+                    ),
+                    detail=(
+                        "1. The fraction is proper (degree 0 over degree 3), so no division is needed; but (x + 2) is a repeated factor, so the decomposition needs three terms: 1/((x + 1)(x + 2)²) = A/(x + 1) + B/(x + 2) + C/(x + 2)².\n"
+                        "2. Multiply through by (x + 1)(x + 2)²: 1 = A(x + 2)² + B(x + 1)(x + 2) + C(x + 1).\n"
+                        "3. Put x = −1: 1 = A(1)², so A = 1.\n"
+                        "4. Put x = −2: 1 = C(−1), so C = −1.\n"
+                        "5. Compare coefficients of x²: 0 = A + B, so B = −1.\n"
+                        "6. Integrand = 1/(x + 1) − 1/(x + 2) − 1/(x + 2)².\n"
+                        "7. Antiderivative = ln|x + 1| − ln|x + 2| + 1/(x + 2). The third term is a power −2, not a logarithm: ∫(x + 2)⁻² dx = −(x + 2)⁻¹, and the leading minus sign turns it into +1/(x + 2).\n"
+                        "8. At x = 1: ln 2 − ln 3 + 1/3. At x = 0: ln 1 − ln 2 + 1/2 = −ln 2 + 1/2.\n"
+                        "9. I = (ln 2 − ln 3 + 1/3) − (−ln 2 + 1/2) = 2 ln 2 − ln 3 − 1/6 = ln(4/3) − 1/6 ≈ 0.1210.\n"
+                        "Most likely mistake: writing only C/(x + 2)² for the repeated factor and omitting B/(x + 2) — with two unknowns the identity cannot be satisfied — or integrating 1/(x + 2)² as a logarithm."
+                    ),
+                ),
             ),
         ),
         # --- 4 ---------------------------------------------------------
@@ -285,6 +436,44 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "claiming the method proves a point is a maximum or a minimum "
                 "— it only produces candidates.",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "If u = sin⁻¹((x² + y²)/(x + y)), find the value of x(∂u/∂x) + y(∂u/∂y)."
+                    ),
+                    answer=(
+                        "x(∂u/∂x) + y(∂u/∂y) = tan u"
+                    ),
+                    detail=(
+                        "1. u itself is not homogeneous, so Euler's theorem cannot be applied to u directly. Isolate the part that is: sin u = (x² + y²)/(x + y).\n"
+                        "2. Test homogeneity of F = sin u: replace x by tx and y by ty. (t²x² + t²y²)/(tx + ty) = t(x² + y²)/(x + y) = t¹·sin u. So F is homogeneous of degree n = 1 — for a quotient the degrees subtract, 2 − 1 = 1.\n"
+                        "3. Euler's theorem: if F(x, y) is homogeneous of degree n and its first-order partial derivatives exist, then x F_x + y F_y = n F.\n"
+                        "4. Here F = sin u, so by the chain rule F_x = cos u·(∂u/∂x) and F_y = cos u·(∂u/∂y).\n"
+                        "5. Substitute: x cos u (∂u/∂x) + y cos u (∂u/∂y) = 1·sin u.\n"
+                        "6. Divide through by cos u (non-zero wherever the expression is defined and u ≠ ±π/2): x(∂u/∂x) + y(∂u/∂y) = sin u/cos u = tan u.\n"
+                        "Most likely mistake: answering n·u, i.e. just u. When u is an inverse-trig or log wrapper the correct result is n·F(u)/F′(u) = 1·sin u/cos u = tan u; the answer n·u holds only when u itself is the homogeneous function."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "Find and classify all stationary points of f(x, y) = x³ + y³ − 3xy."
+                    ),
+                    answer=(
+                        "Saddle point at (0, 0); local minimum with f = −1 at (1, 1)."
+                    ),
+                    detail=(
+                        "1. f_x = 3x² − 3y and f_y = 3y² − 3x. Stationary points need both to vanish.\n"
+                        "2. From f_x = 0: y = x². Substitute into f_y = 0: 3(x²)² − 3x = 0, i.e. x⁴ − x = 0.\n"
+                        "3. Factor: x(x³ − 1) = 0, so the real roots are x = 0 and x = 1.\n"
+                        "4. Stationary points: x = 0 gives y = 0, so (0, 0); x = 1 gives y = 1, so (1, 1).\n"
+                        "5. Second-order partials: f_xx = 6x, f_yy = 6y, f_xy = −3 (a constant), and D = f_xx·f_yy − (f_xy)².\n"
+                        "6. At (0, 0): D = 0·0 − (−3)² = −9 < 0, so (0, 0) is a saddle point. D < 0 is a definite verdict, not a failure of the test.\n"
+                        "7. At (1, 1): D = 6·6 − 9 = 36 − 9 = 27 > 0, and f_xx = 6 > 0, so (1, 1) is a local minimum. (Had f_xx been negative it would have been a local maximum with the same D.)\n"
+                        "8. Value there: f(1, 1) = 1 + 1 − 3·1·1 = −1.\n"
+                        "Most likely mistake: quoting D > 0 without also reporting the sign of f_xx, which is what separates maximum from minimum — or reading D < 0 as \"inconclusive\". Only D = 0 is inconclusive."
+                    ),
+                ),
+            ),
         ),
         # --- 5 ---------------------------------------------------------
         UnitGuidance(
@@ -332,6 +521,44 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "run 0 to 2π. With x = r sin θ cos φ, θ runs 0 to π and φ runs "
                 "0 to 2π — and θ means something different here than it does "
                 "in plane polars, so any card using both must say which.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "Evaluate ∫₀¹ ∫ₓ¹ (sin y)/y dy dx by first changing the order of integration."
+                    ),
+                    answer=(
+                        "1 − cos 1  (≈ 0.4597)"
+                    ),
+                    detail=(
+                        "1. (sin y)/y has no elementary antiderivative, so the inner integral cannot be done in the order given. The order must be reversed.\n"
+                        "2. Read the region from the limits: x runs from 0 to 1, and for each x, y runs from y = x up to y = 1. That is the triangle bounded by y = x, y = 1 and x = 0, with vertices (0, 0), (0, 1) and (1, 1).\n"
+                        "3. Re-derive the limits with y outside, from the region rather than by swapping symbols: y takes every value from 0 to 1, and for a fixed y the horizontal strip runs from the left edge x = 0 across to the line y = x, i.e. x = y. So x goes from 0 to y.\n"
+                        "4. Reversed integral: ∫₀¹ ∫₀^y (sin y)/y dx dy. The outer limits 0 and 1 are pure constants — no x or y survives in them.\n"
+                        "5. Inner integral: (sin y)/y is constant with respect to x, so ∫₀^y (sin y)/y dx = (sin y)/y·(y − 0) = sin y. The awkward 1/y cancels.\n"
+                        "6. Outer integral: ∫₀¹ sin y dy = [−cos y]₀¹ = −cos 1 + cos 0 = 1 − cos 1 ≈ 0.4597.\n"
+                        "Most likely mistake: swapping the limit expressions mechanically to get \"x from x to 1, y from 0 to 1\", which leaves the variable x inside its own limit. The reversed limits must come from a sketch of the region."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "Evaluate ∫₀² ∫₀^√(2x − x²) (x² + y²) dy dx by changing to polar coordinates."
+                    ),
+                    answer=(
+                        "3π/4  (≈ 2.3562)"
+                    ),
+                    detail=(
+                        "1. Identify the region: 0 ≤ y ≤ √(2x − x²) means y² ≤ 2x − x², i.e. x² + y² ≤ 2x, with y ≥ 0 and 0 ≤ x ≤ 2.\n"
+                        "2. Complete the square: (x − 1)² + y² ≤ 1. The region is the UPPER half of the disc of radius 1 centred at (1, 0).\n"
+                        "3. Put x = r cos θ, y = r sin θ (plane polars). The boundary x² + y² = 2x becomes r² = 2r cos θ, so r = 2 cos θ.\n"
+                        "4. Limits: for a fixed θ, r runs from 0 to 2 cos θ; and θ runs from 0 to π/2, since 2 cos θ is negative beyond π/2 and the upper half-disc lies entirely in the first quadrant.\n"
+                        "5. The area element is r dr dθ, not dr dθ, and the integrand x² + y² becomes r².\n"
+                        "6. I = ∫₀^(π/2) ∫₀^(2 cos θ) r²·r dr dθ = ∫₀^(π/2) [r⁴/4]₀^(2 cos θ) dθ = ∫₀^(π/2) (2 cos θ)⁴/4 dθ = ∫₀^(π/2) 4 cos⁴θ dθ.\n"
+                        "7. By Wallis' formula ∫₀^(π/2) cos⁴θ dθ = (3·1)/(4·2)·(π/2) = 3π/16.\n"
+                        "8. I = 4·(3π/16) = 3π/4 ≈ 2.3562. The outer limits are constants and no x or y remains — as required of a definite double integral.\n"
+                        "Most likely mistake: writing dx dy = dr dθ and losing the factor r, which gives ∫₀^(π/2) (8 cos³θ)/3 dθ = 16/9 instead of 3π/4 — or letting θ run 0 to 2π for a region that occupies only 0 ≤ θ ≤ π/2."
+                    ),
+                ),
             ),
         ),
         # --- 6 ---------------------------------------------------------
@@ -383,6 +610,47 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "Sign and limit slips in repeated integration by parts: "
                 "dropping the alternating sign, and mis-evaluating "
                 "cos nπ = (−1)ⁿ, sin nπ = 0, cos 2nπ = 1 at the limits.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "A function of period 2π is defined by f(x) = 0 for −π < x < 0 and f(x) = x for 0 ≤ x < π. Writing its Fourier series as a₀/2 + Σ(aₙ cos nx + bₙ sin nx), find the constant term of the series."
+                    ),
+                    answer=(
+                        "Constant term = a₀/2 = π/4  (here a₀ = π/2)"
+                    ),
+                    detail=(
+                        "1. The period is 2L = 2π, so L = π, and on a full interval of length 2L the Euler factor is 1/L = 1/π: a₀ = (1/π)·∫ f(x) dx taken over (−π, π).\n"
+                        "2. f is piecewise, so split the integral at the breakpoint x = 0 rather than pushing one formula across the whole period: a₀ = (1/π)[∫ 0 dx over (−π, 0) + ∫₀^π x dx].\n"
+                        "3. The first piece is 0. The second piece is [x²/2]₀^π = π²/2.\n"
+                        "4. a₀ = (1/π)·(π²/2) = π/2.\n"
+                        "5. In the convention a₀/2 + Σ(aₙ cos nx + bₙ sin nx) the constant term of the series is a₀/2, not a₀: constant term = (π/2)/2 = π/4 ≈ 0.7854.\n"
+                        "6. Check: the constant term of any Fourier series is the mean value of f over one period, (1/2π)·∫ f dx over (−π, π) = (1/2π)(π²/2) = π/4. ✓\n"
+                        "Most likely mistake: reporting a₀ = π/2 as the constant term. With a₀ = (1/L)∫ over one period, a₀ is twice the mean value; halving it is exactly what makes a₀/2 the constant term. Also note the even/odd shortcut is unavailable here — this f is neither even nor odd."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "Find the Fourier series of f(x) = x² on −π < x < π (period 2π), and hence evaluate 1 + 1/2² + 1/3² + 1/4² + ⋯"
+                    ),
+                    answer=(
+                        "x² = π²/3 + 4Σ(−1)ⁿ(cos nx)/n²; the sum is π²/6."
+                    ),
+                    detail=(
+                        "1. Here 2L = 2π so L = π; the Euler factor on this full interval is 1/π.\n"
+                        "2. f(−x) = (−x)² = x² = f(x), and the interval (−π, π) IS symmetric about the origin, so f is even and every bₙ = 0. (The shortcut is legitimate only because of that symmetry — it would not apply on, say, (0, 2π).)\n"
+                        "3. a₀ = (1/π)·∫ x² dx over (−π, π) = (1/π)·(2π³/3) = 2π²/3, so the constant term a₀/2 = π²/3.\n"
+                        "4. aₙ = (1/π)·∫ x² cos nx dx over (−π, π) = (2/π)∫₀^π x² cos nx dx, since x² cos nx is even.\n"
+                        "5. Integrate by parts with u = x², dv = cos nx dx: ∫₀^π x² cos nx dx = [x² sin nx/n]₀^π − (2/n)∫₀^π x sin nx dx. The bracket vanishes because sin nπ = 0.\n"
+                        "6. By parts again: ∫₀^π x sin nx dx = [−x cos nx/n]₀^π + (1/n)∫₀^π cos nx dx = −π(−1)ⁿ/n + 0 = π(−1)^(n+1)/n, using cos nπ = (−1)ⁿ and sin nπ = 0.\n"
+                        "7. So ∫₀^π x² cos nx dx = −(2/n)·π(−1)^(n+1)/n = 2π(−1)ⁿ/n², and aₙ = (2/π)·2π(−1)ⁿ/n² = 4(−1)ⁿ/n². Check: a₁ = −4, a₂ = 1, a₃ = −4/9.\n"
+                        "8. Series: x² = π²/3 + 4Σ from n = 1 to ∞ of (−1)ⁿ(cos nx)/n², for −π < x < π.\n"
+                        "9. Substitute x = π. This is legitimate because the periodic extension of x² is CONTINUOUS at x = π: f(π⁻) = π² and f(−π⁺) = π² agree, so the series converges to π² there, not to a mean of two different values.\n"
+                        "10. cos nπ = (−1)ⁿ, so (−1)ⁿ·cos nπ = (−1)²ⁿ = 1: π² = π²/3 + 4Σ 1/n².\n"
+                        "11. Hence 4Σ 1/n² = π² − π²/3 = 2π²/3, giving 1 + 1/2² + 1/3² + ⋯ = π²/6 ≈ 1.6449.\n"
+                        "Most likely mistake: substituting a point where the periodic extension jumps and equating the series to f there. Here x = π is safe, but for f(x) = x on (−π, π) the same substitution is invalid — the series converges to ½[f(π⁻) + f(−π⁺)] = 0 at that endpoint."
+                    ),
+                ),
             ),
         ),
     ),
@@ -447,6 +715,41 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "machine code portable, or claiming high-level source runs "
                 "without translation, is wrong.",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "The same five-line program is written twice: once in a compiled language such as C, once in an interpreted language. Lines 1 to 3 print output; line 4 uses a variable `total` that was never declared or assigned; line 5 prints again. One team compiles their version and runs it, the other runs theirs through an interpreter. Which team sees any output on screen?"
+                    ),
+                    answer=(
+                        "Only the interpreted run — the compiled one never produces an executable."
+                    ),
+                    detail=(
+                        "1. The compiler reads the WHOLE program before anything is executed, so it meets the undeclared `total` on line 4 while still translating.\n"
+                        "2. An undeclared identifier is a compilation error, and a compilation error means no object code and no executable is produced.\n"
+                        "3. Nothing was ever run, so lines 1 to 3 never executed: the screen shows the error list and no program output at all.\n"
+                        "4. The interpreter instead translates and executes one statement at a time: line 1 runs and prints, then line 2, then line 3, and those effects persist.\n"
+                        "5. At line 4 the interpreter finds `total` undefined and stops there, so the three lines already printed stay on screen.\n"
+                        "6. Line 5 is never reached, so any error in it stays undiscovered.\n"
+                        "Most likely mistake: assuming an interpreted program prints nothing once it hits an error — everything before the bad statement has already run."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "An assembly source file contains the instruction `JMP LOOP`, and the label `LOOP:` is defined twenty instructions further down the file. A two-pass assembler translates it. In which pass is the address of `LOOP` recorded, and in which pass is the operand of `JMP` replaced by that address?"
+                    ),
+                    answer=(
+                        "Recorded in pass 1; substituted in pass 2."
+                    ),
+                    detail=(
+                        "1. On pass 1 the assembler scans the source from top to bottom keeping a location counter, and enters every label it meets into the symbol table with the address it is defined at.\n"
+                        "2. When pass 1 reaches `JMP LOOP`, `LOOP` has not been defined yet — this is a forward reference — so no address can be filled in; pass 1 only advances the location counter past the instruction.\n"
+                        "3. Twenty instructions later pass 1 meets `LOOP:` and records `LOOP` with its address in the symbol table.\n"
+                        "4. On pass 2 the assembler re-reads the source. Every symbol is now known, so it looks `LOOP` up and replaces the symbolic operand with the final machine address.\n"
+                        "5. So the address is recorded in pass 1 and substituted in pass 2 — the forward reference is the entire reason a second pass exists.\n"
+                        "Most likely mistake: reversing the passes, having pass 1 emit the final addresses and pass 2 build the symbol table."
+                    ),
+                ),
+            ),
         ),
         # --- 2 ---------------------------------------------------------
         UnitGuidance(
@@ -510,6 +813,40 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "application software, or an operating system firmware, is "
                 "wrong — and proprietary, open source and freeware are "
                 "licensing categories, not technical ones.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "A running program reaches the statement `total = 8 + 5`. Name the functional unit that actually produces 13, and the functional unit that fetched the instruction, decoded it, and signalled the first unit to act."
+                    ),
+                    answer=(
+                        "The ALU produces 13; the control unit directed it."
+                    ),
+                    detail=(
+                        "1. The instruction sits in main memory. The control unit fetches it and decodes it, working out that an addition is required.\n"
+                        "2. The control unit then issues the signals that route the operands 8 and 5 from registers into the arithmetic and logic unit.\n"
+                        "3. The ALU performs the addition and produces 13 — it is the only unit that carries out arithmetic and logical operations.\n"
+                        "4. The result is placed back in a register and then stored, again under the control unit's direction, and the program counter advances.\n"
+                        "5. So the split is: ALU computes, control unit coordinates; the machine cycle is fetch → decode → execute → store → advance.\n"
+                        "Most likely mistake: answering \"the CPU\" for both halves, or crediting the control unit with the arithmetic — it directs, it does not calculate."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "Two pieces of code on the same laptop both control hardware directly: the graphics device driver that the operating system loads at startup, and the UEFI code that runs before any operating system starts. Which of the two is firmware, and which property decides it?"
+                    ),
+                    answer=(
+                        "The UEFI code — it is held in non-volatile memory on the hardware itself."
+                    ),
+                    detail=(
+                        "1. Sort by where the code lives and what it is for, not by how low-level it feels — both of these control hardware, so \"low-level\" cannot separate them.\n"
+                        "2. The graphics driver is loaded from secondary storage by the operating system after startup. It belongs to system software, the category that also holds the operating system and utility programs.\n"
+                        "3. The UEFI code is stored in non-volatile memory on the motherboard, is present before any operating system exists on the machine, and controls the hardware at a low level. That is the definition of firmware.\n"
+                        "4. UEFI (or BIOS) is what begins startup and then hands control to the operating system.\n"
+                        "5. So the driver is system software and the UEFI code is firmware; neither is application software, which performs user tasks.\n"
+                        "Most likely mistake: calling a device driver application software, or calling the operating system firmware, because both \"control the hardware\"."
+                    ),
+                ),
             ),
         ),
         # --- 3 ---------------------------------------------------------
@@ -578,6 +915,40 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "has its own VRAM. A card saying a GPU is simply faster than "
                 "a CPU, or that a discrete card shares system RAM, is wrong.",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "Two jobs each perform 8 000 000 operations. Job A multiplies every one of an image's 8 000 000 pixels by the same brightness factor. Job B follows a chain of 8 000 000 pointers, where each next address can only be read after the previous one has been loaded. Which job is the one a GPU accelerates, and why?"
+                    ),
+                    answer=(
+                        "Job A — its 8 000 000 operations are independent, so they can run in parallel."
+                    ),
+                    detail=(
+                        "1. Count the work first: both jobs are 8 000 000 operations, so the amount of work does not decide anything.\n"
+                        "2. Ask whether the operations depend on one another. In job A a pixel's new value needs only that pixel's own old value, so all 8 000 000 multiplications could in principle be done at the same time.\n"
+                        "3. In job B step n + 1 needs the address produced by step n, so the steps must happen strictly one after another however many units are available.\n"
+                        "4. A GPU is many simple units applying the same operation across a large dataset, which fits job A exactly and gains nothing on job B, where the dependency chain and memory latency set the pace.\n"
+                        "5. Job B stays on the CPU, whose few versatile low-latency cores are built for sequential and unpredictably branching work; the GPU does not replace the CPU in any case.\n"
+                        "Most likely mistake: treating \"millions of operations\" as proof that a GPU will help, without checking whether those operations are independent of one another."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "A drive is advertised as 1 TB under the decimal convention, where 1 TB = 10¹² bytes. The operating system reports capacity in GiB, where 1 GiB = 1 024³ bytes. What capacity does the operating system show, to one decimal place?"
+                    ),
+                    answer=(
+                        "About 931.3 GiB"
+                    ),
+                    detail=(
+                        "1. Write the advertised size in bytes under its own convention: 1 TB = 10¹² = 1 000 000 000 000 bytes.\n"
+                        "2. Write the reporting unit in bytes: 1 GiB = 1 024³ = 1 073 741 824 bytes.\n"
+                        "3. Divide the one by the other: 1 000 000 000 000 ÷ 1 073 741 824 = 931.322 574 6…\n"
+                        "4. Round to one decimal place: 931.3 GiB.\n"
+                        "5. No capacity has gone missing — the same count of bytes is being named in two different units, which is exactly why an advertised 1 TB drive reports about 931 GiB.\n"
+                        "Most likely mistake: switching convention part-way through — converting the advertised figure with 1 024³ as though it were 1 TiB, and answering 1 024 GiB, or concluding the manufacturer overstated the size."
+                    ),
+                ),
+            ),
         ),
         # --- 4 ---------------------------------------------------------
         UnitGuidance(
@@ -630,6 +1001,44 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "while 0.1₁₀, 0.2₁₀ and 0.3₁₀ repeat forever. A card printing "
                 "an exact finite binary expansion for 0.1₁₀ or 0.2₁₀ is "
                 "wrong.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "Find the base b for which (144)ᵦ = 49₁₀."
+                    ),
+                    answer=(
+                        "b = 5"
+                    ),
+                    detail=(
+                        "1. Expand the numeral positionally: (144)ᵦ = 1×b² + 4×b + 4.\n"
+                        "2. Set it equal to the decimal value: b² + 4b + 4 = 49.\n"
+                        "3. Rearrange into standard form: b² + 4b − 45 = 0.\n"
+                        "4. Factorise: (b + 9)(b − 5) = 0, so b = −9 or b = 5.\n"
+                        "5. Reject b = −9: a number base must be an integer greater than 1.\n"
+                        "6. Check digit legality in base 5: the numeral uses only the digits 1 and 4, and base 5 admits 0–4, so every digit is legal.\n"
+                        "7. Verify: 1×25 + 4×5 + 4 = 25 + 20 + 4 = 49 ✓, so b = 5.\n"
+                        "Most likely mistake: stopping at the algebra and never checking that every digit of the numeral is smaller than the base — a root that satisfies the equation is still wrong if the numeral contains a digit that base does not have."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "Convert 1101.1011₂ to octal."
+                    ),
+                    answer=(
+                        "15.54₈"
+                    ),
+                    detail=(
+                        "1. Octal takes three bits per digit, grouped outward from the binary point in BOTH directions.\n"
+                        "2. Integer part, grouped right-to-left from the point: 1 | 101, then pad the leftmost group with zeros → 001 101.\n"
+                        "3. Convert each group: 001 = 1 and 101 = 5, so the integer part is 15₈.\n"
+                        "4. Fractional part, grouped LEFT-TO-RIGHT from the point: 101 | 1, then pad the last group with zeros on the RIGHT → 101 100.\n"
+                        "5. Convert each group: 101 = 5 and 100 = 4, so the fractional part is .54₈.\n"
+                        "6. Therefore 1101.1011₂ = 15.54₈.\n"
+                        "7. Check in decimal: 1101.1011₂ = 8 + 4 + 1 + 0.5 + 0.125 + 0.0625 = 13.6875, and 15.54₈ = 8 + 5 + 5/8 + 4/64 = 13.6875 ✓.\n"
+                        "Most likely mistake: grouping the fraction from the RIGHT instead of from the point — that reads 1011 as 1 | 011, pads to 001 011, and gives .13₈ = 1/8 + 3/64 = 0.171875 instead of the correct .54₈ = 5/8 + 4/64 = 0.6875."
+                    ),
+                ),
             ),
         ),
         # --- 5 ---------------------------------------------------------
@@ -699,6 +1108,41 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "the slash as a folder, or a profile page as repository "
                 "history, is wrong.",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "In a repository you run `git add report.txt`, then open report.txt and change a line, then run `git commit -m \"Add report\"`, with no other commands in between. Which version of report.txt does that commit record, and what does `git status` say afterwards?"
+                    ),
+                    answer=(
+                        "The version as it was when `git add` ran; status still lists it as modified."
+                    ),
+                    detail=(
+                        "1. `git add report.txt` copies the file's content AS IT IS AT THAT MOMENT into the staging area. It does not register a live link that keeps up with later edits.\n"
+                        "2. Editing report.txt afterwards changes only the working-directory copy; the staged snapshot is untouched.\n"
+                        "3. `git commit` records what is in the staging area, so the commit stores the pre-edit content that `git add` captured.\n"
+                        "4. The working-directory copy and the committed copy now differ, so `git status` still shows report.txt as modified.\n"
+                        "5. Getting the newer content into history needs another `git add report.txt` followed by another commit.\n"
+                        "Most likely mistake: assuming a plain commit sweeps up the newest working-directory version of every file it has seen — a commit records the staging area, not the working directory."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "A teammate has pushed three commits to the branch you are on. You run `git fetch origin` and nothing else. Do the three commits now show up in `git log --oneline`, and have the files in your working directory changed?"
+                    ),
+                    answer=(
+                        "No to both — only the remote-tracking branch `origin/master` moved."
+                    ),
+                    detail=(
+                        "1. `git fetch origin` downloads the new commits and their objects from the remote into your repository, so the history is now present locally.\n"
+                        "2. It updates only the remote-tracking branch, so `git log --oneline origin/master` does show the three commits.\n"
+                        "3. It does not move your own branch pointer, so a plain `git log --oneline` still ends at your last commit.\n"
+                        "4. It does not touch the working directory either, so the files on disk are byte-for-byte what they were before.\n"
+                        "5. `git status -sb` reports the gap explicitly as `## master...origin/master [behind 3]`.\n"
+                        "6. `git pull` is the command that fetches AND THEN integrates: after it, the branch pointer moves and the working files carry the teammate's changes.\n"
+                        "Most likely mistake: treating fetch and pull as the same command — fetch downloads history, pull downloads it and then integrates it into your branch."
+                    ),
+                ),
+            ),
         ),
         # --- 6 ---------------------------------------------------------
         UnitGuidance(
@@ -762,6 +1206,116 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "a chat assistant as human-level general intelligence, is "
                 "wrong.",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "A student uploads the twelve PDFs of her own course notes and wants a tool that answers her questions from those twelve documents only, showing which document each answer came from. Among the tools this unit names, which one is built for that, and which one would answer from the open web instead?"
+                    ),
+                    answer=(
+                        "NotebookLM for the uploaded sources; Perplexity searches the open web."
+                    ),
+                    detail=(
+                        "1. Both tools attach sources to their answers, so \"it gives citations\" cannot tell them apart — the deciding detail is WHERE the sources come from.\n"
+                        "2. NotebookLM grounds its answers in the sources the user adds to a notebook, so its scope here is exactly those twelve PDFs and its answers point back into them.\n"
+                        "3. Perplexity is a web-discovery tool: it searches and returns an answer citing pages it found, which is the opposite of restricting the answer to a fixed set the user supplied.\n"
+                        "4. The student's requirement is \"these twelve documents and nothing else\", so NotebookLM is the fit and NotebookLM is not a general web search engine.\n"
+                        "5. In either tool a citation is a pointer, not a proof — the cited page, author and date still have to be opened and checked, because a citation may not fully support the sentence attached to it.\n"
+                        "Most likely mistake: choosing the web-search tool because it also shows citations, for a question that must stay inside the user's own documents."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "A student tells a chat assistant that one of its answers is wrong; it accepts the correction and answers correctly for the rest of that conversation. A week later a different student asks the same question in a new conversation and gets the original wrong answer back. Why?"
+                    ),
+                    answer=(
+                        "The correction changed only that conversation, not the model's parameters."
+                    ),
+                    detail=(
+                        "1. Separate the two things a model does. Training is the process that adjusts the model's parameters from data; inference is applying the already-trained model to a new input to produce an answer.\n"
+                        "2. Chatting with a deployed assistant is inference. The correction became part of the context of that one conversation, which is why the rest of that conversation improved.\n"
+                        "3. Nothing in that exchange rewrote any parameter, so the model itself is exactly as it was.\n"
+                        "4. A new conversation begins with none of that context, so the same question meets the same unchanged model and reproduces the same answer.\n"
+                        "5. That original answer is a hallucination — fluent but false output, produced because the model predicts plausible patterns rather than verifying truth — which is why its output needs checking rather than correcting.\n"
+                        "Most likely mistake: assuming a deployed assistant learns from every conversation by default, so that correcting it once fixes it for everyone."
+                    ),
+                ),
+            ),
+        ),
+        # --- 7 ---------------------------------------------------------
+        # This sub-unit exists on the syllabus but has never had its own
+        # guidance pass — it was added to the registry once the syllabus PDF
+        # turned out to list seven sub-headings, not six, after the guidance
+        # rewrite that produced units 1-6 had already run against the old
+        # six-unit list. It is inherently thin: a named list of platforms,
+        # not a body of technique, so the guidance says that plainly rather
+        # than manufacturing false depth.
+        UnitGuidance(
+            guidance=(
+                "This sub-unit is a named list of platforms, not a technique "
+                "— do not manufacture depth it does not have. The only "
+                "examinable fact is WHICH platform a described need actually "
+                "fits: Figma for an interactive interface mock-up, GitHub for "
+                "source code and its commit history, Stack Overflow for one "
+                "specific coding problem answered by other programmers, "
+                "GeeksforGeeks for a written tutorial on a topic, and "
+                "HackerRank / HackerEarth / LeetCode for solving set coding "
+                "problems to build a solved-problem record. Write cards as a "
+                "short scenario needing exactly one of these, never a bare "
+                "'what is X for' definition. Never ask the student to rank "
+                "the platforms or to name a feature no course material gives."
+            ),
+            traps=(
+                "Confusing a design tool with a code host: Figma is for "
+                "interface mock-ups and prototypes, not for hosting or "
+                "version-controlling source code — that is GitHub's job.",
+                "Confusing a curated tutorial site with a Q&A site: "
+                "GeeksforGeeks publishes pre-written articles explaining a "
+                "topic; Stack Overflow answers one specific problem someone "
+                "is stuck on right now. A general 'explain X' request belongs "
+                "on the former, a specific error message on the latter.",
+                "Treating HackerRank, HackerEarth and LeetCode as "
+                "interchangeable with Stack Overflow. All three are for "
+                "solving set coding problems to build a track record, not "
+                "for asking or answering an open-ended question.",
+                "Routing an entire portfolio through one platform because it "
+                "is the one the course spends the most time on elsewhere — "
+                "each of the five serves a distinct artefact, and a card "
+                "that lets one substitute for another is wrong.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "A first-year student is building an online profile. She needs two links: one where a reviewer can click through the screens of her app's interface design in a browser with nothing installed, and one that shows the app's source code together with its commit history. Which platform named in this unit serves each?"
+                    ),
+                    answer=(
+                        "Figma for the clickable screens; GitHub for the code and commit history."
+                    ),
+                    detail=(
+                        "1. Sort the two artefacts by what they actually are: one is an interface design, the other is source code with a recorded history.\n"
+                        "2. Figma is the browser-based interface design tool, so the screens and the links between them are made there and shared as a link the reviewer simply opens.\n"
+                        "3. GitHub hosts Git repositories, so it is where the source itself lives along with commits, branches and the profile page built from that activity.\n"
+                        "4. Neither substitutes for the other: a design file is not version-controlled source code, and a repository is not an interactive mock-up.\n"
+                        "5. So the first link is Figma and the second is GitHub.\n"
+                        "Most likely mistake: routing the whole portfolio through GitHub because it is the platform the course spends most time on, and presenting static exported images as an interactive design."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "A student wants two different things. First, a written tutorial explaining how a hash table works, with worked examples she can read start to finish. Second, a specific answer from other programmers to the exact error message her own code is producing. Which platform named in this unit fits each?"
+                    ),
+                    answer=(
+                        "GeeksforGeeks for the tutorial; Stack Overflow for the specific error."
+                    ),
+                    detail=(
+                        "1. Separate a curated learning resource from a question-and-answer service — they look alike because both end up as pages of text about code.\n"
+                        "2. GeeksforGeeks publishes structured articles and tutorials on topics, written in advance, so it answers \"explain this topic to me\".\n"
+                        "3. Stack Overflow is a Q&A platform: one specific programming problem is posted and other programmers answer it, and a profile there is built from reputation earned by asking and answering.\n"
+                        "4. An exact error message out of one person's own code is a specific problem nobody has written a tutorial for, so it belongs on Stack Overflow.\n"
+                        "5. The practice platforms this unit also names — HackerRank, HackerEarth and LeetCode — are for solving set coding problems and building a solved-problem profile, so neither request goes there.\n"
+                        "Most likely mistake: posting a general \"teach me hash tables\" question on Stack Overflow, whose content and profile model are built around one specific answerable problem."
+                    ),
+                ),
+            ),
         ),
     ),
     "INT335": (
@@ -819,6 +1373,40 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "stating the five modes must be completed once in strict "
                 "sequence, or that testing never sends a team back to "
                 "Empathize/Define.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "A team has finished Empathize and holds forty pages of interview notes from hostel students. In the next session they open a whiteboard and begin sketching app screens. Working in the d.school model, which mode have they skipped, and what should that mode have produced?"
+                    ),
+                    answer=(
+                        "Define — one focused point-of-view problem statement."
+                    ),
+                    detail=(
+                        "1. The d.school model has exactly five modes, in this order: Empathize, Define, Ideate, Prototype, Test.\n"
+                        "2. The team has completed Empathize, and sketching screens is Ideate spilling into Prototype.\n"
+                        "3. The mode sitting between Empathize and Ideate is Define, so Define is the one that was skipped.\n"
+                        "4. Define's job is to turn the raw notes into ONE focused, actionable problem statement — a point of view naming the user, the need and the insight behind it — so that ideation has a target.\n"
+                        "5. Skip it and the team generates ideas for a problem it never agreed on, which surfaces later as prototypes that each solve something different.\n"
+                        "Most likely mistake: placing Ideate straight after Empathize because gathering notes feels like understanding already — and treating the five modes as one strict pass, when testing routinely sends a team back to Define or Empathize."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "A company sells the same solar home system it always has, built from components that already existed. It changes one thing: customers now pay in small weekly instalments by mobile money instead of a single lump sum, and sales rise sharply among households that could never pay upfront. Is this an invention or an innovation?"
+                    ),
+                    answer=(
+                        "An innovation."
+                    ),
+                    detail=(
+                        "1. Check what is actually new. No new device and no new technology has been created here, so nothing in this story is an invention.\n"
+                        "2. Invention is the creation of something new; innovation is implementation that produces value.\n"
+                        "3. What is new is a payment and delivery model, and it has been put into practice with real customers rather than proposed.\n"
+                        "4. It produces value: households previously excluded by the lump-sum price now own the system, and the company sells more of them.\n"
+                        "5. Implementation plus value, using existing technology, is precisely what innovation means — so this is an innovation.\n"
+                        "Most likely mistake: requiring new technology before something counts as an innovation, which leads to calling a novel but never-adopted device an innovation while denying the label to a business-model change that actually worked."
+                    ),
+                ),
             ),
         ),
         # --- 2 ---------------------------------------------------------
@@ -880,6 +1468,40 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "unrecognized until a new possibility appears”. A card "
                 "labelling a directly voiced request as an implicit need, or "
                 "an inference as explicit, is wrong.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "In one session a researcher records three things: (a) the participant's exact words, \"the app is fine, honestly\"; (b) the participant closing and reopening the app three times to check a saved draft; (c) the researcher's own cautious inference that she does not believe the app has saved her work. On a four-quadrant empathy map (Says, Thinks, Does, Feels), which quadrant does each item belong in?"
+                    ),
+                    answer=(
+                        "(a) Says, (b) Does, (c) Thinks."
+                    ),
+                    detail=(
+                        "1. Assign by the TYPE OF EVIDENCE, not by the topic — all three items are about the same worry, so the topic cannot separate them.\n"
+                        "2. (a) is a direct quotation, words the participant actually spoke, so it goes under Says.\n"
+                        "3. (b) is an action the researcher watched happen, so it goes under Does.\n"
+                        "4. (c) was neither spoken nor observed; it is the researcher's cautious inference about what is going on in the participant's head, so it goes under Thinks.\n"
+                        "5. Notice that (a) and (c) contradict one another — a stated \"it's fine\" against an inferred distrust — and surfacing that contradiction is exactly what the map is for.\n"
+                        "Most likely mistake: filing the observed behaviour under Says because the researcher wrote it down in words, or promoting the inference into Does as though it had been observed."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "Asked what she needs from the billing software, a shop assistant says, \"the font should be bigger.\" The researcher then watches her keep a handwritten notebook beside the till and copy every day's total into it before going home; she never mentions the notebook. Which observation reveals an implicit need, and how should that need be written down?"
+                    ),
+                    answer=(
+                        "The notebook: she needs a way to confirm the day's totals are right."
+                    ),
+                    detail=(
+                        "1. An explicit need is one the user states. \"The font should be bigger\" was stated out loud, so it is explicit — and it is stated as a solution rather than as a need.\n"
+                        "2. An implicit need is one inferred from behaviour, from a contradiction, or from a workaround the user has built for herself.\n"
+                        "3. The notebook is a workaround: she does extra work every single day that the software was supposed to remove, and she did not raise it when asked.\n"
+                        "4. Ask what the workaround buys her. Copying the totals by hand gives her a record she can check against, so the underlying need is confidence that the day's totals are correct.\n"
+                        "5. Write the need as an outcome, not a feature: \"needs a way to confirm the day's totals are right\", not \"needs a printed daily summary\" — the second names one solution and closes off every other.\n"
+                        "Most likely mistake: taking the spoken request as the need because it was said aloud, and then writing the need as the feature the user asked for."
+                    ),
+                ),
             ),
         ),
         # --- 3 ---------------------------------------------------------
@@ -957,6 +1579,42 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "buildable idea for a problem nobody has 'highly relevant', "
                 "is wrong.",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "Three ideas are screened on three criteria with weights impact 0.4, feasibility 0.35, relevance 0.25, each rated out of 10. Idea A is rated 9, 3, 8. Idea B is rated 7, 5, 9. Idea C is rated 10, 8, 9 but requires storing customer data in a way the law does not permit. Which idea goes forward, and with what weighted total?"
+                    ),
+                    answer=(
+                        "Idea B, with a weighted total of 6.80."
+                    ),
+                    detail=(
+                        "1. Apply the mandatory constraint FIRST. Legality is a gate, not one more weighted column, so Idea C is excluded before any scoring — no total can buy back a rule that must be met.\n"
+                        "2. Score Idea A with Total = Σ(wᵢ × rᵢ): 0.4 × 9 = 3.60; 0.35 × 3 = 1.05; 0.25 × 8 = 2.00.\n"
+                        "3. Add: 3.60 + 1.05 + 2.00 = 6.65.\n"
+                        "4. Score Idea B: 0.4 × 7 = 2.80; 0.35 × 5 = 1.75; 0.25 × 9 = 2.25.\n"
+                        "5. Add: 2.80 + 1.75 + 2.25 = 6.80.\n"
+                        "6. Compare: 6.80 > 6.65, so Idea B wins even though Idea A carries the single highest rating on the heaviest criterion.\n"
+                        "7. Check the weights sum to 1: 0.40 + 0.35 + 0.25 = 1.00 ✓.\n"
+                        "Most likely mistake: scoring Idea C anyway and choosing it because its ratings are the highest, or picking Idea A on the strength of its 9 — the two admissible totals differ by only 0.15 and have to be worked out digit by digit."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "Ten minutes into an idea-generation session, a member answers a suggestion with \"that will never get past the safety review.\" Which brainstorming rule has been broken, and at what point does that judgement properly belong?"
+                    ),
+                    answer=(
+                        "Defer criticism; the judgement belongs in the convergent screening step."
+                    ),
+                    detail=(
+                        "1. Idea generation is a divergent activity: it suspends judgement and values quantity, variety and novelty.\n"
+                        "2. The rule the remark breaks is defer criticism — evaluation is held back so that unfinished and unusual ideas still get said out loud.\n"
+                        "3. The real cost is not the one idea killed; it is the ideas nobody offers afterwards, because members start filtering themselves.\n"
+                        "4. The safety objection is not wrong, it is early. Once enough variety exists the team converges: it applies mandatory constraints such as safety as gates, then screens and scores what survives.\n"
+                        "5. So the order is diverge, then converge, and this remark dragged a convergent judgement into the divergent half of the session.\n"
+                        "Most likely mistake: defending the objection as good convergent thinking and allowing it into the generation session, or treating it later as a permanent veto rather than a criterion to apply at screening."
+                    ),
+                ),
+            ),
         ),
         # --- 4 ---------------------------------------------------------
         UnitGuidance(
@@ -1022,6 +1680,40 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "set of screens (a storyboard shows the user's context, "
                 "action, system response and outcome over time).",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "A paper prototype of a seat-booking flow tested well: every participant found the seat-selection step unaided. The team now needs to know whether the flow still works when the seat map takes about two seconds to load and the Confirm button greys out while it waits. Can the paper prototype answer that, and what is needed instead?"
+                    ),
+                    answer=(
+                        "No — timing and micro-feedback need a higher-fidelity prototype."
+                    ),
+                    detail=(
+                        "1. Match the artefact to the uncertainty being tested, not to the stage of the project.\n"
+                        "2. A paper prototype tests concept, information hierarchy and screen sequence — whether people understand what the screens are and in what order they come. That is exactly the question it already answered.\n"
+                        "3. The new question is about a delay, about a control changing state, and about whether the user still believes the system is working. None of that exists on paper: a person moving sheets by hand supplies the response instantly and cannot reproduce a two-second wait.\n"
+                        "4. So the low-fidelity result stands for what it tested and simply does not extend to timing, response or visual credibility.\n"
+                        "5. Answering the new question needs a higher-fidelity interactive prototype in which the delay and the disabled state are real.\n"
+                        "Most likely mistake: reading a successful low-fidelity test as evidence that the design works overall, when it only answers the questions that fidelity was able to ask."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "Team A builds one working feature, releases it, and forty paying customers use it for their real work. Team B builds a clickable mock-up of the whole app and watches eight users attempt set tasks with it in a lab. Which team has an MVP, and what does the other team have?"
+                    ),
+                    answer=(
+                        "Team A has the MVP; Team B has a prototype."
+                    ),
+                    detail=(
+                        "1. Ask who uses it, and for what. A prototype simulates an experience so the team can learn and find where the idea is weak; it is not handed to real customers in a real operating context.\n"
+                        "2. Team B's mock-up is used in a lab, on tasks the team set, and delivers no value to the participants. That is a prototype, and covering the whole app does not change what it is.\n"
+                        "3. An MVP is the smallest coherent end-to-end product that reliably delivers the core value to real users and generates evidence about one central hypothesis.\n"
+                        "4. Team A's single feature is used by real customers, in their real context, and does real work for them — so it is an MVP despite being far smaller in scope.\n"
+                        "5. Scope is therefore not the discriminator. \"Viable\" means it must work well enough for a real user to complete the core task, so an MVP is neither \"the version with fewest features\" nor a half-working one.\n"
+                        "Most likely mistake: deciding by size — calling the whole-app mock-up the MVP because it covers more, and the one shipped feature \"just a prototype\"."
+                    ),
+                ),
+            ),
         ),
         # --- 5 ---------------------------------------------------------
         UnitGuidance(
@@ -1086,6 +1778,40 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "layers (actions, thoughts, emotions, channels, "
                 "opportunities) are the stable part.",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "A release passes every acceptance criterion in the requirements document and every test the specification asked for. In the field, users abandon the task within a week because the product solves a problem they turn out not to have. Which of verification and validation succeeded, and which failed?"
+                    ),
+                    answer=(
+                        "Verification succeeded; validation failed."
+                    ),
+                    detail=(
+                        "1. Verification asks whether the product meets its specification — building the thing right.\n"
+                        "2. Every acceptance criterion and specified test passed, so verification succeeded: nothing in the build is defective against what was written down.\n"
+                        "3. Validation asks whether the product meets the real user need — building the right thing.\n"
+                        "4. Users abandoning the task because they do not have that problem is a failure of the need itself, so validation failed.\n"
+                        "5. The two are independent, which is the point: a product can be built exactly to a specification that was wrong, so validation has to be done with real users and not against the document.\n"
+                        "Most likely mistake: defining validation as conformance to requirements, which collapses it into verification and makes the pair impossible to tell apart."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "During a usability test the facilitator reads out: \"Open the Payments tab and choose Bill Pay.\" Every participant completes it. What has this task actually tested, and how should it be worded to test what the team wanted to learn?"
+                    ),
+                    answer=(
+                        "Obedience; word it \"Pay your electricity bill.\""
+                    ),
+                    detail=(
+                        "1. The team wanted to know whether people can find the bill-payment feature by themselves — that is discoverability.\n"
+                        "2. The wording names the control and gives the route, so the participant is handed the answer before starting. A perfect completion rate proves only that the instruction was followed.\n"
+                        "3. Neutral facilitation means giving the participant a goal, not a procedure: the facilitator must not demonstrate the workflow, name the control, or embed a judgement.\n"
+                        "4. \"Pay your electricity bill\" states the outcome and leaves the route to the participant, so hesitations, wrong turns and failures now carry information.\n"
+                        "5. The same rule rules out loaded questions afterwards: \"How useful was our convenient dashboard?\" carries its answer inside the question.\n"
+                        "Most likely mistake: reading a high completion rate on a step-by-step task as evidence that the interface is discoverable."
+                    ),
+                ),
+            ),
         ),
         # --- 6 ---------------------------------------------------------
         UnitGuidance(
@@ -1142,6 +1868,40 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "pitch' opens with technology rather than the user problem or "
                 "benefit.",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "In a pitch a team says: \"Two other apps already send bill reminders, but neither of them works when the phone has no data connection.\" Which element of NABC does this sentence supply?"
+                    ),
+                    answer=(
+                        "Competition."
+                    ),
+                    detail=(
+                        "1. NABC is Need, Approach, Benefits per costs, Competition.\n"
+                        "2. Need would state the user's problem; this sentence names rival products, not the problem.\n"
+                        "3. Approach would state how the team solves it; no mechanism at all is described.\n"
+                        "4. Benefits per costs would state the gain relative to what it costs. \"Works without data\" sounds like a benefit, but the sentence is built as a comparison against what already exists.\n"
+                        "5. A sentence answering \"why is this better than the alternatives?\" is Competition, so that is the element supplied.\n"
+                        "Most likely mistake: filing anything that sounds positive under Benefits, and expanding C as \"Cost\" or \"Customer\" — the cost idea already sits inside \"Benefits per costs\"."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "Between test round 1 and test round 2 a team rewrote the onboarding copy, added a progress bar, and recruited its participants from a different course. Task completion rose from 55% to 80%. What may the team conclude about the progress bar?"
+                    ),
+                    answer=(
+                        "Nothing — three things changed at once, so the rise is unattributable."
+                    ),
+                    detail=(
+                        "1. List what changed between the two measurements: the copy, the progress bar, and the participant group. That is three variables.\n"
+                        "2. The 80% is a real figure, but it is the joint result of all three changes together with whatever differs between the two groups of people.\n"
+                        "3. Any single one of them could account for the whole rise; two could even be pulling in opposite directions with the third carrying it.\n"
+                        "4. Nothing in the data separates the three, so no claim about the progress bar specifically is supported by it.\n"
+                        "5. To attribute the effect the team must change one variable at a time — hold the copy and the recruitment fixed and test the progress bar alone.\n"
+                        "Most likely mistake: reporting \"the progress bar raised completion by 25 points\" because it is the change the team is proudest of, when the design of the comparison cannot support any per-change claim."
+                    ),
+                ),
+            ),
         ),
     ),
     "CSE326": (
@@ -1189,6 +1949,50 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "or that says the fragment in page.html#top is sent to the "
                 "server. Fragments are handled by the browser and never "
                 "appear in the HTTP request target.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "An HTML page contains:\n"
+                        "\n"
+                        "<ol reversed start=\"10\">\n"
+                        "  <li>alpha</li>\n"
+                        "  <li>beta</li>\n"
+                        "  <li value=\"4\">gamma</li>\n"
+                        "  <li>delta</li>\n"
+                        "</ol>\n"
+                        "\n"
+                        "What marker number does the browser render beside each of the four items, in order?"
+                    ),
+                    answer=(
+                        "10, 9, 4, 3"
+                    ),
+                    detail=(
+                        "1. start=\"10\" sets the list's ordinal counter to 10, so the first item, alpha, is numbered 10.\n"
+                        "2. reversed makes the counter step by -1 instead of +1, so beta is 10 - 1 = 9.\n"
+                        "3. The third li carries value=\"4\", which overrides the counter for that item outright: gamma is numbered 4.\n"
+                        "4. A value attribute also resets the counter, so counting resumes from 4 and still steps by -1: delta is 4 - 1 = 3.\n"
+                        "5. Rendered markers, top to bottom: 10, 9, 4, 3.\n"
+                        "Most likely mistake: reading reversed as \"display the list bottom-up\" and answering 3, 4, 9, 10, or ignoring the value attribute and answering 10, 9, 8, 7."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "A page served at https://example.com/docs/guide/page.html contains <a href=\"../img/a.png?size=big#top\">. What absolute URL does that link resolve to, and what request target does the server receive when it is clicked?"
+                    ),
+                    answer=(
+                        "Resolves to https://example.com/docs/img/a.png?size=big#top; server sees GET /docs/img/a.png?size=big"
+                    ),
+                    detail=(
+                        "1. Relative URLs resolve against the base URL's directory, not its filename, so drop page.html: https://example.com/docs/guide/ .\n"
+                        "2. The leading ../ climbs exactly one directory: https://example.com/docs/ .\n"
+                        "3. Append the remainder of the relative path, img/a.png: https://example.com/docs/img/a.png .\n"
+                        "4. Query and fragment ride along unchanged: https://example.com/docs/img/a.png?size=big#top .\n"
+                        "5. The browser strips the fragment before it builds the request, so the request line is GET /docs/img/a.png?size=big HTTP/1.1 - the query is sent, #top is not.\n"
+                        "6. Contrast: href=\"/img/a.png\" would ignore /docs/guide/ entirely and resolve to https://example.com/img/a.png .\n"
+                        "Most likely mistake: counting ../ from the page file rather than from its directory, which wrongly gives /docs/guide/img/a.png, or assuming #top reaches the server."
+                    ),
+                ),
             ),
         ),
         # --- 2 ---------------------------------------------------------
@@ -1238,6 +2042,55 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "<div>, that <header>, <footer> or <nav> may appear only once "
                 "per page, or that client-side constraint validation is a "
                 "security control rather than a usability one.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "The user clicks the Save button in this form:\n"
+                        "\n"
+                        "<form action=\"/save\" method=\"get\">\n"
+                        "  <input name=\"user\" value=\"ada\">\n"
+                        "  <input name=\"role\" value=\"admin\" disabled>\n"
+                        "  <input name=\"id\" value=\"007\" readonly>\n"
+                        "  <input value=\"ghost\">\n"
+                        "  <input type=\"checkbox\" name=\"news\">\n"
+                        "  <input type=\"checkbox\" name=\"terms\" checked>\n"
+                        "  <button type=\"submit\" name=\"action\" value=\"save\">Save</button>\n"
+                        "</form>\n"
+                        "\n"
+                        "What exact URL does the browser request?"
+                    ),
+                    answer=(
+                        "/save?user=ada&id=007&terms=on&action=save"
+                    ),
+                    detail=(
+                        "1. user: an ordinary named control with a value, so it is sent as user=ada.\n"
+                        "2. role: disabled controls are barred from submission entirely, so role=admin is NOT sent - even though its value is still sitting in the DOM.\n"
+                        "3. id: readonly only blocks editing; the control is still submitted, so id=007 is sent.\n"
+                        "4. The fourth input has a value but no name attribute. A control with no name is never submitted, so \"ghost\" is dropped.\n"
+                        "5. news: an unchecked checkbox is omitted from the submission completely - it is not sent as news=off or news=.\n"
+                        "6. terms: checked but with no value attribute, so it submits the default string \"on\": terms=on.\n"
+                        "7. The button that was actually clicked is the submitter, and it contributes its own pair: action=save. (Calling form.submit() from script has no submitter, so action would be missing.)\n"
+                        "8. Pairs are joined in document order: /save?user=ada&id=007&terms=on&action=save\n"
+                        "Most likely mistake: swapping disabled and readonly - sending role=admin and dropping id=007 - or sending news=off for the unchecked box."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "Given <input type=\"number\" min=\"3\" max=\"20\" step=\"5\">, decide for each entered value 8, 10, 20 and 23 whether checkValidity() returns true, and name the ValidityState flag set for each failure."
+                    ),
+                    answer=(
+                        "8 valid; 10 stepMismatch; 20 stepMismatch; 23 rangeOverflow"
+                    ),
+                    detail=(
+                        "1. When min is present it becomes the step base, so the allowed values are 3 + 5k: 3, 8, 13, 18, 23, 28, ...\n"
+                        "2. 8 = 3 + 5x1, so it is on step, and 3 <= 8 <= 20, so checkValidity() is true.\n"
+                        "3. 10 - 3 = 7, and 7 is not a multiple of 5, so 10 is off step: stepMismatch is true (the browser's message names 8 and 13 as the two nearest valid values).\n"
+                        "4. 20 is inside the range, but 20 - 3 = 17 is not a multiple of 5, so 20 is off step too: stepMismatch is true and rangeOverflow is false. The nearest valid value below it is 18.\n"
+                        "5. 23 - 3 = 20 IS a multiple of 5, so 23 is on step - but 23 > max = 20, so stepMismatch is false and rangeOverflow is true.\n"
+                        "Most likely mistake: measuring step from 0 instead of from min, which reverses the verdicts on 8 and 10, and assuming 23 fails on step when it actually fails on range."
+                    ),
+                ),
             ),
         ),
         # --- 3 ---------------------------------------------------------
@@ -1292,6 +2145,61 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "inline content; margin: 0 auto centers a block with a set "
                 "width).",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "The pointer is hovering over the link. Which colour does it render, and what is each selector's specificity?\n"
+                        "\n"
+                        "<style>\n"
+                        "  #main a                    { color: red; }\n"
+                        "  div.card ul li a.btn:hover { color: green; }\n"
+                        "  :where(#main .card) a.btn  { color: blue; }\n"
+                        "</style>\n"
+                        "<div id=\"main\"><div class=\"card\"><ul><li>\n"
+                        "  <a href=\"#\" class=\"btn\">Docs</a>\n"
+                        "</li></ul></div></div>"
+                    ),
+                    answer=(
+                        "red - #main a scores (0,1,0,1) and wins"
+                    ),
+                    detail=(
+                        "1. Score each selector as (a, b, c, d): a = 1 only for a style attribute, b = ID selectors, c = class, attribute and pseudo-class selectors, d = type selectors and pseudo-elements.\n"
+                        "2. #main a - one ID (#main), no classes, one type (a): (0, 1, 0, 1).\n"
+                        "3. div.card ul li a.btn:hover - no ID; .card, .btn and :hover give c = 3; div, ul, li and a give d = 4: (0, 0, 3, 4).\n"
+                        "4. :where(#main .card) a.btn - :where() always contributes zero, so #main and .card count for nothing and only a.btn is scored: (0, 0, 1, 1).\n"
+                        "5. Compare component by component from the left, with no carrying between components: b is 1 against 0 against 0, so #main a wins there and c and d are never even compared.\n"
+                        "6. The element renders red, despite the other two rules appearing later in the stylesheet - source order is only consulted when specificity ties.\n"
+                        "Most likely mistake: collapsing the tuple into one number (0+1+0+1 = 2 losing to 0+0+3+4 = 7) and answering green, or counting #main .card inside :where() toward the third rule's specificity."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "What rendered width does each of the three flex items get?\n"
+                        "\n"
+                        "<style>\n"
+                        "  * { margin: 0; padding: 0; }\n"
+                        "  .row { display: flex; width: 600px; box-sizing: border-box; padding: 0 20px; }\n"
+                        "  .row div { height: 50px; }\n"
+                        "  .a { flex: 2 1 100px; }\n"
+                        "  .b { flex: 1 1 100px; }\n"
+                        "  .c { flex: 1 1 0%; }\n"
+                        "</style>\n"
+                        "<div class=\"row\"><div class=\"a\"></div><div class=\"b\"></div><div class=\"c\"></div></div>"
+                    ),
+                    answer=(
+                        ".a = 280px, .b = 190px, .c = 90px"
+                    ),
+                    detail=(
+                        "1. box-sizing: border-box means the declared width: 600px already includes the 20px of padding on each side, so the container's content box is 600 - 40 = 560px. That 560px, not 600px, is what gets distributed.\n"
+                        "2. The third value in the flex shorthand is flex-basis, so the base sizes are 100px, 100px and 0.\n"
+                        "3. Sum of base sizes = 100 + 100 + 0 = 200px, so the free space is 560 - 200 = 360px.\n"
+                        "4. flex-grow factors are 2, 1 and 1, totalling 4, so one unit of growth = 360 / 4 = 90px.\n"
+                        "5. .a = 100 + 2x90 = 280px; .b = 100 + 1x90 = 190px; .c = 0 + 1x90 = 90px.\n"
+                        "6. Check the total: 280 + 190 + 90 = 560px, exactly filling the content box. flex-shrink never acts here, because there is free space to give out rather than an overflow to absorb.\n"
+                        "Most likely mistake: splitting the free space equally (120px each) instead of in proportion to flex-grow, or distributing 600px because the padding was not subtracted first."
+                    ),
+                ),
+            ),
         ),
         # --- 4 ---------------------------------------------------------
         UnitGuidance(
@@ -1336,6 +2244,50 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "A card asserting that a string method such as toUpperCase() "
                 "changes the original string, that 0.1 + 0.2 === 0.3 is true, "
                 "or that an arrow function has its own this or arguments.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "What does console.log(null == 0, null > 0, null >= 0) print, and why is the third result different from the first two?"
+                    ),
+                    answer=(
+                        "false false true"
+                    ),
+                    detail=(
+                        "1. null == 0: loose equality carries a special rule for null and undefined - null is loosely equal only to null and undefined, and no numeric conversion is performed at all. So null == 0 is false.\n"
+                        "2. null > 0: the relational operators have no such special rule. Both operands are converted with ToNumber, and Number(null) is 0.\n"
+                        "3. So null > 0 becomes 0 > 0, which is false.\n"
+                        "4. null >= 0 is specified as the negation of the corresponding less-than comparison: x >= y is true unless x < y is true.\n"
+                        "5. That comparison is 0 < 0, which is false, so its negation makes null >= 0 true.\n"
+                        "6. Printed: false false true.\n"
+                        "Most likely mistake: reasoning that null >= 0 being true forces null == 0 to be true as well - == and the relational operators use different coercion rules, which is exactly why null == undefined is true while null == 0 is false."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "A classic (non-module) <script> runs this. What does it print?\n"
+                        "\n"
+                        "const obj = {\n"
+                        "  n: 42,\n"
+                        "  reg() { return this.n; },\n"
+                        "  arrow: () => this.n\n"
+                        "};\n"
+                        "const f = obj.reg;\n"
+                        "console.log(obj.reg(), obj.arrow(), f(), f.call(obj));"
+                    ),
+                    answer=(
+                        "42 undefined undefined 42"
+                    ),
+                    detail=(
+                        "1. obj.reg() is a method call, so this is whatever sits to the left of the dot: obj. this.n is 42.\n"
+                        "2. arrow is an arrow function, which has no this of its own - it captures this from the enclosing scope. An object literal is not a scope, so the enclosing scope is the top level of the script, where this is window.\n"
+                        "3. window.n was never assigned (const obj does not create a window property either), so obj.arrow() returns undefined.\n"
+                        "4. const f = obj.reg copies only the function object; the receiver is not copied with it. Calling f() is a plain call, so in this sloppy-mode classic script this is window again, and window.n is undefined. (In strict mode or an ES module this would be undefined and the line would throw a TypeError instead.)\n"
+                        "5. f.call(obj) sets this explicitly to obj, so this.n is 42.\n"
+                        "6. Printed: 42 undefined undefined 42.\n"
+                        "Most likely mistake: expecting obj.arrow() to give 42 because the arrow is written inside the object literal - the call form, not the source position, decides this for a normal function, and an arrow ignores the call form entirely."
+                    ),
+                ),
             ),
         ),
         # --- 5 ---------------------------------------------------------
@@ -1386,6 +2338,62 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "0, 1) is 1 January) or getDay() as 1 = Monday (0 = Sunday), "
                 "or recommending innerHTML for untrusted text where "
                 "textContent is the safe default.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "The user clicks the button. In what order do the six handlers log?\n"
+                        "\n"
+                        "<div id=\"outer\"><div id=\"mid\"><button id=\"btn\">Go</button></div></div>\n"
+                        "<script>\n"
+                        "  const outer = document.getElementById(\"outer\");\n"
+                        "  const mid   = document.getElementById(\"mid\");\n"
+                        "  const btn   = document.getElementById(\"btn\");\n"
+                        "\n"
+                        "  outer.addEventListener(\"click\", () => console.log(\"outer capture\"), true);\n"
+                        "  outer.addEventListener(\"click\", () => console.log(\"outer bubble\"));\n"
+                        "  mid.addEventListener(\"click\", () => console.log(\"mid capture\"), true);\n"
+                        "  mid.addEventListener(\"click\", () => console.log(\"mid bubble\"));\n"
+                        "  btn.addEventListener(\"click\", () => console.log(\"btn one\"));\n"
+                        "  btn.addEventListener(\"click\", () => console.log(\"btn two\"), true);\n"
+                        "</script>"
+                    ),
+                    answer=(
+                        "outer capture, mid capture, btn two, btn one, mid bubble, outer bubble"
+                    ),
+                    detail=(
+                        "1. Dispatch builds the path window > document > ... > outer > mid > btn, then walks it twice: once downwards as the capturing pass, once upwards as the bubbling pass.\n"
+                        "2. Capturing pass on the way down: only listeners registered with capture = true run, so outer logs \"outer capture\" and mid logs \"mid capture\". Their non-capture listeners are skipped on this pass.\n"
+                        "3. At btn, event.eventPhase is 2 (AT_TARGET) - but the capturing pass still arrives there first, and on that pass only the capture-flagged listener runs. So \"btn two\" logs before \"btn one\", even though \"btn one\" was registered first.\n"
+                        "4. The bubbling pass then reaches btn and runs its non-capture listener: \"btn one\".\n"
+                        "5. Bubbling continues upwards through the ancestors: \"mid bubble\", then \"outer bubble\".\n"
+                        "6. Final order: outer capture, mid capture, btn two, btn one, mid bubble, outer bubble. Throughout, event.target stays btn while event.currentTarget is whichever element the running listener is attached to - that difference is what makes delegation work.\n"
+                        "Most likely mistake: assuming that at the target the capture flag is ignored and the two btn listeners simply run in registration order, giving \"btn one\" first. The flag still decides which pass a listener belongs to, even on the target itself."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "The server answers GET /api/user.json with status 404 and the body {\"error\":\"not found\"}. What does this print?\n"
+                        "\n"
+                        "fetch(\"/api/user.json\")\n"
+                        "  .then(res  => { console.log(\"1\", res.ok, res.status); return res.json(); })\n"
+                        "  .then(data => console.log(\"2\", data.error))\n"
+                        "  .catch(err => console.log(\"3\", err.message))\n"
+                        "  .finally(()  => console.log(\"4\"));"
+                    ),
+                    answer=(
+                        "1 false 404, then 2 not found, then 4 - line 3 never runs"
+                    ),
+                    detail=(
+                        "1. A 404 is a completed HTTP exchange, so the promise returned by fetch() FULFILS with a Response. Only a network-level failure - DNS failure, refused connection, a CORS block - rejects it, and that rejection is a TypeError: Failed to fetch.\n"
+                        "2. So the first .then runs. res.ok is true only for statuses 200-299, so here it is false, and res.status is 404: logs \"1 false 404\".\n"
+                        "3. res.json() does not hand back the parsed object; it returns a SECOND promise. Returning it from inside .then makes the chain wait for that promise to settle.\n"
+                        "4. The 404 response still carries a JSON body, so that second promise fulfils with the object {error: \"not found\"}, and data.error is the string \"not found\": logs \"2 not found\".\n"
+                        "5. Nothing threw and nothing rejected anywhere in the chain, so the .catch is skipped entirely - \"3\" is never logged.\n"
+                        "6. .finally runs on either settle path: logs \"4\". Output is 1 false 404, then 2 not found, then 4.\n"
+                        "Most likely mistake: expecting the .catch to receive the 404. To route it there you must add an explicit guard, if (!res.ok) throw new Error(\"HTTP \" + res.status); inside the first .then."
+                    ),
+                ),
             ),
         ),
         # --- 6 ---------------------------------------------------------
@@ -1441,6 +2449,60 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "git command does, what a named DevTools panel shows, or "
                 "which error type a given snippet throws.",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "A page served from https://app.example.com makes these four calls to https://api.example.org. Which of them cause the browser to send a preflight OPTIONS request first, and why?\n"
+                        "\n"
+                        "1. fetch(API + \"/items\")\n"
+                        "2. fetch(API + \"/items\", { method: \"POST\", headers: { \"Content-Type\": \"application/json\" }, body: JSON.stringify(item) })\n"
+                        "3. fetch(API + \"/items\", { method: \"POST\", headers: { \"Content-Type\": \"application/x-www-form-urlencoded\" }, body: \"a=1\" })\n"
+                        "4. fetch(API + \"/items/3\", { method: \"DELETE\" })"
+                    ),
+                    answer=(
+                        "Calls 2 and 4 only - JSON Content-Type, and a non-safelisted method"
+                    ),
+                    detail=(
+                        "1. A cross-origin request skips the preflight only if it is a simple request: the method is GET, HEAD or POST, AND every header the author set is CORS-safelisted.\n"
+                        "2. The safelisted request headers are Accept, Accept-Language, Content-Language and Content-Type - and Content-Type counts as safelisted only when its value is application/x-www-form-urlencoded, multipart/form-data or text/plain.\n"
+                        "3. Call 1 - GET with no author-set headers, so both conditions hold: simple, no OPTIONS, the GET goes straight out.\n"
+                        "4. Call 2 - POST is an allowed method, but application/json is not one of the three allowed media types, so the header is not safelisted. The browser sends OPTIONS /items carrying Access-Control-Request-Method: POST and Access-Control-Request-Headers: content-type, and only sends the real POST if the server's reply approves them.\n"
+                        "5. Call 3 - POST with application/x-www-form-urlencoded: method allowed and Content-Type safelisted, so it is simple. No OPTIONS, despite it being a POST with a body.\n"
+                        "6. Call 4 - DELETE is not GET, HEAD or POST, so it preflights on the method alone, even though it sets no headers at all.\n"
+                        "Most likely mistake: believing every POST is simple - the Content-Type value decides - or expecting the client to send Access-Control-Allow-Origin. That header comes back on the server's response; it is never a request header. A custom header such as X-Api-Key also forces a preflight, on GET as much as on POST."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "What does this print, and in what order?\n"
+                        "\n"
+                        "function load() {\n"
+                        "  try   { console.log(\"A\"); return \"from try\"; }\n"
+                        "  catch (e) { return \"from catch\"; }\n"
+                        "  finally { console.log(\"B\"); }\n"
+                        "}\n"
+                        "function save() {\n"
+                        "  try   { throw new Error(\"disk full\"); }\n"
+                        "  finally { return \"from finally\"; }\n"
+                        "}\n"
+                        "console.log(load());\n"
+                        "console.log(save());"
+                    ),
+                    answer=(
+                        "A, B, from try, from finally"
+                    ),
+                    detail=(
+                        "1. load() runs its try block and logs \"A\".\n"
+                        "2. return \"from try\" does not leave the function immediately: the return value is evaluated and held while the finally block is run.\n"
+                        "3. finally logs \"B\", so \"B\" appears before the returned value is ever printed.\n"
+                        "4. Nothing was thrown, so the catch block is skipped; load() returns \"from try\" and the outer console.log prints it. Order so far: A, B, from try.\n"
+                        "5. save() throws inside try and has no catch, so the Error is on its way out of the function - but finally still runs, exactly as it does on a normal return.\n"
+                        "6. That finally block executes return \"from finally\", and a return in finally replaces whatever the function was already doing, including an in-flight exception. save() therefore returns normally and the Error is discarded silently.\n"
+                        "7. Full output: A, B, from try, from finally - nothing is ever thrown out of save().\n"
+                        "Most likely mistake: printing \"from try\" before \"B\", or expecting save() to throw \"disk full\". Returning from finally swallowing a live exception is why linters flag it as a bug rather than a technique."
+                    ),
+                ),
+            ),
         ),
     ),
     "INT108": (
@@ -1490,6 +2552,46 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "and isinstance(True, int) is True; every non-empty string is "
                 "truthy, so bool('False') and bool('0') are both True.",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "What does this Python 3 program print?\n"
+                        "\n"
+                        "print(-3 ** 2 // 2 + 7 % -3)"
+                    ),
+                    answer=(
+                        "-7"
+                    ),
+                    detail=(
+                        "1. ** binds tighter than unary minus, so -3 ** 2 means -(3 ** 2) = -9, not 9.\n"
+                        "2. // and % bind tighter than +, so the expression is (-9 // 2) + (7 % -3).\n"
+                        "3. -9 // 2 floors toward -infinity: the exact quotient is -4.5 and floor(-4.5) is -5, not -4.\n"
+                        "4. 7 % -3 takes the sign of the DIVISOR: 7 = (-3) * (-3) + (-2), so the result is -2.\n"
+                        "5. Add the two parts: -5 + (-2) = -7.\n"
+                        "Most likely mistake: reading -3 ** 2 as 9, or truncating -4.5 toward zero to -4 - either slip on its own changes the printed value."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "What does this Python 3 program print?\n"
+                        "\n"
+                        "a = 0.1 + 0.2\n"
+                        "print(a == 0.3, round(a, 1) == 0.3, round(2.5) + True)"
+                    ),
+                    answer=(
+                        "False True 3"
+                    ),
+                    detail=(
+                        "1. Binary floating point cannot store 0.1 or 0.2 exactly, so a is 0.30000000000000004, not 0.3.\n"
+                        "2. That value differs from the float literal 0.3 in the last bits, so a == 0.3 is False.\n"
+                        "3. round(a, 1) rounds to one decimal place and produces exactly the float 0.3, so the second test is True.\n"
+                        "4. round() with no second argument rounds halves to the nearest EVEN integer, so round(2.5) is 2, not 3 (and round(3.5) would be 4).\n"
+                        "5. bool is a subclass of int, so True counts as 1 and 2 + True = 3.\n"
+                        "6. print joins the three values with single spaces: False True 3.\n"
+                        "Most likely mistake: asserting 0.1 + 0.2 == 0.3 is True, and expecting round(2.5) to be 3."
+                    ),
+                ),
+            ),
         ),
         # --- 2 ---------------------------------------------------------
         UnitGuidance(
@@ -1538,6 +2640,59 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "comprehension's variable does NOT leak: [q for q in "
                 "range(3)] leaves q undefined. Also = is assignment and == is "
                 "comparison; if x = 5 is a SyntaxError, not a true condition.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "What does this Python 3 program print?\n"
+                        "\n"
+                        "for i in range(2):\n"
+                        "    for j in range(3):\n"
+                        "        if j == 1:\n"
+                        "            break\n"
+                        "        print(i, j)\n"
+                        "    else:\n"
+                        "        print('inner else')\n"
+                        "else:\n"
+                        "    print('outer else')"
+                    ),
+                    answer=(
+                        "Three lines: 0 0, then 1 0, then outer else"
+                    ),
+                    detail=(
+                        "1. Outer loop starts with i = 0. Inner loop j = 0: j == 1 is False, so print(i, j) writes the line 0 0.\n"
+                        "2. Inner loop j = 1: the condition holds and break fires.\n"
+                        "3. A for-else runs only when the loop finishes WITHOUT break, so the inner else is skipped and 'inner else' is never printed.\n"
+                        "4. break leaves only the INNERMOST enclosing loop, so control returns to the outer for, which goes on to i = 1.\n"
+                        "5. i = 1 repeats the same path: the line 1 0 is printed, then break again suppresses 'inner else'.\n"
+                        "6. The outer for itself never executed a break, so it ends normally and its else DOES run, printing outer else.\n"
+                        "Most likely mistake: thinking break ends both loops, or having for-else backwards - it runs when the loop does not break, not when it does."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "What does this Python 3 program print?\n"
+                        "\n"
+                        "count = 0\n"
+                        "for i in range(10, 0, -3):\n"
+                        "    for j in range(i % 4):\n"
+                        "        count += 1\n"
+                        "print(i, count)"
+                    ),
+                    answer=(
+                        "1 6"
+                    ),
+                    detail=(
+                        "1. range(10, 0, -3) counts down from 10 and stops BEFORE the stop value 0, so it yields 10, 7, 4, 1.\n"
+                        "2. i = 10: 10 % 4 = 2, so range(2) runs the body twice; count = 2.\n"
+                        "3. i = 7: 7 % 4 = 3, three more iterations; count = 5.\n"
+                        "4. i = 4: 4 % 4 = 0, and range(0) is empty, so the inner body never runs; count stays 5.\n"
+                        "5. i = 1: 1 % 4 = 1, one iteration; count = 6.\n"
+                        "6. A for loop's variable is an ordinary name that survives the loop, so after it finishes i still holds the last value used, 1.\n"
+                        "7. print(i, count) therefore writes 1 6.\n"
+                        "Most likely mistake: including 0 in the range (giving i = 0), or assuming i is deleted once the loop ends."
+                    ),
+                ),
             ),
         ),
         # --- 3 ---------------------------------------------------------
@@ -1589,6 +2744,57 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "the same key. Since Python 3.7 a dict preserves INSERTION "
                 "order — it is not sorted, so list({'b':1,'a':2,'c':3}) is "
                 "['b', 'a', 'c']. Finally, 'x' in d tests keys, never values.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "What does this Python 3 program print?\n"
+                        "\n"
+                        "a = [[1, 2], [3, 4]]\n"
+                        "b = a[:]\n"
+                        "b[0].append(9)\n"
+                        "b.append([5])\n"
+                        "c = a\n"
+                        "c += [[7]]\n"
+                        "print(a)"
+                    ),
+                    answer=(
+                        "[[1, 2, 9], [3, 4], [7]]"
+                    ),
+                    detail=(
+                        "1. b = a[:] is a SHALLOW copy: b is a new outer list, but b[0] is the very same inner list object as a[0].\n"
+                        "2. b[0].append(9) mutates that shared inner list, so a becomes [[1, 2, 9], [3, 4]].\n"
+                        "3. b.append([5]) adds an element to b's own outer list only, so a's length is unchanged: a is still [[1, 2, 9], [3, 4]].\n"
+                        "4. c = a copies no data at all - it binds a second name to the SAME list object.\n"
+                        "5. c += [[7]] extends that list IN PLACE, so the object a names grows: a becomes [[1, 2, 9], [3, 4], [7]].\n"
+                        "6. print(a) shows [[1, 2, 9], [3, 4], [7]].\n"
+                        "Most likely mistake: believing a[:] copies the inner lists too, or believing += behaves like c = c + [[7]], which would rebind c to a new list and leave a as [[1, 2, 9], [3, 4]]."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "What does this Python 3 program print?\n"
+                        "\n"
+                        "d = {}\n"
+                        "d[1] = 'a'\n"
+                        "d[1.0] = 'b'\n"
+                        "d[True] = 'c'\n"
+                        "d['1'] = 'd'\n"
+                        "print(d, len(d))"
+                    ),
+                    answer=(
+                        "{1: 'c', '1': 'd'} 2"
+                    ),
+                    detail=(
+                        "1. d[1] = 'a' inserts the key 1, giving {1: 'a'}.\n"
+                        "2. A dict finds a key by hash and then ==. hash(1.0) == hash(1) and 1.0 == 1, so d[1.0] = 'b' hits the SAME slot: only the value is replaced, and the stored key object stays the int 1.\n"
+                        "3. bool is a subclass of int, so True == 1 and hash(True) == hash(1) as well; d[True] = 'c' replaces the value once more. The dict is now {1: 'c'} - the key still displays as 1, never as True.\n"
+                        "4. '1' is a str: '1' == 1 is False, so d['1'] = 'd' is a genuinely new key.\n"
+                        "5. Since Python 3.7 a dict preserves INSERTION order, and key 1 kept the position it was first inserted at, so it prints {1: 'c', '1': 'd'}.\n"
+                        "6. Only two distinct keys exist, so len(d) is 2.\n"
+                        "Most likely mistake: counting four keys because four assignments were written, or expecting the key to be shown as True because True was assigned last."
+                    ),
+                ),
             ),
         ),
         # --- 4 ---------------------------------------------------------
@@ -1646,6 +2852,60 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "VARIABLE not its value: [lambda: i for i in range(3)] called "
                 "back gives [2, 2, 2], not [0, 1, 2].",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "What does this Python 3 program print?\n"
+                        "\n"
+                        "def add(x, box=[]):\n"
+                        "    box.append(x)\n"
+                        "    return box\n"
+                        "\n"
+                        "p = add(1)\n"
+                        "q = add(2, [])\n"
+                        "r = add(3)\n"
+                        "print(p, q, r)\n"
+                        "print(p is r, p is q)"
+                    ),
+                    answer=(
+                        "[1, 3] [2] [1, 3] on one line, then True False"
+                    ),
+                    detail=(
+                        "1. The default box=[] is evaluated ONCE, when the def statement runs, and stored on the function object; it is not rebuilt for each call.\n"
+                        "2. add(1) uses that single default list, appending 1 to it. The default is now [1], and p is bound to that exact object.\n"
+                        "3. add(2, []) supplies its own fresh list, so the default is untouched; q is [2].\n"
+                        "4. add(3) falls back to the SAME default list, which already holds [1], so it becomes [1, 3] - and r is bound to that object too.\n"
+                        "5. p and r are two names for one list, so print(p, q, r) shows [1, 3] [2] [1, 3]: p appears to have changed even though nothing was done to p.\n"
+                        "6. p is r is True (same object) and p is q is False, so the second line is True False.\n"
+                        "Most likely mistake: predicting [1] [2] [3] by assuming the default resets to [] on each call. The standard fix is box=None with box = [] if box is None inside the body."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "What does this Python 3 program print?\n"
+                        "\n"
+                        "def g(n):\n"
+                        "    print(n, end=' ')\n"
+                        "    if n < 1:\n"
+                        "        return n\n"
+                        "    return n + g(n - 2)\n"
+                        "\n"
+                        "print(g(5))"
+                    ),
+                    answer=(
+                        "5 3 1 -1 8"
+                    ),
+                    detail=(
+                        "1. g(5) prints 5. The test 5 < 1 is False, so it returns 5 + g(3).\n"
+                        "2. g(3) prints 3. 3 < 1 is False, so it returns 3 + g(1).\n"
+                        "3. g(1) prints 1. Note 1 < 1 is False, so the recursion does NOT stop at 1; it returns 1 + g(-1).\n"
+                        "4. g(-1) prints -1. Now -1 < 1 is True, so the base case returns n itself, which is -1. That is four calls in total.\n"
+                        "5. Unwind: g(1) = 1 + (-1) = 0, then g(3) = 3 + 0 = 3, then g(5) = 5 + 3 = 8.\n"
+                        "6. The four prints used end=' ', so they stay on one line, and print(g(5)) appends 8: the whole output is 5 3 1 -1 8.\n"
+                        "Most likely mistake: assuming a step of -2 lands exactly on the base case and stopping at n = 1 with a return of 1, which gives 1, 4, 9 instead of 0, 3, 8."
+                    ),
+                ),
+            ),
         ),
         # --- 5 ---------------------------------------------------------
         UnitGuidance(
@@ -1700,6 +2960,72 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "method in the child always wins for a child instance, and "
                 "for class W(Y, Z) the MRO is W, Y, Z, then the common base, "
                 "then object — left to right.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "What does this Python 3 program print?\n"
+                        "\n"
+                        "class Counter:\n"
+                        "    count = 0\n"
+                        "    items = []\n"
+                        "\n"
+                        "    def bump(self, x):\n"
+                        "        self.count += 1\n"
+                        "        self.items.append(x)\n"
+                        "\n"
+                        "a = Counter()\n"
+                        "b = Counter()\n"
+                        "a.bump('p')\n"
+                        "b.bump('q')\n"
+                        "print(a.count, b.count, Counter.count, Counter.items)"
+                    ),
+                    answer=(
+                        "1 1 0 ['p', 'q']"
+                    ),
+                    detail=(
+                        "1. count and items are CLASS attributes: created once in the class body and shared by every instance.\n"
+                        "2. self.count += 1 expands to self.count = self.count + 1. The read finds no instance attribute and falls back to the class value 0, but the ASSIGNMENT creates a brand-new instance attribute a.count = 1. Counter.count is not touched.\n"
+                        "3. b.bump('q') does the same for b: it again reads 0 from the class, then creates b.count = 1.\n"
+                        "4. So a.count is 1 and b.count is 1 - the two calls did not accumulate to 2 - and Counter.count is still 0.\n"
+                        "5. self.items.append(x) never assigns to self.items; it looks the name up (finding the class list) and MUTATES it, so both calls land in that one list.\n"
+                        "6. Counter.items is therefore ['p', 'q'], and the line printed is 1 1 0 ['p', 'q'].\n"
+                        "Most likely mistake: expecting count and items to behave alike - rebinding through self makes a private per-instance copy, while mutating through self does not."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "What does this Python 3 program print?\n"
+                        "\n"
+                        "class A:\n"
+                        "    def __init__(self):\n"
+                        "        self.tag = 'A'\n"
+                        "    def show(self):\n"
+                        "        return 'A:' + self.name()\n"
+                        "    def name(self):\n"
+                        "        return 'a'\n"
+                        "\n"
+                        "class B(A):\n"
+                        "    def name(self):\n"
+                        "        return 'b'\n"
+                        "\n"
+                        "x = B()\n"
+                        "print(x.show(), x.tag, type(x) == A, isinstance(x, A))"
+                    ),
+                    answer=(
+                        "A:b A False True"
+                    ),
+                    detail=(
+                        "1. B defines no __init__ of its own, so B() runs the inherited A.__init__, which sets x.tag = 'A'.\n"
+                        "2. x.show() is not found on B either, so A.show runs - but self is still the B instance.\n"
+                        "3. Inside A.show, self.name() is looked up starting at the object's actual class, B. B.name overrides A.name, so the child's version wins and returns 'b'.\n"
+                        "4. A.show therefore returns 'A:' + 'b' = 'A:b'. This is dynamic dispatch: a parent method calling an overridden method gets the CHILD's implementation.\n"
+                        "5. type(x) reports the exact class B and ignores inheritance, so type(x) == A is False.\n"
+                        "6. isinstance(x, A) walks the inheritance chain, and B is a subclass of A, so it is True.\n"
+                        "7. The line printed is A:b A False True.\n"
+                        "Most likely mistake: answering 'A:a' because show() is written inside A, or expecting type(x) == A to be True for an instance of a subclass."
+                    ),
+                ),
             ),
         ),
         # --- 6 ---------------------------------------------------------
@@ -1761,6 +3087,64 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "'b']. Quantifiers are greedy by default: on 'aXbYb', a.*b "
                 "matches 'aXbYb' while a.*?b matches 'aXb'. And . does not "
                 "match '\\n' unless re.DOTALL is passed.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "What does this Python 3 program print? (d.txt does not exist beforehand.)\n"
+                        "\n"
+                        "with open('d.txt', 'w') as f:\n"
+                        "    f.write('one\\ntwo\\nthree')\n"
+                        "\n"
+                        "try:\n"
+                        "    f = open('d.txt')\n"
+                        "    print(f.readline().strip(), f.readlines())\n"
+                        "    print(f.readline() == '')\n"
+                        "except FileNotFoundError:\n"
+                        "    print('missing')\n"
+                        "else:\n"
+                        "    print('else')\n"
+                        "finally:\n"
+                        "    f.close()\n"
+                        "    print('finally')"
+                    ),
+                    answer=(
+                        "Four lines: one ['two\\n', 'three'] / True / else / finally"
+                    ),
+                    detail=(
+                        "1. The file now holds exactly one\\ntwo\\nthree - three lines, with NO newline after 'three'.\n"
+                        "2. print evaluates its arguments left to right, so f.readline() runs first. It returns 'one\\n', INCLUDING the trailing newline, and .strip() removes it, giving 'one'.\n"
+                        "3. f.readlines() then reads from the CURRENT cursor position, not from the start, so it returns only what is left: ['two\\n', 'three'] - 'two\\n' keeps its newline, while 'three' has none because the file does not end with one.\n"
+                        "4. First line printed: one ['two\\n', 'three'].\n"
+                        "5. The cursor now sits at end of file, so the next f.readline() returns '' rather than re-reading line one, and the comparison prints True.\n"
+                        "6. The try block raised nothing, so the else clause runs and prints else. (else runs ONLY when no exception occurred; except is skipped entirely.)\n"
+                        "7. finally runs last whatever happened, closing the file and printing finally.\n"
+                        "Most likely mistake: expecting readlines() to return all three lines from the start, or expecting else to run after a handled exception - it runs only when there was none."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "What does this Python 3 program print?\n"
+                        "\n"
+                        "import re\n"
+                        "s = 'x12y345'\n"
+                        "print(re.match(r'\\d+', s))\n"
+                        "print(re.search(r'\\d+', s).group())\n"
+                        "print(re.findall(r'([a-z])(\\d+)', s))\n"
+                        "print(re.split(r'\\d+', s))"
+                    ),
+                    answer=(
+                        "None, then 12, then [('x', '12'), ('y', '345')], then ['x', 'y', '']"
+                    ),
+                    detail=(
+                        "1. re.match anchors at the START of the string. s begins with 'x', which is not a digit, so there is no match and re.match returns None - not '' and not an error. print shows None.\n"
+                        "2. re.search scans the whole string and finds the first digit run at index 1, so .group() returns the matched text, the string 12.\n"
+                        "3. re.findall does not return whole matches once the pattern has capturing groups: with TWO groups it returns a list of tuples of those groups, [('x', '12'), ('y', '345')]. The same pattern written without parentheses, r'[a-z]\\d+', would give ['x12', 'y345'].\n"
+                        "4. re.split cuts the string at every match of r'\\d+': 'x12y345' is cut at '12' and at '345'.\n"
+                        "5. That leaves the pieces before, between and after the separators: 'x', 'y', and the empty string that follows the final match, so the result is ['x', 'y', ''] - three items, the last one empty because the string ended with a separator.\n"
+                        "Most likely mistake: expecting re.match to find a match anywhere like re.search does, and then calling .group() on the None it returned, which raises AttributeError."
+                    ),
+                ),
             ),
         ),
     ),
@@ -1858,6 +3242,40 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "any inverted eccentricity ratio, 'equal to the minor axis', "
                 "2πd, πr, and a height given as the radius.",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "On a survey map, a ground area of 144 km² is represented by an area of 36 cm². Find the representative fraction of the map, and the length of a scale drawn to that RF that must measure up to 40 km."
+                    ),
+                    answer=(
+                        "RF = 1/200 000; length of scale = 20 cm."
+                    ),
+                    detail=(
+                        "1. Convert the ground area to cm²: 1 km = 10⁵ cm, so 1 km² = 10¹⁰ cm² and 144 km² = 144 × 10¹⁰ = 1.44 × 10¹² cm².\n"
+                        "2. Form the AREA ratio: 36 / (1.44 × 10¹²) = 25 × 10⁻¹², i.e. 1/(4 × 10¹⁰).\n"
+                        "3. RF is a ratio of LENGTHS, and areas scale as the square of lengths, so RF = √(25 × 10⁻¹²) = 5 × 10⁻⁶ = 1/200 000.\n"
+                        "4. Length of scale = RF × the maximum length the scale must measure = (1/200 000) × 40 km.\n"
+                        "5. 40 km = 4 × 10⁶ cm, so length of scale = 4 × 10⁶ / 2 × 10⁵ = 20 cm.\n"
+                        "Most likely mistake: quoting the area ratio 1/(4 × 10¹⁰) itself as the RF instead of its square root, or taking RF × the object's own size instead of RF × the maximum length the scale must read."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "The two foci of an ellipse are 80 mm apart, and the sum of the distances of any point on the curve from the two foci is 100 mm. Find the eccentricity of the ellipse and the length of its minor axis."
+                    ),
+                    answer=(
+                        "e = 0.8; minor axis = 60 mm."
+                    ),
+                    detail=(
+                        "1. For an ellipse the constant SUM of the two focal distances equals the MAJOR axis, so 2a = 100 mm and the semi-major axis a = 50 mm.\n"
+                        "2. The foci lie 2c apart about the centre: 2c = 80 mm, so c = 40 mm.\n"
+                        "3. Eccentricity e = c/a (the same ratio as focal distance ÷ directrix distance) = 40/50 = 0.8.\n"
+                        "4. For an ellipse b² = a² − c² = 50² − 40² = 2500 − 1600 = 900, so the semi-minor axis b = 30 mm.\n"
+                        "5. Minor axis = 2b = 60 mm, and e = 0.8 < 1 confirms the curve is an ellipse (e = 0 circle, e = 1 parabola, e > 1 hyperbola).\n"
+                        "Most likely mistake: applying the constant-DIFFERENCE rule, which belongs to the hyperbola, or writing e = c/b instead of e = c/a."
+                    ),
+                ),
+            ),
         ),
         # --- 2 ---------------------------------------------------------
         UnitGuidance(
@@ -1913,6 +3331,41 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "plane perpendicular to the HP shows true shape in the top "
                 "view' and reject any card promising true shape for a plane "
                 "inclined to the plane of projection.",
+            ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "A straight line AB is 100 mm long and is inclined at 30° to the HP and 45° to the VP. Find the length of its front view, the length of its top view, and the difference in height of its two ends above the HP."
+                    ),
+                    answer=(
+                        "Front view ≈ 70.7 mm, top view ≈ 86.6 mm, height difference 50 mm."
+                    ),
+                    detail=(
+                        "1. The top view is the projection of the line on the HP, so its length is TL × cos(inclination to the HP) = 100 cos 30°.\n"
+                        "2. 100 × 0.8660 = 86.6 mm — the top view.\n"
+                        "3. The front view is the projection on the VP, so its length is TL × cos(inclination to the VP) = 100 cos 45°.\n"
+                        "4. 100 × 0.7071 = 70.7 mm — the front view.\n"
+                        "5. The rise of the line above the HP is TL × sin 30° = 100 × 0.5 = 50 mm, so one end is 50 mm higher than the other.\n"
+                        "6. Check the data is legal: θ + φ = 30° + 45° = 75°, which cannot exceed 90°, and both views (86.6 and 70.7) are shorter than the true length, as they must be for a line inclined to both planes.\n"
+                        "Most likely mistake: pairing each angle with the wrong view — using cos 30° for the front view — or using sin instead of cos, which gives the height and depth rather than the view lengths."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "A point P lies 30 mm above the HP and 40 mm in front of the VP, in the first quadrant. Find (a) the distance between its front view and its top view on the drawing sheet, and (b) the shortest distance in space from P to the line of intersection of the HP and the VP."
+                    ),
+                    answer=(
+                        "The two views are 70 mm apart; P is 50 mm from the line of intersection."
+                    ),
+                    detail=(
+                        "1. In the first quadrant the front view p′ lies ABOVE XY by the point's height above the HP, so p′ is 30 mm above XY.\n"
+                        "2. The top view p lies BELOW XY by the point's distance in front of the VP, so p is 40 mm below XY.\n"
+                        "3. Both views lie on one projector perpendicular to XY, so their separation on the sheet = 30 + 40 = 70 mm.\n"
+                        "4. In space, the perpendicular from P to the HP (30 mm) and the perpendicular from P to the VP (40 mm) are mutually perpendicular, so the distance from P to the line where the planes meet is √(30² + 40²).\n"
+                        "5. √(900 + 1600) = √2500 = 50 mm.\n"
+                        "Most likely mistake: quoting the 70 mm sheet separation as the true distance from the point to the reference line, or subtracting (40 − 30 = 10 mm), which would wrongly put both views on the same side of XY."
+                    ),
+                ),
             ),
         ),
         # --- 3 ---------------------------------------------------------
@@ -1977,6 +3430,40 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "PARALLEL to the base; a truncated solid is cut by an "
                 "inclined plane — reject that swap.",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "A machine block is drawn in FIRST-angle projection with its front view placed at the centre of the sheet. State where the top view, the view from the left and the view from below are each placed relative to the front view, and give the reason the arrangement comes out that way."
+                    ),
+                    answer=(
+                        "Top view below, view from the left on the right, view from below above."
+                    ),
+                    detail=(
+                        "1. In first-angle projection the object lies BETWEEN the observer and the plane of projection, so each view is pushed through the object onto the plane beyond it — every view lands on the side away from the direction you looked from.\n"
+                        "2. Looking from above throws the top view onto the horizontal plane below the object; rotating the HP down about XY brings the top view BELOW the front view.\n"
+                        "3. Looking from the left throws that view onto the profile plane standing on the RIGHT of the object, so the view from the left is placed to the RIGHT of the front view.\n"
+                        "4. By the same rule the view from the right goes on the LEFT, and looking from below throws the bottom view ABOVE the front view.\n"
+                        "5. Third-angle projection is the exact mirror of all four, because there the transparent plane lies between the observer and the object. India follows FIRST angle under BIS/IS practice; the USA and Canada use third angle.\n"
+                        "Most likely mistake: placing the view from the left on the left — that is the third-angle arrangement; in first angle the left-hand view crosses over to the right."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "A right regular pentagonal prism rests with one of its bases on the HP. How many faces, edges and vertices does it have, and which orthographic view is drawn first?"
+                    ),
+                    answer=(
+                        "7 faces, 15 edges, 10 vertices; the top view is drawn first."
+                    ),
+                    detail=(
+                        "1. A right regular n-sided prism has two identical polygonal ends plus n rectangular side faces, so F = 2 + 5 = 7.\n"
+                        "2. Edges: 5 on the lower pentagon, 5 on the upper pentagon and 5 vertical lateral edges, so E = 5 + 5 + 5 = 15.\n"
+                        "3. Vertices: 5 on each end polygon, so V = 5 + 5 = 10.\n"
+                        "4. Check with Euler's formula: V − E + F = 10 − 15 + 7 = 2 ✓.\n"
+                        "5. The base rests on the HP, so the axis is perpendicular to the HP; the view on the plane the axis is perpendicular to is drawn FIRST, i.e. the TOP view (a true regular pentagon), and the front view is projected up from it.\n"
+                        "Most likely mistake: counting only the 5 rectangular faces and forgetting the two pentagonal ends, or starting with the front view — the front view is drawn first only when the axis is perpendicular to the VP."
+                    ),
+                ),
+            ),
         ),
         # --- 4 ---------------------------------------------------------
         UnitGuidance(
@@ -2039,6 +3526,40 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "complete. Reject cards claiming hidden lines must be shown "
                 "in a sectional view or that the other views are also cut.",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "A cast-iron pulley with four spokes is keyed to a steel shaft. A vertical cutting plane passes along the axis of the shaft, along the length of the key, and lengthwise through two opposite spokes. In the resulting sectional front view, which of the rim, hub, spokes, shaft and key are hatched, and how is that hatching drawn?"
+                    ),
+                    answer=(
+                        "Only the rim and hub are hatched; the spokes, shaft and key are not."
+                    ),
+                    detail=(
+                        "1. The governing rule is that a feature is left UNHATCHED when the cutting plane passes ALONG its length, and is hatched normally only when the plane cuts ACROSS it.\n"
+                        "2. The plane runs lengthwise through the two spokes, so the spokes are shown in outside view, unhatched — the same convention that covers ribs and webs.\n"
+                        "3. The plane runs along the axis of the shaft and along the length of the key, so shaft and key are unhatched too — as are bolts, nuts, screws, pins and rivets sectioned lengthwise.\n"
+                        "4. The rim and the hub are cut ACROSS by the plane, so they are hatched: continuous THIN section lines at 45° to the principal outline, uniformly spaced.\n"
+                        "5. Where two hatched parts meet, their section lines are reversed in direction or drawn at a different spacing so the joint stays readable; 30° or 60° replaces 45° only where a 45° line would run parallel to the outline. Hatching goes only where the plane actually cuts material, so the keyway void and any bolt holes stay clear.\n"
+                        "Most likely mistake: hatching the spoke and the shaft because the plane physically passes through them — a longitudinally sectioned spoke, web, rib, shaft, key or bolt is never hatched."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "A symmetrical cast component is to be presented in HALF SECTION. What fraction of the object is imagined removed, what line divides the sectioned half from the unsectioned half, and what do the arrows on the cutting-plane line indicate?"
+                    ),
+                    answer=(
+                        "A quarter removed; a chain centre line divides the halves; the arrows show the direction of sight."
+                    ),
+                    detail=(
+                        "1. A half section is produced by two cutting planes meeting at right angles on the axis, and the QUARTER between them nearest the observer is imagined taken away — one quarter, not one half.\n"
+                        "2. The result is that one half of the view appears in section and the other half appears as an ordinary outside view of the same component.\n"
+                        "3. The two halves are separated by a thin long-dash dotted (chain) CENTRE line, because no real edge exists along the join; a continuous thick line there would falsely read as an edge.\n"
+                        "4. On the adjacent view the cutting plane is drawn as a chain THIN line made thick at its ends and at every change of direction, lettered with capitals and named, e.g. SECTION A-A.\n"
+                        "5. Its end arrows give the DIRECTION OF SIGHT: everything between the observer and the plane is the material removed. The true shape of the section appears in the view projected on a plane PARALLEL to the cutting plane, and hidden lines are normally omitted in the sectional view while the remaining views are still drawn complete.\n"
+                        "Most likely mistake: saying half the object is removed, drawing the divider as a continuous thick line, or reading the arrows as pointing at the portion that is thrown away rather than as the direction of sight."
+                    ),
+                ),
+            ),
         ),
         # --- 5 ---------------------------------------------------------
         UnitGuidance(
@@ -2095,6 +3616,40 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "card asserting that the base and top are always part of the "
                 "development.",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "A right circular cone has a base diameter of 60 mm and a vertical height of 40 mm. Find its slant height and the included angle of the sector that forms the development of its lateral surface."
+                    ),
+                    answer=(
+                        "Slant height 50 mm; sector angle θ = 216°."
+                    ),
+                    detail=(
+                        "1. Base radius r = 60/2 = 30 mm; vertical (axis) height h = 40 mm.\n"
+                        "2. The slant height is the hypotenuse of the right triangle formed by r and h: L = √(r² + h²) = √(30² + 40²) = √(900 + 1600) = √2500 = 50 mm.\n"
+                        "3. A cone takes RADIAL-LINE development: the lateral surface opens into a sector whose radius is the SLANT height, 50 mm — not r and not the axis height.\n"
+                        "4. Sector angle θ = (r/L) × 360° = (30/50) × 360° = 0.6 × 360° = 216°.\n"
+                        "5. Check: the sector's arc = (216/360) × 2π × 50 = 0.6 × 100π = 60π mm, and the cone's base circumference = 2πr = 2π × 30 = 60π mm — they agree ✓.\n"
+                        "Most likely mistake: substituting the vertical height 40 mm for the slant height, which gives θ = (30/40) × 360° = 270°, or inverting the ratio as θ = (L/r) × 360°."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "A right regular hexagonal prism of 25 mm base side and 70 mm height, and a right cylinder of 50 mm base diameter and 70 mm height, are each to have their lateral surfaces developed. Give the dimensions of each development."
+                    ),
+                    answer=(
+                        "Prism 150 mm × 70 mm; cylinder 157.1 mm × 70 mm."
+                    ),
+                    detail=(
+                        "1. Both solids have their generators parallel, so both take PARALLEL-LINE development, and each lateral surface opens out into a plain rectangle whose height is the solid's height, 70 mm.\n"
+                        "2. Prism: the rectangle's length is the base PERIMETER = number of sides × side length = 6 × 25 = 150 mm. Development = 150 mm × 70 mm, divided by five interior fold lines at the vertical edges into six 25 mm panels.\n"
+                        "3. Cylinder: the rectangle's length is the base circumference πd = π × 50 = 157.08 mm. Development = 157.1 mm × 70 mm.\n"
+                        "4. Check: a regular hexagon of side 25 mm has circumradius 25 mm, so it is exactly inscribed in the cylinder's 50 mm base circle; its perimeter 150 mm must therefore be a little less than the circumference 157.1 mm ✓.\n"
+                        "5. Both figures are the LATERAL surface only — the two hexagonal ends and the two circles are added separately if a closed development is wanted, and each is laid out from one seam, conventionally the shortest edge.\n"
+                        "Most likely mistake: writing 2πd, πr or πd² for the cylinder's width, or using one side (25 mm) or the base area in place of the perimeter for the prism."
+                    ),
+                ),
+            ),
         ),
         # --- 6 ---------------------------------------------------------
         UnitGuidance(
@@ -2150,6 +3705,40 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "that calls isometric a form of oblique or perspective "
                 "projection, or that gives isometric unequal foreshortening.",
             ),
+            examples=(
+                WorkedExample(
+                    question=(
+                        "A rectangular block measures 80 mm × 50 mm × 40 mm. Give the length to which each of the three edges is set off along the isometric axes (a) in an isometric PROJECTION of the block and (b) in an isometric VIEW (isometric drawing) of it."
+                    ),
+                    answer=(
+                        "Projection: 65.3, 40.8, 32.6 mm. View: 80, 50, 40 mm (true lengths)."
+                    ),
+                    detail=(
+                        "1. All three edges are parallel to the isometric axes, so all three are isometric lines and may be measured directly along those axes.\n"
+                        "2. An isometric PROJECTION is set off with the isometric scale, which foreshortens every isometric line to √2/√3 = 0.8165 ≈ 0.816 of true length.\n"
+                        "3. 80 × 0.816 = 65.3 mm; 50 × 0.816 = 40.8 mm; 40 × 0.816 = 32.6 mm.\n"
+                        "4. An isometric VIEW (isometric drawing) is set off with TRUE lengths, so the three edges stay 80 mm, 50 mm and 40 mm.\n"
+                        "5. The view is therefore the LARGER of the two, by 1/0.816 = 1.22 times — check: 65.3 × 1.22 = 79.9 ≈ 80 mm ✓. In both cases the axes themselves are 120° apart, two of them at 30° to the horizontal and one vertical.\n"
+                        "Most likely mistake: using 0.866 (that is cos 30°, not the isometric scale) or applying the reduction to the isometric view — it is the PROJECTION that is reduced, and the view that is drawn full size."
+                    ),
+                ),
+                WorkedExample(
+                    question=(
+                        "A hole of 40 mm diameter is drilled through the top face of a block. In an isometric PROJECTION of the block, give the lengths and directions of the major and minor axes of the ellipse representing the hole; then give the major axis the same hole would have in an isometric VIEW."
+                    ),
+                    answer=(
+                        "Projection: major 40 mm horizontal, minor 23.1 mm vertical. View: major 48.8 mm."
+                    ),
+                    detail=(
+                        "1. A circle lying on an isometric plane appears as an ELLIPSE, normally constructed by the four-centre method inside the rhombus that is the isometric image of the enclosing square.\n"
+                        "2. In an isometric PROJECTION the ellipse's major axis equals the true diameter D, so major axis = 40 mm.\n"
+                        "3. Its minor axis is 0.577D (the ratio 1/√3): 0.577 × 40 = 23.1 mm.\n"
+                        "4. The MINOR axis lies along the isometric axis normal to the face carrying the circle. The top face's normal is the vertical axis, so the minor axis is vertical and the 40 mm major axis is horizontal, at right angles to it.\n"
+                        "5. An isometric VIEW is 1/0.816 = 1.22 times the projection, so there the major axis becomes 1.22 × 40 = 48.8 mm and the minor axis 0.7 × 40 = 28 mm.\n"
+                        "Most likely mistake: putting the MAJOR axis along the normal isometric axis — it is the minor axis that lies there — or drawing the hole as a true circle because the face it sits on is flat."
+                    ),
+                ),
+            ),
         ),
     ),
 }
@@ -2183,3 +3772,25 @@ def traps_text(topic_code: str, unit_number: int) -> str:
     return ("\nMistakes that are common in this unit specifically. Check every "
             "card against this list; a card that makes one of these is "
             '"wrong":\n' + listed + "\n")
+
+
+def examples_text(topic_code: str, unit_number: int) -> str:
+    """Two hard cards shown as few-shot calibration, or "" when unresearched.
+
+    Formatted as the JSON shape the model is asked to reply in, not as
+    prose describing that shape — an example the model has to translate out
+    of prose loses the thing that made it worth showing."""
+    g = guidance_for(topic_code, unit_number)
+    if g is None or not g.examples:
+        return ""
+    shown = ",\n".join(
+        "  {\"question\": %s,\n   \"answer\": %s,\n   \"detail\": %s}"
+        % (json.dumps(e.question, ensure_ascii=False),
+           json.dumps(e.answer, ensure_ascii=False),
+           json.dumps(e.detail, ensure_ascii=False))
+        for e in g.examples
+    )
+    return (
+        "\nTwo examples of the DIFFICULTY and DEPTH this unit is examined at "
+        "— not the content to reuse, the level to match:\n[\n" + shown + "\n]\n"
+    )

@@ -19,6 +19,7 @@ import { parseCloze } from "@/lib/cloze";
 import { formatDuration, plural } from "@/lib/format";
 import { formatInterval, previewIntervals, type MemoryState } from "@/lib/fsrs";
 import { hasModifier, isTypingTarget } from "@/lib/keys";
+import { consumeReviewQueuePrefetch } from "@/lib/resources";
 import type { Grade, QueueCard } from "@/lib/types";
 import styles from "./review.module.css";
 
@@ -132,7 +133,13 @@ export function ReviewSession() {
 
   useEffect(() => {
     let live = true;
-    Promise.all([getQueue(topic, 50), getSettings()])
+    // A hover on "Start review", the Enter key, or a click on a topic row
+    // may already have this on the way — see lib/resources.ts. Only the
+    // natural first load for this topic gets to use it; `retryLoad` bumps
+    // reloadNonce specifically to force a fresh fetch after an error, and a
+    // stale head start is not what "retry" means.
+    const prefetched = reloadNonce === 0 ? consumeReviewQueuePrefetch(topic) : null;
+    (prefetched ?? Promise.all([getQueue(topic, 50), getSettings()]))
       .then(([q, settings]) => {
         if (!live) return;
         setRetention(settings.desired_retention);

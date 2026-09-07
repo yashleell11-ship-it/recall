@@ -1,8 +1,15 @@
 "use client";
 
-import { getSettings, getSources, getStats, getTests, getTopics } from "./api";
-import { cache, inflight, put } from "./cache";
-import type { Settings, Source, Stats, TestSummary, Topic } from "./types";
+import { getQueue, getSettings, getSources, getStats, getTests, getTopics } from "./api";
+import { cache, fresh, inflight, invalidate, put } from "./cache";
+import type {
+  QueueResponse,
+  Settings,
+  Source,
+  Stats,
+  TestSummary,
+  Topic,
+} from "./types";
 
 /**
  * The data each screen needs, keyed, in one place — so the shell can start
@@ -94,4 +101,72 @@ export function prefetchFor(pathname: string): void {
     .finally(() => {
       if (inflight.get(key) === request) inflight.delete(key);
     });
+}
+
+/* --- the review queue: prefetched on intent, consumed once --------------- */
+/*
+ * The review screen is not on ROUTE_KEY above because it does not behave
+ * like the other four. It owns mutable session state — the queue drains as
+ * you answer, cards get pulled in mid-session by `loadMore` — so treating its
+ * data as a long-lived cache entry that silently revalidates underneath an
+ * active session is asking for a card to reappear or vanish while someone is
+ * answering it. What this gives it instead is narrower and safer: a one-shot
+ * head start. The moment intent is clear — a hover on "Start review", a key
+ * press, a click on a topic row — the fetch begins. The review screen either
+ * finds it waiting (or already in flight) and uses it once, or finds nothing
+ * and fetches exactly as it always has. Nothing here is revalidated, and
+ * nothing here is written back to by the session.
+ */
+
+function reviewQueueKey(topic?: string): string {
+  return `review:${topic ?? ""}`;
+}
+
+/** Start the fetch for a review queue before the review screen exists. Safe
+ * to call from a hover handler — a hover that never turns into a click just
+ * means one request that nobody read the answer to. */
+export function prefetchReviewQueue(topic?: string): void {
+  const key = reviewQueueKey(topic);
+  if (cache.has(key) || inflight.has(key)) return;
+  const request = Promise.all([getQueue(topic, 50), getSettings()]);
+  inflight.set(key, request);
+  request
+    .then((data) => {
+      put(key, data);
+    })
+    .catch(() => {
+      /* the review screen's own fetch will surface the error */
+    })
+    .finally(() => {
+      if (inflight.get(key) === request) inflight.delete(key);
+    });
+}
+
+/**
+ * Take a waiting prefetch for `topic`, if there is a fresh one. Returns null
+ * — not a rejected promise — when there is nothing to take, so the caller's
+ * fallback is a plain `if`, not a `catch`.
+ *
+ * Consuming removes it from the shared cache immediately either way: once
+ * the review screen has it, this copy is stale by definition — the session
+ * is about to start mutating a queue the cache knows nothing about.
+ */
+export function consumeReviewQueuePrefetch(
+  topic?: string,
+): Promise<[QueueResponse, Settings]> | null {
+  const key = reviewQueueKey(topic);
+  if (cache.has(key)) {
+    const value = fresh(key)
+      ? (cache.get(key)!.data as [QueueResponse, Settings])
+      : null;
+    invalidate(key);
+    if (value) return Promise.resolve(value);
+    return null;
+  }
+  const pending = inflight.get(key);
+  if (pending) {
+    inflight.delete(key);
+    return pending as Promise<[QueueResponse, Settings]>;
+  }
+  return null;
 }
