@@ -32,7 +32,14 @@ class UnitGuidance:
     traps: tuple[str, ...] = ()
     """The specific errors students (and models) make in this unit. Shown to
     the fact checker as a checklist, not to the writer — telling a model
-    "don't say X" is a reliable way to make it say X."""
+    "don't say X" is a reliable way to make it say X.
+
+    Which means a trap can only catch a card that is WRONG. "Never write cards
+    about the Double Diamond, it is not on this syllabus" is not a trap: the
+    writer never sees it, and a Double Diamond card is off-syllabus rather
+    than incorrect, so the checker will pass it. Every exclusion belongs in
+    `guidance`, where the writer reads it. A verification pass caught exactly
+    that mistake sitting in INT335's list."""
 
 
 # Keyed by topic code, indexed by unit number - 1, so the tuple's length must
