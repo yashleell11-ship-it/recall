@@ -124,7 +124,7 @@ KNOWLEDGE_GENERATE_USER = """Course: {full_name} ({topic_code})
 Unit {unit_number}: {unit_name}
 
 {format_guidance}
-
+{unit_guidance}
 Write at most {n} flashcards covering the core concepts, definitions, formulas
 and standard exam questions of THIS UNIT ONLY, at the depth this paper
 demands."""

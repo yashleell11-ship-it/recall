@@ -350,15 +350,15 @@ export function ReviewSession() {
           </p>
           <p className="text-[13px] text-fg-2 mt-2 max-w-sm">
             Cards come back when the scheduler decides you are about to forget
-            them. To bring work forward, approve some pending cards or ingest a
-            new source.
+            them. To bring work forward, add cards: upload a source, or generate
+            a unit straight from the syllabus.
           </p>
           <div className="flex gap-4 mt-5 text-[13px]">
             <Link href="/" className="link">
               Back to today
             </Link>
-            <Link href="/approve" className="link text-fg-2">
-              Approve queue
+            <Link href="/test" className="link text-fg-2">
+              Generate a unit
             </Link>
           </div>
         </Reveal>

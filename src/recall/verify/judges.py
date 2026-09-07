@@ -12,6 +12,7 @@ import json
 import re
 
 from recall.generate.generate import Candidate
+from recall.generate.unit_guidance import traps_text
 from recall.ingest.chunk import Chunk
 from recall.verify.prompts import (
     CLOSED_BOOK_SYSTEM,
@@ -78,8 +79,18 @@ def check_closed_book(client, c: Candidate) -> tuple[str | None, int, int]:
     return (None, *tokens)
 
 
+def _listed(i: int, c: Candidate) -> str:
+    """One card as the checker sees it. The detail is included because it is
+    what the student actually reads after answering, and a wrong explanation
+    of a right answer still teaches the wrong thing."""
+    lines = [f"[{i}] Q: {c.question}", f"    A: {c.answer}"]
+    if c.detail:
+        lines.append(f"    detail: {c.detail}")
+    return "\n".join(lines)
+
+
 def check_facts(client, cards: list[Candidate], *, topic_code: str,
-                full_name: str, unit_name: str
+                full_name: str, unit_name: str, unit_number: int | None = None
                 ) -> tuple[list[tuple[Candidate, str | None]], int, int]:
     """Fact-check a batch of knowledge-mode cards in one paid call.
 
@@ -100,13 +111,13 @@ def check_facts(client, cards: list[Candidate], *, topic_code: str,
     if not cards:
         return [], 0, 0
 
-    listing = "\n".join(
-        f"[{i}] Q: {c.question}\n    A: {c.answer}" for i, c in enumerate(cards)
-    )
+    listing = "\n".join(_listed(i, c) for i, c in enumerate(cards))
+    traps = (traps_text(topic_code, unit_number)
+             if unit_number is not None else "")
     resp = client.complete_json(
         FACT_CHECK_SYSTEM,
         FACT_CHECK_USER.format(topic_code=topic_code, full_name=full_name,
-                               unit_name=unit_name, cards=listing),
+                               unit_name=unit_name, traps=traps, cards=listing),
     )
     tokens = (resp.prompt_tokens, resp.completion_tokens)
     data = _loads(resp.content)

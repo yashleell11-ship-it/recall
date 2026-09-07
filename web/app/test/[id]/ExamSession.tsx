@@ -657,12 +657,12 @@ export function ExamSession({ id }: { id: number }) {
       <Centered>
         <p className="text-[15px]">This paper has no questions.</p>
         <p className="text-[13px] text-fg-2 mt-2 max-w-sm">
-          Your deck had nothing to draw from when it was assembled. Approve some
-          pending cards, then start a new paper.
+          Your deck had nothing to draw from when it was assembled. Generate the
+          units this paper covers, then start a new one.
         </p>
         <div className="flex gap-4 mt-5 text-[13px]">
-          <Link href="/approve" className="link">
-            Approve queue
+          <Link href="/test" className="link">
+            Generate units
           </Link>
           <Link href="/test" className="link text-fg-2">
             Back to papers

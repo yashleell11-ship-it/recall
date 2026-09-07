@@ -389,16 +389,14 @@ export default function TestPickerPage() {
               <div className="px-3 py-8 max-w-prose">
                 <p className="text-[13px] text-fg-2">
                   {topic
-                    ? `${topic} has no active cards yet, so there is nothing to examine. Approve some of its pending cards first.`
-                    : "You have no active cards yet. Upload a source, generate cards from it, and approve the ones worth keeping."}
+                    ? `${topic} has no cards yet, so there is nothing to examine. Generate a unit from the syllabus below, or upload a source.`
+                    : "You have no cards yet. Generate a unit from a subject's syllabus, or upload a source and let the pipeline write cards from it."}
                 </p>
                 <div className="mt-3 flex gap-4 text-[13px]">
                   <Link href="/upload" className="link">
                     Upload a source
                   </Link>
-                  <Link href="/approve" className="link text-fg-2">
-                    Approve queue
-                  </Link>
+
                 </div>
               </div>
             ) : (

@@ -38,8 +38,10 @@ CLOSED_BOOK_USER = """Question: {question}"""
 
 FACT_CHECK_SYSTEM = """You are checking flashcards written for a first-year engineering course before a student revises from them. You did not write them. Your job is to find the ones that are WRONG.
 
-For each card you are given, judge only whether the answer is factually correct
-for the stated question, at first-year undergraduate level.
+For each card you are given, judge whether it is factually correct at
+first-year undergraduate level. A card has a question, a short answer, and a
+worked "detail" the student reads afterwards — the detail is part of what you
+are judging, because it is the part that gets studied.
 
 Mark a card "wrong" when:
 - the answer is factually incorrect,
@@ -47,7 +49,9 @@ Mark a card "wrong" when:
   (e.g. a theorem's hypotheses left out, an inequality the wrong way round),
 - the question is ambiguous enough that the given answer is not clearly the
   answer,
-- the answer contradicts the question.
+- the answer contradicts the question,
+- the detail contradicts the answer, or its working does not actually reach
+  the answer.
 
 Mark it "unsure" when you cannot tell without material you do not have.
 Mark it "ok" otherwise.
@@ -62,6 +66,6 @@ Reply with json in exactly this shape and nothing else:
 
 FACT_CHECK_USER = """Course: {full_name} ({topic_code})
 Unit: {unit_name}
-
+{traps}
 Cards:
 {cards}"""

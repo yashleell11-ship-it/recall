@@ -44,7 +44,6 @@ export default function DashboardPage() {
       due: t.reduce((n, x) => n + x.due, 0),
       new: t.reduce((n, x) => n + x.new, 0),
       active: t.reduce((n, x) => n + x.active, 0),
-      pending: t.reduce((n, x) => n + x.pending, 0),
     };
   }, [res.data]);
 
@@ -182,12 +181,6 @@ export default function DashboardPage() {
               )}
             </p>
 
-            {totals.pending > 0 && (
-              <Link href="/approve" className="link text-fg-2 hover:text-fg">
-                {totals.pending} generated {plural(totals.pending, "card")}{" "}
-                waiting for triage
-              </Link>
-            )}
           </Reveal>
 
           {/* --- topics and history -------------------------------------- */}
@@ -221,9 +214,6 @@ export default function DashboardPage() {
                         </th>
                         <th className="label text-right font-semibold px-3 py-1.5 w-16">
                           Active
-                        </th>
-                        <th className="label text-right font-semibold px-3 py-1.5 w-16">
-                          Pending
                         </th>
                       </tr>
                     </thead>
@@ -272,13 +262,6 @@ export default function DashboardPage() {
                           <td className="px-3 py-[7px] text-right tnum text-fg-2">
                             {t.active.toLocaleString()}
                           </td>
-                          <td
-                            className={`px-3 py-[7px] text-right tnum ${
-                              t.pending > 0 ? "text-fg-2" : "text-fg-3"
-                            }`}
-                          >
-                            {t.pending || "—"}
-                          </td>
                         </motion.tr>
                       ))}
                     </tbody>
@@ -294,9 +277,6 @@ export default function DashboardPage() {
                         </td>
                         <td className="px-3 py-[7px] text-right tnum font-semibold">
                           {totals.active.toLocaleString()}
-                        </td>
-                        <td className="px-3 py-[7px] text-right tnum font-semibold">
-                          {totals.pending}
                         </td>
                       </tr>
                     </tfoot>
@@ -362,7 +342,6 @@ export default function DashboardPage() {
                 <dl className="text-[12.5px]">
                   {[
                     ["Active cards", res.data.stats.totals.active],
-                    ["Pending triage", res.data.stats.totals.pending],
                     ["Sources ingested", res.data.stats.totals.sources],
                   ].map(([label, value]) => (
                     <div

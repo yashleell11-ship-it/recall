@@ -121,11 +121,11 @@ function UnitGenerate({ topicCode, unit }: { topicCode: string; unit: number }) 
   if (state.stage === "done") {
     return (
       <Link
-        href="/approve"
+        href={`/review?topic=${encodeURIComponent(topicCode)}`}
         className="telemetry text-[10px] text-fg-2 shrink-0 pt-px underline
           underline-offset-2 hover:text-fg"
       >
-        +{state.accepted} to approve
+        +{state.accepted} to study
       </Link>
     );
   }
@@ -143,7 +143,7 @@ function UnitGenerate({ topicCode, unit }: { topicCode: string; unit: number }) 
   return (
     <button
       onClick={run}
-      title={`Write practice cards for unit ${unit} from the model's own knowledge. Spends a little of your daily budget, and the cards land in the approve queue.`}
+      title={`Write practice cards for unit ${unit} from the model's own knowledge. Spends a little of your daily budget. What survives the checks goes straight into your rotation, marked "no source".`}
       className="telemetry text-[10px] text-fg-3 shrink-0 pt-px
         hover:text-fg-2 underline underline-offset-2
         transition-colors duration-[120ms]"
