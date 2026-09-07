@@ -1,10 +1,28 @@
 """LPU Semester-1 (B.Tech CSE AI/ML, 2026 batch) subject registry.
 
-Sources: lpu.in programme structure + notes.lpuverto.xyz per-course pages,
-fetched 2026-09-05; MTH165 corrected 2026-09-07 directly from the owner's own
-LPU zero-lecture slides (the original MTH174 guess had the wrong course code
-and scheme). Schemes genuinely differ per subject — INT108 and CSE326 carry
-NO mid-term at LPU, so the app must not offer one for them.
+Sources, in descending order of trust:
+
+1. **LPU's own Session 2026-27 syllabus PDFs**, at
+   notes.lpuverto.xyz/notes-syllabus/Sem1/26271/<CODE>/<CODE>_Syllabus.pdf.
+   Five of the six subjects are there and were read directly on 2026-09-07:
+   MTH165, INT108, CSE326, CSE111 and INT335. Each PDF's header line carries
+   the L-T-P and the credits, and its Unit I..VI headings carry the unit
+   names. Where this file disagreed with one, this file was wrong — CSE111
+   was coded from an older 2-credit revision of the course, INT335's credits
+   were a guess, and MTH165's unit names were a paraphrase.
+2. **The owner's own course files** — his MTH165 zero-lecture slides (which
+   is where the scheme comes from; the syllabus PDFs do not print one) and
+   his UNIT 1 MEC103.pdf.
+3. **notes.lpuverto.xyz per-course pages** for the assessment schemes, which
+   the PDFs omit. Worth believing: the site carries five different schemes
+   across these six subjects, so it is transcribing rather than defaulting.
+
+MEC103 is the exception — it is not on that mirror under any path tried, so
+it rests on the published LPU course deck plus the owner's own unit 1 file,
+and carries scheme_confirmed=False to say so on screen.
+
+Schemes genuinely differ per subject — INT108, CSE326 and CSE111 carry NO
+mid-term at LPU, so the app must not offer one for them.
 
 Global LPU conventions this encodes:
 - Theory scheme: Attendance 5 + CA (best 2 of 3, 30-mark tests) + MTE + ETE.
@@ -18,9 +36,18 @@ SUBJECTS: dict[str, dict] = {
     "MTH165": {
         "full_name": "Mathematics for Engineers",
         "credits": 4,
-        "units": ["Linear Algebra", "Differential Calculus and Its Applications",
-                  "Fundamentals of Integral Calculus", "Multivariate Functions",
-                  "Multivariate Integrals", "Fourier Series"],
+        # Verbatim from the Session 2026-27 syllabus PDF (header
+        # "L:3 T:1 P:0 Credits:4", which also corroborates the credits), only
+        # title-cased to match the rest of this file. The first list here was
+        # a paraphrase — right in content, but "Linear Algebra" is not what
+        # the paper calls unit 1, and the unit name goes into the generation
+        # prompt.
+        "units": ["Matrix Methods and Linear Systems",
+                  "Differential Calculus and Its Applications",
+                  "Fundamentals of Integral Calculus",
+                  "Multivariate Differentiation",
+                  "Multivariable Integration and Applications",
+                  "Introduction to Fourier Series"],
         "scheme": {"attendance": 5, "ca": 25, "mte": 20, "ete": 50},
         "ca_policy": "CT1 units 1-2 · CT2 real-time applications (unit 4) · "
                       "CT3 cumulative over the CA1+CA2 syllabus — 30 marks each",
@@ -71,6 +98,9 @@ SUBJECTS: dict[str, dict] = {
     },
     "INT108": {
         "full_name": "Python Programming",
+        # Checked against the Session 2026-27 syllabus PDF and correct as
+        # coded: "L:3 T:0 P:2 Credits:4", and all six unit names match its
+        # printed headings.
         "credits": 4,
         "units": ["Environment, Variables, Expressions and Statements",
                   "Conditional and Iterative Statements",
@@ -141,6 +171,9 @@ SUBJECTS: dict[str, dict] = {
     },
     "CSE326": {
         "full_name": "Internet Programming",
+        # Checked against the Session 2026-27 syllabus PDF and correct as
+        # coded: "L:1 T:0 P:2 Credits:2", and all six unit names match its
+        # printed headings verbatim.
         "credits": 2,
         "units": ["HTML Fundamentals", "Semantic HTML and Forms",
                   "Cascading Style Sheets", "JavaScript Fundamentals",
