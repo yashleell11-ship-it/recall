@@ -227,7 +227,10 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "two-variable second-derivative test require both "
                 "D = f_xx·f_yy − (f_xy)² and the sign of f_xx in the answer, "
                 "and include at least one saddle case and one D = 0 case so "
-                "\"saddle\" and \"inconclusive\" both get drilled. The second "
+                "\"saddle\" and \"inconclusive\" both get drilled — at the "
+                "origin x⁴ + y⁴ has D = 0 and a minimum, −(x⁴ + y⁴) has D = 0 "
+                "and a maximum, and x³ + y³ has D = 0 and neither, which is "
+                "the whole point of the word inconclusive. The second "
                 "class test on this course targets real-time applications of "
                 "this unit, so make roughly half the cards word problems: "
                 "percentage-error propagation through a total differential, a "
@@ -1128,7 +1131,11 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "A card claiming a disabled control's value is submitted, or "
                 "that a readonly control's value is not. Disabled controls "
                 "are excluded from submission; readonly controls are "
-                "submitted normally and still validate.",
+                "submitted normally. Also watch for a card claiming a "
+                "readonly control is still constraint-validated: readonly "
+                "(like disabled) bars the element from constraint validation, "
+                "so required and pattern on a readonly input never block "
+                "submission.",
                 "A card presenting placeholder as a replacement for <label>, "
                 "or claiming placeholder text supplies an accessible name. It "
                 "disappears on input and is not a label.",
@@ -1195,7 +1202,9 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "0%.",
                 "A card claiming position: absolute is positioned against the "
                 "page or <body> rather than the nearest positioned ancestor, "
-                "that z-index applies to a static element, or that "
+                "that z-index takes effect on an ordinary static block box "
+                "(it is ignored there, though it does apply to flex and grid "
+                "items even when they are position: static), or that "
                 "text-align: center centers a block-level box (it aligns "
                 "inline content; margin: 0 auto centers a block with a set "
                 "width).",
@@ -1336,9 +1345,13 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "A card telling the client to send "
                 "Access-Control-Allow-Origin as a request header, or claiming "
                 "mode: \"no-cors\" lets JavaScript read the response body. CORS "
-                "headers come from the server's response, and a preflight "
-                "OPTIONS is triggered by custom headers or non-simple "
-                "methods.",
+                "headers come from the server's response. Also watch for a "
+                "wrong account of what is preflighted: only GET, HEAD and "
+                "POST carrying just CORS-safelisted headers are simple, so a "
+                "preflight OPTIONS is triggered by any other method, by a "
+                "custom request header, and by a Content-Type outside "
+                "application/x-www-form-urlencoded, multipart/form-data and "
+                "text/plain — which is why a POST of JSON is preflighted.",
                 "A card whose answer is generic advice — 'follow best "
                 "practices', 'explain hosting', 'Copilot generates correct "
                 "code' — instead of a checkable fact such as what a specific "
@@ -1649,10 +1662,12 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
                 "file automatically, so no explicit close() is needed.",
                 "Misdescribing the read methods. read() returns the whole "
                 "file as ONE string; readline() returns one line INCLUDING "
-                "its trailing '\\n'; readlines() returns a list of lines each "
-                "keeping its '\\n'. After a read() the cursor sits at end of "
-                "file, so a following readline() returns '' — not the first "
-                "line again.",
+                "its trailing '\\n'; readlines() returns a list of lines, each "
+                "keeping its '\\n' EXCEPT the last one when the file does not "
+                "end in a newline — on a file holding 'one\\ntwo\\nthree' "
+                "readlines() is ['one\\n', 'two\\n', 'three']. After a read() "
+                "the cursor sits at end of file, so a following readline() "
+                "returns '' — not the first line again.",
                 "Regex errors. re.match() anchors at the START, so "
                 "re.match('b', 'abc') is None while re.search('b', 'abc') "
                 "finds it. Both return None on failure — not '' — so calling "
