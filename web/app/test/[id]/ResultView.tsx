@@ -380,9 +380,20 @@ function SynapseRail({ data }: { data: Explanation }) {
       ))}
 
       <figure className="mt-3 pl-3 border-l-2 border-l-line-strong">
-        <blockquote className="k-text text-[13.5px] text-fg-2 leading-relaxed">
-          &ldquo;{data.source_quote}&rdquo;
-        </blockquote>
+        {/* A knowledge-mode card has no source to quote, and the server sends
+            an empty string rather than inventing one. Rendering the blockquote
+            anyway would print bare quote marks and imply a citation that does
+            not exist — so say what this actually is instead. */}
+        {data.source_quote ? (
+          <blockquote className="k-text text-[13.5px] text-fg-2 leading-relaxed">
+            &ldquo;{data.source_quote}&rdquo;
+          </blockquote>
+        ) : (
+          <p className="text-[12.5px] text-fg-3 leading-relaxed">
+            From the model&rsquo;s own knowledge of the syllabus — there is no
+            uploaded source behind this one to check it against.
+          </p>
+        )}
         <figcaption className="telemetry text-[11px] text-fg-3 mt-1.5">
           <span className="font-semibold tracking-[0.05em]">
             {data.topic_code}

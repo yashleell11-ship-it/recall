@@ -62,6 +62,51 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def cmd_set_password(args, cfg) -> int:
+    """Reset an account's password.
+
+    Deliberately separate from claim-owner, which refuses to touch an account
+    that already has one — that guard is right for "claim this account" and
+    wrong for "I want a new password".
+
+    Resetting also deletes that account's sessions. If you are resetting
+    because you think the old password got out, leaving the sessions it
+    opened still valid would defeat the point; you will be signed out
+    everywhere and sign back in once.
+    """
+    import getpass
+
+    from recall.auth import hash_password
+
+    password = args.password or getpass.getpass("New password: ")
+    if len(password) < 8:
+        print("password must be at least 8 characters", file=sys.stderr)
+        return 2
+    if not args.password:
+        again = getpass.getpass("Again: ")
+        if again != password:
+            print("passwords did not match", file=sys.stderr)
+            return 2
+
+    conn = _conn(cfg)
+    row = conn.execute(
+        "SELECT id, name FROM users WHERE email = ? OR name = ?",
+        (args.who.strip().lower(), args.who),
+    ).fetchone()
+    if row is None:
+        print(f"no account matching {args.who!r}", file=sys.stderr)
+        return 2
+
+    conn.execute("UPDATE users SET password_hash = ? WHERE id = ?",
+                 (hash_password(password), row["id"]))
+    killed = conn.execute("DELETE FROM sessions WHERE user_id = ?",
+                          (row["id"],)).rowcount
+    conn.commit()
+    print(f"password reset for {row['name']}"
+          + (f"; {killed} existing session(s) signed out" if killed else ""))
+    return 0
+
+
 def cmd_set_email(args, cfg) -> int:
     """Change the login email on an account.
 
@@ -280,6 +325,12 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--password", default=None,
                    help="omit to be prompted (avoids the value landing in shell history)")
     s.set_defaults(func=cmd_claim_owner)
+
+    s = sub.add_parser("set-password", help="reset an account's password")
+    s.add_argument("who", help="the account's email or name")
+    s.add_argument("--password", default=None,
+                   help="omit to be prompted twice (keeps it out of shell history)")
+    s.set_defaults(func=cmd_set_password)
 
     s = sub.add_parser("set-email", help="change an account's login email")
     s.add_argument("--user", default="yash")
