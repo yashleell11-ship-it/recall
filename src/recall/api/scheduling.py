@@ -83,7 +83,8 @@ def build_queue(conn, user_id: int, topic_code: str | None = None,
     topic_args: tuple = (topic_code,) if topic_code else ()
 
     due_rows = conn.execute(
-        "SELECT c.id, c.kind, c.question, c.answer, c.cloze_text, t.code AS topic_code,"
+        "SELECT c.id, c.kind, c.question, c.answer, c.cloze_text, c.origin,"
+        " t.code AS topic_code,"
         " ch.page_ref, cs.due_at, cs.stability, cs.difficulty, cs.lapses,"
         " (SELECT MAX(reviewed_at) FROM reviews r"
         "  WHERE r.card_id = c.id AND r.user_id = cs.user_id) AS last_reviewed_at"
@@ -91,23 +92,32 @@ def build_queue(conn, user_id: int, topic_code: str | None = None,
         " JOIN card_state cs ON cs.card_id = c.id AND cs.user_id = ?"
         " JOIN topics t ON t.id = c.topic_id"
         " JOIN chunks ch ON ch.id = c.chunk_id"
-        f" WHERE c.state = 'active' AND cs.due_at <= ?{topic_clause}"
+        " WHERE c.state = 'active' AND cs.due_at <= ?"
+        f" AND t.user_id = ?{topic_clause}"
         " ORDER BY cs.due_at ASC",
-        (user_id, now, *topic_args),
+        (user_id, now, user_id, *topic_args),
     ).fetchall()
 
     new_budget = max(0, settings["new_cards_per_day"]
                      - new_cards_introduced_today(conn, user_id))
+    # t.user_id is load-bearing, not decoration: the only other user-bound
+    # predicate here is "this user has no card_state row for it", and ANOTHER
+    # user's untouched card satisfies that perfectly. Without this filter the
+    # new-card queue serves other people's cards, question and answer text and
+    # all. The due half above is safe for a different reason — it INNER JOINs
+    # card_state on this user, so it can only ever return cards they have
+    # personally studied.
     new_rows = conn.execute(
-        "SELECT c.id, c.kind, c.question, c.answer, c.cloze_text, t.code AS topic_code,"
-        " ch.page_ref"
+        "SELECT c.id, c.kind, c.question, c.answer, c.cloze_text, c.origin,"
+        " t.code AS topic_code, ch.page_ref"
         " FROM cards c"
         " JOIN topics t ON t.id = c.topic_id"
         " JOIN chunks ch ON ch.id = c.chunk_id"
         " LEFT JOIN card_state cs ON cs.card_id = c.id AND cs.user_id = ?"
-        f" WHERE c.state = 'active' AND cs.card_id IS NULL{topic_clause}"
+        " WHERE c.state = 'active' AND cs.card_id IS NULL"
+        f" AND t.user_id = ?{topic_clause}"
         " ORDER BY c.id ASC LIMIT ?",
-        (user_id, *topic_args, new_budget),
+        (user_id, user_id, *topic_args, new_budget),
     ).fetchall()
 
     def card(row, is_new: bool) -> dict:
@@ -126,6 +136,7 @@ def build_queue(conn, user_id: int, topic_code: str | None = None,
             )
         return {"id": row["id"], "kind": row["kind"], "question": row["question"],
                 "answer": row["answer"], "cloze_text": row["cloze_text"],
+                "origin": row["origin"],
                 "topic_code": row["topic_code"], "page_ref": row["page_ref"],
                 "is_new": is_new, "stability": stability, "difficulty": difficulty,
                 "elapsed_days": round(elapsed, 4),
@@ -153,8 +164,13 @@ def _last_reviewed_at(conn, card_id: int, user_id: int) -> str | None:
 def record_review(conn, user_id: int, card_id: int, grade: int) -> ReviewOutcome:
     if grade not in (1, 2, 3, 4):
         raise ValueError("grade must be 1, 2, 3 or 4")
-    exists = conn.execute("SELECT id, state FROM cards WHERE id = ?",
-                          (card_id,)).fetchone()
+    # Joined through topics: a card id on its own is not proof of ownership,
+    # and without this any signed-in user could record reviews against — and
+    # so schedule themselves through — someone else's deck.
+    exists = conn.execute(
+        "SELECT c.id, c.state FROM cards c JOIN topics t ON t.id = c.topic_id"
+        " WHERE c.id = ? AND t.user_id = ?", (card_id, user_id)
+    ).fetchone()
     if exists is None:
         raise LookupError(f"no card {card_id}")
 
@@ -253,8 +269,10 @@ def stats(conn, user_id: int) -> dict:
         (user_id,),
     ).fetchall()
     totals = conn.execute(
-        "SELECT SUM(CASE WHEN state='active' THEN 1 ELSE 0 END) AS active,"
-        " SUM(CASE WHEN state='pending' THEN 1 ELSE 0 END) AS pending FROM cards"
+        "SELECT SUM(CASE WHEN c.state='active' THEN 1 ELSE 0 END) AS active,"
+        " SUM(CASE WHEN c.state='pending' THEN 1 ELSE 0 END) AS pending"
+        " FROM cards c JOIN topics t ON t.id = c.topic_id WHERE t.user_id = ?",
+        (user_id,),
     ).fetchone()
     sources = conn.execute(
         "SELECT COUNT(*) AS n FROM sources WHERE user_id = ?", (user_id,)

@@ -25,6 +25,43 @@ def cmd_init(args, cfg) -> int:
     return 0
 
 
+def cmd_claim_owner(args, cfg) -> int:
+    """One-time: give the pre-auth owner account (id 1, created by `init`) a
+    real email + password, so it can log in through open registration's
+    /api/auth/login instead of the implicit single-user model. Idempotent —
+    refuses if a password is already set, so it's safe to run by accident."""
+    import getpass
+
+    from recall.auth import hash_password, normalize_email
+
+    password = args.password or getpass.getpass("Password: ")
+    if len(password) < 8:
+        print("password must be at least 8 characters", file=sys.stderr)
+        return 2
+    conn = _conn(cfg)
+    row = conn.execute("SELECT password_hash FROM users WHERE id = 1").fetchone()
+    if row is None:
+        print("no user with id 1 — run `recall init` first", file=sys.stderr)
+        return 2
+    if row["password_hash"] is not None:
+        print("owner already has a password set; not overwriting", file=sys.stderr)
+        return 2
+    conn.execute(
+        "UPDATE users SET email = ?, password_hash = ?, created_at = COALESCE(created_at, ?)"
+        " WHERE id = 1",
+        (normalize_email(args.email), hash_password(password), _now_iso()),
+    )
+    conn.commit()
+    print(f"owner account (id 1) can now log in as {normalize_email(args.email)}")
+    return 0
+
+
+def _now_iso() -> str:
+    from datetime import datetime, timezone
+
+    return datetime.now(timezone.utc).isoformat()
+
+
 def cmd_ingest(args, cfg) -> int:
     # Imported here so the rest of the CLI works without network deps loaded.
     from recall.llm.client import DeepSeekClient
@@ -49,11 +86,15 @@ def cmd_ingest(args, cfg) -> int:
 
 def cmd_queue(args, cfg) -> int:
     conn = _conn(cfg)
+    # Scoped to the owner (user 1). This is local, owner-only tooling, but the
+    # database it opens now holds other people's decks too, and triaging a
+    # stranger's cards from the terminal is not what this command is for.
     rows = conn.execute(
         "SELECT c.id, t.code, c.kind, c.question, c.answer, ch.page_ref "
         "FROM cards c JOIN topics t ON t.id = c.topic_id "
         "JOIN chunks ch ON ch.id = c.chunk_id "
-        "WHERE c.state = 'pending' ORDER BY c.id LIMIT ?", (args.limit,)
+        "WHERE c.state = 'pending' AND t.user_id = 1 "
+        "ORDER BY c.id LIMIT ?", (args.limit,)
     ).fetchall()
     for r in rows:
         print(f"[{r['id']}] {r['code']} {r['page_ref']} ({r['kind']})\n"
@@ -68,7 +109,8 @@ def cmd_approve(args, cfg) -> int:
     reason = "rejected by hand" if args.reject else None
     conn.executemany(
         "UPDATE cards SET state = ?, reject_reason = ? "
-        "WHERE id = ? AND state = 'pending'",
+        "WHERE id = ? AND state = 'pending' "
+        "AND topic_id IN (SELECT id FROM topics WHERE user_id = 1)",
         [(state, reason, cid) for cid in args.ids],
     )
     conn.commit()
@@ -105,7 +147,7 @@ def cmd_fit(args, cfg) -> int:
 
 
 def cmd_export(args, cfg) -> int:
-    n = export_apkg(_conn(cfg), args.out, topic_code=args.topic)
+    n = export_apkg(_conn(cfg), args.out, 1, topic_code=args.topic)
     print(f"wrote {n} notes to {args.out}")
     return 0
 
@@ -142,6 +184,13 @@ def build_parser() -> argparse.ArgumentParser:
     s = sub.add_parser("init", help="create the database and seed topics")
     s.add_argument("--user", default="yash")
     s.set_defaults(func=cmd_init)
+
+    s = sub.add_parser("claim-owner",
+                       help="give the pre-auth owner account (id 1) an email+password")
+    s.add_argument("--email", required=True)
+    s.add_argument("--password", default=None,
+                   help="omit to be prompted (avoids the value landing in shell history)")
+    s.set_defaults(func=cmd_claim_owner)
 
     s = sub.add_parser("ingest", help="turn a PDF into candidate cards")
     s.add_argument("--topic", required=True)

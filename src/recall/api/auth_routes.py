@@ -1,0 +1,113 @@
+"""Open registration: sign up, log in, log out, and who-am-I.
+
+No email verification, no forgot-password flow, no CAPTCHA, and deliberately
+no per-IP rate limiting either — open signup with no invite code is a
+deliberate choice (mirrors the owner's other project), none of the above
+would protect the one resource that's actually scarce here (DeepSeek spend,
+guarded by a per-user daily cost cap at generation time instead), and the
+audience this actually ships to is LPU students, who are disproportionately
+likely to share one outbound IP on hostel/campus WiFi — a per-IP limiter
+would lock out an entire building over a handful of students signing up at
+once, not just an attacker. Argon2's own cost is what actually blunts
+scripted credential stuffing.
+"""
+
+import os
+
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Response
+from pydantic import BaseModel, EmailStr, Field
+
+from recall.api.deps import (
+    SESSION_COOKIE,
+    SESSION_TTL_DAYS,
+    create_session,
+    get_conn,
+    get_current_user,
+    hash_token,
+)
+from recall.auth import DuplicateAccount, create_user, normalize_email, verify_password
+
+router = APIRouter(tags=["auth"])
+
+
+def _cookie_secure() -> bool:
+    return os.environ.get("RECALL_COOKIE_SECURE", "1") != "0"
+
+
+def _set_session_cookie(response: Response, token: str) -> None:
+    response.set_cookie(
+        SESSION_COOKIE,
+        token,
+        httponly=True,
+        secure=_cookie_secure(),
+        samesite="lax",
+        max_age=60 * 60 * 24 * SESSION_TTL_DAYS,
+        path="/",
+        # No `domain=` — leaving it unset scopes the cookie to the exact
+        # host. The same edge also serves other, unrelated apps on sibling
+        # subdomains; an explicit parent-domain cookie would leak into them.
+    )
+
+
+class RegisterIn(BaseModel):
+    name: str = Field(min_length=1, max_length=100)
+    email: EmailStr
+    password: str = Field(min_length=8, max_length=200)
+
+
+class LoginIn(BaseModel):
+    email: EmailStr
+    password: str
+
+
+def _public_user(conn, user_id: int) -> dict:
+    row = conn.execute(
+        "SELECT id, name, email FROM users WHERE id = ?", (user_id,)
+    ).fetchone()
+    return {"id": row["id"], "name": row["name"], "email": row["email"]}
+
+
+@router.post("/api/auth/register")
+def register(body: RegisterIn, response: Response, conn=Depends(get_conn)):
+    try:
+        user_id = create_user(conn, name=body.name, email=body.email,
+                              password=body.password)
+    except DuplicateAccount as exc:
+        raise HTTPException(status_code=422,
+                            detail="that name or email is already taken") from exc
+    token = create_session(conn, user_id)
+    _set_session_cookie(response, token)
+    return _public_user(conn, user_id)
+
+
+@router.post("/api/auth/login")
+def login(body: LoginIn, response: Response, conn=Depends(get_conn)):
+    email = normalize_email(body.email)
+    row = conn.execute(
+        "SELECT id, password_hash FROM users WHERE email = ?", (email,)
+    ).fetchone()
+    # Never distinguish "no such account" from "wrong password" — that split
+    # is a free user-enumeration oracle.
+    if row is None or row["password_hash"] is None or not verify_password(
+        body.password, row["password_hash"]
+    ):
+        raise HTTPException(status_code=401, detail="invalid email or password")
+    token = create_session(conn, row["id"])
+    _set_session_cookie(response, token)
+    return _public_user(conn, row["id"])
+
+
+@router.post("/api/auth/logout")
+def logout(response: Response, conn=Depends(get_conn),
+          recall_session: str | None = Cookie(default=None)):
+    if recall_session:
+        conn.execute("DELETE FROM sessions WHERE token_hash = ?",
+                     (hash_token(recall_session),))
+        conn.commit()
+    response.delete_cookie(SESSION_COOKIE, path="/")
+    return {"ok": True}
+
+
+@router.get("/api/auth/me")
+def me(user_id: int = Depends(get_current_user), conn=Depends(get_conn)):
+    return _public_user(conn, user_id)

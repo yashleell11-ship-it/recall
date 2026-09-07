@@ -64,7 +64,7 @@ const HTML_SRC = "html-semantics-and-forms.pdf";
 const ACTIVE_SEEDS: Seed[] = [
   // --- MATHS ---
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "qa",
     p: "p31",
     q: "State Rolle's theorem.",
@@ -72,7 +72,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "cloze",
     p: "p34",
     q: "Maclaurin series for e^x",
@@ -81,7 +81,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "qa",
     p: "p37",
     q: "What does a non-zero Wronskian at a point tell you about a set of solutions?",
@@ -89,7 +89,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "cloze",
     p: "p29",
     q: "Indeterminate forms for L'Hôpital",
@@ -98,7 +98,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "qa",
     p: "p42",
     q: "Give the integrating factor for dy/dx + P(x)·y = Q(x).",
@@ -106,7 +106,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "qa",
     p: "p12",
     q: "For any matrix, how do row rank and column rank relate?",
@@ -114,7 +114,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC2,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "cloze",
     p: "p14",
     q: "Invertibility and the determinant",
@@ -123,7 +123,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC2,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "qa",
     p: "p18-p19",
     q: "What is the geometric meaning of an eigenvector of A?",
@@ -131,7 +131,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC2,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "qa",
     p: "p22",
     q: "State the Cauchy–Schwarz inequality for real vectors.",
@@ -139,7 +139,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC2,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "cloze",
     p: "p27",
     q: "Derivative of arctan",
@@ -148,7 +148,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "qa",
     p: "p45",
     q: "What is the trace of a square matrix, and what does it equal?",
@@ -156,7 +156,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC2,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "qa",
     p: "p39",
     q: "When is a power series Σaₙ(x − a)ⁿ absolutely convergent?",
@@ -164,7 +164,7 @@ const ACTIVE_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "cloze",
     p: "p16",
     q: "Rank–nullity",
@@ -526,7 +526,7 @@ const ACTIVE_SEEDS: Seed[] = [
 
 const PENDING_SEEDS: Seed[] = [
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "qa",
     p: "p47",
     q: "State the mean value theorem.",
@@ -534,7 +534,7 @@ const PENDING_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "cloze",
     p: "p48",
     q: "Second derivative test",
@@ -543,7 +543,7 @@ const PENDING_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "qa",
     p: "p50",
     q: "What is the determinant of a triangular matrix?",
@@ -551,7 +551,7 @@ const PENDING_SEEDS: Seed[] = [
     src: MATHS_SRC2,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "qa",
     p: "p51",
     q: "What is the sum of a convergent geometric series Σarⁿ from n = 0?",
@@ -559,7 +559,7 @@ const PENDING_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "cloze",
     p: "p52",
     q: "Orthogonal matrix inverse",
@@ -568,7 +568,7 @@ const PENDING_SEEDS: Seed[] = [
     src: MATHS_SRC2,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "qa",
     p: "p53",
     q: "When is an improper integral said to converge?",
@@ -576,7 +576,7 @@ const PENDING_SEEDS: Seed[] = [
     src: MATHS_SRC,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "qa",
     p: "p55",
     q: "What does it mean for a matrix to be positive definite?",
@@ -584,7 +584,7 @@ const PENDING_SEEDS: Seed[] = [
     src: MATHS_SRC2,
   },
   {
-    t: "MTH174",
+    t: "MTH165",
     k: "cloze",
     p: "p56",
     q: "Integration by parts",
@@ -832,21 +832,22 @@ const PENDING_SEEDS: Seed[] = [
 const NO_META = process.env.NEXT_PUBLIC_MOCK_NO_META === "1";
 
 const LPU_META: Record<string, TopicMeta> = {
-  MTH174: {
-    full_name: "Engineering Mathematics",
+  MTH165: {
+    full_name: "Mathematics for Engineers",
     credits: 4,
     units: [
-      "Matrix Algebra",
-      "Linear Differential Equation-I",
-      "Linear Differential Equation-II",
+      "Linear Algebra",
+      "Differential Calculus and Its Applications",
+      "Fundamentals of Integral Calculus",
+      "Multivariate Functions",
+      "Multivariate Integrals",
       "Fourier Series",
-      "Multivariate Calculus",
-      "Integral Calculus",
     ],
     scheme: { attendance: 5, ca: 25, mte: 20, ete: 50 },
-    ca_policy: "Best 2 of 3 · 30-mark subjective tests",
+    ca_policy:
+      "CT1 units 1-2 · CT2 real-time applications (unit 4) · CT3 cumulative over the CA1+CA2 syllabus — 30 marks each",
     mte_exists: true,
-    exam_format: "subjective",
+    exam_format: "mixed",
   },
   CSE111: {
     full_name: "Orientation to Computing",
@@ -924,7 +925,7 @@ const TOPIC_META: { code: string; label: string }[] = [
   { code: "CSE326", label: "Internet Programming" },
   { code: "INT108", label: "Python Programming" },
   { code: "INT335", label: "Design Thinking" },
-  { code: "MTH174", label: "Engineering Mathematics" },
+  { code: "MTH165", label: "Mathematics for Engineers" },
 ];
 
 /** Deterministic jitter, so the fixture is identical on every render. */
@@ -1003,7 +1004,7 @@ function store(): MockState {
     againToday: 9,
     streak: 21,
     reviewedByTopic: {
-      MTH174: 24,
+      MTH165: 24,
       CSE111: 15,
       INT108: 11,
       INT335: 8,
@@ -1017,7 +1018,7 @@ function store(): MockState {
 /* Counts the dashboard shows. The queue the mock actually serves is a slice of
    a larger backlog, exactly as the real endpoint's `limit` implies. */
 const BACKLOG = {
-  MTH174: { due: 31, new: 4, active: 402, pending: 8 },
+  MTH165: { due: 31, new: 4, active: 402, pending: 8 },
   CSE111: { due: 22, new: 3, active: 286, pending: 8 },
   INT108: { due: 17, new: 2, active: 241, pending: 7 },
   INT335: { due: 9, new: 2, active: 183, pending: 7 },
@@ -1249,7 +1250,7 @@ const SOURCES: Omit<Source, "added_at">[] = [
   {
     id: 1,
     filename: MATHS_SRC,
-    topic_code: "MTH174",
+    topic_code: "MTH165",
     accepted: 84,
     rejected: 11,
     cost_estimate: 0.0412,
@@ -1257,7 +1258,7 @@ const SOURCES: Omit<Source, "added_at">[] = [
   {
     id: 2,
     filename: MATHS_SRC2,
-    topic_code: "MTH174",
+    topic_code: "MTH165",
     accepted: 61,
     rejected: 7,
     cost_estimate: 0.0298,
@@ -1329,7 +1330,7 @@ const SOURCES: Omit<Source, "added_at">[] = [
   {
     id: 11,
     filename: "maths-tutorial-sheet-07.pdf",
-    topic_code: "MTH174",
+    topic_code: "MTH165",
     accepted: 27,
     rejected: 31,
     cost_estimate: 0.0154,
@@ -1816,4 +1817,76 @@ export async function generateCards(sourceId: number): Promise<GenerateResponse>
     cost_usd: Number((chunks * 0.0042).toFixed(4)),
     stopped_early: chunks > 9,
   };
+}
+
+/* --- auth ------------------------------------------------------------------
+ * The fixture is single-tab, single-session already, so "auth" here is just
+ * a boolean the tab remembers — good enough to exercise /login and the
+ * AppShell gate without a real backend. */
+
+const MOCK_USER = { id: 1, name: "yash", email: "yash@example.com" };
+let mockSignedIn = true; // MOCK mode starts logged in, matching the rest of the fixture
+
+export async function getMe(): Promise<typeof MOCK_USER> {
+  await delay();
+  if (!mockSignedIn) throw new ApiError(401, "/api/auth/me", "not authenticated");
+  return MOCK_USER;
+}
+
+export async function postRegister(
+  name: string,
+  email: string,
+  password: string,
+): Promise<typeof MOCK_USER> {
+  await delay(300);
+  // Mirrors the server's own rule, so the fixture exercises the error path
+  // rather than only the happy one.
+  if (password.length < 8) {
+    throw new ApiError(422, "/api/auth/register", "Password must be at least 8 characters.");
+  }
+  mockSignedIn = true;
+  return { ...MOCK_USER, name, email };
+}
+
+export async function postLogin(
+  email: string,
+  password: string,
+): Promise<typeof MOCK_USER> {
+  await delay(300);
+  if (!password) {
+    throw new ApiError(401, "/api/auth/login", "invalid email or password");
+  }
+  mockSignedIn = true;
+  return { ...MOCK_USER, email };
+}
+
+export async function postLogout(): Promise<{ ok: true }> {
+  await delay();
+  mockSignedIn = false;
+  return { ok: true };
+}
+
+export async function generateFromKnowledge(
+  topicCode: string,
+  unit: number,
+  count = 12,
+): Promise<GenerateResponse> {
+  await delay(1200);
+  const accepted = Math.max(1, count - 3);
+  const rejected = 3;
+  const s = store();
+  for (let i = 0; i < Math.min(accepted, 5); i++) {
+    s.pending.unshift({
+      id: 9500 + s.pending.length + i,
+      kind: "qa",
+      question: `${topicCode} unit ${unit} — generated question ${i + 1}?`,
+      answer: "A generated answer from the model's own knowledge.",
+      cloze_text: null,
+      topic_code: topicCode,
+      page_ref: `Unit ${unit}`,
+      source_filename: "AI knowledge (no upload)",
+      origin: "knowledge",
+    });
+  }
+  return { accepted, rejected, cost_usd: 0.0018, stopped_early: false };
 }

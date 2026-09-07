@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ClozePrompt, clozeShowsAnswer } from "@/components/CardText";
+import { Provenance } from "@/components/Provenance";
 import {
   AnimatedNumber,
   ProgressRing,
@@ -491,7 +492,7 @@ export function ReviewSession() {
                     {c.topic_code} · {c.page_ref}
                     {c.is_new && <> · new</>}
                   </span>
-                  <span className="prov prov--ai">AI</span>
+                  <Provenance origin={c.origin} variant="chip" />
                   {meta.is_leech && (
                     <span
                       className="prov"

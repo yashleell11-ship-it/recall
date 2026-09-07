@@ -4,6 +4,7 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from recall.api.deps import get_current_user
 from recall.api.teach_routes import get_conn, get_llm, router
 from recall.db import connect, init_db
 from recall.llm.fake import FakeLlmClient
@@ -83,6 +84,7 @@ def make_client(db_path):
 
         app.dependency_overrides[get_conn] = override_conn
         app.dependency_overrides[get_llm] = lambda: (fake, "fake-model")
+        app.dependency_overrides[get_current_user] = lambda: 1
         return TestClient(app), fake
     return build
 
@@ -269,6 +271,7 @@ def real_client(db_path):
             conn.close()
 
     app.dependency_overrides[get_conn] = override_conn
+    app.dependency_overrides[get_current_user] = lambda: 1
     return TestClient(app, raise_server_exceptions=False)
 
 

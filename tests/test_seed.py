@@ -17,8 +17,8 @@ def test_seed_creates_all_subjects_with_meta(tmp_path):
     conn = fresh(tmp_path)
     result = seed_topics(conn)
     assert set(result["created"]) == set(SUBJECTS)
-    row = conn.execute("SELECT label, meta FROM topics WHERE code='MTH174'").fetchone()
-    assert row["label"] == "Engineering Mathematics"
+    row = conn.execute("SELECT label, meta FROM topics WHERE code='MTH165'").fetchone()
+    assert row["label"] == "Mathematics for Engineers"
     meta = json.loads(row["meta"])
     assert len(meta["units"]) == 6
     assert meta["scheme"] == {"attendance": 5, "ca": 25, "mte": 20, "ete": 50}
@@ -26,17 +26,32 @@ def test_seed_creates_all_subjects_with_meta(tmp_path):
 
 
 def test_legacy_codes_are_renamed_in_place_keeping_ids(tmp_path):
-    """Cards reference topic ids; a rename must never orphan them."""
+    """Cards reference topic ids; a rename must never orphan them. A
+    from-scratch legacy MATHS row cascades all the way to today's real code
+    (MTH174 was itself superseded by MTH165) in one seed_topics() call."""
     conn = fresh(tmp_path)
     conn.execute("INSERT INTO topics (id, user_id, code, label) VALUES (7, 1, 'MATHS', 'Mathematics')")
     conn.execute("INSERT INTO topics (id, user_id, code, label) VALUES (9, 1, 'HTML', 'HTML')")
     conn.commit()
     result = seed_topics(conn)
     assert "MATHS->MTH174" in result["renamed"]
+    assert "MTH174->MTH165" in result["renamed"]
     assert "HTML->CSE326" in result["renamed"]
-    assert conn.execute("SELECT id FROM topics WHERE code='MTH174'").fetchone()["id"] == 7
+    assert conn.execute("SELECT id FROM topics WHERE code='MTH165'").fetchone()["id"] == 7
     assert conn.execute("SELECT id FROM topics WHERE code='CSE326'").fetchone()["id"] == 9
-    assert conn.execute("SELECT COUNT(*) n FROM topics WHERE code IN ('MATHS','HTML')").fetchone()["n"] == 0
+    assert conn.execute("SELECT COUNT(*) n FROM topics WHERE code IN ('MATHS','HTML','MTH174')").fetchone()["n"] == 0
+
+
+def test_mth174_wrong_guess_is_renamed_to_mth165_keeping_id(tmp_path):
+    """MTH174 was itself a wrong course-code guess; a DB seeded before the fix
+    must have its topic renamed in place, not orphaned or duplicated."""
+    conn = fresh(tmp_path)
+    conn.execute("INSERT INTO topics (id, user_id, code, label) VALUES (3, 1, 'MTH174', 'Engineering Mathematics')")
+    conn.commit()
+    result = seed_topics(conn)
+    assert "MTH174->MTH165" in result["renamed"]
+    assert conn.execute("SELECT id FROM topics WHERE code='MTH165'").fetchone()["id"] == 3
+    assert conn.execute("SELECT COUNT(*) n FROM topics WHERE code='MTH174'").fetchone()["n"] == 0
 
 
 def test_seed_is_idempotent(tmp_path):

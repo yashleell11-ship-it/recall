@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 
 from recall.api import tests_routes
 from recall.api.app import create_app, get_conn
+from recall.api.deps import get_current_user
 from recall.db import connect, init_db
 from recall.testmode import service
 from recall.testmode.assembly import CandidateCard, assemble
@@ -71,6 +72,7 @@ def make_client(db_path: str) -> TestClient:
 
     app.dependency_overrides[get_conn] = override
     app.dependency_overrides[tests_routes.get_conn] = override
+    app.dependency_overrides[get_current_user] = lambda: 1
     return TestClient(app)
 
 

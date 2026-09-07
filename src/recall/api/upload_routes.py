@@ -13,6 +13,7 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from PIL import Image, UnidentifiedImageError
 
+from recall.api.deps import get_conn, get_current_user
 from recall.config import Config, load_config
 from recall.generate.generate import Candidate, generate_cards
 from recall.ingest.chunk import Chunk, chunk_pages
@@ -26,12 +27,18 @@ from recall.ingest.pdf import read_pdf
 
 # Private helpers imported rather than copied: the card-insert shape and the
 # cost formula must not drift between the CLI path and the upload path.
-from recall.pipeline import IngestResult, _cost, _insert_card, _now, assign_arm
+from recall.pipeline import (
+    IngestResult,
+    _cost,
+    _insert_card,
+    _now,
+    assign_arm,
+    keep_state,
+)
+from recall.usage import check_daily_budget, record_spend
 from recall.verify.dedupe import dedupe, embed_texts
 from recall.verify.heuristics import check_answerable, check_atomic
 from recall.verify.judges import check_closed_book, check_grounded
-
-USER_ID = 1  # single user for now; every query already filters by it
 
 IMAGE_EXTENSIONS = frozenset({".png", ".jpg", ".jpeg", ".webp"})
 TEXT_EXTENSIONS = frozenset({".txt", ".md"})
@@ -39,14 +46,6 @@ ALLOWED_EXTENSIONS = frozenset({".pdf"}) | IMAGE_EXTENSIONS | TEXT_EXTENSIONS
 MAX_UPLOAD_BYTES = 25 * 1024 * 1024
 
 router = APIRouter()
-
-
-def get_conn():
-    # Imported inside the function: app.py includes this router, so importing
-    # app.py at module level here would be a circular import.
-    from recall.api.app import get_conn as app_get_conn
-
-    yield from app_get_conn()
 
 
 def get_config() -> Config:
@@ -128,13 +127,13 @@ def _read_capped(file: UploadFile) -> bytes:
     return data
 
 
-def _topic_id(conn, topic_code: str) -> int:
+def _topic_id(conn, user_id: int, topic_code: str) -> int:
     row = conn.execute(
-        "SELECT id FROM topics WHERE user_id = ? AND code = ?", (USER_ID, topic_code)
+        "SELECT id FROM topics WHERE user_id = ? AND code = ?", (user_id, topic_code)
     ).fetchone()
     if row is None:
         known = [r["code"] for r in conn.execute(
-            "SELECT code FROM topics WHERE user_id = ? ORDER BY code", (USER_ID,)
+            "SELECT code FROM topics WHERE user_id = ? ORDER BY code", (user_id,)
         ).fetchall()]
         raise HTTPException(
             status_code=422,
@@ -149,17 +148,25 @@ def _discard(stored: Path, conn, sha: str) -> None:
 
     A failed extraction writes no source row and no chunks, so the file left
     behind is unreachable — up to 25 MB of it per attempt, and a phone retrying
-    a photo that will not OCR repeats the attempt. Guarded by the dedupe lookup
-    so a concurrent upload of the same file that *did* succeed keeps its copy.
+    a photo that will not OCR repeats the attempt.
+
+    The guard deliberately looks ACROSS users, unlike everything else here:
+    files are stored by content hash alone, so two people who upload the same
+    lecture PDF share one file on disk. Scoping this check to the current user
+    would let one person's failed upload delete the bytes another person's
+    source still points at.
     """
-    if _existing_source(conn, sha) is None:
+    shared = conn.execute(
+        "SELECT 1 FROM sources WHERE sha256 = ? LIMIT 1", (sha,)
+    ).fetchone()
+    if shared is None:
         stored.unlink(missing_ok=True)
 
 
-def _existing_source(conn, sha: str) -> dict | None:
+def _existing_source(conn, user_id: int, sha: str) -> dict | None:
     row = conn.execute(
         "SELECT id, filename, kind FROM sources WHERE user_id = ? AND sha256 = ?",
-        (USER_ID, sha),
+        (user_id, sha),
     ).fetchone()
     if row is None:
         return None
@@ -179,6 +186,7 @@ def _existing_source(conn, sha: str) -> dict | None:
 
 @router.post("/api/sources/upload")
 def upload_source(file: UploadFile = File(...), topic_code: str = Form(...),
+                  user_id: int = Depends(get_current_user),
                   conn=Depends(get_conn), ocr=Depends(get_ocr)):
     filename = os.path.basename(file.filename or "").strip()
     ext = os.path.splitext(filename)[1].lower()
@@ -191,12 +199,12 @@ def upload_source(file: UploadFile = File(...), topic_code: str = Form(...),
         )
 
     data = _read_capped(file)
-    topic_id = _topic_id(conn, topic_code)
+    topic_id = _topic_id(conn, user_id, topic_code)
 
     # Same dedupe key the pipeline uses, so re-uploading a photo the phone
     # already sent does not create a second source.
     sha = hashlib.sha256(data).hexdigest()
-    existing = _existing_source(conn, sha)
+    existing = _existing_source(conn, user_id, sha)
     if existing is not None:
         return existing
 
@@ -227,14 +235,14 @@ def upload_source(file: UploadFile = File(...), topic_code: str = Form(...),
         cur = conn.execute(
             "INSERT INTO sources (user_id, topic_id, filename, kind, sha256, added_at)"
             " VALUES (?,?,?,?,?,?)",
-            (USER_ID, topic_id, filename, file_kind(ext), sha, _now()),
+            (user_id, topic_id, filename, file_kind(ext), sha, _now()),
         )
     except sqlite3.IntegrityError:
         # A concurrent upload of the same file won the race between the check
         # above and this insert. A phone double-tapping Upload does exactly
         # that, and the promise is the same either way: one photo, one source.
         conn.rollback()
-        duplicate = _existing_source(conn, sha)
+        duplicate = _existing_source(conn, user_id, sha)
         if duplicate is None:
             raise
         return duplicate
@@ -304,7 +312,7 @@ def generate_for_source(conn, cfg: Config, client, *, source_id: int, topic_id: 
             _insert_card(conn, row["id"], topic_id, c, "rejected", reason, "learned")
             rejected += 1
         for c in kept:
-            _insert_card(conn, row["id"], topic_id, c, "pending", None,
+            _insert_card(conn, row["id"], topic_id, c, keep_state("upload"), None,
                          assign_arm(accepted))
             accepted += 1
 
@@ -347,18 +355,20 @@ def generate_for_source(conn, cfg: Config, client, *, source_id: int, topic_id: 
 
 
 @router.post("/api/sources/{source_id}/generate")
-def generate_source(source_id: int, conn=Depends(get_conn),
-                    cfg: Config = Depends(get_config),
+def generate_source(source_id: int, user_id: int = Depends(get_current_user),
+                    conn=Depends(get_conn), cfg: Config = Depends(get_config),
                     client=Depends(get_llm_client), embed=Depends(get_embed)):
     row = conn.execute(
         "SELECT id, topic_id FROM sources WHERE id = ? AND user_id = ?",
-        (source_id, USER_ID),
+        (source_id, user_id),
     ).fetchone()
     if row is None:
         raise HTTPException(status_code=404, detail=f"no source {source_id}")
 
+    check_daily_budget(conn, user_id)
     result = generate_for_source(conn, cfg, client, source_id=row["id"],
                                  topic_id=row["topic_id"], embed=embed)
+    record_spend(conn, user_id, result.cost_usd)
     return {"accepted": result.accepted, "rejected": result.rejected,
             "cost_usd": round(result.cost_usd, 6),
             "stopped_early": result.stopped_early}

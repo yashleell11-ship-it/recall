@@ -8,6 +8,7 @@
 
 import * as mock from "./mock";
 import type {
+  AuthUser,
   DecideAction,
   DecideResponse,
   Explanation,
@@ -44,6 +45,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
         ...(init?.body ? { "Content-Type": "application/json" } : {}),
         ...init?.headers,
       },
+      // The session cookie has to ride along. In production the page and the
+      // API share one origin, where fetch's default ("same-origin") would
+      // already send it; this exists for local dev, where the frontend and
+      // backend are on different ports and the default silently drops it.
+      credentials: "include",
       cache: "no-store",
     });
   } catch {
@@ -73,6 +79,42 @@ function qs(params: Record<string, string | number | undefined>): string {
   }
   const s = search.toString();
   return s ? `?${s}` : "";
+}
+
+/* --- auth ---------------------------------------------------------------- */
+
+/** GET /api/auth/me — 401 when there is no valid session. */
+export function getMe(): Promise<AuthUser> {
+  if (MOCK) return mock.getMe();
+  return request<AuthUser>("/api/auth/me");
+}
+
+/** POST /api/auth/register — 422 when the name or email is taken. */
+export function postRegister(
+  name: string,
+  email: string,
+  password: string,
+): Promise<AuthUser> {
+  if (MOCK) return mock.postRegister(name, email, password);
+  return request<AuthUser>("/api/auth/register", {
+    method: "POST",
+    body: JSON.stringify({ name, email, password }),
+  });
+}
+
+/** POST /api/auth/login — 401 for a wrong password OR an unknown email. */
+export function postLogin(email: string, password: string): Promise<AuthUser> {
+  if (MOCK) return mock.postLogin(email, password);
+  return request<AuthUser>("/api/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+/** POST /api/auth/logout */
+export function postLogout(): Promise<{ ok: true }> {
+  if (MOCK) return mock.postLogout();
+  return request<{ ok: true }>("/api/auth/logout", { method: "POST" });
 }
 
 /* --- endpoints ----------------------------------------------------------- */
@@ -247,6 +289,9 @@ export function uploadSource(
 
     const xhr = new XMLHttpRequest();
     xhr.open("POST", `${API_BASE}${path}`);
+    // Same reason as request()'s credentials: "include" — the session cookie
+    // has to survive local dev's cross-port setup.
+    xhr.withCredentials = true;
     xhr.setRequestHeader("Accept", "application/json");
 
     xhr.upload.addEventListener("progress", (e) => {
@@ -301,4 +346,21 @@ export function generateCards(sourceId: number): Promise<GenerateResponse> {
   return request<GenerateResponse>(`/api/sources/${sourceId}/generate`, {
     method: "POST",
   });
+}
+
+/**
+ * POST /api/topics/{code}/generate — cards for one syllabus unit with nothing
+ * uploaded. Same response shape as generateCards; also spends money, and 429s
+ * when the account is over its daily cap.
+ */
+export function generateFromKnowledge(
+  topicCode: string,
+  unit: number,
+  count?: number,
+): Promise<GenerateResponse> {
+  if (MOCK) return mock.generateFromKnowledge(topicCode, unit, count);
+  return request<GenerateResponse>(
+    `/api/topics/${encodeURIComponent(topicCode)}/generate`,
+    { method: "POST", body: JSON.stringify({ unit, ...(count ? { count } : {}) }) },
+  );
 }

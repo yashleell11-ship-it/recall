@@ -5,29 +5,16 @@ import os
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
+from recall.api.deps import get_conn, get_current_user
 from recall.config import load_config
-from recall.db import connect
 from recall.llm.client import DeepSeekClient, LlmResponse
 from recall.teach.explain import explain_card
-
-USER_ID = 1  # single user for now; every query already filters by it
 
 router = APIRouter()
 
 
 class ExplainIn(BaseModel):
     card_id: int
-
-
-def get_conn():
-    # Deliberately a second copy of the app's dependency rather than an import
-    # from recall.api.app: the app imports this router, so importing back would
-    # be a cycle. Same env var, same default, so both point at one database.
-    conn = connect(os.environ.get("RECALL_DB", "recall.db"))
-    try:
-        yield conn
-    finally:
-        conn.close()
 
 
 class DeferredClient:
@@ -62,10 +49,11 @@ def get_llm() -> tuple[object, str]:
 
 
 @router.post("/api/teach/explain")
-def explain(body: ExplainIn, conn=Depends(get_conn), llm=Depends(get_llm)):
+def explain(body: ExplainIn, user_id: int = Depends(get_current_user),
+           conn=Depends(get_conn), llm=Depends(get_llm)):
     client, model = llm
     try:
-        out = explain_card(conn, client, user_id=USER_ID, card_id=body.card_id,
+        out = explain_card(conn, client, user_id=user_id, card_id=body.card_id,
                            model=model)
     except LookupError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc

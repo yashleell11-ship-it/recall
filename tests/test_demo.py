@@ -29,7 +29,7 @@ def test_seed_covers_every_topic(tmp_path):
     codes = {r["code"] for r in conn.execute(
         "SELECT DISTINCT t.code FROM cards c JOIN topics t ON t.id=c.topic_id"
     ).fetchall()}
-    assert codes == {"MTH174", "CSE111", "INT108", "INT335", "CSE326"}
+    assert codes == {"MTH165", "CSE111", "INT108", "INT335", "CSE326"}
 
 
 def test_clear_removes_everything_it_added(tmp_path):

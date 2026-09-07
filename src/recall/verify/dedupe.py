@@ -28,14 +28,32 @@ def dedupe(
     cards: list[Candidate],
     embed=embed_texts,
     threshold: float = 0.90,
+    seed_texts: list[str] | None = None,
 ) -> tuple[list[Candidate], list[tuple[Candidate, str]]]:
+    """Drop near-duplicate questions.
+
+    `seed_texts` are questions that already exist and are not up for keeping —
+    a new card too close to one of them is dropped as a duplicate of it. The
+    upload path needs none, because a chunk is generated from exactly once;
+    knowledge mode does, because the same unit can be generated from again and
+    again and the model will happily rewrite what it already wrote.
+
+    Seeds and candidates are embedded in ONE call: the embedder is the
+    expensive part, and two calls would double it for no reason.
+    """
     if not cards:
         return [], []
-    vectors = embed([c.question for c in cards])
+    seeds = seed_texts or []
+    vectors = embed(seeds + [c.question for c in cards])
+    seed_vectors = list(vectors[: len(seeds)])
+    card_vectors = vectors[len(seeds):]
+
     kept: list[Candidate] = []
-    kept_vectors: list[np.ndarray] = []
+    # Seeds occupy the comparison set from the start but are never "kept" —
+    # they are already in the database.
+    kept_vectors: list[np.ndarray] = list(seed_vectors)
     dropped: list[tuple[Candidate, str]] = []
-    for card, vector in zip(cards, vectors):
+    for card, vector in zip(cards, card_vectors):
         match = next(
             (i for i, kv in enumerate(kept_vectors) if _cosine(vector, kv) >= threshold),
             None,
@@ -44,5 +62,7 @@ def dedupe(
             kept.append(card)
             kept_vectors.append(vector)
         else:
-            dropped.append((card, f"duplicate of: {kept[match].question}"))
+            prior = (seeds[match] if match < len(seeds)
+                     else kept[match - len(seeds)].question)
+            dropped.append((card, f"duplicate of: {prior}"))
     return kept, dropped

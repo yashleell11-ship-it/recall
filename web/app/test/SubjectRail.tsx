@@ -1,6 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
+import { useState } from "react";
+import { errorMessage, generateFromKnowledge } from "@/lib/api";
 import { Reveal } from "@/components/rich";
 import type { SubjectScheme, TestKind, Topic, TopicMeta } from "@/lib/types";
 
@@ -81,6 +84,75 @@ function chipsFor(meta: TopicMeta): Chip[] {
   return chips;
 }
 
+/* --- generating a unit with nothing uploaded --------------------------------
+
+   The other way into a deck. Upload is better — those cards are checked
+   against your own notes — so this is deliberately the quieter control: a
+   text button at the end of a unit row, not a call to action competing with
+   the paper chips. It spends money on a press, exactly like Generate on the
+   upload screen, so it says what it did and what it cost. */
+
+type GenState =
+  | { stage: "idle" }
+  | { stage: "busy" }
+  | { stage: "done"; accepted: number }
+  | { stage: "error"; message: string };
+
+function UnitGenerate({ topicCode, unit }: { topicCode: string; unit: number }) {
+  const [state, setState] = useState<GenState>({ stage: "idle" });
+
+  async function run() {
+    setState({ stage: "busy" });
+    try {
+      const res = await generateFromKnowledge(topicCode, unit);
+      setState({ stage: "done", accepted: res.accepted });
+    } catch (err) {
+      setState({ stage: "error", message: errorMessage(err) });
+    }
+  }
+
+  if (state.stage === "busy") {
+    return (
+      <span className="telemetry text-[10px] text-fg-3 shrink-0 pt-px">
+        writing…
+      </span>
+    );
+  }
+  if (state.stage === "done") {
+    return (
+      <Link
+        href="/approve"
+        className="telemetry text-[10px] text-fg-2 shrink-0 pt-px underline
+          underline-offset-2 hover:text-fg"
+      >
+        +{state.accepted} to approve
+      </Link>
+    );
+  }
+  if (state.stage === "error") {
+    return (
+      <span
+        className="telemetry text-[10px] shrink-0 pt-px"
+        style={{ color: "var(--g-again)" }}
+        title={state.message}
+      >
+        failed
+      </span>
+    );
+  }
+  return (
+    <button
+      onClick={run}
+      title={`Write practice cards for unit ${unit} from the model's own knowledge. Spends a little of your daily budget, and the cards land in the approve queue.`}
+      className="telemetry text-[10px] text-fg-3 shrink-0 pt-px
+        hover:text-fg-2 underline underline-offset-2
+        transition-colors duration-[120ms]"
+    >
+      generate
+    </button>
+  );
+}
+
 /* --- one subject ------------------------------------------------------------ */
 
 function SubjectCard({
@@ -148,7 +220,8 @@ function SubjectCard({
                 <span className="telemetry text-[10px] text-fg-3 w-4 shrink-0 pt-px">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="text-[12px] text-fg-2 leading-snug">{u}</span>
+                <span className="text-[12px] text-fg-2 leading-snug flex-1">{u}</span>
+                <UnitGenerate topicCode={topic.code} unit={i + 1} />
               </li>
             ))}
           </ol>

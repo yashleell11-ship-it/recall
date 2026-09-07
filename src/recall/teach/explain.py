@@ -1,9 +1,16 @@
-"""Grounded explanations of cards that were answered wrongly.
+"""Explanations of cards that were answered wrongly.
 
-Same discipline as the groundedness gate in recall.verify.judges: the model must
-cite verbatim and the citation is checked here, in Python. An explanation whose
-quote we cannot find in the source chunk is never shown — a fluent explanation of
-something the syllabus does not say is worse than no explanation at all.
+For an upload-grounded card this holds the same discipline as the groundedness
+gate in recall.verify.judges: the model must cite verbatim and the citation is
+checked here, in Python. An explanation whose quote we cannot find in the source
+chunk is never shown — a fluent explanation of something the syllabus does not
+say is worse than no explanation at all.
+
+A knowledge-mode card (`cards.origin = 'knowledge'`) has no passage behind it,
+so there is nothing to cite and nothing to check. Those are explained from the
+model's own knowledge and stored with an empty `source_quote`, which is how the
+client knows to show the explanation without a citation rather than pretending
+to one.
 
 Explanations are cached by card id. They cost money, and the cards a person keeps
 getting wrong are exactly the ones they will ask about again.
@@ -14,7 +21,12 @@ import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
-from recall.teach.prompts import EXPLAIN_SYSTEM, EXPLAIN_USER
+from recall.teach.prompts import (
+    EXPLAIN_KNOWLEDGE_SYSTEM,
+    EXPLAIN_KNOWLEDGE_USER,
+    EXPLAIN_SYSTEM,
+    EXPLAIN_USER,
+)
 
 
 @dataclass(frozen=True)
@@ -47,8 +59,8 @@ def _loads(raw: str) -> dict | None:
 
 def _card_row(conn, user_id: int, card_id: int):
     return conn.execute(
-        "SELECT c.id, c.question, c.answer, ch.text AS chunk_text, ch.page_ref,"
-        " t.code AS topic_code"
+        "SELECT c.id, c.question, c.answer, c.origin, ch.text AS chunk_text,"
+        " ch.page_ref, t.code AS topic_code"
         " FROM cards c"
         " JOIN chunks ch ON ch.id = c.chunk_id"
         " JOIN topics t ON t.id = c.topic_id"
@@ -85,23 +97,45 @@ def explain_card(conn, client, *, user_id: int, card_id: int,
     if hit is not None:
         return hit
 
-    resp = client.complete_json(
-        EXPLAIN_SYSTEM,
-        EXPLAIN_USER.format(text=card["chunk_text"], question=card["question"],
-                            answer=card["answer"]),
-    )
+    # A knowledge-mode card has no passage: its "chunk" holds a unit name, not
+    # source text. Asking for a quote and then checking it would be theatre —
+    # the only honest options are to refuse to teach these cards at all, or to
+    # teach them without the citation and say so. This does the latter, and
+    # the empty source_quote is what the client keys off to say so on screen.
+    knowledge = card["origin"] == "knowledge"
+    if knowledge:
+        resp = client.complete_json(
+            EXPLAIN_KNOWLEDGE_SYSTEM,
+            EXPLAIN_KNOWLEDGE_USER.format(topic_code=card["topic_code"],
+                                          question=card["question"],
+                                          answer=card["answer"]),
+        )
+    else:
+        resp = client.complete_json(
+            EXPLAIN_SYSTEM,
+            EXPLAIN_USER.format(text=card["chunk_text"], question=card["question"],
+                                answer=card["answer"]),
+        )
     data = _loads(resp.content)
     if data is None:
         raise ValueError("the explanation model returned unusable output")
 
-    explanation, quote = data.get("explanation"), data.get("quote")
-    if not isinstance(explanation, str) or not isinstance(quote, str):
+    explanation = data.get("explanation")
+    if not isinstance(explanation, str):
         raise ValueError("the explanation model returned unusable output")
-    explanation, quote = explanation.strip(), quote.strip()
+    explanation = explanation.strip()
     if not explanation:
         raise ValueError("the explanation model returned an empty explanation")
-    if not quote or _normalize(quote) not in _normalize(card["chunk_text"]):
-        raise ValueError("cited quote does not appear in the source passage")
+
+    if knowledge:
+        quote = ""
+    else:
+        quote = data.get("quote")
+        if not isinstance(quote, str):
+            raise ValueError("the explanation model returned unusable output")
+        quote = quote.strip()
+        if not quote or _normalize(quote) not in _normalize(card["chunk_text"]):
+            raise ValueError("cited quote does not appear in the source passage")
 
     conn.execute(
         "INSERT INTO card_explanations (card_id, explanation, source_quote, model,"

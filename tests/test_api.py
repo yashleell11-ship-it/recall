@@ -4,6 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from recall.api.app import create_app, get_conn
+from recall.api.deps import get_current_user
 from recall.db import connect, init_db
 
 
@@ -47,6 +48,7 @@ def client(db_path):
             c.close()
 
     app.dependency_overrides[get_conn] = override
+    app.dependency_overrides[get_current_user] = lambda: 1
     return TestClient(app)
 
 
@@ -374,8 +376,8 @@ def test_topics_carry_lpu_meta_when_seeded(client, db_path):
     conn.close()
 
     topics = client.get("/api/topics").json()
-    mth = next(t for t in topics if t["code"] == "MTH174")
-    assert mth["meta"]["full_name"] == "Engineering Mathematics"
+    mth = next(t for t in topics if t["code"] == "MTH165")
+    assert mth["meta"]["full_name"] == "Mathematics for Engineers"
     assert len(mth["meta"]["units"]) == 6
     assert mth["meta"]["scheme"]["ete"] == 50
     int108 = next(t for t in topics if t["code"] == "INT108")

@@ -8,15 +8,15 @@ SAMPLE_SOURCE = "sample-data (not from your syllabus)"
 
 # (topic_code, kind, question, answer, cloze_text)
 SAMPLE_CARDS: list[tuple[str, str, str, str, str | None]] = [
-    ("MTH174", "qa", "What two conditions does Rolle's theorem require on [a, b]?",
+    ("MTH165", "qa", "What two conditions does Rolle's theorem require on [a, b]?",
      "Continuous on [a, b] and differentiable on (a, b), with f(a) = f(b)", None),
-    ("MTH174", "cloze", "Derivative of sin x", "cos x",
+    ("MTH165", "cloze", "Derivative of sin x", "cos x",
      "The derivative of sin x with respect to x is {{c1::cos x}}."),
-    ("MTH174", "qa", "When is a square matrix invertible?",
+    ("MTH165", "qa", "When is a square matrix invertible?",
      "Exactly when its determinant is non-zero", None),
-    ("MTH174", "cloze", "Rank-nullity theorem", "rank(A) + nullity(A) = n",
+    ("MTH165", "cloze", "Rank-nullity theorem", "rank(A) + nullity(A) = n",
      "For an m x n matrix A, {{c1::rank(A) + nullity(A) = n}}."),
-    ("MTH174", "qa", "What does L'Hopital's rule apply to?",
+    ("MTH165", "qa", "What does L'Hopital's rule apply to?",
      "Limits of indeterminate form 0/0 or infinity/infinity", None),
 
     ("CSE111", "qa", "What does the sizeof operator return for an array in C?",

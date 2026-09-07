@@ -12,6 +12,11 @@ def connect(db_path: str) -> sqlite3.Connection:
     conn = sqlite3.connect(db_path, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
+    # Open registration is the first thing that makes concurrent writers a
+    # real scenario (one implicit user never contended). Without this, a
+    # second request landing mid-write gets "database is locked" instead of
+    # just waiting the ~instant it takes the first to finish.
+    conn.execute("PRAGMA busy_timeout = 5000")
     return conn
 
 
@@ -70,6 +75,35 @@ def _migrate(conn: sqlite3.Connection) -> None:
     cols = {r["name"] for r in conn.execute("PRAGMA table_info(topics)").fetchall()}
     if cols and "meta" not in cols:
         conn.execute("ALTER TABLE topics ADD COLUMN meta TEXT")
+
+    # cards.origin (2026-09-07, knowledge mode). SQLite cannot add a CHECK to
+    # an EXISTING column, but it can add a NEW column that carries one, so this
+    # needs no table rebuild — unlike the tests.kind change below. The DEFAULT
+    # backfills every existing row as 'upload', which is exactly what they are.
+    card_cols = {r["name"] for r in conn.execute("PRAGMA table_info(cards)").fetchall()}
+    if card_cols and "origin" not in card_cols:
+        conn.execute(
+            "ALTER TABLE cards ADD COLUMN origin TEXT NOT NULL DEFAULT 'upload'"
+            " CHECK (origin IN ('upload','knowledge'))"
+        )
+    if card_cols:
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_cards_origin ON cards(origin)")
+
+    # users.email/password_hash/created_at (2026-09-07, open registration).
+    # No CHECK constraint on any of these, so a plain ADD COLUMN is legal SQL
+    # — unlike the tests.kind CHECK below, this needs no table rebuild.
+    user_cols = {r["name"] for r in conn.execute("PRAGMA table_info(users)").fetchall()}
+    if user_cols and "email" not in user_cols:
+        conn.execute("ALTER TABLE users ADD COLUMN email TEXT")
+        conn.execute("ALTER TABLE users ADD COLUMN password_hash TEXT")
+        conn.execute("ALTER TABLE users ADD COLUMN created_at TEXT")
+    # Unconditional and idempotent: covers both a database that just gained
+    # the email column above and a fresh one where schema.sql's CREATE TABLE
+    # already had it — schema.sql itself can't create this index, since it
+    # runs before the ALTER above on any pre-existing database (see the
+    # comment on the users table there).
+    if user_cols:
+        conn.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON users(email)")
 
     # tests.kind CHECK gained 'mte40'. SQLite cannot alter a CHECK, so rebuild —
     # and the ORDER MATTERS: renaming the OLD table away rewrites every foreign

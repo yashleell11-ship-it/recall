@@ -18,7 +18,7 @@ def test_init_creates_the_lpu_subjects(tmp_path):
     assert cmd_init(build_parser().parse_args(["init"]), cfg) == 0
     codes = {r["code"] for r in connect(cfg.db_path)
              .execute("SELECT code FROM topics").fetchall()}
-    assert codes == {"MTH174", "CSE111", "INT108", "INT335", "CSE326"}
+    assert codes == {"MTH165", "CSE111", "INT108", "INT335", "CSE326"}
 
 
 def test_init_is_idempotent(tmp_path):

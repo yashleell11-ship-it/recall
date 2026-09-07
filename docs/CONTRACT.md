@@ -54,10 +54,27 @@ def interval_days(stability: float, desired_retention: float) -> float
 
 Grades: 1=again, 2=hard, 3=good, 4=easy.
 
+## Authentication
+
+Open registration — no invite code, no email verification. A session is an
+HttpOnly, Secure, SameSite=Lax cookie (`recall_session`) holding an opaque
+token; the server stores only its SHA-256 hash (`sessions` table). Every
+route below `## HTTP API` requires this cookie and resolves it to a
+`user_id` via `Depends(get_current_user)` — a request with no cookie, or an
+expired/unknown one, gets `401 {"detail": "..."}`.
+
+| Method | Path | Request | Response |
+|---|---|---|---|
+| POST | `/api/auth/register` | `{name, email, password}` (password ≥ 8 chars) | `{id, name, email}` + sets the session cookie. Also seeds the full LPU topic catalog and default settings for the new account — a signup is immediately usable. `422` on a taken name/email. |
+| POST | `/api/auth/login` | `{email, password}` | `{id, name, email}` + sets the session cookie. `401` for either an unknown email or a wrong password — deliberately the same error, to avoid an account-enumeration oracle. |
+| POST | `/api/auth/logout` | — | `{ok: true}`, clears the cookie and deletes the session row. |
+| GET | `/api/auth/me` | — | `{id, name, email}` for the current session, or `401`. |
+
 ## HTTP API — FastAPI, mounted at `/api`
 
-Single user for now (`user_id = 1`), but every query filters by user_id so multi-user
-is a config change, not a rewrite.
+Every table and query is scoped by `user_id`, resolved per-request from the
+session cookie above — this is a real multi-user app, not a single-owner one
+with a placeholder constant.
 
 | Method | Path | Request | Response |
 |---|---|---|---|
@@ -66,6 +83,7 @@ is a config change, not a rewrite.
 | POST | `/api/review` | `{card_id, grade}` | `{card_id, interval_days, due_at, stability, difficulty}` |
 | GET | `/api/pending` | `?limit=&offset=&topic=` | `{cards: [PendingCard], total}` |
 | POST | `/api/pending/decide` | `{ids: [int], action: "approve"\|"reject"}` | `{updated}` |
+| POST | `/api/cards/{id}/suspend` | — | `{ok, card_id, state}` — drops a card out of the queue and every paper without deleting it, so reviews already recorded against it still count toward the scheduler fit. `404` when the card is not yours. |
 | GET | `/api/settings` | — | `{new_cards_per_day, daily_review_cap, desired_retention}` |
 | PUT | `/api/settings` | any subset | full settings |
 | GET | `/api/stats` | — | `{today: {reviewed, again, streak}, by_topic: [...], last_14_days: [{date, count}], totals: {active, pending, sources}}` |
@@ -73,10 +91,20 @@ is a config change, not a rewrite.
 
 ```
 QueueCard   = {id, kind, question, answer, cloze_text, topic_code, page_ref, is_new,
-               stability, difficulty, elapsed_days}
+               stability, difficulty, elapsed_days, origin}
               stability/difficulty are null for new cards. They travel with the card so
               the client can price each grade button exactly rather than estimating.
-PendingCard = {id, kind, question, answer, cloze_text, topic_code, page_ref, source_filename}
+PendingCard = {id, kind, question, answer, cloze_text, topic_code, page_ref,
+               source_filename, origin}
+origin      = "upload" | "knowledge"
+              "upload"    — grounded: a verbatim quote from an uploaded file was
+                            checked, in Python, before the card was kept.
+              "knowledge" — written from the model's own knowledge of a syllabus
+                            unit. No source exists to check it against, so the
+                            grounding and closed-book gates did not run.
+              The client MUST show the difference. The violet "AI" mark cannot
+              carry it: every card in the app is model-authored, so that mark is
+              true of both. A second, uncoloured "no source" mark carries it.
 ```
 
 Queue ordering: due cards first (oldest due first), then new cards up to
@@ -225,3 +253,53 @@ screenshots work well. **Handwriting works badly** — that is a real limitation
 CPU OCR, not a bug, and the response carries a `warning` when extracted text looks too
 sparse for the image size. OCR sits behind a single `extract_text_from_image(path)`
 function so a vision-capable API can replace it later without touching anything else.
+
+## Knowledge mode — cards with nothing uploaded
+
+| Method | Path | Request | Response |
+|---|---|---|---|
+| POST | `/api/topics/{code}/generate` | `{unit, count?}` (`unit` is 1-based; `count` ≤ 25, default 12) | `{accepted, rejected, cost_usd, stopped_early}` — the same shape as upload generation |
+
+Writes cards for one syllabus unit from the model's own knowledge, for the case
+where the student has uploaded nothing. `422` when the topic carries no unit
+metadata or the unit number is past the end of the syllabus; `404` when the
+topic is not yours; `429` when the account is over its daily spend cap.
+
+**What is deliberately given up.** The upload path runs five gates; this path
+runs three. `check_grounded` cannot run — there is no passage to quote — and
+`check_closed_book` is meaningless here, since its whole job is to reject cards
+answerable without a source, which is what these are by construction.
+`check_answerable`, `check_atomic` and semantic dedup all still run.
+
+**Where a surviving card lands depends on how thoroughly it was checked**
+(`pipeline.keep_state`). An upload-grounded card cleared five gates including
+a Python-verified verbatim quote, so it goes straight into rotation
+(`state = 'active'`) — making someone read thirty verified cards before they
+can study is judgement exercised at the moment they have the least
+information, and a bad one is caught in review anyway: graded `again`,
+surfaced as a leech, suspended with one press
+(`POST /api/cards/{id}/suspend`).
+
+A knowledge-mode card cleared three, and the two it skipped are exactly the
+ones that check it against reality. It still lands `pending`, because the
+approval queue is the only gate it has left.
+
+Dedup for this path is seeded with the questions already on the unit. Uploaded
+chunks generate exactly once, so repeats are impossible there; this button can
+be pressed all day against the same unit, and without the seed a second press
+would re-add what the first one wrote.
+
+The chunk foreign key is satisfied by a synthetic per-topic source
+(`sources.kind = 'knowledge'`) and one chunk per unit, not by a nullable
+`chunk_id`: seven read paths inner-join `chunks`, so a null there would
+silently drop these cards from the review queue, test assembly, teaching, the
+CLI and the Anki export.
+
+## Spend limits
+
+`RECALL_MAX_COST_USD` caps a single generation run. That was sufficient while
+one person owned the instance. With open registration it is not — nothing
+bounded how many runs one account started — so
+`RECALL_MAX_COST_USD_PER_USER_PER_DAY` (default `1.00`) caps what one account
+may spend in a UTC day, tracked in `usage_daily` and checked at the top of
+**both** generation endpoints before any paid call. Over the cap is `429`.

@@ -1,8 +1,40 @@
 PRAGMA journal_mode=WAL;
 
 CREATE TABLE IF NOT EXISTS users (
-  id   INTEGER PRIMARY KEY,
-  name TEXT NOT NULL UNIQUE
+  id            INTEGER PRIMARY KEY,
+  name          TEXT NOT NULL UNIQUE,
+  email         TEXT,
+  password_hash TEXT,
+  created_at    TEXT
+);
+-- The unique index on email is created in db.py's _migrate(), not here: this
+-- script runs (via executescript) BEFORE _migrate() adds the email column to
+-- a pre-existing users table, and CREATE TABLE IF NOT EXISTS is a no-op on a
+-- table that already exists — so an index statement here would fail with
+-- "no such column: email" on any database older than this change.
+
+-- Open registration: one row per logged-in session, looked up by the hash of
+-- the opaque token in the "recall_session" cookie — the raw token is never
+-- stored, so a copy of this database alone can't be used to impersonate
+-- anyone. DB-backed rather than JWT: revocation (logout, killing an abusive
+-- account) is a DELETE, and there's no signing secret to protect or rotate.
+CREATE TABLE IF NOT EXISTS sessions (
+  token_hash TEXT PRIMARY KEY,
+  user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL,
+  expires_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
+
+-- Per-user, per-day DeepSeek spend, so open registration can't run up the
+-- shared API budget: one row summed and checked before any generation call,
+-- upload-grounded or knowledge-mode alike.
+CREATE TABLE IF NOT EXISTS usage_daily (
+  user_id  INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  day      TEXT NOT NULL,  -- YYYY-MM-DD, UTC
+  cost_usd REAL NOT NULL DEFAULT 0.0,
+  PRIMARY KEY (user_id, day)
 );
 
 CREATE TABLE IF NOT EXISTS settings (
@@ -53,10 +85,19 @@ CREATE TABLE IF NOT EXISTS cards (
   arm           TEXT NOT NULL CHECK (arm IN ('learned','baseline')),
   state         TEXT NOT NULL CHECK (state IN ('pending','active','suspended','rejected')),
   reject_reason TEXT,
-  created_at    TEXT NOT NULL
+  created_at    TEXT NOT NULL,
+  -- 'upload'    = grounded in a verbatim quote from a file you uploaded.
+  -- 'knowledge' = written from the model's own knowledge of a syllabus unit,
+  --               with no source to check it against. The UI must say which,
+  --               because the two carry very different warranties.
+  origin        TEXT NOT NULL DEFAULT 'upload'
+                CHECK (origin IN ('upload','knowledge'))
 );
 CREATE INDEX IF NOT EXISTS idx_cards_state ON cards(state);
 CREATE INDEX IF NOT EXISTS idx_cards_topic ON cards(topic_id);
+-- idx_cards_origin is created in db.py's _migrate(), for the same reason as
+-- idx_users_email: this script runs before the ALTER that adds the column to
+-- a pre-existing table, and indexing a column that is not there yet fails.
 
 CREATE TABLE IF NOT EXISTS gen_runs (
   id                INTEGER PRIMARY KEY,

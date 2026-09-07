@@ -90,9 +90,9 @@ SELECT
   ch.source_id   AS source_id,
   ch.ordinal     AS ordinal
 FROM cards c
-LEFT JOIN topics t ON t.id = c.topic_id
+JOIN topics t ON t.id = c.topic_id
 LEFT JOIN chunks ch ON ch.id = c.chunk_id
-WHERE c.state = 'active'
+WHERE c.state = 'active' AND t.user_id = ?
 """
 
 _ORDER = " ORDER BY t.code, ch.source_id, ch.ordinal, c.id"
@@ -138,22 +138,28 @@ def _note_for(row: sqlite3.Row) -> genanki.Note:
     )
 
 
-def export_apkg(conn, out_path: str, topic_code: str | None = None) -> int:
-    """Write active cards to an Anki package at ``out_path``.
+def export_apkg(conn, out_path: str, user_id: int,
+                topic_code: str | None = None) -> int:
+    """Write one user's active cards to an Anki package at ``out_path``.
 
     Only cards with ``state = 'active'`` are exported — pending, rejected and
     suspended cards never leave the database.
 
+    ``user_id`` is required rather than defaulted: this function writes a file
+    to disk, and a forgotten default here would quietly package every account's
+    cards into it.
+
     :param conn: sqlite3.Connection with ``row_factory = sqlite3.Row``.
     :param out_path: destination ``.apkg`` path.
+    :param user_id: whose deck to export.
     :param topic_code: export a single topic, or every topic when ``None``.
     :returns: the number of notes written (0 is a valid, importable package).
     """
     if topic_code is None:
-        rows = conn.execute(_SELECT + _ORDER).fetchall()
+        rows = conn.execute(_SELECT + _ORDER, (user_id,)).fetchall()
     else:
         rows = conn.execute(
-            _SELECT + " AND t.code = ?" + _ORDER, (topic_code,)
+            _SELECT + " AND t.code = ?" + _ORDER, (user_id, topic_code)
         ).fetchall()
 
     deck_name = _deck_name(topic_code)

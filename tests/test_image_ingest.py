@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 from PIL import Image
 
 from recall.api import upload_routes
+from recall.api.deps import get_current_user
 from recall.config import load_config
 from recall.db import connect, init_db
 from recall.ingest.image import (
@@ -121,6 +122,7 @@ def client(db_path, tmp_path, monkeypatch, ocr, llm):
     app.dependency_overrides[upload_routes.get_llm_client] = lambda: llm
     app.dependency_overrides[upload_routes.get_embed] = lambda: orthogonal_embed
     app.dependency_overrides[upload_routes.get_ocr] = lambda: ocr
+    app.dependency_overrides[get_current_user] = lambda: 1
     return TestClient(app)
 
 
@@ -440,7 +442,7 @@ def generating_client(client, question, answer, quote):
     return client
 
 
-def test_generate_turns_an_uploaded_photo_into_pending_cards(client, db_path):
+def test_generate_turns_an_uploaded_photo_into_active_cards(client, db_path):
     source_id = upload(client, "notes.png", image_bytes()).json()["source_id"]
     generating_client(client, "What do pointers store in C?", "memory addresses",
                       "Pointers store memory addresses in C.")
@@ -450,7 +452,7 @@ def test_generate_turns_an_uploaded_photo_into_pending_cards(client, db_path):
     assert body["cost_usd"] > 0
     card = query(db_path, "SELECT c.state, ch.page_ref FROM cards c"
                           " JOIN chunks ch ON ch.id = c.chunk_id")[0]
-    assert card["state"] == "pending"
+    assert card["state"] == "active"
     assert card["page_ref"] == "p1"
 
 

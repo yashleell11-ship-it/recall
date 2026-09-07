@@ -41,12 +41,39 @@ def _cost(cfg: Config, prompt_tokens: int, completion_tokens: int) -> float:
     ) * cfg.price_output_per_mtok
 
 
-def _insert_card(conn, chunk_id, topic_id, c: Candidate, state, reason, arm) -> None:
+_ORIGINS = ("upload", "knowledge")
+
+
+def keep_state(origin: str) -> str:
+    """What a surviving card is worth on the way in — and it depends on how
+    thoroughly it was checked.
+
+    An upload-grounded card cleared five gates, including one that made the
+    model quote the source verbatim and then checked that quote in Python. It
+    has earned its way straight into rotation; making someone read thirty of
+    those before they can study is work done at the moment they have the least
+    information, and a bad one is caught in review anyway — graded 'again',
+    surfaced as a leech, suspended with one key.
+
+    A knowledge-mode card cleared three, and the two it skipped are precisely
+    the ones that check it against reality. Nothing has verified it. So that
+    one still stops at the approval queue, which is the only check it has.
+    """
+    return "pending" if origin == "knowledge" else "active"
+
+
+def _insert_card(conn, chunk_id, topic_id, c: Candidate, state, reason, arm,
+                 origin: str = "upload") -> None:
+    """`origin` defaults to 'upload' so every existing call site is unchanged;
+    only recall.generate.knowledge passes anything else."""
+    if origin not in _ORIGINS:
+        raise ValueError(f"origin must be one of {_ORIGINS}")
     conn.execute(
         "INSERT INTO cards (chunk_id, topic_id, kind, question, answer, cloze_text,"
-        " arm, state, reject_reason, created_at) VALUES (?,?,?,?,?,?,?,?,?,?)",
+        " arm, state, reject_reason, created_at, origin)"
+        " VALUES (?,?,?,?,?,?,?,?,?,?,?)",
         (chunk_id, topic_id, c.kind, c.question, c.answer, c.cloze_text,
-         arm, state, reason, _now()),
+         arm, state, reason, _now(), origin),
     )
 
 
@@ -116,7 +143,7 @@ def ingest_source(conn, cfg: Config, client, *, user_id: int, topic_id: int,
             _insert_card(conn, row["id"], topic_id, c, "rejected", reason, "learned")
             rejected += 1
         for c in kept:
-            _insert_card(conn, row["id"], topic_id, c, "pending", None,
+            _insert_card(conn, row["id"], topic_id, c, keep_state("upload"), None,
                          assign_arm(accepted))
             accepted += 1
 

@@ -104,7 +104,7 @@ def conn(tmp_path):
 
 def test_exports_only_active_cards(conn, tmp_path):
     out = tmp_path / "all.apkg"
-    n = export_apkg(conn, str(out))
+    n = export_apkg(conn, str(out), 1)
 
     active = conn.execute(
         "SELECT COUNT(*) FROM cards WHERE state = 'active'"
@@ -121,14 +121,14 @@ def test_exports_only_active_cards(conn, tmp_path):
 
 def test_output_is_a_valid_zip(conn, tmp_path):
     out = tmp_path / "all.apkg"
-    export_apkg(conn, str(out))
+    export_apkg(conn, str(out), 1)
     assert out.exists()
     assert zipfile.is_zipfile(str(out))
 
 
 def test_topic_filter_selects_only_that_topic(conn, tmp_path):
     out = tmp_path / "cse.apkg"
-    n = export_apkg(conn, str(out), topic_code="CSE111")
+    n = export_apkg(conn, str(out), 1, topic_code="CSE111")
     assert n == 3
 
     notes = read_notes(out)
@@ -137,19 +137,19 @@ def test_topic_filter_selects_only_that_topic(conn, tmp_path):
     assert "homeostasis" not in blob
 
     out_bio = tmp_path / "bio.apkg"
-    assert export_apkg(conn, str(out_bio), topic_code="BIO204") == 1
+    assert export_apkg(conn, str(out_bio), 1, topic_code="BIO204") == 1
 
 
 def test_unknown_topic_exports_nothing_but_still_writes(conn, tmp_path):
     out = tmp_path / "nope.apkg"
-    assert export_apkg(conn, str(out), topic_code="NOSUCH") == 0
+    assert export_apkg(conn, str(out), 1, topic_code="NOSUCH") == 0
     assert zipfile.is_zipfile(str(out))
     assert read_notes(out) == []
 
 
 def test_cloze_markup_survives_into_the_package(conn, tmp_path):
     out = tmp_path / "all.apkg"
-    export_apkg(conn, str(out))
+    export_apkg(conn, str(out), 1)
 
     notes = read_notes(out)
     cloze_notes = [n for n in notes if "{{c1::" in n["fields"][0]]
@@ -164,7 +164,7 @@ def test_cloze_markup_survives_into_the_package(conn, tmp_path):
 def test_cloze_note_generates_a_card_per_deletion(conn, tmp_path):
     """{{c1}} and {{c2}} must become two Anki cards, not one."""
     out = tmp_path / "all.apkg"
-    export_apkg(conn, str(out))
+    export_apkg(conn, str(out), 1)
 
     with zipfile.ZipFile(out) as zf:
         raw = zf.read("collection.anki2")
@@ -186,7 +186,7 @@ def test_cloze_note_generates_a_card_per_deletion(conn, tmp_path):
 
 def test_source_field_carries_topic_code_and_page_ref(conn, tmp_path):
     out = tmp_path / "all.apkg"
-    export_apkg(conn, str(out))
+    export_apkg(conn, str(out), 1)
 
     notes = read_notes(out)
     qa = [n for n in notes if n["fields"][0] == "What is a TLB?"]
@@ -209,7 +209,7 @@ def test_empty_database_still_produces_a_valid_package(tmp_path):
     init_db(conn)
     out = tmp_path / "empty.apkg"
 
-    assert export_apkg(conn, str(out)) == 0
+    assert export_apkg(conn, str(out), 1) == 0
     assert zipfile.is_zipfile(str(out))
     assert read_notes(out) == []
 
@@ -219,18 +219,18 @@ def test_no_active_cards_still_produces_a_valid_package(conn, tmp_path):
     conn.commit()
     out = tmp_path / "none.apkg"
 
-    assert export_apkg(conn, str(out)) == 0
+    assert export_apkg(conn, str(out), 1) == 0
     assert zipfile.is_zipfile(str(out))
     assert read_notes(out) == []
 
 
 def test_deck_is_nested_under_recall(conn, tmp_path):
     all_out = tmp_path / "all.apkg"
-    export_apkg(conn, str(all_out))
+    export_apkg(conn, str(all_out), 1)
     assert "Recall::All" in read_deck_names(all_out)
 
     topic_out = tmp_path / "cse.apkg"
-    export_apkg(conn, str(topic_out), topic_code="CSE111")
+    export_apkg(conn, str(topic_out), 1, topic_code="CSE111")
     assert "Recall::CSE111" in read_deck_names(topic_out)
 
 
@@ -239,8 +239,8 @@ def test_note_identity_is_stable_across_exports(conn, tmp_path):
     same card => same guid and same note type id, every time."""
     first = tmp_path / "first.apkg"
     second = tmp_path / "second.apkg"
-    export_apkg(conn, str(first))
-    export_apkg(conn, str(second))
+    export_apkg(conn, str(first), 1)
+    export_apkg(conn, str(second), 1)
 
     def identity(path):
         return sorted((n["guid"], n["mid"]) for n in read_notes(path))

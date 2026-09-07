@@ -50,6 +50,14 @@ export interface Topic {
   meta?: TopicMeta | null;
 }
 
+/**
+ * Where a card came from. 'upload' is grounded in a verbatim quote from a file
+ * the student uploaded; 'knowledge' was written from the model's own knowledge
+ * of a syllabus unit, with no source to check it against. The UI must show the
+ * difference — the two carry very different warranties.
+ */
+export type CardOrigin = "upload" | "knowledge";
+
 export interface QueueCard {
   id: number;
   kind: CardKind;
@@ -59,6 +67,8 @@ export interface QueueCard {
   topic_code: string;
   page_ref: string;
   is_new: boolean;
+  /** OPTIONAL / ADDITIVE: absent on servers older than knowledge mode. */
+  origin?: CardOrigin;
   /**
    * OPTIONAL / ADDITIVE. Present in `card_state` server-side. When the API
    * includes them the grade buttons show exact intervals; otherwise they show
@@ -101,6 +111,8 @@ export interface PendingCard {
   topic_code: string;
   page_ref: string;
   source_filename: string;
+  /** OPTIONAL / ADDITIVE: absent on servers older than knowledge mode. */
+  origin?: CardOrigin;
 }
 
 /** GET /api/pending */
@@ -275,4 +287,13 @@ export interface GenerateResponse {
   rejected: number;
   cost_usd: number;
   stopped_early: boolean;
+}
+
+/* --- auth ---------------------------------------------------------------- */
+
+/** GET /api/auth/me, POST /api/auth/register, POST /api/auth/login */
+export interface AuthUser {
+  id: number;
+  name: string;
+  email: string;
 }

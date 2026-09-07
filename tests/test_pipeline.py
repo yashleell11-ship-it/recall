@@ -58,7 +58,8 @@ def test_accepted_card_is_persisted_with_traceability(conn, tmp_path):
         "SELECT c.state, c.topic_id, ch.page_ref FROM cards c "
         "JOIN chunks ch ON ch.id = c.chunk_id"
     ).fetchone()
-    assert row["state"] == "pending"
+    # Straight into rotation: triage moved out of the way of daily use.
+    assert row["state"] == "active"
     assert row["topic_id"] == 1
     assert row["page_ref"] == "p1"
 

@@ -11,10 +11,11 @@ import {
   useRef,
   useState,
 } from "react";
-import { MOCK } from "@/lib/api";
+import { getMe, MOCK, postLogout } from "@/lib/api";
 import { hasModifier, isTypingTarget } from "@/lib/keys";
 import { buildDefaultActions } from "@/lib/palette";
 import { useSkin } from "@/lib/skin";
+import type { AuthUser } from "@/lib/types";
 import { CommandPalette, ToastProvider, useToast } from "./rich";
 import { ShortcutsOverlay } from "./Shortcuts";
 import { ThemeToggle, useThemeMode } from "./ThemeToggle";
@@ -40,6 +41,9 @@ const GOTO: Record<string, string> = {
   o: "/sources",
   s: "/settings",
 };
+
+/** The only screens that render without a session. */
+const PUBLIC_ROUTES = new Set(["/login", "/signup"]);
 
 const FocusContext = createContext<((on: boolean) => void) | null>(null);
 
@@ -83,6 +87,41 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
   const activeNav = useRef<HTMLAnchorElement>(null);
 
   const closeHelp = useCallback(() => setHelp(false), []);
+
+  /* --- session ----------------------------------------------------------
+     Every page here is a client component that fetches its own data, so the
+     gate lives here rather than in Next middleware: one check, one place,
+     no new machinery. `user` is fetched only while it is null, so ordinary
+     navigation costs nothing — but the fetch does re-run after a login,
+     which lands on "/" with the state still empty. */
+  const isPublic = PUBLIC_ROUTES.has(pathname);
+  const [user, setUser] = useState<AuthUser | null>(null);
+
+  useEffect(() => {
+    if (isPublic || user) return;
+    let cancelled = false;
+    getMe()
+      .then((me) => {
+        if (!cancelled) setUser(me);
+      })
+      .catch(() => {
+        // A hard navigation, not router.replace: crossing an identity
+        // boundary should drop every scrap of the previous session's client
+        // state and RSC cache rather than carry it into the next one.
+        if (!cancelled) window.location.replace("/login");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isPublic, user]);
+
+  const signOut = useCallback(async () => {
+    try {
+      await postLogout();
+    } finally {
+      window.location.replace("/login");
+    }
+  }, []);
 
   // The palette names theme states outright; the store only knows how to
   // cycle. Stepping the cycle the right number of times keeps the store —
@@ -187,6 +226,29 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
   // progress claims the same treatment for as long as it is being sat.
   const focus = pathname === "/review" || claimed;
 
+  // /login and /signup render themselves, with none of the shell around them.
+  if (isPublic) {
+    return (
+      <>
+        <div aria-hidden="true" className="grain" />
+        {children}
+      </>
+    );
+  }
+
+  // Nothing gated paints before the session is known — a flash of someone
+  // else's dashboard shape, however brief, is worse than a blank moment.
+  if (!user) {
+    return (
+      <>
+        <div aria-hidden="true" className="grain" />
+        <div className="min-h-[100dvh] grid place-items-center">
+          <p className="telemetry text-[11px] text-fg-3">signing in…</p>
+        </div>
+      </>
+    );
+  }
+
   return (
     <FocusContext.Provider value={setClaimed}>
       <div aria-hidden="true" className="grain" />
@@ -255,6 +317,17 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
                 className="hidden sm:block"
               >
                 <Kbd>?</Kbd>
+              </button>
+              <button
+                onClick={signOut}
+                title={`Signed in as ${user.name} — sign out`}
+                aria-label={`Signed in as ${user.name}. Sign out.`}
+                className="h-6 px-1.5 rounded-xs border border-transparent
+                  hover:border-line text-[10px] font-medium tracking-[0.12em]
+                  text-fg-3 hover:text-fg-2 transition-colors duration-[90ms]"
+                style={{ fontFamily: "var(--font-mono)" }}
+              >
+                SIGN OUT
               </button>
             </div>
           </div>
