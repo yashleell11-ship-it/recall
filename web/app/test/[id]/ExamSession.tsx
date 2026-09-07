@@ -893,21 +893,30 @@ export function ExamSession({ id }: { id: number }) {
                 <h1 className="k-question">{question.question}</h1>
               )}
 
-              {isRevealed && (!solved || !answerIsRedundant) && (
+              {isRevealed && (!solved || !answerIsRedundant || question.detail) && (
                 <div className="mt-6 pt-5 border-t border-line anim-reveal">
-                  <div className="flex items-center gap-2 mb-2">
-                    <p className="label">{solved ? "Note" : "Model answer"}</p>
-                    <Provenance origin={question.origin} variant="chip" />
-                  </div>
-                  <p className="k-answer">{question.answer}</p>
+                  {(!solved || !answerIsRedundant) && (
+                    <>
+                      <div className="flex items-center gap-2 mb-2">
+                        <p className="label">
+                          {solved ? "Note" : "Model answer"}
+                        </p>
+                        <Provenance origin={question.origin} variant="chip" />
+                      </div>
+                      <p className="k-answer">{question.answer}</p>
+                    </>
+                  )}
                   {/* The working, not just the verdict. A paper you cannot
                       learn from is a paper you sat, not a paper you studied —
                       and this is the screen where you find out you were
-                      wrong. */}
+                      wrong. A cloze that already revealed its own answer skips
+                      repeating it and comes straight here. */}
                   {question.detail && (
                     <p
-                      className="mt-4 text-[13.5px] leading-relaxed text-fg-2
-                        max-w-[62ch] whitespace-pre-line"
+                      className={`text-[13.5px] leading-relaxed text-fg-2
+                        max-w-[62ch] whitespace-pre-line ${
+                          solved && answerIsRedundant ? "" : "mt-4"
+                        }`}
                     >
                       {question.detail}
                     </p>

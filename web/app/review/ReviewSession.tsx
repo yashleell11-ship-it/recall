@@ -521,40 +521,51 @@ export function ReviewSession() {
                   <p className="k-question">{c.question}</p>
                 )}
 
-                {top && revealed && (!solved || !clozeAnswerIsRedundant) && (
+                {/* One block after the rule, whatever is in it. A cloze that
+                    has already shown its own answer does not repeat it — but
+                    it still gets the working, which is the part that teaches.
+                    When there is neither, the rule stays anyway so the card
+                    does not change height on reveal. */}
+                {top && revealed && (
                   <motion.div
                     className="mt-7 pt-6 border-t border-line"
+                    aria-hidden={
+                      solved && clozeAnswerIsRedundant && !card.detail
+                        ? "true"
+                        : undefined
+                    }
                     initial={reduced ? false : { opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={reduced ? { duration: 0 } : REVEAL_SPRING}
                   >
-                    <p className="label mb-2">{solved ? "Note" : "Answer"}</p>
-                    <p className="k-answer text-fg">{card.answer}</p>
+                    {(!solved || !clozeAnswerIsRedundant) && (
+                      <>
+                        <p className="label mb-2">
+                          {solved ? "Note" : "Answer"}
+                        </p>
+                        <p className="k-answer text-fg">{card.answer}</p>
+                      </>
+                    )}
                     {/* The worked explanation. It appears only after the
                         answer, which is the whole point: read before
                         retrieval it would be a spoiler, read after it is
                         the teaching. Quieter and smaller than the answer,
-                        because the answer is the thing being tested. */}
-                    {/* whitespace-pre-line: the working comes back as
+                        because the answer is the thing being tested.
+                        whitespace-pre-line: the working comes back as
                         numbered lines, and collapsing them would turn a
                         derivation back into the paragraph it was written to
                         replace. */}
                     {card.detail && (
                       <p
-                        className="mt-4 text-[13.5px] leading-relaxed text-fg-2
-                          max-w-[62ch] whitespace-pre-line"
+                        className={`text-[13.5px] leading-relaxed text-fg-2
+                          max-w-[62ch] whitespace-pre-line ${
+                            solved && clozeAnswerIsRedundant ? "" : "mt-4"
+                          }`}
                       >
                         {card.detail}
                       </p>
                     )}
                   </motion.div>
-                )}
-
-                {top && revealed && solved && clozeAnswerIsRedundant && (
-                  <div
-                    className="mt-7 pt-6 border-t border-line"
-                    aria-hidden="true"
-                  />
                 )}
               </motion.article>
             );

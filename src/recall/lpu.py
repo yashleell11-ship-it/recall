@@ -69,23 +69,31 @@ SUBJECTS: dict[str, dict] = {
     "MEC103": {
         "full_name": "Engineering Graphics",
         "credits": 3,
-        # Unit 1 is confirmed from the owner's own "UNIT 1 MEC103.pdf"
-        # (drawing sheets, pencil grades, scales, protractor, compass, then
-        # line types). The rest follows the course structure Tikle's Academy
-        # teaches this subject in — engineering scales; the special curves;
-        # orthographic projection; projections of points, lines, planes and
-        # solids; isometric projection with sections and developments — which
-        # is the standard Indian engineering-graphics syllabus and the one the
-        # owner asked to model this on.
-        "units": ["Drawing Instruments, Line Types and Geometrical Construction",
-                  "Engineering Scales",
-                  "Conic Sections and Special Curves (Ellipse, Cycloid, Involute)",
-                  "Orthographic Projection and Angles of Projection",
-                  "Projection of Points, Straight Lines, Planes and Solids",
-                  "Isometric Projection, Sections of Solids and Development of Surfaces"],
+        # Corrected 2026-09-07. The first version of this list put scales in
+        # unit 2 and no projection anywhere in units 1-3 — which, since the
+        # mid-term is units 1-3, would have examined the wrong half of the
+        # subject. Two independent sources killed it: LPU's own published
+        # MEC103 course deck, whose applications section labels all six units
+        # in this order, and the owner's own "UNIT 1 MEC103.pdf", which runs
+        # instruments -> line types -> dimensioning -> lettering -> scales and
+        # ends with four worked plain/diagonal-scale problems. Scales are
+        # inside unit 1, so unit 1 is the whole introduction.
+        #
+        # Two placements are inferred rather than quoted: projection of solids
+        # (appended to unit 3) and the conics (left in unit 1, and absent from
+        # the owner's file). The deck is also 2014-era and a later
+        # AutoCAD-bearing revision of MEC103 exists.
+        "units": ["Introduction to Engineering Drawing: Instruments, Line Types,"
+                  " Lettering, Dimensioning, Scales and Conic Sections",
+                  "Projections of Points, Lines and Planes",
+                  "Orthographic Projections (including Projection of Regular Solids)",
+                  "Sectional Views",
+                  "Development of Surfaces",
+                  "Isometric Projections"],
         "scheme": {"attendance": 5, "ca": 25, "mte": 20, "ete": 50},
-        "ca_policy": "Drawing-sheet work and class tests — confirm the exact "
-                     "split on UMS",
+        "ca_policy": "Ten best of twelve graded drawing sheets, plus a class "
+                     "test either side of the mid-term — the deck says CA 20 / "
+                     "MTE 25 against the 25 / 20 coded here; unresolved",
         "mte_exists": True,
         "exam_format": "subjective",
         # The units are researched; the WEIGHTS are not confirmed for MEC103
