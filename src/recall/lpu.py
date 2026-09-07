@@ -85,7 +85,11 @@ SUBJECTS: dict[str, dict] = {
     },
     "INT335": {
         "full_name": "Design Thinking",
-        "credits": 3,
+        # 2, from the Session 2026-27 syllabus PDF's own header:
+        # "INT335:DESIGN THINKING  L:2  T:0  P:0  Credits:2". The same
+        # document prints a full sub-topic list for all six units, and the six
+        # unit names below match it verbatim.
+        "credits": 2,
         "units": ["Foundations of Learning, Creativity and Design Thinking",
                   "Empathy, Observation and Problem Identification",
                   "Ideation and Creative Problem Solving",
