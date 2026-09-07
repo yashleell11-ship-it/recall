@@ -62,6 +62,33 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def cmd_set_email(args, cfg) -> int:
+    """Change the login email on an account.
+
+    Exists because `claim-owner` refuses to overwrite an account that already
+    has a password — which is the right guard for a password and the wrong one
+    for a typo in an email address.
+    """
+    import sqlite3
+
+    from recall.auth import normalize_email
+
+    email = normalize_email(args.email)
+    conn = _conn(cfg)
+    try:
+        cur = conn.execute("UPDATE users SET email = ? WHERE name = ?",
+                           (email, args.user))
+    except sqlite3.IntegrityError:
+        print(f"{email} is already used by another account", file=sys.stderr)
+        return 2
+    conn.commit()
+    if cur.rowcount == 0:
+        print(f"no user named {args.user!r}", file=sys.stderr)
+        return 2
+    print(f"{args.user} now logs in as {email}")
+    return 0
+
+
 def cmd_backfill_detail(args, cfg) -> int:
     """Write the worked explanation onto cards that predate the detail field.
 
@@ -253,6 +280,11 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--password", default=None,
                    help="omit to be prompted (avoids the value landing in shell history)")
     s.set_defaults(func=cmd_claim_owner)
+
+    s = sub.add_parser("set-email", help="change an account's login email")
+    s.add_argument("--user", default="yash")
+    s.add_argument("--email", required=True)
+    s.set_defaults(func=cmd_set_email)
 
     s = sub.add_parser("backfill-detail",
                        help="write the worked explanation onto older cards")

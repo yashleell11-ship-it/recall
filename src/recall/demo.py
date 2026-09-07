@@ -19,6 +19,17 @@ SAMPLE_CARDS: list[tuple[str, str, str, str, str | None]] = [
     ("MTH165", "qa", "What does L'Hopital's rule apply to?",
      "Limits of indeterminate form 0/0 or infinity/infinity", None),
 
+    ("MEC103", "qa", "Which pencil grades are recommended for technical drawing?",
+     "H, 2H and HB", None),
+    ("MEC103", "cloze", "Hardest and softest pencil grades", "9H and 7B",
+     "Of the eighteen pencil grades, {{c1::9H}} is the hardest and 7B is the softest."),
+    ("MEC103", "qa", "What is the size of an A0 drawing sheet in millimetres?",
+     "1189 x 841 mm", None),
+    ("MEC103", "qa", "Which line type is used for hidden edges in a drawing?",
+     "A dashed medium line", None),
+    ("MEC103", "cloze", "Continuous thick line", "visible outlines",
+     "A continuous thick line represents {{c1::visible outlines}} and object lines."),
+
     ("CSE111", "qa", "What does the sizeof operator return for an array in C?",
      "The total size in bytes of the whole array", None),
     ("CSE111", "cloze", "Pointer arithmetic scaling", "the size of the pointed-to type",

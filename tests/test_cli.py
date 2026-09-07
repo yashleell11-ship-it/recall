@@ -1,6 +1,7 @@
 from recall.cli import build_parser, cmd_approve, cmd_init, cmd_queue
 from recall.config import load_config
 from recall.db import connect
+from recall.lpu import SUBJECTS
 
 
 def cfg_for(tmp_path):
@@ -18,7 +19,7 @@ def test_init_creates_the_lpu_subjects(tmp_path):
     assert cmd_init(build_parser().parse_args(["init"]), cfg) == 0
     codes = {r["code"] for r in connect(cfg.db_path)
              .execute("SELECT code FROM topics").fetchall()}
-    assert codes == {"MTH165", "CSE111", "INT108", "INT335", "CSE326"}
+    assert codes == set(SUBJECTS)
 
 
 def test_init_is_idempotent(tmp_path):

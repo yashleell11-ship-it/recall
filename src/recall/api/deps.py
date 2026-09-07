@@ -21,7 +21,10 @@ from fastapi import Cookie, Depends, HTTPException
 from recall.db import connect
 
 SESSION_COOKIE = "recall_session"
-SESSION_TTL_DAYS = 30
+#: How long a login lasts before it has to be done again. Fixed, not sliding:
+#: refreshing this on every request would turn every read in the app — the
+#: queue, the stats, every card — into a database write.
+SESSION_TTL_DAYS = 10
 
 
 def get_conn():

@@ -66,6 +66,36 @@ SUBJECTS: dict[str, dict] = {
         "mte_exists": True,
         "exam_format": "mcq",
     },
+    "MEC103": {
+        "full_name": "Engineering Graphics",
+        "credits": 3,
+        # Unit 1 is confirmed from the owner's own "UNIT 1 MEC103.pdf"
+        # (drawing sheets, pencil grades, scales, protractor, compass, then
+        # line types). The rest follows the course structure Tikle's Academy
+        # teaches this subject in — engineering scales; the special curves;
+        # orthographic projection; projections of points, lines, planes and
+        # solids; isometric projection with sections and developments — which
+        # is the standard Indian engineering-graphics syllabus and the one the
+        # owner asked to model this on.
+        "units": ["Drawing Instruments, Line Types and Geometrical Construction",
+                  "Engineering Scales",
+                  "Conic Sections and Special Curves (Ellipse, Cycloid, Involute)",
+                  "Orthographic Projection and Angles of Projection",
+                  "Projection of Points, Straight Lines, Planes and Solids",
+                  "Isometric Projection, Sections of Solids and Development of Surfaces"],
+        "scheme": {"attendance": 5, "ca": 25, "mte": 20, "ete": 50},
+        "ca_policy": "Drawing-sheet work and class tests — confirm the exact "
+                     "split on UMS",
+        "mte_exists": True,
+        "exam_format": "subjective",
+        # The units are researched; the WEIGHTS are not confirmed for MEC103
+        # specifically — they are the common LPU pattern, shown as a
+        # placeholder. The UI says so rather than presenting them as fact,
+        # because a wrong exam structure in an exam-prep tool is worse than an
+        # absent one. Replace this with the zero-lecture's real numbers and
+        # drop the flag.
+        "scheme_confirmed": False,
+    },
     "CSE326": {
         "full_name": "Internet Programming",
         "credits": 2,
@@ -80,17 +110,15 @@ SUBJECTS: dict[str, dict] = {
     },
 }
 
+#: Subjects whose CA/MTE/ETE weights came from a real source (the owner's own
+#: zero-lecture slides, or the published course pages) default to confirmed.
+#: Only MEC103 carries scheme_confirmed=False today.
+DEFAULT_SCHEME_CONFIRMED = True
+
 # The app's earlier ad-hoc codes map onto the real LPU codes. MTH174 was itself
 # a wrong guess — the owner's own zero-lecture slides confirm the real code is
 # MTH165 — so it renames the same way a legacy ad-hoc code would, preserving
 # every existing card/review against the topic id.
 LEGACY_RENAMES = {"MATHS": "MTH174", "HTML": "CSE326", "MTH174": "MTH165"}
 
-# MEC103 (Engineering Graphics) is a real Sem-1 course confirmed from the
-# owner's own "UNIT 1 MEC103.pdf" — Unit 1 covers Drawing Instruments and Line
-# Types — but that file only carries Unit 1. Credits, L-T-P, the other 5
-# units, and the CA/MTE/ETE weight split are NOT yet confirmed from any
-# source. Deliberately not added to SUBJECTS below: guessing a scheme in an
-# exam-prep tool (e.g. inventing whether an MTE exists) is actively worse than
-# the subject not existing yet. Add it once the owner supplies MEC103's own
-# zero-lecture, following the exact shape of the other entries.
+

@@ -8,7 +8,7 @@ old topic keeps pointing at the same topic id under its real LPU code.
 import json
 import sqlite3
 
-from recall.lpu import LEGACY_RENAMES, SUBJECTS
+from recall.lpu import DEFAULT_SCHEME_CONFIRMED, LEGACY_RENAMES, SUBJECTS
 
 
 def seed_topics(conn: sqlite3.Connection, user_id: int = 1) -> dict:
@@ -33,6 +33,10 @@ def seed_topics(conn: sqlite3.Connection, user_id: int = 1) -> dict:
             "ca_policy": info["ca_policy"],
             "mte_exists": info["mte_exists"],
             "exam_format": info["exam_format"],
+            # False only where the weights are a placeholder rather than a
+            # sourced fact, so the UI can say so instead of asserting them.
+            "scheme_confirmed": info.get("scheme_confirmed",
+                                         DEFAULT_SCHEME_CONFIRMED),
         })
         row = conn.execute(
             "SELECT id FROM topics WHERE user_id = ? AND code = ?", (user_id, code)

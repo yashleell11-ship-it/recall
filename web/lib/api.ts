@@ -235,6 +235,26 @@ export function submitTest(id: number): Promise<TestResult> {
   return request<TestResult>(`/api/tests/${id}/submit`, { method: "POST" });
 }
 
+/**
+ * POST /api/topics/{code}/paper — sit a real paper for a subject, generating
+ * whatever the deck cannot cover first.
+ *
+ * The difference from createTest: that one assembles from what exists and
+ * returns an empty paper when the deck is empty. This one fills the gap, so
+ * "no questions" stops being a possible outcome. Costs money, and 429s when
+ * the day's budget is spent.
+ */
+export function sitPaper(
+  topicCode: string,
+  kind: TestKind,
+): Promise<TestPaper> {
+  if (MOCK) return mock.createTest(kind, topicCode);
+  return request<TestPaper>(
+    `/api/topics/${encodeURIComponent(topicCode)}/paper`,
+    { method: "POST", body: JSON.stringify({ kind }) },
+  );
+}
+
 /** GET /api/tests */
 export function getTests(): Promise<TestSummary[]> {
   if (MOCK) return mock.getTests();

@@ -192,6 +192,15 @@ function SubjectCard({
 
         <div className="mt-2.5">
           <SchemeBar scheme={meta.scheme} />
+          {meta.scheme_confirmed === false && (
+            <p
+              className="telemetry text-[10px] mt-1 leading-relaxed"
+              style={{ color: "var(--g-hard)" }}
+            >
+              weights not confirmed for this course — check UMS before trusting
+              them
+            </p>
+          )}
         </div>
 
         <p className="telemetry text-[10.5px] text-fg-3 mt-2 leading-relaxed">

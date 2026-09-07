@@ -140,11 +140,21 @@ def generate_for_unit(conn, cfg: Config, client, *, user_id: int, topic_id: int,
                       topic_code: str, full_name: str, exam_format: str,
                       unit_index: int, unit_name: str,
                       n: int = DEFAULT_CARDS_PER_UNIT,
+                      state: str | None = None,
                       embed=embed_texts) -> IngestResult:
     """One paid call, then the source-independent gates, then insert.
 
     `unit_index` is 0-based; the prompt shows the student-facing 1-based
     number.
+
+    `state` overrides where surviving cards land. It defaults to the normal
+    rule (knowledge cards wait for approval, because nothing has checked them
+    against reality). The one caller that overrides it is the paper builder:
+    when you have asked to sit a paper on this unit right now, the cards are
+    not entering your rotation unseen — you are about to read every one of
+    them and grade yourself on it, which is a stricter look than the approval
+    queue gives. Holding them back would just produce an empty paper, which is
+    the bug this was built to fix.
     """
     n = max(1, min(n, MAX_CARDS_PER_CALL))
     source_id = _synthetic_source_id(conn, user_id, topic_id)
@@ -185,8 +195,9 @@ def generate_for_unit(conn, cfg: Config, client, *, user_id: int, topic_id: int,
         _insert_card(conn, chunk_id, topic_id, c, "rejected", reason, "learned",
                      origin="knowledge")
         rejected += 1
+    landing = state or keep_state("knowledge")
     for c in kept:
-        _insert_card(conn, chunk_id, topic_id, c, keep_state("knowledge"), None,
+        _insert_card(conn, chunk_id, topic_id, c, landing, None,
                      assign_arm(accepted), origin="knowledge")
         accepted += 1
 

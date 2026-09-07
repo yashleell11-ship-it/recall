@@ -35,6 +35,13 @@ export interface TopicMeta {
   /** INT108 and CSE326 carry no mid-term at LPU; offering one is an error. */
   mte_exists: boolean;
   exam_format: string;
+  /**
+   * OPTIONAL / ADDITIVE. False when the weight split above is a placeholder
+   * rather than a sourced fact — MEC103's units are researched but its
+   * CA/MTE/ETE split is not confirmed. The UI must say so: a wrong exam
+   * structure presented as fact is worse than an absent one.
+   */
+  scheme_confirmed?: boolean;
 }
 
 /** GET /api/topics */

@@ -1,6 +1,7 @@
 from recall.cli import build_parser, cmd_init
 from recall.config import load_config
 from recall.db import connect
+from recall.lpu import SUBJECTS
 from recall.demo import SAMPLE_CARDS, clear_demo, seed_demo
 
 
@@ -29,7 +30,7 @@ def test_seed_covers_every_topic(tmp_path):
     codes = {r["code"] for r in conn.execute(
         "SELECT DISTINCT t.code FROM cards c JOIN topics t ON t.id=c.topic_id"
     ).fetchall()}
-    assert codes == {"MTH165", "CSE111", "INT108", "INT335", "CSE326"}
+    assert codes == set(SUBJECTS)
 
 
 def test_clear_removes_everything_it_added(tmp_path):

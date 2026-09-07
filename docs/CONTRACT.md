@@ -58,7 +58,9 @@ Grades: 1=again, 2=hard, 3=good, 4=easy.
 
 Open registration — no invite code, no email verification. A session is an
 HttpOnly, Secure, SameSite=Lax cookie (`recall_session`) holding an opaque
-token; the server stores only its SHA-256 hash (`sessions` table). Every
+token valid for 10 days; the server stores only its SHA-256 hash
+(`sessions` table). The expiry is fixed rather than sliding — refreshing it
+per request would turn every read in the app into a database write. Every
 route below `## HTTP API` requires this cookie and resolves it to a
 `user_id` via `Depends(get_current_user)` — a request with no cookie, or an
 expired/unknown one, gets `401 {"detail": "..."}`.
@@ -259,6 +261,7 @@ function so a vision-capable API can replace it later without touching anything 
 | Method | Path | Request | Response |
 |---|---|---|---|
 | POST | `/api/topics/{code}/generate` | `{unit, count?}` (`unit` is 1-based; `count` ≤ 25, default 12) | `{accepted, rejected, cost_usd, stopped_early}` — the same shape as upload generation |
+| POST | `/api/topics/{code}/paper` | `{kind}` | A full `TestPaper`, plus `generated: {cards, rejected, cost_usd, units, deck_already_covered_it}`. Works out which units the paper draws from (MTE → units 1-3, class test → 1-2, ETE → all), generates only the shortfall, then assembles normally. This is what the subject chips on `/test` call: `POST /api/tests` assembles from what exists and hands back an empty paper when the deck is empty, which is the "This paper has no questions" dead end. |
 
 Writes cards for one syllabus unit from the model's own knowledge, for the case
 where the student has uploaded nothing. `422` when the topic carries no unit

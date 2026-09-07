@@ -6,7 +6,13 @@ import { motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatedNumber, Reveal, Skeleton } from "@/components/rich";
 import { ErrorState, Kbd, Panel, TopicCode } from "@/components/ui";
-import { createTest, errorMessage, getTests, getTopics } from "@/lib/api";
+import {
+  createTest,
+  errorMessage,
+  getTests,
+  getTopics,
+  sitPaper,
+} from "@/lib/api";
 import { formatDuration, mediumDate, plural } from "@/lib/format";
 import { hasModifier, isTypingTarget } from "@/lib/keys";
 import { MAX_MARKS, PAPER_LABEL } from "@/lib/marks";
@@ -136,13 +142,19 @@ export default function TestPickerPage() {
   /**
    * A subject chip is its own start button. A refusal — the server's 422 for
    * an MTE on a subject that has none — is shown verbatim on that card.
+   *
+   * This goes through sitPaper, not createTest: createTest assembles from
+   * whatever the deck holds and hands back an empty paper when that is
+   * nothing, which is the "This paper has no questions" dead end. sitPaper
+   * fills the units the paper needs first, so pressing a chip on a subject
+   * you have never uploaded for gives you a real paper.
    */
   const startSubject = useCallback(
     (paperKind: TestKind, code: string) => {
       if (starting || subjectStarting) return;
       setSubjectStarting(`${code}:${paperKind}`);
       setSubjectError(null);
-      createTest(paperKind, code)
+      sitPaper(code, paperKind)
         .then((p) => router.push(`/test/${p.test_id}`))
         .catch((err: unknown) => {
           setSubjectError({ code, message: errorMessage(err) });
