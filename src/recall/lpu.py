@@ -29,14 +29,45 @@ SUBJECTS: dict[str, dict] = {
     },
     "CSE111": {
         "full_name": "Orientation to Computing",
-        "credits": 2,
+        # 3, not the 2 coded first. The Session 2026-27 syllabus PDF prints
+        # "L:3 T:0 P:0 Credits:3", and the notes mirror agrees independently.
+        # The 2 almost certainly came from an older revision of this course
+        # ("Orientation to Computing-I", L T P : 2 0 0), which is a real
+        # document about a different version of it.
+        "credits": 3,
+        # All six are verbatim sub-headings from that syllabus, in its printed
+        # order — but they are a strict SUBSET of it, and the gap is worth
+        # knowing about rather than discovering in an exam:
+        #
+        # - "Profile Creation" is a seventh sub-heading, printed in Unit VI
+        #   alongside the last two. It is here.
+        # - The PDF itself prints only Unit I and Unit VI; Units II to V have
+        #   no body at all, and page 2 is blank. Yet the course outcomes name
+        #   operating systems, Linux, networking, virtualisation and cloud
+        #   (CO2); career pathways, MOOCs and hackathons (CO3); algorithms,
+        #   pseudocode and flowcharts (CO4); digital security (CO5); and ML,
+        #   Agentic AI, IoT, Blockchain and Web3 (CO6). None of that has a
+        #   printed unit body, so none of it is invented into one here. If it
+        #   turns out to be taught, this list needs those units and they need
+        #   a real source, not a guess from the outcome statements.
         "units": ["Computer Languages", "Computer Fundamentals",
                   "Computer Hardware", "Number Systems", "Version Control",
-                  "Modern AI Trends and Tools"],
-        "scheme": {"attendance": 5, "ca": 95, "mte": 0, "ete": 0},
-        "ca_policy": "CA-driven low-credit course; unit-wise MCQ + subjective practice",
+                  "Modern AI Trends and Tools", "Profile Creation"],
+        # The notes mirror's grading block reads 30 attendance / 70 continuous
+        # assessment / NA mid term / NA end term. That mirror is worth
+        # believing — it carries five different schemes across the owner's
+        # other courses, so it is transcribing rather than defaulting, and its
+        # CSE121 figures match LPU's own course deck. But it is ONE source for
+        # this subject, so scheme_confirmed stays False and the UI says so.
+        # The part both readings agree on is the part that changes behaviour:
+        # no mid-term and no end-term.
+        "scheme": {"attendance": 30, "ca": 70, "mte": 0, "ete": 0},
+        "ca_policy": "100% internal — no mid-term, no end-term, so every mark "
+                     "comes from attendance plus continuous assessment across "
+                     "all units; the per-task split is unpublished, confirm on UMS",
         "mte_exists": False,
         "exam_format": "mcq",
+        "scheme_confirmed": False,
     },
     "INT108": {
         "full_name": "Python Programming",
@@ -120,7 +151,7 @@ SUBJECTS: dict[str, dict] = {
 
 #: Subjects whose CA/MTE/ETE weights came from a real source (the owner's own
 #: zero-lecture slides, or the published course pages) default to confirmed.
-#: Only MEC103 carries scheme_confirmed=False today.
+#: MEC103 and CSE111 carry scheme_confirmed=False today.
 DEFAULT_SCHEME_CONFIRMED = True
 
 # The app's earlier ad-hoc codes map onto the real LPU codes. MTH174 was itself
