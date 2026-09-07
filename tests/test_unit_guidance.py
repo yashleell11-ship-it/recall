@@ -42,7 +42,6 @@ def test_mth165_is_covered_end_to_end():
 @pytest.mark.parametrize("code,unit", [
     ("MTH165", 0),      # 1-based: there is no unit zero
     ("MTH165", 7),      # past the end
-    ("CSE111", 1),      # a real subject nobody has researched yet
     ("NOPE", 1),        # not a subject at all
     ("", 1),
 ])
@@ -50,13 +49,24 @@ def test_unresearched_lookups_are_none_not_errors(code, unit):
     assert guidance_for(code, unit) is None
 
 
+def test_a_subject_with_no_guidance_yet_is_none_all_the_way_down():
+    """Coverage is allowed to be partial, and it is going to be: a subject
+    gets researched or it does not, and the generator has to work either
+    way."""
+    for code in set(SUBJECTS) - set(_UNITS):
+        for n in range(1, len(SUBJECTS[code]["units"]) + 1):
+            assert guidance_for(code, n) is None, (code, n)
+            assert guidance_text(code, n) == ""
+            assert traps_text(code, n) == ""
+
+
 def test_the_code_is_matched_case_insensitively():
     assert guidance_for("mth165", 1) is not None
 
 
 def test_an_unresearched_unit_leaves_no_gap_in_the_prompt():
-    assert guidance_text("CSE111", 1) == ""
-    assert traps_text("CSE111", 1) == ""
+    assert guidance_text("NOPE", 1) == ""
+    assert traps_text("NOPE", 1) == ""
 
 
 def test_a_researched_unit_is_its_own_paragraph():
@@ -92,12 +102,28 @@ def test_traps_are_a_checklist_the_checker_can_read():
     assert text.count("\n- ") == len(guidance_for("MTH165", 4).traps)
 
 
-def test_guidance_is_written_in_human_notation():
+# The maths-notation rule applies to subjects made of mathematics. It does not
+# apply to the programming subjects, where `lambda`, `->` and `<=` are not bad
+# notation for a symbol — they are the vocabulary being examined, and a card
+# for INT108 that wrote a lambda as λ would be wrong rather than tidy.
+_MATHS_SUBJECTS = ("MTH165", "MEC103")
+
+
+def test_maths_guidance_is_written_in_human_notation():
     """The owner asked for maths that looks like maths. LaTeX and programming
-    operators in the guidance would be copied straight onto the cards."""
+    operators here would be copied straight onto the cards."""
     banned = ["\\frac", "\\int", "\\lambda", "lambda", "<=", ">=", "->", "sqrt("]
+    for code in _MATHS_SUBJECTS:
+        for i, unit in enumerate(_UNITS.get(code, ()), 1):
+            blob = unit.guidance + " " + " ".join(unit.traps)
+            for token in banned:
+                assert token not in blob, f"{code} unit {i}: {token!r}"
+
+
+def test_no_subject_smuggles_in_latex():
+    """LaTeX is wrong everywhere, including in a programming subject."""
     for code, units in _UNITS.items():
         for i, unit in enumerate(units, 1):
             blob = unit.guidance + " " + " ".join(unit.traps)
-            for token in banned:
+            for token in ("\\frac", "\\int", "\\sum", "\\alpha", "$$"):
                 assert token not in blob, f"{code} unit {i}: {token!r}"

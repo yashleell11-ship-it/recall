@@ -3,14 +3,16 @@
 import os
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from recall.api import auth_routes, knowledge_routes, scheduling
 from recall.api import teach_routes, tests_routes, upload_routes
 from recall.api.deps import get_conn, get_current_user
 from recall.db import connect, init_db
+from recall.llm.client import LlmUnavailable
 
 
 class ReviewIn(BaseModel):
@@ -63,6 +65,20 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    @app.exception_handler(LlmUnavailable)
+    def _llm_unavailable(request: Request, exc: LlmUnavailable) -> JSONResponse:
+        """One handler for every paid route.
+
+        Without it, an upstream refusal — a rejected key, an exhausted
+        balance, a rate limit — escapes as an unhandled 500. Starlette's
+        server-error path runs OUTSIDE CORSMiddleware, so the browser never
+        even sees the status: it sees a CORS failure and the client reports
+        "could not reach the API", which is the one thing that definitely did
+        not happen. Handled here, it comes back as a 502 with the actual
+        reason, through the middleware, with the headers on it.
+        """
+        return JSONResponse(status_code=502, content={"detail": exc.detail})
 
     @app.get("/api/topics")
     def topics(user_id: int = Depends(get_current_user), conn=Depends(get_conn)):

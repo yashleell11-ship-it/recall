@@ -337,6 +337,9 @@ export function uploadSource(
         /* a non-JSON body is still a response */
       }
       if (xhr.status >= 200 && xhr.status < 300) {
+        // This upload path bypasses `request`, so it has to drop the read
+        // cache itself — a new source changes every screen that counts cards.
+        invalidate();
         resolve(body as UploadResponse);
         return;
       }

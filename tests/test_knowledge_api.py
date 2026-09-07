@@ -161,3 +161,47 @@ def test_the_cap_also_covers_upload_generation(db_path, monkeypatch):
     r = client.post("/api/sources/4/generate")
     assert r.status_code == 429
     assert llm.calls == []
+
+
+class DeadLlmClient:
+    """A client whose upstream refuses. The one thing every paid route has to
+    survive, because a rejected key or an exhausted balance is not a bug in
+    this app and must not be reported as one."""
+
+    def __init__(self, status: int):
+        self._status = status
+
+    def complete_json(self, system, user):
+        from recall.llm.client import _unavailable
+
+        raise _unavailable(self._status)
+
+
+@pytest.mark.parametrize("status,phrase", [
+    (401, "key is missing or was rejected"),
+    (402, "out of credit"),
+    (None, "not responding"),
+])
+def test_an_upstream_refusal_is_a_502_that_says_why(db_path, status, phrase):
+    """Not a 500. An unhandled 500 escapes outside CORSMiddleware, so the
+    browser reports a CORS failure and the client says "could not reach the
+    API" — the one thing that certainly did happen is that it reached the
+    API."""
+    client = make_client(db_path, DeadLlmClient(status))
+    r = client.post("/api/topics/MTH165/generate", json={"unit": 1})
+    assert r.status_code == 502
+    assert phrase in r.json()["detail"]
+
+
+def test_the_paper_route_fails_the_same_way(db_path):
+    client = make_client(db_path, DeadLlmClient(401))
+    r = client.post("/api/topics/MTH165/paper", json={"kind": "class30"})
+    assert r.status_code == 502
+    assert "Cards could not be written" in r.json()["detail"]
+
+
+def test_the_refusal_never_carries_the_api_key(db_path):
+    client = make_client(db_path, DeadLlmClient(401))
+    r = client.post("/api/topics/MTH165/generate", json={"unit": 1})
+    assert CFG.api_key not in r.text
+    assert "Authorization" not in r.text

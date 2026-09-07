@@ -81,3 +81,34 @@ def test_fake_client_returns_queued_responses_in_order():
     assert fake.complete_json("s", "u1").content == '{"a": 1}'
     assert fake.complete_json("s", "u2").content == '{"b": 2}'
     assert fake.calls == [("s", "u1"), ("s", "u2")]
+
+
+def test_a_non_retryable_status_is_typed_and_explained():
+    """401 is not a bug in this app: it is a key problem, and the person
+    reading the error needs to be told which."""
+    from recall.llm.client import LlmUnavailable
+
+    client = DeepSeekClient(CFG,
+                            transport=httpx.MockTransport(lambda r: httpx.Response(401)),
+                            sleep=lambda _s: None)
+    with pytest.raises(LlmUnavailable) as exc:
+        client.complete_json("s", "u")
+    assert exc.value.status == 401
+    assert "key is missing or was rejected" in str(exc.value)
+    assert "sk-test" not in str(exc.value)
+
+
+def test_a_non_retryable_status_is_not_retried():
+    calls = {"n": 0}
+
+    def handler(request):
+        calls["n"] += 1
+        return httpx.Response(402)
+
+    from recall.llm.client import LlmUnavailable
+
+    client = DeepSeekClient(CFG, transport=httpx.MockTransport(handler),
+                            sleep=lambda _s: None)
+    with pytest.raises(LlmUnavailable):
+        client.complete_json("s", "u")
+    assert calls["n"] == 1
