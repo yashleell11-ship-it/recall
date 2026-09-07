@@ -34,6 +34,18 @@ export function mediumDate(value: string): string {
   return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
 }
 
+/** 4 Sep, 14:32 — the date plus the clock time a paper was opened. Distinct
+ *  from mediumDate because "which one did I start this morning" needs the
+ *  time, not just the day, once more than one paper is open on the same
+ *  date. */
+export function mediumDateTime(value: string): string {
+  const d = parse(value);
+  if (!d) return value;
+  const h = String(d.getHours()).padStart(2, "0");
+  const m = String(d.getMinutes()).padStart(2, "0");
+  return `${d.getDate()} ${MONTHS[d.getMonth()]}, ${h}:${m}`;
+}
+
 /** Thursday, 4 September — from an ISO date, so render stays pure and the
  *  statically prerendered HTML never bakes in the build date. */
 export function longDate(value: string): string {

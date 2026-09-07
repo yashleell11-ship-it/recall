@@ -734,14 +734,73 @@ def test_history_reports_each_paper(client):
 
     rows = client.get("/api/tests").json()
     assert len(rows) == 2
-    assert set(rows[0]) == {"id", "kind", "started_at", "obtained_marks",
-                            "total_marks", "duration_s"}
+    assert set(rows[0]) == {"id", "kind", "started_at", "submitted_at",
+                            "obtained_marks", "total_marks", "duration_s",
+                            "topic_code"}
     sat = next(r for r in rows if r["id"] == tid)
     assert sat["obtained_marks"] == q["marks"]
     assert sat["total_marks"] == 30
     assert sat["duration_s"] == 9
     unsat = next(r for r in rows if r["id"] != tid)
     assert unsat["obtained_marks"] is None
+
+
+def test_history_names_the_subject_a_restricted_paper_covers(client):
+    """A class30/mte40/endterm100 paper for one topic says which; a fullday
+    paper covers everything and has none to name."""
+    restricted = create(client, "class30", topic_code="CSE111")
+    spanning = create(client, "fullday")
+
+    rows = {r["id"]: r for r in client.get("/api/tests").json()}
+    assert rows[restricted["test_id"]]["topic_code"] == "CSE111"
+    assert rows[spanning["test_id"]]["topic_code"] is None
+
+
+def test_history_says_outright_whether_a_paper_was_submitted(client):
+    """duration_s was the old proxy for this and it lies in one real case: a
+    paper submitted with nothing answered records duration_s = 0, which the
+    client read as falsy and therefore as still open — forever."""
+    sat = create(client)
+    client.post(f"/api/tests/{sat['test_id']}/submit")
+    still_open = create(client)
+
+    rows = {r["id"]: r for r in client.get("/api/tests").json()}
+    assert rows[sat["test_id"]]["submitted_at"] is not None
+    assert rows[sat["test_id"]]["duration_s"] == 0  # the proxy's blind spot
+    assert rows[still_open["test_id"]]["submitted_at"] is None
+
+
+def test_closing_an_open_paper_removes_it_from_history(client):
+    paper = create(client)
+    tid = paper["test_id"]
+    assert client.delete(f"/api/tests/{tid}").status_code == 200
+    assert tid not in {r["id"] for r in client.get("/api/tests").json()}
+    assert client.get(f"/api/tests/{tid}").status_code == 404
+
+
+def test_closing_a_submitted_paper_is_refused(client):
+    paper = create(client)
+    tid = paper["test_id"]
+    client.post(f"/api/tests/{tid}/submit")
+    r = client.delete(f"/api/tests/{tid}")
+    assert r.status_code == 409
+    # Refused, not silently ignored: the graded paper is still there.
+    assert client.get(f"/api/tests/{tid}").status_code == 200
+
+
+def test_closing_someone_elses_paper_is_a_404_not_a_409(client, db_path):
+    """A test that exists but isn't yours must read the same as one that
+    doesn't exist at all — telling the two apart would leak that the id is
+    real."""
+    conn = connect(db_path)
+    conn.execute("INSERT INTO users (id, name) VALUES (2, 'someone else')")
+    conn.commit()
+    other = service.create_test(conn, 2, "class30")
+    assert client.delete(f"/api/tests/{other['test_id']}").status_code == 404
+
+
+def test_closing_a_test_that_never_existed_is_a_404(client):
+    assert client.delete("/api/tests/999999").status_code == 404
 
 
 def test_mte_kind_builds_a_40_mark_90_minute_paper(db_path):

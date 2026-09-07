@@ -45,6 +45,20 @@ def get_test(test_id: int, user_id: int = Depends(get_current_user),
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
+@router.delete("/api/tests/{test_id}")
+def abandon_test(test_id: int, user_id: int = Depends(get_current_user),
+                 conn=Depends(get_conn)):
+    """Close an unfinished paper. Refuses a submitted one — that is a graded
+    result, not clutter — with 409 rather than quietly no-op-ing."""
+    try:
+        service.abandon_test(conn, user_id, test_id)
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return {"ok": True}
+
+
 @router.post("/api/tests/{test_id}/answer")
 def record_answer(test_id: int, body: AnswerIn,
                   user_id: int = Depends(get_current_user), conn=Depends(get_conn)):

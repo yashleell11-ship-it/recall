@@ -273,6 +273,18 @@ export interface TestSummary {
    * to resume it.
    */
   duration_s: number | null;
+  /**
+   * OPTIONAL / ADDITIVE. When the paper was submitted, or null while it is
+   * still open. This is the honest answer to "is it finished"; duration_s was
+   * only ever a proxy for it, and a proxy that is wrong for a paper submitted
+   * with nothing answered — that records duration_s = 0, which reads as
+   * falsy and left the paper in the unfinished list forever.
+   */
+  submitted_at?: string | null;
+  /** The one subject a class30/mte40/endterm100 paper was restricted to, or
+   *  null for a fullday paper (which spans every subject) or on a server
+   *  older than this field. */
+  topic_code: string | null;
 }
 
 /* --- teaching ------------------------------------------------------------ */

@@ -7,11 +7,17 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatedNumber, Reveal, Skeleton } from "@/components/rich";
 import { ErrorState, Kbd, Panel, TopicCode } from "@/components/ui";
 import {
+  abandonTest,
   createTest,
   errorMessage,
   sitPaper,
 } from "@/lib/api";
-import { formatDuration, mediumDate, plural } from "@/lib/format";
+import {
+  formatDuration,
+  mediumDate,
+  mediumDateTime,
+  plural,
+} from "@/lib/format";
 import { hasModifier, isTypingTarget } from "@/lib/keys";
 import { MAX_MARKS, PAPER_LABEL } from "@/lib/marks";
 import { fetchPicker } from "@/lib/resources";
@@ -57,9 +63,113 @@ const PAPERS: Paper[] = [
   },
 ];
 
-/** A paper with no duration recorded was started and never submitted. */
+/**
+ * Still open, meaning: never submitted.
+ *
+ * `submitted_at` is the field that actually answers this. The original test
+ * was `!t.duration_s`, a proxy — and a proxy that got it wrong in exactly one
+ * case that happens for real: submit a paper having answered nothing and the
+ * recorded duration is 0, which is falsy, so the paper sat in the "unfinished"
+ * banner permanently, offering to resume something already graded.
+ *
+ * The proxy survives only as the fallback for a server too old to send the
+ * field, per the OPTIONAL / ADDITIVE convention in lib/types.ts.
+ */
 function isOpen(t: TestSummary): boolean {
+  if (t.submitted_at !== undefined) return t.submitted_at === null;
   return !t.duration_s;
+}
+
+/**
+ * One unfinished paper: what it is, when it was opened, and the two things
+ * you can do about it.
+ *
+ * "Resume Mid term from 5 Sep 2026" was not enough to act on once more than
+ * one paper is open — two mid-terms opened the same afternoon read
+ * identically, and neither said which subject it covered. A paper you cannot
+ * identify is a paper you will not resume, so it sits in the banner forever.
+ * Hence the subject, the clock time, and a way to close it.
+ *
+ * Closing asks first. Nothing here has reached the scheduler — a paper only
+ * becomes reviews when it is submitted — so this destroys nothing that
+ * counted, but it does destroy answers someone sat down and gave, and that
+ * is worth one click of friction.
+ */
+function OpenPaper({ test, onClosed }: {
+  test: TestSummary;
+  onClosed: () => void;
+}) {
+  const [confirming, setConfirming] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const close = useCallback(() => {
+    setBusy(true);
+    setError(null);
+    abandonTest(test.id)
+      .then(onClosed)
+      .catch((err: unknown) => {
+        setError(errorMessage(err));
+        setBusy(false);
+        setConfirming(false);
+      });
+  }, [test.id, onClosed]);
+
+  return (
+    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[13px]">
+      <span className="font-semibold text-fg">
+        {KIND_LABEL[test.kind] ?? test.kind}
+      </span>
+      {test.topic_code ? (
+        <TopicCode code={test.topic_code} />
+      ) : (
+        <span className="text-fg-3">all subjects</span>
+      )}
+      <span className="text-fg-3 tnum">
+        opened {mediumDateTime(test.started_at)}
+      </span>
+
+      <span className="ml-auto flex items-center gap-3">
+        {error && (
+          <span className="text-[12px]" style={{ color: "var(--g-again)" }}>
+            {error}
+          </span>
+        )}
+        {confirming ? (
+          <>
+            <span className="text-fg-2 text-[12px]">Discard it?</span>
+            <button
+              onClick={close}
+              disabled={busy}
+              className="link text-[13px] disabled:opacity-50"
+              style={{ color: "var(--g-again)" }}
+            >
+              {busy ? "closing…" : "Yes, close"}
+            </button>
+            <button
+              onClick={() => setConfirming(false)}
+              disabled={busy}
+              className="link text-fg-3 text-[13px] disabled:opacity-50"
+            >
+              Keep
+            </button>
+          </>
+        ) : (
+          <>
+            <Link href={`/test/${test.id}`} className="link">
+              Resume
+            </Link>
+            <button
+              onClick={() => setConfirming(true)}
+              className="link text-fg-3 text-[13px]"
+            >
+              Close
+            </button>
+          </>
+        )}
+      </span>
+    </div>
+  );
 }
 
 export default function TestPickerPage() {
@@ -214,23 +324,16 @@ export default function TestPickerPage() {
       ) : null}
 
       {open.length > 0 && (
-        <div className="panel mb-4 px-3 py-2.5 flex flex-wrap items-center gap-x-4 gap-y-2 border-l-2 border-l-accent">
-          <p className="text-[13px] text-fg-2">
+        <div className="panel mb-4 px-3 py-2.5 border-l-2 border-l-accent">
+          <p className="text-[13px] text-fg-2 mb-2">
             <span className="font-semibold text-fg">
               {open.length} unfinished {plural(open.length, "paper")}.
             </span>{" "}
             Nothing was lost — every answer was saved as you gave it.
           </p>
-          <div className="flex flex-wrap gap-3 ml-auto">
+          <div className="flex flex-col gap-1.5">
             {open.map((t) => (
-              <Link
-                key={t.id}
-                href={`/test/${t.id}`}
-                className="link text-[13px]"
-              >
-                Resume {KIND_LABEL[t.kind] ?? t.kind} from{" "}
-                {mediumDate(t.started_at)}
-              </Link>
+              <OpenPaper key={t.id} test={t} onClosed={res.reload} />
             ))}
           </div>
         </div>

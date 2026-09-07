@@ -1378,6 +1378,9 @@ interface MockTest {
   started_at: string;
   startedMs: number;
   time_limit_s: number | null;
+  /** The one subject the paper was restricted to, or null for a fullday
+   *  paper, which spans every subject. */
+  topic_code: string | null;
   questions: TestQuestion[];
   seconds: Record<number, number>;
   submitted: boolean;
@@ -1509,6 +1512,7 @@ export async function createTest(
     started_at: new Date(now).toISOString(),
     startedMs: now,
     time_limit_s: paper.limit,
+    topic_code: topicCode ?? null,
     questions,
     seconds: {},
     submitted: false,
@@ -1657,6 +1661,9 @@ function seedPast() {
       started_at: p.startedAt,
       startedMs: Date.parse(p.startedAt),
       time_limit_s: PAPERS[p.kind].limit,
+      // The seeded history is all all-subject papers; a fixture that named a
+      // subject it had not actually filtered to would be a lie on screen.
+      topic_code: null,
       questions,
       seconds: {},
       submitted: true,
@@ -1678,8 +1685,28 @@ export async function getTests(): Promise<TestSummary[]> {
       obtained_marks: t.obtained,
       total_marks: t.questions.reduce((n, q) => n + q.marks, 0),
       duration_s: t.duration_s,
+      submitted_at: t.submitted ? t.started_at : null,
+      topic_code: t.topic_code,
     }))
     .sort((a, b) => (a.started_at < b.started_at ? 1 : -1));
+}
+
+/** DELETE /api/tests/{id}. Same two refusals as the server: 404 for a paper
+ *  that is not there, 409 for one already submitted. */
+export async function abandonTest(id: number): Promise<{ ok: true }> {
+  await delay();
+  seedPast();
+  const t = tests.get(id);
+  if (!t) throw new ApiError(404, `/api/tests/${id}`, `no test ${id}`);
+  if (t.submitted) {
+    throw new ApiError(
+      409,
+      `/api/tests/${id}`,
+      "cannot close a paper that has already been submitted",
+    );
+  }
+  tests.delete(id);
+  return { ok: true };
 }
 
 /* --- teaching ------------------------------------------------------------ */

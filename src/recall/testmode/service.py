@@ -234,11 +234,36 @@ def submit_test(conn, user_id: int, test_id: int) -> dict:
 
 def list_tests(conn, user_id: int) -> list[dict]:
     rows = conn.execute(
-        "SELECT id, kind, started_at, obtained_marks, total_marks, duration_s"
-        " FROM tests WHERE user_id = ? ORDER BY started_at DESC, id DESC",
+        "SELECT t.id, t.kind, t.started_at, t.submitted_at, t.obtained_marks,"
+        " t.total_marks, t.duration_s, tp.code AS topic_code"
+        " FROM tests t LEFT JOIN topics tp ON tp.id = t.topic_id"
+        " WHERE t.user_id = ? ORDER BY t.started_at DESC, t.id DESC",
         (user_id,)).fetchall()
     return [dict(r) for r in rows]
 
 
+def abandon_test(conn, user_id: int, test_id: int) -> None:
+    """Close an open paper without sitting it.
+
+    Only ever touches an unsubmitted test: `submit_test` is the one place a
+    paper's answers turn into reviews, and nothing before that point has
+    written anything the scheduler has seen — record_answer only fills in
+    `test_questions.verdict`. So deleting an open test deletes work that was
+    never real yet, and a submitted one is refused rather than silently
+    losing a graded result.
+
+    `test_questions` has no ON DELETE CASCADE (SQLite does not enforce
+    foreign keys by default and this schema does not turn that pragma on),
+    so its rows are deleted explicitly, in the same transaction as the
+    `tests` row, rather than left orphaned for a later query to trip over.
+    """
+    test = _test_row(conn, user_id, test_id)
+    if test["submitted_at"] is not None:
+        raise ValueError("cannot close a paper that has already been submitted")
+    conn.execute("DELETE FROM test_questions WHERE test_id = ?", (test_id,))
+    conn.execute("DELETE FROM tests WHERE id = ?", (test_id,))
+    conn.commit()
+
+
 __all__ = ["KINDS", "VERDICTS", "GRADE_FOR_VERDICT", "create_test", "get_test",
-           "record_answer", "submit_test", "list_tests"]
+           "record_answer", "submit_test", "list_tests", "abandon_test"]

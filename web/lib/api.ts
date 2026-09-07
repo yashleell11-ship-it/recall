@@ -270,6 +270,13 @@ export function getTests(): Promise<TestSummary[]> {
   return request<TestSummary[]>("/api/tests");
 }
 
+/** DELETE /api/tests/{id} — close an open paper without sitting it. 409 if
+ *  it has already been submitted: that is a graded result, not clutter. */
+export function abandonTest(id: number): Promise<{ ok: true }> {
+  if (MOCK) return mock.abandonTest(id);
+  return request<{ ok: true }>(`/api/tests/${id}`, { method: "DELETE" });
+}
+
 /* --- teaching ------------------------------------------------------------ */
 
 /** POST /api/teach/explain — 422 when the model could not cite its source. */
