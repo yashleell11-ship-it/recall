@@ -12,6 +12,11 @@ router = APIRouter(tags=["tests"])
 class TestCreateIn(BaseModel):
     kind: str
     topic_code: str | None = None
+    #: 0-based syllabus unit indices to examine. Null draws from the whole
+    #: subject. The generate-then-sit route (/api/topics/{code}/paper) takes
+    #: 1-based numbers instead, because that one is what the UI calls with a
+    #: unit number read off a timetable; this one is the raw contract.
+    units: list[int] | None = None
 
 
 class AnswerIn(BaseModel):
@@ -24,7 +29,8 @@ class AnswerIn(BaseModel):
 def create_test(body: TestCreateIn, user_id: int = Depends(get_current_user),
                 conn=Depends(get_conn)):
     try:
-        return service.create_test(conn, user_id, body.kind, body.topic_code)
+        return service.create_test(conn, user_id, body.kind, body.topic_code,
+                                   units=body.units)
     except LookupError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except ValueError as exc:

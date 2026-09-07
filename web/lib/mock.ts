@@ -1381,6 +1381,9 @@ interface MockTest {
   /** The one subject the paper was restricted to, or null for a fullday
    *  paper, which spans every subject. */
   topic_code: string | null;
+  /** 0-based unit indices the paper was scoped to, or null for the whole
+   *  subject. */
+  units: number[] | null;
   questions: TestQuestion[];
   seconds: Record<number, number>;
   submitted: boolean;
@@ -1480,6 +1483,9 @@ function assemble(pool: MockCard[], target: number | null): TestQuestion[] {
 export async function createTest(
   kind: TestKind,
   topicCode?: string,
+  /** 1-based, as the sitPaper endpoint takes them. Stored 0-based, as the
+   *  server stores them. */
+  units?: number[],
 ): Promise<TestPaper> {
   await delay(320);
   const s = store();
@@ -1513,6 +1519,7 @@ export async function createTest(
     startedMs: now,
     time_limit_s: paper.limit,
     topic_code: topicCode ?? null,
+    units: units?.length ? [...new Set(units.map((u) => u - 1))].sort() : null,
     questions,
     seconds: {},
     submitted: false,
@@ -1664,6 +1671,7 @@ function seedPast() {
       // The seeded history is all all-subject papers; a fixture that named a
       // subject it had not actually filtered to would be a lie on screen.
       topic_code: null,
+      units: null,
       questions,
       seconds: {},
       submitted: true,
@@ -1687,6 +1695,7 @@ export async function getTests(): Promise<TestSummary[]> {
       duration_s: t.duration_s,
       submitted_at: t.submitted ? t.started_at : null,
       topic_code: t.topic_code,
+      units: t.units,
     }))
     .sort((a, b) => (a.started_at < b.started_at ? 1 : -1));
 }

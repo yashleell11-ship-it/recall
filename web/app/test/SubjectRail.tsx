@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { errorMessage, generateFromKnowledge } from "@/lib/api";
 import { Reveal } from "@/components/rich";
 import type { SubjectScheme, TestKind, Topic, TopicMeta } from "@/lib/types";
@@ -169,10 +169,23 @@ function SubjectCard({
   startingKey: string | null;
   anyStarting: boolean;
   errorMessage: string | null;
-  onStart: (kind: TestKind, code: string) => void;
+  onStart: (kind: TestKind, code: string, units: number[]) => void;
 }) {
   const reduced = useReducedMotion();
   const meta = topic.meta;
+
+  /**
+   * Which units were actually covered in class, 1-based, as printed beside
+   * each unit. Empty means "whatever this paper kind normally covers", which
+   * is what every chip did before this existed — the feature adds a way to
+   * narrow, and narrows nothing until asked.
+   */
+  const [chosen, setChosen] = useState<number[]>([]);
+  const toggleUnit = useCallback((n: number) => {
+    setChosen((prev) =>
+      prev.includes(n) ? prev.filter((u) => u !== n) : [...prev, n].sort((a, b) => a - b),
+    );
+  }, []);
 
   return (
     <Reveal index={index} className="h-full">
@@ -221,20 +234,65 @@ function SubjectCard({
             units
           </summary>
           <ol className="mt-1.5 border-t border-line">
-            {meta.units.map((u, i) => (
-              <li
-                key={u}
-                className="flex gap-2 py-[4px] border-b border-line last:border-b-0"
-              >
-                <span className="telemetry text-[10px] text-fg-3 w-4 shrink-0 pt-px">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="text-[12px] text-fg-2 leading-snug flex-1">{u}</span>
-                <UnitGenerate topicCode={topic.code} unit={i + 1} />
-              </li>
-            ))}
+            {meta.units.map((u, i) => {
+              const n = i + 1;
+              const picked = chosen.includes(n);
+              return (
+                <li
+                  key={u}
+                  className="flex gap-2 py-[4px] border-b border-line last:border-b-0"
+                >
+                  {/* The whole row is the toggle: "we did this one in class".
+                      A checkbox rather than a link, because it changes what
+                      the buttons below will do rather than navigating. */}
+                  <button
+                    type="button"
+                    onClick={() => toggleUnit(n)}
+                    aria-pressed={picked}
+                    aria-label={`Examine unit ${n}: ${u}`}
+                    className="flex gap-2 flex-1 text-left group/unit"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`telemetry text-[10px] w-4 shrink-0 pt-px ${
+                        picked ? "text-accent font-semibold" : "text-fg-3"
+                      }`}
+                    >
+                      {picked ? "✓" : String(n).padStart(2, "0")}
+                    </span>
+                    <span
+                      className={`text-[12px] leading-snug flex-1 transition-colors
+                        duration-[90ms] ${
+                          picked
+                            ? "text-fg"
+                            : "text-fg-2 group-hover/unit:text-fg"
+                        }`}
+                    >
+                      {u}
+                    </span>
+                  </button>
+                  <UnitGenerate topicCode={topic.code} unit={n} />
+                </li>
+              );
+            })}
           </ol>
         </details>
+
+        {chosen.length > 0 && (
+          <p className="telemetry text-[10.5px] mt-2 flex items-center gap-2">
+            <span className="text-accent">
+              examining {chosen.length === 1 ? "unit" : "units"}{" "}
+              {chosen.join(", ")}
+            </span>
+            <button
+              onClick={() => setChosen([])}
+              className="text-fg-3 hover:text-fg-2 underline underline-offset-2
+                transition-colors duration-[90ms]"
+            >
+              clear
+            </button>
+          </p>
+        )}
 
         <div className="mt-auto pt-3 flex flex-wrap items-center gap-1.5">
           {chipsFor(meta).map((chip) => {
@@ -243,11 +301,17 @@ function SubjectCard({
             return (
               <motion.button
                 key={chip.kind}
-                onClick={() => onStart(chip.kind, topic.code)}
+                onClick={() => onStart(chip.kind, topic.code, chosen)}
                 disabled={anyStarting}
                 whileTap={reduced ? undefined : { scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                aria-label={`Start ${chip.label} paper for ${topic.code} — ${chip.detail}`}
+                aria-label={
+                  chosen.length
+                    ? `Start ${chip.label} paper for ${topic.code} on unit${
+                        chosen.length > 1 ? "s" : ""
+                      } ${chosen.join(", ")}`
+                    : `Start ${chip.label} paper for ${topic.code} — ${chip.detail}`
+                }
                 className="telemetry text-[11px] leading-none px-2 py-[7px] rounded-sm border border-line
                   bg-surface hover:border-line-strong hover:bg-surface-hover
                   transition-colors duration-[90ms]
@@ -299,7 +363,7 @@ export function SubjectRail({
   topics: SubjectTopic[];
   startingKey: string | null;
   error: { code: string; message: string } | null;
-  onStart: (kind: TestKind, code: string) => void;
+  onStart: (kind: TestKind, code: string, units: number[]) => void;
 }) {
   return (
     <section aria-label="Subjects">

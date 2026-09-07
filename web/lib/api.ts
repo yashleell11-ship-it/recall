@@ -256,11 +256,18 @@ export function submitTest(id: number): Promise<TestResult> {
 export function sitPaper(
   topicCode: string,
   kind: TestKind,
+  /** 1-based syllabus unit numbers — "we did units 2 and 3 in class". Omit
+   *  for the paper kind's own coverage. This endpoint speaks in the numbers
+   *  printed on a timetable; POST /api/tests takes 0-based indices. */
+  units?: number[],
 ): Promise<TestPaper> {
-  if (MOCK) return mock.createTest(kind, topicCode);
+  if (MOCK) return mock.createTest(kind, topicCode, units);
   return request<TestPaper>(
     `/api/topics/${encodeURIComponent(topicCode)}/paper`,
-    { method: "POST", body: JSON.stringify({ kind }) },
+    {
+      method: "POST",
+      body: JSON.stringify(units?.length ? { kind, units } : { kind }),
+    },
   );
 }
 

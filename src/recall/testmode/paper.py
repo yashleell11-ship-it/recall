@@ -96,13 +96,20 @@ def _active_per_unit(conn, user_id: int, topic_id: int) -> dict[int, int]:
 def ensure_coverage(conn, cfg: Config, client, *, user_id: int, topic_id: int,
                     topic_code: str, full_name: str, exam_format: str,
                     units: list[str], kind: str,
+                    only_units: list[int] | None = None,
                     embed=embed_texts) -> CoverageResult:
     """Generate whatever the paper needs and the deck does not have.
 
     Only the shortfall is generated: a unit already carrying enough cards
     costs nothing, so sitting the same paper twice does not pay twice.
+
+    `only_units` overrides the paper kind's own plan with an explicit list of
+    0-based unit indices — "we did units 2 and 3 in class, examine me on
+    those". Given one, the marks target is spread across just those units, so
+    asking for one unit gets a paper's worth of that unit rather than a sixth
+    of one.
     """
-    plan = units_for(kind, len(units))
+    plan = units_for(kind, len(units)) if only_units is None else list(only_units)
     if not plan:
         return CoverageResult(0, 0, 0.0, [], already_covered=True)
 

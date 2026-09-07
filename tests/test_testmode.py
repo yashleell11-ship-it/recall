@@ -736,7 +736,7 @@ def test_history_reports_each_paper(client):
     assert len(rows) == 2
     assert set(rows[0]) == {"id", "kind", "started_at", "submitted_at",
                             "obtained_marks", "total_marks", "duration_s",
-                            "topic_code"}
+                            "topic_code", "units"}
     sat = next(r for r in rows if r["id"] == tid)
     assert sat["obtained_marks"] == q["marks"]
     assert sat["total_marks"] == 30
@@ -837,4 +837,172 @@ def test_mte_allowed_when_meta_permits_or_is_absent(db_path):
                  (_json.dumps({"mte_exists": True}),))
     conn.commit()
     assert service.create_test(conn, 1, "mte40", topic_code="MATHS")["kind"] == "mte40"
+    conn.close()
+
+
+# --- unit-scoped papers ------------------------------------------------------
+#
+# "We did unit 3 in class today, examine me on unit 3." A unit is knowable only
+# for knowledge-mode cards, whose chunk is the topic's per-unit synthetic chunk
+# and whose ordinal IS the unit index; an uploaded PDF is chunked by page and a
+# page maps to no unit at all. These check that the line is drawn there and
+# nowhere else.
+
+def _knowledge_deck(db_path, topic_id=1, code="CSE111", per_unit=6, units=3):
+    """Give a topic a knowledge source with `units` unit-chunks under it."""
+    import json as _json
+
+    from recall.generate.knowledge import knowledge_sha
+
+    conn = connect(db_path)
+    conn.execute(
+        "UPDATE topics SET meta = ? WHERE id = ?",
+        (_json.dumps({"full_name": code, "units": [f"Unit {i + 1}"
+                                                   for i in range(units)],
+                      "exam_format": "mixed", "mte_exists": True}), topic_id))
+    conn.execute(
+        "INSERT INTO sources (id,user_id,topic_id,filename,kind,sha256,added_at)"
+        " VALUES (900,1,?,'AI knowledge','knowledge',?,'2026-09-01T00:00:00+00:00')",
+        (topic_id, knowledge_sha(topic_id)))
+    for u in range(units):
+        conn.execute(
+            "INSERT INTO chunks (id,source_id,ordinal,text,page_ref)"
+            " VALUES (?,900,?,?,?)",
+            (900 + u, u, f"Unit {u + 1}", f"Unit {u + 1} · Unit {u + 1}"))
+        for i in range(per_unit):
+            conn.execute(
+                "INSERT INTO cards (chunk_id,topic_id,kind,question,answer,"
+                "cloze_text,arm,state,origin,created_at) VALUES (?,?,'qa',?,?,"
+                "NULL,'learned','active','knowledge','2026-09-01T00:00:00+00:00')",
+                (900 + u, topic_id, f"unit{u + 1} q{i}?", words(3)))
+    conn.commit()
+    conn.close()
+
+
+def _questions_of(client, test_id):
+    return client.get(f"/api/tests/{test_id}").json()["questions"]
+
+
+def test_a_unit_scoped_paper_only_draws_from_those_units(db_path):
+    _knowledge_deck(db_path)
+    conn = connect(db_path)
+    paper = service.create_test(conn, 1, "class30", "CSE111", units=[2])
+    asked = {q["question"] for q in paper["questions"]}
+    assert asked, "unit 3 has cards; the paper must not be empty"
+    assert all(q.startswith("unit3 ") for q in asked), sorted(asked)
+    conn.close()
+
+
+def test_choosing_two_units_draws_from_both_and_no_others(db_path):
+    _knowledge_deck(db_path)
+    conn = connect(db_path)
+    paper = service.create_test(conn, 1, "endterm100", "CSE111", units=[0, 1])
+    prefixes = {q["question"].split(" ")[0] for q in paper["questions"]}
+    assert prefixes <= {"unit1", "unit2"}
+    assert prefixes == {"unit1", "unit2"}
+    conn.close()
+
+
+def test_a_unit_paper_leaves_out_cards_whose_unit_is_unknown(db_path):
+    """The topic's uploaded-PDF cards are chunked by page. A page is not a
+    unit, so they cannot honestly be claimed for one."""
+    _knowledge_deck(db_path)
+    conn = connect(db_path)
+    paper = service.create_test(conn, 1, "endterm100", "CSE111", units=[0, 1, 2])
+    assert not any(q["question"].startswith("CSE111 q")
+                   for q in paper["questions"])
+    # ...and without a unit scope they are exactly where they always were.
+    whole = service.create_test(conn, 1, "endterm100", "CSE111")
+    assert any(q["question"].startswith("CSE111 q") for q in whole["questions"])
+    conn.close()
+
+
+def test_the_scope_survives_on_the_paper_and_in_history(db_path, client):
+    _knowledge_deck(db_path)
+    body = client.post("/api/tests", json={"kind": "class30",
+                                           "topic_code": "CSE111",
+                                           "units": [1, 2]}).json()
+    assert body["units"] == [1, 2]
+    assert client.get(f"/api/tests/{body['test_id']}").json()["units"] == [1, 2]
+    row = next(r for r in client.get("/api/tests").json()
+               if r["id"] == body["test_id"])
+    assert row["units"] == [1, 2]
+
+
+def test_a_whole_subject_paper_reports_no_scope(client):
+    body = client.post("/api/tests", json={"kind": "class30"}).json()
+    assert body["units"] is None
+
+
+def test_a_unit_out_of_range_is_refused_rather_than_clamped(db_path):
+    _knowledge_deck(db_path)          # three units
+    conn = connect(db_path)
+    with pytest.raises(ValueError) as exc:
+        service.create_test(conn, 1, "class30", "CSE111", units=[0, 9])
+    assert "no unit 10" in str(exc.value)
+    conn.close()
+
+
+def test_units_are_deduplicated_and_sorted(db_path):
+    _knowledge_deck(db_path)
+    conn = connect(db_path)
+    paper = service.create_test(conn, 1, "class30", "CSE111", units=[2, 0, 2])
+    assert paper["units"] == [0, 2]
+    conn.close()
+
+
+def test_choosing_units_without_a_subject_is_refused(db_path):
+    conn = connect(db_path)
+    with pytest.raises(ValueError) as exc:
+        service.create_test(conn, 1, "class30", None, units=[0])
+    assert "needs a subject" in str(exc.value)
+    conn.close()
+
+
+def test_a_subject_with_no_syllabus_cannot_be_scoped_to_a_unit(db_path):
+    """PHY in the fixture carries no meta at all."""
+    conn = connect(db_path)
+    with pytest.raises(ValueError) as exc:
+        service.create_test(conn, 1, "class30", "PHY", units=[0])
+    assert "no syllabus units" in str(exc.value)
+    conn.close()
+
+
+def test_an_empty_unit_list_is_refused(db_path):
+    _knowledge_deck(db_path)
+    conn = connect(db_path)
+    with pytest.raises(ValueError) as exc:
+        service.create_test(conn, 1, "class30", "CSE111", units=[])
+    assert "at least one unit" in str(exc.value)
+    conn.close()
+
+
+def test_a_unit_paper_never_reaches_another_account(db_path):
+    """cards and chunks carry no owner; the only thing keeping a unit query
+    inside one account is the join back to topics."""
+    import json as _json
+
+    from recall.generate.knowledge import knowledge_sha
+
+    _knowledge_deck(db_path)
+    conn = connect(db_path)
+    conn.execute("INSERT INTO users (id, name) VALUES (2, 'someone else')")
+    conn.execute("INSERT INTO topics (id,user_id,code,label,meta)"
+                 " VALUES (77,2,'CSE111',?,?)",
+                 ("theirs", _json.dumps({"units": ["Unit 1", "Unit 2", "Unit 3"]})))
+    conn.execute(
+        "INSERT INTO sources (id,user_id,topic_id,filename,kind,sha256,added_at)"
+        " VALUES (950,2,77,'AI knowledge','knowledge',?,'2026-09-01T00:00:00+00:00')",
+        (knowledge_sha(77),))
+    conn.execute("INSERT INTO chunks (id,source_id,ordinal,text,page_ref)"
+                 " VALUES (950,950,0,'theirs','Unit 1')")
+    conn.execute(
+        "INSERT INTO cards (chunk_id,topic_id,kind,question,answer,cloze_text,"
+        "arm,state,origin,created_at) VALUES (950,77,'qa','THEIR SECRET?',?,"
+        "NULL,'learned','active','knowledge','2026-09-01T00:00:00+00:00')",
+        (words(3),))
+    conn.commit()
+
+    paper = service.create_test(conn, 1, "endterm100", "CSE111", units=[0])
+    assert not any("SECRET" in q["question"] for q in paper["questions"])
     conn.close()

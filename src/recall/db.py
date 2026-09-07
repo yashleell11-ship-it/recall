@@ -93,6 +93,16 @@ def _migrate(conn: sqlite3.Connection) -> None:
     if card_cols and "detail" not in card_cols:
         conn.execute("ALTER TABLE cards ADD COLUMN detail TEXT")
 
+    # tests.units_json (2026-09-08): which syllabus units a paper was scoped
+    # to, as a JSON array of 0-based indices, or NULL for a paper that drew
+    # from the whole subject. Stored rather than derived because the paper is
+    # materialised into test_questions at creation — after that, nothing about
+    # the rows says what the scope had been, and "Unit 3 test" is the label a
+    # resumed paper has to be able to show.
+    test_cols = {r["name"] for r in conn.execute("PRAGMA table_info(tests)").fetchall()}
+    if test_cols and "units_json" not in test_cols:
+        conn.execute("ALTER TABLE tests ADD COLUMN units_json TEXT")
+
     # users.email/password_hash/created_at (2026-09-07, open registration).
     # No CHECK constraint on any of these, so a plain ADD COLUMN is legal SQL
     # — unlike the tests.kind CHECK below, this needs no table rebuild.
@@ -125,8 +135,18 @@ def _migrate(conn: sqlite3.Connection) -> None:
                   started_at     TEXT NOT NULL,
                   submitted_at   TEXT,
                   duration_s     INTEGER,
-                  obtained_marks REAL
+                  obtained_marks REAL,
+                  units_json     TEXT
                 )"""
+    # Named columns, not SELECT *. The positional form broke the moment a
+    # column was added above this block: the old table had 12 columns and this
+    # DDL declared 11, and SQLite refused mid-migration. Naming them means the
+    # next ADD COLUMN is free.
+    _TESTS_COLS = (
+        "id, user_id, kind, topic_id, target_marks, total_marks,"
+        " time_limit_s, started_at, submitted_at, duration_s, obtained_marks,"
+        " units_json"
+    )
     row = conn.execute(
         "SELECT sql FROM sqlite_master WHERE type='table' AND name='tests'"
     ).fetchone()
@@ -134,7 +154,9 @@ def _migrate(conn: sqlite3.Connection) -> None:
         conn.execute("PRAGMA foreign_keys = OFF")
         try:
             conn.execute(f"CREATE TABLE tests_new {_TESTS_DDL}")
-            conn.execute("INSERT INTO tests_new SELECT * FROM tests")
+            conn.execute(
+                f"INSERT INTO tests_new ({_TESTS_COLS})"
+                f" SELECT {_TESTS_COLS} FROM tests")
             conn.execute("DROP TABLE tests")
             conn.execute("ALTER TABLE tests_new RENAME TO tests")
             conn.execute(

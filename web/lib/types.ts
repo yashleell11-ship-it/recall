@@ -231,6 +231,9 @@ export interface TestQuestion {
 export interface TestPaper {
   test_id: number;
   kind: TestKind;
+  /** OPTIONAL / ADDITIVE. 0-based syllabus unit indices the paper was scoped
+   *  to, or null for one drawn from the whole subject. */
+  units?: number[] | null;
   total_marks: number;
   /** null (or 0) for `fullday`, which has no limit. */
   time_limit_s: number | null;
@@ -285,6 +288,9 @@ export interface TestSummary {
    *  null for a fullday paper (which spans every subject) or on a server
    *  older than this field. */
   topic_code: string | null;
+  /** OPTIONAL / ADDITIVE. 0-based syllabus unit indices the paper was scoped
+   *  to, or null for one drawn from the whole subject. */
+  units?: number[] | null;
 }
 
 /* --- teaching ------------------------------------------------------------ */

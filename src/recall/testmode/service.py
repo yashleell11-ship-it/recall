@@ -10,6 +10,7 @@ and difficulty exactly as a wrong answer in review does.
 """
 
 from recall.api.scheduling import iso, record_review, utc_now
+from recall.generate.knowledge import knowledge_sha
 from recall.testmode.assembly import CandidateCard, assemble, shortfall_note
 from recall.testmode.marks import PARTIAL_MIN_MARKS, marks_for_card
 
@@ -54,6 +55,28 @@ def _question(row) -> dict:
             "page_ref": row["page_ref"], "verdict": row["verdict"]}
 
 
+def _units_of(row) -> list[int] | None:
+    """The unit scope stored on a test row, or None for a whole-subject paper.
+
+    Tolerant of a row from a database that predates the column, and of junk in
+    it: a paper whose scope cannot be read is reported as unscoped rather than
+    crashing the screen that lists it.
+    """
+    import json as _json
+
+    try:
+        raw = row["units_json"]
+    except (KeyError, IndexError):
+        return None
+    if not raw:
+        return None
+    try:
+        value = _json.loads(raw)
+    except _json.JSONDecodeError:
+        return None
+    return [int(u) for u in value] if isinstance(value, list) else None
+
+
 def _score(row) -> float:
     return row["marks"] * _SCORE_FRACTION.get(row["verdict"] or "skipped", 0.0)
 
@@ -69,9 +92,42 @@ def _test_row(conn, user_id: int, test_id: int):
     return row
 
 
-def _candidates(conn, user_id: int, topic_code: str | None) -> list[CandidateCard]:
+def _candidates(conn, user_id: int, topic_code: str | None,
+                topic_id: int | None = None,
+                units: list[int] | None = None) -> list[CandidateCard]:
+    """Active cards a paper may draw from, optionally narrowed to units.
+
+    `units` is a list of 0-BASED unit indices. Narrowing to them is only
+    possible for knowledge-mode cards: their chunk is the per-unit chunk of
+    the topic's synthetic knowledge source, and its `ordinal` IS the unit
+    index (see recall.generate.knowledge._unit_chunk_id). A card from an
+    uploaded PDF is chunked by PAGE, and a page does not map to a syllabus
+    unit — so an upload card cannot honestly be claimed for unit 3, and a
+    unit-scoped paper leaves it out rather than guessing. The caller says so
+    on screen; silently mixing in cards from unknown units would break the
+    one promise a unit paper makes.
+
+    `t.user_id = ?` is load-bearing and not redundant with the topic filter:
+    `cards` and `chunks` carry no owner of their own, so every query that
+    reaches them has to arrive through `topics` (or `sources`) to stay inside
+    one account.
+    """
     clause = " AND t.code = ?" if topic_code else ""
     args: tuple = (topic_code,) if topic_code else ()
+
+    if units is not None:
+        if topic_id is None:
+            raise ValueError("a unit-scoped paper needs a topic")
+        if not units:
+            return []
+        holes = ",".join("?" for _ in units)
+        clause += (
+            " AND ch.source_id = (SELECT id FROM sources"
+            "                     WHERE user_id = ? AND sha256 = ?)"
+            f" AND ch.ordinal IN ({holes})"
+        )
+        args = (*args, user_id, knowledge_sha(topic_id), *units)
+
     rows = conn.execute(
         "SELECT c.id, c.kind, c.answer, t.code AS topic_code,"
         " cs.stability, cs.difficulty, cs.due_at"
@@ -90,10 +146,46 @@ def _candidates(conn, user_id: int, topic_code: str | None) -> list[CandidateCar
             for r in rows]
 
 
+def _clean_units(units: list[int], syllabus: list[str],
+                 topic_code: str) -> list[int]:
+    """Deduplicated, sorted, and every index checked against the real syllabus.
+
+    Out-of-range is refused rather than clamped or dropped: asking for unit 9
+    of a six-unit course is a mistake somewhere, and a paper that silently
+    came back covering unit 6 instead would hide it.
+    """
+    if not syllabus:
+        raise ValueError(
+            f"{topic_code} has no syllabus units recorded, so a paper cannot "
+            "be scoped to one")
+    cleaned = sorted({int(u) for u in units})
+    if not cleaned:
+        raise ValueError("choose at least one unit")
+    bad = [u for u in cleaned if not 0 <= u < len(syllabus)]
+    if bad:
+        raise ValueError(
+            f"{topic_code} has {len(syllabus)} units; "
+            f"no unit {', '.join(str(u + 1) for u in bad)}")
+    return cleaned
+
+
 def create_test(conn, user_id: int, kind: str,
-                topic_code: str | None = None) -> dict:
+                topic_code: str | None = None,
+                units: list[int] | None = None) -> dict:
+    """Assemble a paper.
+
+    `units` is a list of 0-based syllabus unit indices — "we did units 2 and 3
+    in class, examine me on those". It narrows the draw to cards whose unit is
+    actually known (see `_candidates`), and requires a subject: "unit 3" means
+    nothing across five different courses that each have one.
+    """
+    import json as _json
+
     if kind not in KINDS:
         raise ValueError(f"kind must be one of {', '.join(KINDS)}")
+    if units is not None and topic_code is None:
+        raise ValueError("choosing units needs a subject to choose them from")
+
     topic_id = None
     if topic_code is not None:
         row = conn.execute(
@@ -102,26 +194,28 @@ def create_test(conn, user_id: int, kind: str,
         if row is None:
             raise LookupError(f"no topic {topic_code!r}")
         topic_id = row["id"]
+        meta = _json.loads(row["meta"]) if row["meta"] else {}
         # Subjects without a mid-term at LPU must not offer one here: sitting a
         # paper the university will never set is practice for nothing.
-        if kind == "mte40" and row["meta"]:
-            import json as _json
-
-            meta = _json.loads(row["meta"])
-            if meta.get("mte_exists") is False:
-                raise ValueError(
-                    f"{topic_code} has no MTE at LPU "
-                    f"({meta.get('ca_policy', 'CA/ETE only')})"
-                )
+        if kind == "mte40" and meta.get("mte_exists") is False:
+            raise ValueError(
+                f"{topic_code} has no MTE at LPU "
+                f"({meta.get('ca_policy', 'CA/ETE only')})"
+            )
+        if units is not None:
+            units = _clean_units(units, meta.get("units") or [], topic_code)
 
     target, time_limit_s = KINDS[kind]
-    paper = assemble(_candidates(conn, user_id, topic_code), target, now=utc_now())
+    paper = assemble(
+        _candidates(conn, user_id, topic_code, topic_id, units),
+        target, now=utc_now())
 
     cur = conn.execute(
         "INSERT INTO tests (user_id, kind, topic_id, target_marks, total_marks,"
-        " time_limit_s, started_at) VALUES (?,?,?,?,?,?,?)",
+        " time_limit_s, started_at, units_json) VALUES (?,?,?,?,?,?,?,?)",
         (user_id, kind, topic_id, paper.target_marks, paper.total_marks,
-         time_limit_s, iso(utc_now())),
+         time_limit_s, iso(utc_now()),
+         _json.dumps(units) if units is not None else None),
     )
     test_id = int(cur.lastrowid)
     for ordinal, card in enumerate(paper.cards, start=1):
@@ -139,6 +233,7 @@ def get_test(conn, user_id: int, test_id: int) -> dict:
     note = shortfall_note(test["total_marks"], test["target_marks"], len(rows))
     return {"test_id": test["id"], "kind": test["kind"],
             "topic_code": test["topic_code"],
+            "units": _units_of(test),
             "target_marks": test["target_marks"],
             "total_marks": test["total_marks"],
             "time_limit_s": test["time_limit_s"],
@@ -235,11 +330,17 @@ def submit_test(conn, user_id: int, test_id: int) -> dict:
 def list_tests(conn, user_id: int) -> list[dict]:
     rows = conn.execute(
         "SELECT t.id, t.kind, t.started_at, t.submitted_at, t.obtained_marks,"
-        " t.total_marks, t.duration_s, tp.code AS topic_code"
+        " t.total_marks, t.duration_s, t.units_json, tp.code AS topic_code"
         " FROM tests t LEFT JOIN topics tp ON tp.id = t.topic_id"
         " WHERE t.user_id = ? ORDER BY t.started_at DESC, t.id DESC",
         (user_id,)).fetchall()
-    return [dict(r) for r in rows]
+    out = []
+    for r in rows:
+        row = dict(r)
+        row["units"] = _units_of(r)
+        row.pop("units_json", None)
+        out.append(row)
+    return out
 
 
 def abandon_test(conn, user_id: int, test_id: int) -> None:

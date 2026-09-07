@@ -34,6 +34,11 @@ class KnowledgeGenerateIn(BaseModel):
 
 class PaperIn(BaseModel):
     kind: str = Field(description="class30 | mte40 | endterm100 | fullday")
+    units: list[int] | None = Field(
+        default=None,
+        description="1-based syllabus unit numbers to examine, e.g. [2, 3] for "
+                    "'we did units 2 and 3 in class'. Omit for the paper "
+                    "kind's own coverage.")
 
 
 @router.post("/api/topics/{topic_code}/paper")
@@ -79,18 +84,32 @@ def sit_a_paper(topic_code: str, body: PaperIn,
             detail=f"{topic_code} has no MTE at LPU "
                    f"({meta.get('ca_policy', 'CA/ETE only')})")
 
+    # The wire speaks in the unit numbers a student reads off a timetable;
+    # everything inside counts from zero.
+    chosen = None
+    if body.units is not None:
+        bad = [u for u in body.units if not 1 <= u <= len(units)]
+        if bad or not body.units:
+            raise HTTPException(
+                status_code=422,
+                detail=(f"{topic_code} has {len(units)} units; no unit "
+                        + ", ".join(str(u) for u in bad)) if bad
+                       else "choose at least one unit")
+        chosen = sorted({u - 1 for u in body.units})
+
     check_daily_budget(conn, user_id)
     coverage = ensure_coverage(
         conn, cfg, client, user_id=user_id, topic_id=row["id"],
         topic_code=topic_code,
         full_name=meta.get("full_name") or row["label"],
         exam_format=meta.get("exam_format") or "written",
-        units=units, kind=body.kind, embed=embed,
+        units=units, kind=body.kind, only_units=chosen, embed=embed,
     )
     record_spend(conn, user_id, coverage.cost_usd)
 
     try:
-        paper = service.create_test(conn, user_id, body.kind, topic_code)
+        paper = service.create_test(conn, user_id, body.kind, topic_code,
+                                    units=chosen)
     except LookupError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except ValueError as exc:

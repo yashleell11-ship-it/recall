@@ -254,11 +254,13 @@ export default function TestPickerPage() {
    * you have never uploaded for gives you a real paper.
    */
   const startSubject = useCallback(
-    (paperKind: TestKind, code: string) => {
+    (paperKind: TestKind, code: string, units: number[] = []) => {
       if (starting || subjectStarting) return;
       setSubjectStarting(`${code}:${paperKind}`);
       setSubjectError(null);
-      sitPaper(code, paperKind)
+      // An empty selection means "whatever this paper kind covers", which is
+      // what sitPaper does when given no units at all.
+      sitPaper(code, paperKind, units)
         .then((p) => router.push(`/test/${p.test_id}`))
         .catch((err: unknown) => {
           setSubjectError({ code, message: errorMessage(err) });

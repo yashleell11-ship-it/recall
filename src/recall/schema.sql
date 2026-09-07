@@ -165,7 +165,10 @@ CREATE TABLE IF NOT EXISTS tests (
   started_at     TEXT NOT NULL,
   submitted_at   TEXT,
   duration_s     INTEGER,
-  obtained_marks REAL
+  obtained_marks REAL,
+  -- Which syllabus units the paper was scoped to: a JSON array of 0-based
+  -- indices, or NULL for a paper drawn from the whole subject.
+  units_json     TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_tests_user ON tests(user_id, started_at);
 
