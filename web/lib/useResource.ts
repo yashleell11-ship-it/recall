@@ -75,7 +75,12 @@ export function useResource<T>(
     // Just-arrived data is not revalidated. On a cold load the shell has
     // already prefetched this key; asking again a moment later would double
     // every request on the slowest path in the app.
-    if (fresh(key) && !inflight.has(key)) return;
+    //
+    // `cached` is the value THIS render read, not whatever is in the map now.
+    // That distinction is the whole guard: a prefetch can land between render
+    // and effect, and skipping the fetch on a value this component never
+    // received would leave it showing a skeleton forever.
+    if (cached !== undefined && fresh(key) && !inflight.has(key)) return;
 
     // Two components asking for the same thing at the same time is one
     // request, not two — the dashboard and the shell both want the topic
@@ -111,7 +116,7 @@ export function useResource<T>(
     return () => {
       live = false;
     };
-  }, [key, nonce, fetcher]);
+  }, [key, nonce, fetcher, cached]);
 
   const reload = useCallback(() => {
     cache.delete(key);
