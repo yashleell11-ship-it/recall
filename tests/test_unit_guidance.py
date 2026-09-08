@@ -201,3 +201,68 @@ def test_examples_text_is_valid_json_after_the_header_line():
     parsed = json.loads(payload)
     assert len(parsed) == 2
     assert set(parsed[0]) == {"question", "answer", "detail"}
+
+
+# --- guidance follows the unit, not the slot ---------------------------------
+#
+# `guidance_for` indexed the authored tuple positionally, in a codebase whose
+# law is that a unit is its name. While only a prompt read this it merely
+# mis-calibrated generation. Once a lesson renders guidance and a curated
+# worked example on screen, an inserted or reordered unit would teach unit 4's
+# material under unit 5's heading — and "relabelling a card as the wrong unit
+# is worse than leaving it unlabelled" is already the rule here.
+
+def test_guidance_follows_a_reordered_unit(monkeypatch):
+    """Swap two units in the syllabus; each must keep its own guidance."""
+    from recall.generate import unit_guidance as ug
+
+    original = ug.SUBJECTS["MTH165"]["units"]
+    before_1 = ug.guidance_for("MTH165", 1)
+    before_2 = ug.guidance_for("MTH165", 2)
+    assert before_1 is not None and before_2 is not None
+    assert before_1 is not before_2
+
+    swapped = [original[1], original[0], *original[2:]]
+    monkeypatch.setitem(ug.SUBJECTS["MTH165"], "units", swapped)
+
+    assert ug.guidance_for("MTH165", 1) is before_2
+    assert ug.guidance_for("MTH165", 2) is before_1
+
+
+def test_guidance_follows_a_unit_pushed_down_by_an_insertion(monkeypatch):
+    from recall.generate import unit_guidance as ug
+
+    original = ug.SUBJECTS["MTH165"]["units"]
+    before_1 = ug.guidance_for("MTH165", 1)
+    monkeypatch.setitem(ug.SUBJECTS["MTH165"], "units",
+                        ["Brand New Unit", *original])
+    assert ug.guidance_for("MTH165", 2) is before_1
+    assert ug.guidance_for("MTH165", 1) is None, (
+        "an unauthored unit must get no guidance rather than its neighbour's")
+
+
+def test_a_renamed_unit_gets_no_guidance_rather_than_the_wrong_guidance(monkeypatch):
+    """The one edit a name cannot survive. Silence is the correct answer —
+    `guidance_for` returning None is already supported everywhere."""
+    from recall.generate import unit_guidance as ug
+
+    original = ug.SUBJECTS["MTH165"]["units"]
+    monkeypatch.setitem(ug.SUBJECTS["MTH165"], "units",
+                        ["Renamed Beyond Recognition", *original[1:]])
+    assert ug.guidance_for("MTH165", 1) is None
+    assert ug.guidance_text("MTH165", 1) == ""
+
+
+def test_every_authored_unit_name_is_a_real_syllabus_unit():
+    """The declaration and the registry must not drift apart silently: if
+    lpu.py renames a unit, this fails and the guidance gets re-authored."""
+    from recall.generate.unit_guidance import _AUTHORED_UNITS, _UNITS
+    from recall.lpu import SUBJECTS, unit_key
+
+    for code, names in _AUTHORED_UNITS.items():
+        assert len(names) == len(_UNITS[code]), code
+        current = {unit_key(u) for u in SUBJECTS[code]["units"]}
+        for name in names:
+            assert unit_key(name) in current, (
+                f"{code}: guidance is authored for {name!r}, which lpu.py no "
+                "longer lists — re-author it or add the rename")

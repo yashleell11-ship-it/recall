@@ -39,6 +39,10 @@ from recall.generate.prompts import (
     format_guidance,
 )
 from recall.generate.unit_guidance import examples_text, guidance_text
+# Re-exported: unit identity is normalised in exactly one place, and that
+# place has to be a leaf module so unit_guidance can use it too without a
+# cycle. Every existing caller imports it from here.
+from recall.lpu import unit_key  # noqa: F401
 from recall.pipeline import (
     IngestResult,
     _cost,
@@ -92,13 +96,6 @@ def _synthetic_source_id(conn, user_id: int, topic_id: int) -> int:
     return cur.lastrowid
 
 
-def unit_key(unit_name: str) -> str:
-    """A unit's identity, normalised for comparison.
-
-    Whitespace and case only — anything cleverer (stripping punctuation, say)
-    would start merging units that a syllabus deliberately distinguishes.
-    """
-    return " ".join((unit_name or "").split()).casefold()
 
 
 def unit_chunk_ids(conn, source_id: int) -> dict[str, int]:

@@ -22,6 +22,8 @@ falls back to the paper-shape guidance alone.
 import json
 from dataclasses import dataclass
 
+from recall.lpu import SUBJECTS, unit_key
+
 
 @dataclass(frozen=True)
 class UnitGuidance:
@@ -3744,12 +3746,99 @@ _UNITS: dict[str, tuple[UnitGuidance, ...]] = {
 }
 
 
+#: The unit names each subject's guidance tuple above was written for, in
+#: the order it was written. DECLARED, not derived from lpu.SUBJECTS at
+#: import time, and that distinction is the whole point: the tuples above are
+#: positional, so deriving the mapping from whatever lpu.py currently says
+#: would re-point every entry the instant a unit is inserted or reordered —
+#: the drift that stranded sixteen MTH165 cards under "Linear Algebra".
+#:
+#: With the names written down, an insert or a reorder costs nothing and a
+#: rename degrades to "no guidance for this unit", which `guidance_for`
+#: already treats as a supported answer. Re-author the entry and update the
+#: name here; never edit one without the other.
+_AUTHORED_UNITS: dict[str, tuple[str, ...]] = {
+    "CSE111": (
+        "Computer Languages",
+        "Computer Fundamentals",
+        "Computer Hardware",
+        "Number Systems",
+        "Version Control",
+        "Modern AI Trends and Tools",
+        "Profile Creation",
+    ),
+    "CSE326": (
+        "HTML Fundamentals",
+        "Semantic HTML and Forms",
+        "Cascading Style Sheets",
+        "JavaScript Fundamentals",
+        "Interactive Web Development",
+        "Web Application Development and Deployment",
+    ),
+    "INT108": (
+        "Environment, Variables, Expressions and Statements",
+        "Conditional and Iterative Statements",
+        "Strings, Lists, Tuples and Dictionaries",
+        "Functions and Recursion",
+        "Classes, Objects and OOP Terminology",
+        "Files, Exceptions and Regular Expressions",
+    ),
+    "INT335": (
+        "Foundations of Learning, Creativity and Design Thinking",
+        "Empathy, Observation and Problem Identification",
+        "Ideation and Creative Problem Solving",
+        "Product Design and Prototyping",
+        "Testing, Validation and Customer Experience",
+        "Innovation Project, Re-Design and Product Presentation",
+    ),
+    "MEC103": (
+        "Introduction to Engineering Drawing: Instruments, Line Types, Lettering, Dimensioning, Scales and Conic Sections",
+        "Projections of Points, Lines and Planes",
+        "Orthographic Projections (including Projection of Regular Solids)",
+        "Sectional Views",
+        "Development of Surfaces",
+        "Isometric Projections",
+    ),
+    "MTH165": (
+        "Matrix Methods and Linear Systems",
+        "Differential Calculus and Its Applications",
+        "Fundamentals of Integral Calculus",
+        "Multivariate Differentiation",
+        "Multivariable Integration and Applications",
+        "Introduction to Fourier Series",
+    ),
+}
+
+
 def guidance_for(topic_code: str, unit_number: int) -> UnitGuidance | None:
-    """`unit_number` is 1-based, as shown to the student."""
-    units = _UNITS.get((topic_code or "").strip().upper())
-    if not units or not 1 <= unit_number <= len(units):
+    """`unit_number` is 1-based, as shown to the student.
+
+    The number indexes the syllabus **as it stands now**; the guidance is then
+    found by that unit's NAME. Going straight to `_UNITS[code][n - 1]` read the
+    authored tuple positionally, so the day a unit was inserted or reordered
+    every unit after it would have been calibrated against — and, once lessons
+    render guidance and worked examples on screen, taught from — its
+    neighbour's material under its own name.
+
+    That mattered less while only a prompt read this. It stops being invisible
+    the moment a curated WorkedExample is shown to a student, and "relabelling
+    a card as the wrong unit is worse than leaving it unlabelled" is already
+    this codebase's rule.
+    """
+    code = (topic_code or "").strip().upper()
+    units = _UNITS.get(code)
+    if not units:
         return None
-    return units[unit_number - 1]
+    syllabus = SUBJECTS.get(code, {}).get("units") or []
+    if not 1 <= unit_number <= len(syllabus):
+        return None
+    wanted = unit_key(syllabus[unit_number - 1])
+    for authored, guidance in zip(_AUTHORED_UNITS.get(code, ()), units):
+        if unit_key(authored) == wanted:
+            return guidance
+    # The unit was renamed, or is new. No guidance is a supported answer, and a
+    # far better one than another unit's.
+    return None
 
 
 def guidance_text(topic_code: str, unit_number: int) -> str:

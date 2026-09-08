@@ -227,3 +227,10 @@ DEFAULT_SCHEME_CONFIRMED = True
 LEGACY_RENAMES = {"MATHS": "MTH174", "HTML": "CSE326", "MTH174": "MTH165"}
 
 
+def unit_key(unit_name: str) -> str:
+    """A unit's identity, normalised for comparison.
+
+    Whitespace and case only — anything cleverer (stripping punctuation, say)
+    would start merging units that a syllabus deliberately distinguishes.
+    """
+    return " ".join((unit_name or "").split()).casefold()
