@@ -138,8 +138,48 @@ def passage_is_usable(text: str) -> bool:
         return False
     if sentences / (len(body) / 1000.0) < _MIN_SENTENCES_PER_KCHAR:
         return False
+    # A fill-in-the-blank bank is unquotable by construction: the load-bearing
+    # word is the missing one. The first grounded run was offered "The rank of
+    # a matrix is the maximum number of linearly independent __." and the model
+    # quoted it with the gap filled in — caught by the quote gate, but the
+    # passage should never have been on the table.
+    if "__" in body or "….." in body or body.count("...") > 3:
+        return False
     orphans = body.count(" ,") + body.count(" .") + body.count(" ?")
     return orphans / max(sentences, 1) <= _MAX_ORPHAN_RATIO
+
+
+#: A repeated prefix shorter than this is a coincidence, not boilerplate.
+_MIN_BOILERPLATE = 180
+
+
+def strip_boilerplate(texts: list[str]) -> list[str]:
+    """Remove the header every page of one scraped source repeats.
+
+    A page chunk spans several pages, so a site's navigation bar lands inside
+    the same passage as its real content and no whole-passage filter separates
+    them — two of the eight slots offered to the first grounded lesson were
+    "You're offline Ctrl+K Home Exam Center Revision…".
+
+    Boilerplate is exactly the text that repeats, so it is found rather than
+    listed: the longest prefix common to every chunk of one source. A PDF's
+    chunks share no such prefix and are left alone, and nothing has to know in
+    advance which sites the corpus was collected from.
+    """
+    usable = [t for t in texts if t]
+    if len(usable) < 3:
+        return texts
+    prefix = usable[0]
+    for t in usable[1:]:
+        limit = min(len(prefix), len(t))
+        i = 0
+        while i < limit and prefix[i] == t[i]:
+            i += 1
+        prefix = prefix[:i]
+        if len(prefix) < _MIN_BOILERPLATE:
+            return texts
+    return [t[len(prefix):].lstrip() if t.startswith(prefix) else t
+            for t in texts]
 
 
 def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
@@ -163,14 +203,26 @@ def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
         " ORDER BY ch.id",
         (user_id, topic_id, unit_key(unit_name), knowledge_sha(topic_id))
     ).fetchall()
-    rows = [r for r in rows if passage_is_usable(r["text"])]
-    if not rows:
+    # Strip each source's repeated header BEFORE judging or ranking: a chunk
+    # that is half navigation bar should be scored on the half that is not.
+    by_source: dict[int, list] = {}
+    for r in rows:
+        by_source.setdefault(r["filename"], []).append(r)
+    cleaned: list[tuple] = []
+    for _fn, group in by_source.items():
+        for r, text in zip(group, strip_boilerplate([g["text"] for g in group])):
+            cleaned.append((r, text))
+
+    cleaned = [(r, t) for r, t in cleaned if passage_is_usable(t)]
+    if not cleaned:
         return []
+    rows = [r for r, _ in cleaned]
+    clean_text = {id(r): t for r, t in cleaned}
 
     if embed is None:
         from recall.verify.dedupe import embed_texts as embed
 
-    texts = [r["text"] for r in rows]
+    texts = [clean_text[id(r)] for r in rows]
     vectors = embed([query] + texts)
     q, rest = vectors[0], vectors[1:]
 
@@ -179,10 +231,11 @@ def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
         return 0.0 if denom == 0.0 else float(q @ v / denom)
 
     ranked = sorted(zip(rows, rest), key=lambda p: -cosine(p[1]))
-    return [{"chunk_id": r["id"], "text": r["text"], "page_ref": r["page_ref"],
+    return [{"chunk_id": r["id"], "text": clean_text[id(r)],
+             "page_ref": r["page_ref"],
              "filename": pathlib.Path(r["filename"]).name}
             for r, _ in ranked[:limit]]
 
 
 __all__ = ["load_source", "passage_is_usable", "plan_load",
-           "read_manifest", "unit_passages"]
+           "read_manifest", "strip_boilerplate", "unit_passages"]

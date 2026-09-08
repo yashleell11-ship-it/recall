@@ -537,3 +537,34 @@ def test_the_passage_filter_drops_chrome_and_symbol_stripped_scrapes():
     assert not passage_is_usable(nav)
     assert not passage_is_usable(stripped)
     assert passage_is_usable(prose)
+
+
+def test_site_boilerplate_is_stripped_before_a_passage_is_judged():
+    """A page chunk spans several pages, so a scraped site's navigation bar
+    lands inside the same passage as real content and no whole-passage filter
+    separates them. Boilerplate is exactly the text that repeats, so it is
+    found rather than listed."""
+    from recall.teach.corpus import strip_boilerplate
+
+    chrome = ("You are offline Ctrl+K Home Exam Center Revision More Offline "
+              "Library About Contact Request Material Recent Updates Mark all "
+              "read Loading View all updates Home Exam Center Revision "
+              "Offline Library About Contact Request Material Support Us ")
+    out = strip_boilerplate([chrome + "Rank content.", chrome + "Eigen content.",
+                             chrome + "Determinant content."])
+    assert out == ["Rank content.", "Eigen content.", "Determinant content."]
+    # A PDF's pages share no such prefix and must be left alone.
+    assert strip_boilerplate(["alpha", "beta", "gamma"]) == ["alpha", "beta", "gamma"]
+
+
+def test_a_fill_in_the_blank_bank_is_not_offered_as_source_material():
+    """Unquotable by construction: the load-bearing word is the missing one.
+    The first grounded run was offered 'the maximum number of linearly
+    independent __.' and quoted it with the gap filled in."""
+    from recall.teach.corpus import passage_is_usable
+
+    gapped = ("The rank of a matrix is the maximum number of linearly "
+              "independent __. The determinant of a singular matrix is __. "
+              "A system is consistent when the two ranks are __. This bank "
+              "covers the whole of unit one and is examined every year.")
+    assert not passage_is_usable(gapped)
