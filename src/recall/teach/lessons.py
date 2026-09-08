@@ -31,9 +31,11 @@ from recall.generate.knowledge import _synthetic_source_id, _unit_chunk_id
 from recall.generate.unit_guidance import guidance_for
 from recall.config import Config
 from recall.notation import check_notation
+from recall.teach.corpus import unit_passages
 from recall.pipeline import _cost
 from recall.teach.lesson_prompts import (
     DEFAULT_SHAPE,
+    PASSAGES_PREFACE,
     EXAMPLES_PREFACE,
     GUIDANCE_PREFACE,
     LESSON_SYSTEM,
@@ -66,6 +68,79 @@ def _loads(raw: str) -> dict | None:
     except json.JSONDecodeError:
         return None
     return data if isinstance(data, dict) else None
+
+
+def _normalise_quote(text: str) -> str:
+    """Whitespace and case only.
+
+    Exactly `teach/explain.py`'s rule, and for its reason: a quote differing by
+    a line break is still a real citation, one differing by a word is a
+    paraphrase, and paraphrase is what this check exists to catch.
+    """
+    return re.sub(r"\s+", " ", text or "").strip().lower()
+
+
+#: Text that is furniture rather than teaching. A page chunk spans several
+#: pages, so a scraped site's navigation bar and its real content land in the
+#: same passage and no passage-level filter separates them. What can be checked
+#: is the QUOTE — the span that actually reaches the student.
+_FURNITURE = (
+    "reveal answer", "hide answer", "correct answer:", "try again",
+    "ctrl+k", "view all updates", "mark all read", "you're offline",
+    "exam center", "offline library", "request material", "loading…",
+    "click here", "download pdf", "table of contents",
+)
+
+#: A citation shorter than this is not carrying a definition or a condition.
+_MIN_QUOTE_WORDS = 8
+
+
+def _quote_is_furniture(quote: str) -> str | None:
+    """Why this quote is not worth citing, or None if it is fine."""
+    low = " ".join((quote or "").split()).lower()
+    if len(low.split()) < _MIN_QUOTE_WORDS:
+        return f"is only {len(low.split())} words — too short to state anything"
+    for marker in _FURNITURE:
+        if marker in low:
+            return (f"contains {marker!r}, which is page furniture from a "
+                    "scraped site, not course material")
+    return None
+
+
+def check_grounding(body: dict, passages: list[dict]) -> list[str]:
+    """Every section's quote must appear VERBATIM in the supplied passages.
+
+    This is the only gate in the lesson pipeline with a floor under it. The
+    re-derivation check asked a model to judge a model and was wrong every time
+    it spoke; this asks Python whether a span of characters occurs in a
+    document, and fluency cannot argue with the answer.
+
+    Returns [] when no passages were supplied — an ungrounded lesson is not a
+    failed one, it is a different and weaker thing, and the caller records
+    which it is.
+    """
+    if not passages:
+        return []
+    haystack = " \u2016 ".join(_normalise_quote(p["text"]) for p in passages)
+    out: list[str] = []
+    for i, section in enumerate(body.get("sections") or [], 1):
+        if not isinstance(section, dict):
+            continue
+        quote = str(section.get("quote") or "").strip()
+        if not quote:
+            out.append(f"section {i} ({section.get('heading', '')!r}) cites "
+                       "nothing, but course material was supplied")
+        elif _normalise_quote(quote) not in haystack:
+            out.append(f"section {i} ({section.get('heading', '')!r}) quotes "
+                       f"{quote[:70]!r}, which does not appear in the course "
+                       "material — that is a paraphrase, not a citation")
+        elif (why := _quote_is_furniture(quote)) is not None:
+            # Verbatim and useless. The gate proves a span was copied, not that
+            # it was worth copying, and a citation backed by a navigation bar
+            # is a claim backed by nothing.
+            out.append(f"section {i} ({section.get('heading', '')!r}) quotes "
+                       f"{quote[:60]!r}, which {why}")
+    return out
 
 
 def check_structure(body: dict) -> list[str]:
@@ -251,7 +326,9 @@ def _rederive(client, cfg: Config, *, topic_code: str, full_name: str,
 
 def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
                  topic_code: str, meta: dict, unit_number: int,
-                 rederive: bool = True) -> LessonResult:
+                 rederive: bool = True, ground: bool = True,
+                 passage_limit: int = 8, embed=None,
+                 _passages: list[dict] | None = None) -> LessonResult:
     """Write, check and store one lesson. `unit_number` is 1-based."""
     units = meta.get("units") or []
     if not 1 <= unit_number <= len(units):
@@ -271,11 +348,28 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
             for e in guidance.examples)
         examples_block = EXAMPLES_PREFACE.format(examples=shown)
 
+    # Course material for this unit, if any has been loaded. What it buys is
+    # the one check with a floor under it: a quote Python can find, or cannot.
+    passages: list[dict] = list(_passages or [])
+    if ground and not passages:
+        query = f"{unit_name}. {full_name}. " + (
+            guidance.guidance if guidance and guidance.guidance else "")
+        passages = unit_passages(conn, user_id=user_id, topic_id=topic_id,
+                                 unit_name=unit_name, query=query,
+                                 limit=passage_limit, embed=embed)
+    passages_block = ""
+    if passages:
+        shown = "\n\n".join(
+            f"[{i}] {p['filename']} {p['page_ref']}\n{p['text']}"
+            for i, p in enumerate(passages, 1))
+        passages_block = PASSAGES_PREFACE.format(passages=shown)
+
     user = LESSON_USER.format(
         topic_code=topic_code, full_name=full_name, unit_number=unit_number,
         unit_count=len(units), unit_name=unit_name,
         all_units="; ".join(f"{i + 1}. {u}" for i, u in enumerate(units)),
-        shape=shape, guidance=guidance_block, examples=examples_block)
+        shape=shape, guidance=guidance_block,
+        examples=examples_block + passages_block)
 
     cost = 0.0
     body: dict | None = None
@@ -291,8 +385,9 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
         if candidate is None:
             complaints = ["the reply was not valid json"]
             continue
-        complaints = check_structure(candidate) + check_notation(
-            lesson_text(candidate))
+        complaints = (check_structure(candidate)
+                      + check_notation(lesson_text(candidate))
+                      + check_grounding(candidate, passages))
         body = candidate
         if not complaints:
             break
@@ -304,6 +399,19 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
         client, cfg, body, topic_code=topic_code, full_name=full_name,
         unit_name=unit_name) if rederive else ("draft", [], 0.0)
     cost += check_cost
+
+    # Grounding outranks everything the re-derivation can say. Every section
+    # quoted the course material and Python found every quote — that is a real
+    # warranty, and it must not be talked down to "unverified" by a solver that
+    # was wrong every time it spoke on the first six lessons.
+    if passages:
+        status = "grounded"
+        notes.insert(0, f"grounded in {len(passages)} passages from the course "
+                        "material; every section's quote verified verbatim")
+    else:
+        notes.append("no course material loaded for this unit — written from "
+                     "the model's own knowledge, with nothing to check it "
+                     "against")
 
     source_id = _synthetic_source_id(conn, user_id, topic_id)
     chunk_id = _unit_chunk_id(conn, source_id, unit_number - 1, unit_name)
@@ -450,7 +558,8 @@ def latest_lesson(conn, user_id: int, topic_id: int, unit_name: str) -> dict | N
     return None
 
 
-__all__ = ["LessonResult", "answers_agree", "check_structure",
+__all__ = ["LessonResult", "answers_agree", "check_grounding",
+           "check_structure",
            "is_adjudicable", "latest_lesson", "recheck_lesson",
            "verify_worked",
            "lesson_text", "write_lesson"]

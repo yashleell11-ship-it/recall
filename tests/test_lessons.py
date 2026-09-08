@@ -15,6 +15,7 @@ from recall.llm.fake import FakeLlmClient
 from recall.notation import check_notation, strip_code
 from recall.teach.lessons import (
     answers_agree,
+    check_grounding,
     is_adjudicable,
     check_structure,
     latest_lesson,
@@ -153,8 +154,9 @@ def test_a_clean_lesson_is_stored_as_a_draft(db):
                           topic_code="MTH165", meta=META, unit_number=1)
     assert result.status == "draft"
     assert result.lesson_id is not None
-    assert result.notes == []
     assert result.cost_usd > 0
+    assert any("no course material" in n for n in result.notes), (
+        "a lesson with nothing to check it against has to say so")
 
 
 def test_a_worked_example_that_does_not_survive_re_solving_is_flagged(db):
@@ -272,7 +274,7 @@ def test_a_prose_answer_makes_the_lesson_unverified_not_suspect(db):
                           topic_code="INT335", meta=META, unit_number=1)
     assert result.status == "unverified"
     assert len(llm.calls) == 1, "an unjudgeable answer must not pay for a re-solve"
-    assert all("read this one yourself" in n for n in result.notes)
+    assert any("read this one yourself" in n for n in result.notes)
 
 
 def test_one_dissenting_solve_is_not_enough_to_doubt_a_lesson(db):
@@ -396,3 +398,131 @@ def test_nothing_this_check_finds_is_ever_called_wrong(db):
         assert result.status in {"draft", "unverified"}, fresh
         assert result.status != "suspect", fresh
     assert "suspect" not in L.verify_worked.__doc__ or True
+
+
+# --- grounding: the one gate with a floor under it ---------------------------
+
+PASSAGE = {
+    "chunk_id": 1, "filename": "ncert-matrices.pdf", "page_ref": "p12",
+    "text": ("The rank of a matrix A is the number of non-zero rows in its row "
+             "echelon form. A system of linear equations is consistent if and "
+             "only if the rank of the coefficient matrix equals the rank of the "
+             "augmented matrix."),
+}
+
+
+def grounded_body(quote=None):
+    body = good_body()
+    q = quote or "the number of non-zero rows in its row echelon form"
+    for sec in body["sections"]:
+        sec["quote"] = q
+        sec["source"] = "[1] ncert-matrices.pdf p12"
+    return body
+
+
+def test_a_verbatim_quote_passes_and_a_paraphrase_does_not():
+    assert check_grounding(grounded_body(), [PASSAGE]) == []
+    bad = check_grounding(
+        grounded_body("the count of nonzero rows after reduction"), [PASSAGE])
+    assert bad and "paraphrase, not a citation" in bad[0]
+
+
+def test_a_quote_differing_only_by_whitespace_is_still_a_citation():
+    """explain.py's rule and its reason: a line break is not a paraphrase."""
+    assert check_grounding(
+        grounded_body("the number of non-zero\n   rows in its ROW echelon form"),
+        [PASSAGE]) == []
+
+
+def test_a_section_that_cites_nothing_is_caught_when_material_was_supplied():
+    body = good_body()          # no quote fields at all
+    out = check_grounding(body, [PASSAGE])
+    assert len(out) == len(body["sections"])
+    assert all("cites nothing" in c for c in out)
+
+
+def test_no_material_means_no_grounding_complaints():
+    """An ungrounded lesson is not a failed one; it is a weaker thing, and the
+    caller records which it is."""
+    assert check_grounding(good_body(), []) == []
+
+
+def test_a_grounded_lesson_says_so_and_outranks_the_re_solve(db):
+    """Every section quoted the course material and Python found every quote.
+    That is a real warranty and must not be talked down to "unverified" by a
+    solver that was wrong every time it spoke on the first six lessons."""
+    llm = FakeLlmClient(_calls(grounded_body(), fresh=("7", "7", "k ≠ 3")))
+    result = write_lesson(
+        db, llm, CFG, user_id=1, topic_id=1, topic_code="MTH165", meta=META,
+        unit_number=1, embed=lambda texts: __import__("numpy").eye(len(texts)),
+        _passages=[PASSAGE])
+    assert result.status == "grounded"
+    assert "verified verbatim" in result.notes[0]
+
+
+def test_a_paraphrasing_lesson_is_repaired_then_rejected(db):
+    """The gate has real teeth: it can stop a lesson being stored at all."""
+    bad = json.dumps(grounded_body("a tidied up version of the sentence"))
+    llm = FakeLlmClient([bad, bad])
+    result = write_lesson(
+        db, llm, CFG, user_id=1, topic_id=1, topic_code="MTH165", meta=META,
+        unit_number=1, _passages=[PASSAGE])
+    assert result.status == "rejected"
+    assert result.lesson_id is None
+    assert db.execute("SELECT COUNT(*) n FROM lessons").fetchone()["n"] == 0
+
+
+def test_a_verbatim_quote_of_page_furniture_is_still_refused():
+    """The gate proves a span was copied, not that it was worth copying. A page
+    chunk spans several pages, so a scraped site's navigation bar lands in the
+    same passage as its real content and no passage-level filter separates
+    them. A citation backed by a nav bar is a claim backed by nothing."""
+    passage = [{"text": ("Home Exam Center Revision Offline Library About "
+                         "Contact Reveal Answer Hide Answer. The rank of a "
+                         "matrix A is the number of non-zero rows in its row "
+                         "echelon form.")}]
+    chrome = check_grounding(
+        {"sections": [{"heading": "R",
+                       "quote": ("Home Exam Center Revision Offline Library "
+                                 "About Contact Reveal Answer Hide Answer")}]},
+        passage)
+    assert chrome and "page furniture" in chrome[0]
+
+    real = check_grounding(
+        {"sections": [{"heading": "R",
+                       "quote": ("The rank of a matrix A is the number of "
+                                 "non-zero rows in its row echelon form")}]},
+        passage)
+    assert real == []
+
+
+def test_a_quote_too_short_to_state_anything_is_refused():
+    passage = [{"text": "The rank of a matrix A is the number of non-zero rows."}]
+    out = check_grounding(
+        {"sections": [{"heading": "R", "quote": "The rank of A"}]}, passage)
+    assert out and "too short" in out[0]
+
+
+def test_the_passage_filter_drops_chrome_and_symbol_stripped_scrapes():
+    """Retrieval by similarity alone put a navigation bar top of the ranking
+    for 'rank of a matrix', because chrome mentions everything, and a scraped
+    MCQ bank second having lost every symbol it was about."""
+    from recall.teach.corpus import passage_is_usable
+
+    nav = ("You're offline Ctrl+K Home Exam Center Revision More Offline "
+           "Library About Contact Request Material Recent Updates Mark all "
+           "read Loading View all updates Home Exam Center Revision Offline "
+           "Library About Contact Request Material More Links Here Now")
+    stripped = ("Reveal Answer Hide Answer Correct Answer: Explanation: From , "
+                "multiply by to get . Substitution gives . Incorrect! Try "
+                "again. For what value of does the matrix have rank ? Rank of "
+                "a matrix Medium A. B. C. D. Reveal Answer Correct Answer .")
+    prose = ("The rank of a matrix A is the number of non-zero rows in its row "
+             "echelon form. A system of linear equations is consistent if and "
+             "only if the rank of the coefficient matrix equals the rank of "
+             "the augmented matrix. If the ranks differ there is no solution. "
+             "This is the central theorem of the unit and it is examined most "
+             "years, usually as a short computational question.")
+    assert not passage_is_usable(nav)
+    assert not passage_is_usable(stripped)
+    assert passage_is_usable(prose)

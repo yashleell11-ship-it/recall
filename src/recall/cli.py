@@ -503,6 +503,67 @@ def cmd_demo(args, cfg) -> int:
     return 0
 
 
+def cmd_corpus_load(args, cfg) -> int:
+    """Load corpus material for a subject's units so lessons can be grounded.
+
+    FREE. This chunks text and stores it; it calls no model. Card generation is
+    what costs money on the upload path and is deliberately not done here — the
+    point is passages a lesson must quote, not more cards.
+    """
+    import json as _json
+
+    from recall.teach.corpus import load_source, plan_load
+
+    conn = _conn(cfg)
+    init_db(conn)
+    row = conn.execute(
+        "SELECT id, meta FROM topics WHERE user_id = ? AND code = ?",
+        (args.user_id, args.topic)).fetchone()
+    if row is None:
+        print(f"no topic {args.topic!r} for user {args.user_id}")
+        return 1
+    syllabus = (_json.loads(row["meta"]) if row["meta"] else {}).get("units") or []
+    if not syllabus:
+        print(f"{args.topic} has no syllabus units recorded")
+        return 1
+
+    files = plan_load(args.manifest, subject=args.topic, unit_numbers=args.units)
+    if args.limit:
+        files = files[: args.limit]
+    if not files:
+        print("nothing in the manifest matches")
+        return 0
+
+    if args.dry_run:
+        for path, entry in files[:20]:
+            units = ", ".join(str(u) for u in (entry.get("units") or []))
+            print(f"  unit {units:6} {entry.get('kind', '?'):14} {path.name[:52]}")
+        if len(files) > 20:
+            print(f"  ... and {len(files) - 20} more")
+        print(f"\n{len(files)} files would be loaded. Free — no model is called.")
+        conn.close()
+        return 0
+
+    loaded = chunks = failed = 0
+    for path, entry in files:
+        try:
+            _sid, added = load_source(conn, user_id=args.user_id,
+                                      topic_id=row["id"], path=path,
+                                      entry=entry, syllabus=syllabus)
+        except Exception as exc:  # noqa: BLE001 — one bad file must not end the run
+            print(f"  {path.name}: skipped ({exc})")
+            failed += 1
+            continue
+        loaded += 1
+        chunks += added
+        print(f"  {path.name[:56]}: +{added} passages"
+              + ("  (already had it)" if added == 0 else ""))
+    print(f"\nloaded {loaded} files, {chunks} new passages"
+          + (f", {failed} failed" if failed else ""))
+    conn.close()
+    return 0
+
+
 def cmd_lessons(args, cfg) -> int:
     """Write a lesson for one syllabus unit, or several.
 
@@ -758,6 +819,16 @@ def build_parser() -> argparse.ArgumentParser:
     s = sub.add_parser("demo", help="seed sample cards so the app works without a key")
     s.add_argument("--clear", action="store_true")
     s.set_defaults(func=cmd_demo)
+
+    s = sub.add_parser("corpus-load",
+                       help="load corpus passages so lessons can be grounded")
+    s.add_argument("topic")
+    s.add_argument("--manifest", default="~/recall-corpus/manifest.jsonl")
+    s.add_argument("--unit", type=int, action="append", dest="units")
+    s.add_argument("--limit", type=int)
+    s.add_argument("--user-id", type=int, default=1)
+    s.add_argument("--dry-run", action="store_true")
+    s.set_defaults(func=cmd_corpus_load)
 
     s = sub.add_parser("lessons", help="write a lesson for a syllabus unit")
     s.add_argument("topic")

@@ -61,7 +61,10 @@ not do before.
 Reply with json only, exactly this shape:
 
 {"why": "two sentences: what this unit lets you do, and how it is examined",
- "sections": [{"heading": "short", "body": "the teaching"}],
+ "sections": [{"heading": "short", "body": "the teaching",
+               "quote": "verbatim span from a supplied passage, or omitted
+                         when no course material was supplied",
+               "source": "which passage the quote came from"}],
  "worked": [{"question": "...", "steps": ["...", "..."], "answer": "..."}],
  "check": [{"question": "...", "answer": "...", "why": "..."}]}
 
@@ -112,6 +115,34 @@ set the LEVEL and the SHAPE of your worked examples, not their subject: draw
 yours from different corners of the unit, and do not reuse these.
 
 {examples}
+"""
+
+PASSAGES_PREFACE = """
+COURSE MATERIAL. These passages are from the reading list for this course. You
+must teach FROM them.
+
+Every section you write carries a `quote`: a span copied WORD FOR WORD from one
+of these passages, supporting what that section teaches, and a `source` naming
+which passage it came from. The quote is checked against the passages
+character by character before the lesson is shown to anyone, so a paraphrase,
+a tidied-up version, or a sentence you remember rather than copy will be
+rejected.
+
+Quote course material, never page furniture. A navigation bar, a "Reveal
+Answer" button, a cookie notice or a table of contents may appear in a passage
+because the page was scraped whole; none of them is teaching and a citation
+backed by one is a claim backed by nothing. Those are rejected too.
+
+Pick a quote that carries the load — the sentence that states the definition,
+the condition, or the rule. Do not quote a heading, a figure caption, or a
+sentence that merely mentions the topic. Twenty to forty words is usually
+right.
+
+Teach what the passages support. Where you need a step they do not cover —
+arithmetic in a worked example, say — that is fine and needs no quote; the
+quote belongs to the section that teaches the idea.
+
+{passages}
 """
 
 #: The re-derivation check. A fresh call gets only the question — never the

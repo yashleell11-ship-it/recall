@@ -188,6 +188,24 @@ CREATE INDEX IF NOT EXISTS idx_test_questions_test ON test_questions(test_id);
 -- full scan of every question ever asked, once per candidate card.
 CREATE INDEX IF NOT EXISTS idx_test_questions_card ON test_questions(card_id);
 
+-- Which syllabus units a source serves, for corpus material collected against
+-- a course rather than uploaded blind.
+--
+-- The manifest maps files to unit NUMBERS. Numbers are positions and a
+-- syllabus is editable, so the number is resolved to a NAME at load time and
+-- the name is what is stored — the same rule chunks, cards and lessons already
+-- follow. A corpus mapped by ordinal would silently re-point at a different
+-- unit the first time one was inserted.
+--
+-- OWNERSHIP: source_id -> sources.user_id.
+CREATE TABLE IF NOT EXISTS source_units (
+  source_id INTEGER NOT NULL REFERENCES sources(id),
+  unit_name TEXT NOT NULL,
+  unit_key  TEXT NOT NULL,
+  PRIMARY KEY (source_id, unit_key)
+);
+CREATE INDEX IF NOT EXISTS idx_source_units_key ON source_units(unit_key);
+
 -- Teaching: a written lesson for one syllabus unit.
 --
 -- OWNERSHIP: `chunk_id` -> chunks -> sources.user_id. There is no user_id
