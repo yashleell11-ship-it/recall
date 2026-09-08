@@ -16,6 +16,7 @@ from recall.notation import check_notation, strip_code
 from recall.teach.lessons import (
     answers_agree,
     check_grounding,
+    grounded_share,
     is_adjudicable,
     check_structure,
     latest_lesson,
@@ -434,11 +435,21 @@ def test_a_quote_differing_only_by_whitespace_is_still_a_citation():
         [PASSAGE]) == []
 
 
-def test_a_section_that_cites_nothing_is_caught_when_material_was_supplied():
+def test_a_section_may_honestly_cite_nothing():
+    """Demanding a citation for every section teaches the model to manufacture
+    them, which is the failure this gate exists to catch, reached from the
+    other side. A missing quote is not an error; a false one is. Whether ENOUGH
+    of the lesson is anchored is a separate question, asked once."""
     body = good_body()          # no quote fields at all
-    out = check_grounding(body, [PASSAGE])
-    assert len(out) == len(body["sections"])
-    assert all("cites nothing" in c for c in out)
+    assert check_grounding(body, [PASSAGE]) == []
+    assert grounded_share(body, [PASSAGE]) == 0.0
+
+
+def test_grounded_share_counts_only_verified_citations():
+    body = grounded_body()
+    assert grounded_share(body, [PASSAGE]) == 1.0
+    body["sections"][0]["quote"] = "a sentence that is nowhere in the passage"
+    assert grounded_share(body, [PASSAGE]) == 2 / 3
 
 
 def test_no_material_means_no_grounding_complaints():
@@ -457,7 +468,7 @@ def test_a_grounded_lesson_says_so_and_outranks_the_re_solve(db):
         unit_number=1, embed=lambda texts: __import__("numpy").eye(len(texts)),
         _passages=[PASSAGE])
     assert result.status == "grounded"
-    assert "verified verbatim" in result.notes[0]
+    assert "grounded:" in result.notes[0] and "verbatim" in result.notes[0]
 
 
 def test_a_paraphrasing_lesson_is_repaired_then_rejected(db):

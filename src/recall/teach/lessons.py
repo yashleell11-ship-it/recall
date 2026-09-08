@@ -92,7 +92,16 @@ _FURNITURE = (
 )
 
 #: A citation shorter than this is not carrying a definition or a condition.
-_MIN_QUOTE_WORDS = 8
+#: Six, not eight: the first grounded run was refused partly over
+#: "det(A − λI) = 0", which is a real thing to cite even though it is not a
+#: sentence.
+_MIN_QUOTE_WORDS = 6
+
+#: How much of a lesson must be anchored in the course material before the
+#: lesson may be called grounded. Not all of it: a section that walks through
+#: arithmetic is teaching a method, not a claim, and demanding a citation for
+#: it only teaches the model to manufacture one.
+_GROUNDED_SHARE = 0.5
 
 
 def _quote_is_furniture(quote: str) -> str | None:
@@ -128,8 +137,12 @@ def check_grounding(body: dict, passages: list[dict]) -> list[str]:
             continue
         quote = str(section.get("quote") or "").strip()
         if not quote:
-            out.append(f"section {i} ({section.get('heading', '')!r}) cites "
-                       "nothing, but course material was supplied")
+            # Not an error. A section may honestly have nothing to cite, and
+            # demanding a citation for every one only teaches the model to
+            # manufacture them — which is the failure this gate exists to
+            # catch, arrived at from the other side. Whether ENOUGH of the
+            # lesson is anchored is judged by grounded_share, once.
+            continue
         elif _normalise_quote(quote) not in haystack:
             out.append(f"section {i} ({section.get('heading', '')!r}) quotes "
                        f"{quote[:70]!r}, which does not appear in the course "
@@ -141,6 +154,21 @@ def check_grounding(body: dict, passages: list[dict]) -> list[str]:
             out.append(f"section {i} ({section.get('heading', '')!r}) quotes "
                        f"{quote[:60]!r}, which {why}")
     return out
+
+
+def grounded_share(body: dict, passages: list[dict]) -> float:
+    """What fraction of the lesson's sections carry a verified citation."""
+    if not passages:
+        return 0.0
+    sections = [s for s in (body.get("sections") or []) if isinstance(s, dict)]
+    if not sections:
+        return 0.0
+    haystack = " \u2016 ".join(_normalise_quote(p["text"]) for p in passages)
+    good = sum(1 for s in sections
+               if str(s.get("quote") or "").strip()
+               and _normalise_quote(str(s["quote"])) in haystack
+               and _quote_is_furniture(str(s["quote"])) is None)
+    return good / len(sections)
 
 
 def check_structure(body: dict) -> list[str]:
@@ -404,10 +432,18 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
     # quoted the course material and Python found every quote — that is a real
     # warranty, and it must not be talked down to "unverified" by a solver that
     # was wrong every time it spoke on the first six lessons.
-    if passages:
+    share = grounded_share(body, passages)
+    if passages and share >= _GROUNDED_SHARE:
         status = "grounded"
-        notes.insert(0, f"grounded in {len(passages)} passages from the course "
-                        "material; every section's quote verified verbatim")
+        pct = round(100 * share)
+        notes.insert(0, f"grounded: {pct}% of sections carry a quote found "
+                        f"verbatim in {len(passages)} passages of course "
+                        "material")
+    elif passages:
+        notes.insert(0, f"only {round(100 * share)}% of sections are anchored "
+                        "in the course material — the citations that are there "
+                        "were verified, but most of this is the model's own "
+                        "knowledge")
     else:
         notes.append("no course material loaded for this unit — written from "
                      "the model's own knowledge, with nothing to check it "
@@ -559,6 +595,7 @@ def latest_lesson(conn, user_id: int, topic_id: int, unit_name: str) -> dict | N
 
 
 __all__ = ["LessonResult", "answers_agree", "check_grounding",
+           "grounded_share",
            "check_structure",
            "is_adjudicable", "latest_lesson", "recheck_lesson",
            "verify_worked",
