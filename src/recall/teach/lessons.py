@@ -45,6 +45,13 @@ from recall.teach.lesson_prompts import (
     SHAPE_BY_FORMAT,
 )
 
+#: A grounded lesson is long: five sections, two derivations shown line by
+#: line, and a check. DeepSeek's default output cap is 4096 tokens, and
+#: MTH165 unit 2 hit it twice — the json came back cut off mid-string, which
+#: reads as "the model wrote nonsense" and is actually "we did not let it
+#: finish". Sixteen tenths of a cent to learn that, twice.
+_LESSON_MAX_TOKENS = 8000
+
 #: How many worked examples a lesson must carry. Two, for the reason
 #: unit_guidance gives about its own calibration pair: one cannot show a range,
 #: and three starts to read as a problem set rather than a lesson.
@@ -433,11 +440,21 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
             user + "\n\nYour previous attempt was rejected for these reasons. "
             "Fix every one and write the lesson again:\n- "
             + "\n- ".join(complaints))
-        resp = client.complete_json(LESSON_SYSTEM, prompt)
+        resp = client.complete_json(LESSON_SYSTEM, prompt,
+                                    max_tokens=_LESSON_MAX_TOKENS)
         cost += _cost(cfg, resp.prompt_tokens, resp.completion_tokens)
         candidate = _loads(resp.content)
         if candidate is None:
-            complaints = ["the reply was not valid json"]
+            # Say WHICH failure it was. "not valid json" sent me looking at the
+            # prompt when the reply had simply been truncated at the cap.
+            cut_off = getattr(resp, "finish_reason", "stop") == "length"
+            complaints = [
+                "the reply was cut off at the token cap, so the json is "
+                f"incomplete ({resp.completion_tokens} tokens) — the lesson is "
+                "too long for the limit, not malformed"
+                if cut_off else
+                f"the reply was not valid json ({resp.completion_tokens} tokens)"
+            ]
             continue
         # Citation problems are worth one repair — the model can usually pick a
         # better sentence when told which one failed — but they are not worth a

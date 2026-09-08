@@ -8,7 +8,8 @@ class FakeLlmClient:
         self._responses = list(responses)
         self.calls: list[tuple[str, str]] = []
 
-    def complete_json(self, system: str, user: str) -> LlmResponse:
+    def complete_json(self, system: str, user: str,
+                      max_tokens: int | None = None) -> LlmResponse:
         self.calls.append((system, user))
         if not self._responses:
             raise AssertionError("FakeLlmClient ran out of queued responses")

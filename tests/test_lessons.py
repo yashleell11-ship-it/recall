@@ -810,3 +810,31 @@ def test_indexing_reports_progress_as_it_goes():
     assert seen[-1] == (70, 70)
     assert all(tot == 70 for _, tot in seen)
     conn.close()
+
+
+def test_a_truncated_reply_says_it_was_truncated(db):
+    """MTH165 unit 2 failed twice with "the reply was not valid json", which
+    sent me looking at the prompt. The reply had simply been cut off at
+    DeepSeek's default 4096-token cap mid-string. Naming the two apart is the
+    difference between "the model wrote nonsense" and "we did not let it
+    finish"."""
+    from recall.llm.client import LlmResponse
+
+    class Truncating:
+        calls: list = []
+
+        def complete_json(self, system, user, max_tokens=None):
+            self.calls.append(max_tokens)
+            return LlmResponse('{"why": "half a les',
+                               prompt_tokens=100, completion_tokens=8000,
+                               finish_reason="length")
+
+    llm = Truncating()
+    result = write_lesson(db, llm, CFG, user_id=1, topic_id=1,
+                          topic_code="MTH165", meta=META, unit_number=1,
+                          ground=False)
+    assert result.status == "rejected"
+    assert any("cut off at the token cap" in n for n in result.notes)
+    assert all(t == 8000 for t in llm.calls), (
+        "a lesson must ask for room to finish, not the API's default"
+    )

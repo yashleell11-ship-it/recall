@@ -48,6 +48,11 @@ class LlmResponse:
     content: str
     prompt_tokens: int
     completion_tokens: int
+    #: Why the model stopped. "length" means the reply was CUT OFF at the token
+    #: cap, which for a json_object response means unparseable json — and the
+    #: difference between "the model wrote nonsense" and "we did not let it
+    #: finish" is the whole diagnosis.
+    finish_reason: str = "stop"
 
 
 class DeepSeekClient:
@@ -62,7 +67,8 @@ class DeepSeekClient:
             base_url=cfg.base_url, timeout=120.0, transport=transport
         )
 
-    def complete_json(self, system: str, user: str) -> LlmResponse:
+    def complete_json(self, system: str, user: str,
+                      max_tokens: int | None = None) -> LlmResponse:
         payload = {
             "model": self._cfg.model,
             "messages": [
@@ -72,6 +78,8 @@ class DeepSeekClient:
             "response_format": {"type": "json_object"},
             "temperature": 0.2,
         }
+        if max_tokens is not None:
+            payload["max_tokens"] = max_tokens
         last_status = None
         for attempt in range(self._max_retries):
             resp = self._http.post(
@@ -87,10 +95,12 @@ class DeepSeekClient:
                 raise _unavailable(resp.status_code)
             data = resp.json()
             usage = data.get("usage", {})
+            choice = data["choices"][0]
             return LlmResponse(
-                content=data["choices"][0]["message"]["content"],
+                content=choice["message"]["content"],
                 prompt_tokens=usage.get("prompt_tokens", 0),
                 completion_tokens=usage.get("completion_tokens", 0),
+                finish_reason=choice.get("finish_reason") or "stop",
             )
         # Deliberately excludes payload and headers: the API key must never
         # reach a log line or a traceback.
