@@ -374,6 +374,7 @@ export default function TestPickerPage() {
         </div>
       ) : lpu ? (
         <SubjectRail
+          plan={res.data?.plan}
           topics={lpuTopics}
           startingKey={subjectStarting}
           error={subjectError}

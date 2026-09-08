@@ -89,6 +89,7 @@ with a placeholder constant.
 | GET | `/api/settings` | — | `{new_cards_per_day, daily_review_cap, desired_retention}` |
 | PUT | `/api/settings` | any subset | full settings |
 | GET | `/api/stats` | — | `{today: {reviewed, again, streak}, by_topic: [...], last_14_days: [{date, count}], totals: {active, pending, sources}}` |
+| GET | `/api/study-plan` | — | `[{topic_code, due, new, active, units_cover, weakest_unit, units: [{number, name, active, due, mastery}], action: {kind, unit}, advice}]` |
 | GET | `/api/sources` | — | `[{id, filename, topic_code, added_at, accepted, rejected, cost_estimate}]` |
 
 ```
@@ -152,6 +153,34 @@ Build instead:
 
 Screens: `/` dashboard, `/review` focus mode, `/approve` bulk triage of pending cards,
 `/settings`, `/sources`.
+
+### What to study next
+
+`GET /api/study-plan` answers the question the dashboard could not: not "how many
+are due" but "what do I do". One entry per subject, and one `action` — a ladder,
+not a score, because a recommendation offering three options is the report it
+was meant to replace.
+
+The rungs, first match wins: nothing in the deck → write some; anything due →
+review it; anything never seen → meet it; a unit with no cards → write for it;
+the weakest unit → sit a unit paper on it, or write more first if it is too thin
+to examine. The order of the first three is load-bearing: putting empty units
+above `new` told you to generate on a subject built from PDFs — where no card
+belongs to a unit, so every unit reads as empty — while unmet cards sat in the
+deck.
+
+`mastery` is `1 - mean(assembly.weakness)`, computed by calling that function
+rather than by a second copy of its formula. A never-reviewed unit sits at 0.5,
+so a fresh deck does not read as weak merely for being new.
+
+**`units_cover`** is how many of a subject's `active` cards the per-unit view can
+account for. Only knowledge-mode cards carry a unit; an uploaded PDF is chunked
+by page and a page maps to no unit. When it is 0 the endpoint declines to speak
+about units at all, and the client says so — "unit 4 is your weakest" drawn from
+three of forty cards is a guess wearing a fact's clothing.
+
+Never a paid call. The web client prefetches on route intent, so a GET that
+spent money would spend it on a hover.
 
 ---
 

@@ -237,6 +237,40 @@ export interface TestQuestion {
   asked_before?: Verdict | "open" | null;
 }
 
+/** One syllabus unit as the deck actually stands. `mastery` is 1 - mean
+ *  weakness, 0..1; a never-reviewed unit sits at 0.5 rather than at either end. */
+export interface StudyUnit {
+  number: number;
+  name: string;
+  active: number;
+  due: number;
+  mastery: number;
+}
+
+/**
+ * GET /api/study-plan — the single next action for one subject.
+ *
+ * `units_cover` is how many of the subject's `active` cards the per-unit view
+ * can actually account for. Cards from an uploaded PDF are chunked by page and
+ * belong to no syllabus unit, so on a PDF-built subject this is 0 and the
+ * unit-level fields say nothing. Render that honestly rather than showing a
+ * confident "unit 4 is weakest" derived from three of forty cards.
+ */
+export interface StudyPlanEntry {
+  topic_code: string;
+  due: number;
+  new: number;
+  active: number;
+  units_cover: number;
+  weakest_unit: number | null;
+  units: StudyUnit[];
+  action: {
+    kind: "review" | "generate" | "sit" | "clear";
+    unit: number | null;
+  };
+  advice: string;
+}
+
 /** POST /api/tests and GET /api/tests/{id} */
 export interface TestPaper {
   test_id: number;

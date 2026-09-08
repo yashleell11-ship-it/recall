@@ -26,6 +26,7 @@ import type {
   Settings,
   Source,
   Stats,
+  StudyPlanEntry,
   TestKind,
   TestPaper,
   TestQuestion,
@@ -1925,4 +1926,35 @@ export async function generateFromKnowledge(
     });
   }
   return { accepted, rejected, cost_usd: 0.0018, stopped_early: false };
+}
+
+
+export async function getStudyPlan(): Promise<StudyPlanEntry[]> {
+  await delay(120);
+  const topics = await getTopics();
+  return topics.map((t) => {
+    const units = (t.meta?.units ?? []).map((name, i) => ({
+      number: i + 1,
+      name,
+      active: i < 2 ? 6 : 0,
+      due: i === 0 ? 3 : 0,
+      mastery: i === 0 ? 0.41 : i === 1 ? 0.78 : 0,
+    }));
+    const cover = units.reduce((n, u) => n + u.active, 0);
+    return {
+      topic_code: t.code,
+      due: t.due,
+      new: t.new,
+      active: t.active,
+      units_cover: cover,
+      weakest_unit: cover ? 1 : null,
+      units,
+      action: t.due
+        ? { kind: "review" as const, unit: null }
+        : { kind: "sit" as const, unit: 1 },
+      advice: t.due
+        ? `${t.due} due \u2014 review before anything else`
+        : "unit 1 is your weakest \u2014 sit a test on it",
+    };
+  });
 }

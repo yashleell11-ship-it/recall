@@ -21,6 +21,7 @@ import type {
   SettingsPatch,
   Source,
   Stats,
+  StudyPlanEntry,
   TestKind,
   TestPaper,
   TestResult,
@@ -196,6 +197,12 @@ export function putSettings(patch: SettingsPatch): Promise<Settings> {
 export function getStats(): Promise<Stats> {
   if (MOCK) return mock.getStats();
   return request<Stats>("/api/stats");
+}
+
+/** GET /api/study-plan — what to do next, per subject. Never spends money. */
+export function getStudyPlan(): Promise<StudyPlanEntry[]> {
+  if (MOCK) return mock.getStudyPlan();
+  return request<StudyPlanEntry[]>("/api/study-plan");
 }
 
 /** GET /api/sources */

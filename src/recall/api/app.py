@@ -13,6 +13,7 @@ from recall.api import teach_routes, tests_routes, upload_routes
 from recall.api.deps import get_conn, get_current_user
 from recall.db import connect, init_db
 from recall.llm.client import LlmUnavailable
+from recall.study import plan
 
 
 class ReviewIn(BaseModel):
@@ -187,6 +188,14 @@ def create_app() -> FastAPI:
     @app.get("/api/stats")
     def stats(user_id: int = Depends(get_current_user), conn=Depends(get_conn)):
         return scheduling.stats(conn, user_id)
+
+    @app.get("/api/study-plan")
+    def study_plan(user_id: int = Depends(get_current_user),
+                   conn=Depends(get_conn)):
+        """What to do next, per subject. Reads only — no paid call, ever, on a
+        GET: the web client prefetches these on route intent, so a paid GET
+        would spend money on a hover."""
+        return plan.study_plan(conn, user_id)
 
     @app.get("/api/sources")
     def sources(user_id: int = Depends(get_current_user), conn=Depends(get_conn)):

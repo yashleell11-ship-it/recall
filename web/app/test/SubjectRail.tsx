@@ -5,7 +5,13 @@ import { motion, useReducedMotion } from "motion/react";
 import { useCallback, useState } from "react";
 import { errorMessage, generateFromKnowledge } from "@/lib/api";
 import { Reveal } from "@/components/rich";
-import type { SubjectScheme, TestKind, Topic, TopicMeta } from "@/lib/types";
+import type {
+  StudyPlanEntry,
+  SubjectScheme,
+  TestKind,
+  Topic,
+  TopicMeta,
+} from "@/lib/types";
 
 /** A topic the server sent LPU facts for. The rail renders nothing else. */
 export interface SubjectTopic extends Topic {
@@ -166,10 +172,37 @@ function UnitGenerate({ topicCode, unit }: { topicCode: string; unit: number }) 
   );
 }
 
+/* --- what to do next --------------------------------------------------------
+
+   The one line that turns a report into an instruction. Deliberately telemetry
+   rather than a banner: it sits in the same quiet register as the credits and
+   the CA policy, because it is a fact about the subject, not a call to action
+   competing with the paper chips pinned to the bottom of the card.
+
+   `units_cover` is the honesty valve. Cards from an uploaded PDF are chunked by
+   page and belong to no syllabus unit, so on a PDF-built subject nothing here
+   can speak about units and the server says so instead of guessing. */
+
+function NextUp({ plan }: { plan: StudyPlanEntry }) {
+  const partial =
+    plan.units_cover > 0 && plan.units_cover < plan.active
+      ? `unit view covers ${plan.units_cover} of ${plan.active} cards`
+      : null;
+  return (
+    <p className="telemetry text-[10.5px] mt-2 leading-relaxed">
+      <span className={plan.action.kind === "clear" ? "text-fg-3" : "text-fg-2"}>
+        {plan.advice}
+      </span>
+      {partial && <span className="text-fg-3"> · {partial}</span>}
+    </p>
+  );
+}
+
 /* --- one subject ------------------------------------------------------------ */
 
 function SubjectCard({
   topic,
+  plan,
   index,
   startingKey,
   anyStarting,
@@ -177,6 +210,8 @@ function SubjectCard({
   onStart,
 }: {
   topic: SubjectTopic;
+  /** Absent on a server without the study plan; the card just shows no advice. */
+  plan?: StudyPlanEntry;
   index: number;
   /** `${code}:${kind}` of the chip currently assembling, or null. */
   startingKey: string | null;
@@ -232,6 +267,8 @@ function SubjectCard({
         <p className="telemetry text-[10.5px] text-fg-3 mt-2 leading-relaxed">
           {meta.ca_policy}
         </p>
+
+        {plan && <NextUp plan={plan} />}
 
         <details className="group mt-2">
           <summary
@@ -369,11 +406,13 @@ function SubjectCard({
 
 export function SubjectRail({
   topics,
+  plan,
   startingKey,
   error,
   onStart,
 }: {
   topics: SubjectTopic[];
+  plan?: StudyPlanEntry[];
   startingKey: string | null;
   error: { code: string; message: string } | null;
   onStart: (kind: TestKind, code: string, units: number[]) => void;
@@ -385,6 +424,7 @@ export function SubjectRail({
           <SubjectCard
             key={t.id}
             topic={t}
+            plan={plan?.find((p) => p.topic_code === t.code)}
             index={i}
             startingKey={startingKey}
             anyStarting={startingKey !== null}

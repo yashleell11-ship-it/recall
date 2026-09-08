@@ -1,6 +1,14 @@
 "use client";
 
-import { getQueue, getSettings, getSources, getStats, getTests, getTopics } from "./api";
+import {
+  getQueue,
+  getSettings,
+  getSources,
+  getStats,
+  getStudyPlan,
+  getTests,
+  getTopics,
+} from "./api";
 import { cache, fresh, inflight, invalidate, put } from "./cache";
 import type {
   QueueResponse,
@@ -9,6 +17,7 @@ import type {
   Stats,
   TestSummary,
   Topic,
+  StudyPlanEntry,
 } from "./types";
 
 /**
@@ -47,11 +56,23 @@ export async function fetchDashboard(): Promise<DashboardData> {
 export interface PickerData {
   topics: Topic[];
   tests: TestSummary[];
+  /** OPTIONAL / ADDITIVE: absent on a server that predates the study plan, in
+   *  which case the subject cards simply carry no advice line. */
+  plan?: StudyPlanEntry[];
 }
 
 export async function fetchPicker(): Promise<PickerData> {
-  const [topics, tests] = await Promise.all([getTopics(), getTests()]);
-  return { topics, tests };
+  // Folded into the existing bundle rather than given a cache key of its own:
+  // it is read on exactly one screen, at the same moment as the other two, and
+  // a third key would mean a third prefetch to keep in step.
+  const [topics, tests, plan] = await Promise.all([
+    getTopics(),
+    getTests(),
+    // Advice is the least important thing on this screen. A server that cannot
+    // produce it must not stop the paper picker from rendering.
+    getStudyPlan().catch(() => undefined),
+  ]);
+  return { topics, tests, plan };
 }
 
 export interface UploadContext {
