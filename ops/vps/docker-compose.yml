@@ -17,6 +17,11 @@ services:
     volumes:
       - /srv/recall/data:/data
       - /srv/recall/uploads:/uploads
+      # Course material a lesson can be checked against. Read-only: the loader
+      # reads text out of these files and stores it, and nothing at runtime
+      # touches them again — retrieval reads the database. Safe to delete the
+      # directory once a unit is loaded.
+      - /srv/recall/corpus:/corpus:ro
     networks: [bots]
 
   frontend:
