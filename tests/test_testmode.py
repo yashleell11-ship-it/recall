@@ -1011,3 +1011,158 @@ def test_a_unit_paper_never_reaches_another_account(db_path):
     paper = service.create_test(conn, 1, "endterm100", "CSE111", units=[0])
     assert not any("SECRET" in q["question"] for q in paper["questions"])
     conn.close()
+
+
+# --- a syllabus that changes under a stored deck -----------------------------
+#
+# A unit's identity used to be its chunk ORDINAL, and nothing ever renumbered
+# one. `seed_topics` rewrites topics.meta from lpu.py on every boot, so editing
+# a unit list silently repointed every stored ordinal at a different unit. That
+# is not hypothetical: MEC103's list was restructured wholesale in this project
+# and CSE111's grew a seventh unit. These pin the four shapes that edit takes.
+
+def _named_deck(db_path, unit_names, per_unit=4, topic_id=1, code="CSE111"):
+    """A knowledge deck whose cards say which unit they were written for."""
+    import json as _json
+
+    from recall.generate.knowledge import knowledge_sha
+
+    conn = connect(db_path)
+    conn.execute("UPDATE topics SET meta = ? WHERE id = ?",
+                 (_json.dumps({"full_name": code, "units": list(unit_names),
+                               "exam_format": "mixed", "mte_exists": True}),
+                  topic_id))
+    conn.execute(
+        "INSERT INTO sources (id,user_id,topic_id,filename,kind,sha256,added_at)"
+        " VALUES (800,1,?,'AI knowledge','knowledge',?,'2026-09-01T00:00:00+00:00')",
+        (topic_id, knowledge_sha(topic_id)))
+    for i, name in enumerate(unit_names):
+        conn.execute(
+            "INSERT INTO chunks (id,source_id,ordinal,text,page_ref)"
+            " VALUES (?,800,?,?,?)",
+            (800 + i, i, name, f"Unit {i + 1} · {name}"))
+        for k in range(per_unit):
+            conn.execute(
+                "INSERT INTO cards (chunk_id,topic_id,kind,question,answer,"
+                "cloze_text,arm,state,origin,created_at) VALUES (?,?,'qa',?,?,"
+                "NULL,'learned','active','knowledge','2026-09-01T00:00:00+00:00')",
+                (800 + i, topic_id, f"[{name}] q{k}?", words(3)))
+    conn.commit()
+    return conn
+
+
+def _resyllabus(conn, unit_names, topic_id=1, code="CSE111"):
+    """What seed_topics does on the next boot after lpu.py is edited."""
+    import json as _json
+
+    conn.execute("UPDATE topics SET meta = ? WHERE id = ?",
+                 (_json.dumps({"full_name": code, "units": list(unit_names),
+                               "exam_format": "mixed", "mte_exists": True}),
+                  topic_id))
+    conn.commit()
+
+
+def _asked(paper):
+    return {q["question"] for q in paper["questions"]}
+
+
+def test_a_unit_inserted_above_does_not_repoint_the_units_below(db_path):
+    """CSE111's own comment plans exactly this edit. Inserting units shifts
+    every later index; the cards must follow their unit, not their slot."""
+    conn = _named_deck(db_path, ["Languages", "Fundamentals", "Hardware"])
+    _resyllabus(conn, ["Languages", "Operating Systems", "Networking",
+                       "Fundamentals", "Hardware"])
+
+    # "Fundamentals" has moved from index 1 to index 3.
+    paper = service.create_test(conn, 1, "endterm100", "CSE111", units=[3])
+    assert _asked(paper) == {f"[Fundamentals] q{k}?" for k in range(4)}
+
+    # And index 1 is now a unit with no cards at all, not Fundamentals'.
+    empty = service.create_test(conn, 1, "endterm100", "CSE111", units=[1])
+    assert empty["questions"] == []
+    conn.close()
+
+
+def test_reordering_units_moves_their_cards_with_them(db_path):
+    conn = _named_deck(db_path, ["Alpha", "Beta", "Gamma"])
+    _resyllabus(conn, ["Gamma", "Alpha", "Beta"])
+
+    for index, name in enumerate(["Gamma", "Alpha", "Beta"]):
+        paper = service.create_test(conn, 1, "endterm100", "CSE111",
+                                    units=[index])
+        assert _asked(paper) == {f"[{name}] q{k}?" for k in range(4)}, name
+    conn.close()
+
+
+def test_a_deleted_units_cards_leave_unit_papers_but_stay_in_the_subject(db_path):
+    """They are still real cards about the subject — they just no longer
+    belong to any unit, so no unit paper may claim them."""
+    conn = _named_deck(db_path, ["Alpha", "Beta", "Gamma"])
+    _resyllabus(conn, ["Alpha", "Gamma"])          # Beta is gone
+
+    scoped = service.create_test(conn, 1, "endterm100", "CSE111", units=[0, 1])
+    assert not any("[Beta]" in q for q in _asked(scoped))
+
+    whole = service.create_test(conn, 1, "endterm100", "CSE111")
+    assert any("[Beta]" in q for q in _asked(whole))
+    conn.close()
+
+
+def test_a_moved_units_page_ref_is_corrected_when_it_is_generated_into(db_path):
+    """page_ref is printed beside every question from the card. Left alone it
+    keeps announcing the unit's OLD position."""
+    from recall.generate.knowledge import _unit_chunk_id
+
+    conn = _named_deck(db_path, ["Alpha", "Beta"])
+    _resyllabus(conn, ["Beta", "Alpha"])
+
+    chunk_id = _unit_chunk_id(conn, 800, 0, "Beta")   # Beta is index 0 now
+    row = conn.execute("SELECT ordinal, page_ref FROM chunks WHERE id = ?",
+                       (chunk_id,)).fetchone()
+    assert row["page_ref"] == "Unit 1 · Beta"
+    assert chunk_id == 801, "it must reuse Beta's chunk, not make a second one"
+    conn.close()
+
+
+def test_generating_for_a_moved_unit_does_not_pour_it_into_another(db_path):
+    """The worst shape of the bug: new cards for the unit now at index 1 were
+    inserted into whatever chunk sat at ordinal 1, permanently mixing two
+    units under one label."""
+    from recall.generate.knowledge import _unit_chunk_id
+
+    conn = _named_deck(db_path, ["Alpha", "Beta"])
+    _resyllabus(conn, ["Beta", "Alpha"])
+
+    into = _unit_chunk_id(conn, 800, 1, "Alpha")     # Alpha is index 1 now
+    assert into == 800, "Alpha's own chunk, not the one sitting at ordinal 1"
+    assert conn.execute("SELECT text FROM chunks WHERE id = ?",
+                        (into,)).fetchone()["text"] == "Alpha"
+    conn.close()
+
+
+def test_a_brand_new_unit_gets_its_own_chunk_without_colliding(db_path):
+    """UNIQUE(source_id, ordinal) means the slot for a new unit's index may
+    already be occupied by a unit that did not move."""
+    from recall.generate.knowledge import _unit_chunk_id
+
+    conn = _named_deck(db_path, ["Alpha", "Beta"])
+    _resyllabus(conn, ["Alpha", "Brand New", "Beta"])
+
+    fresh = _unit_chunk_id(conn, 800, 1, "Brand New")
+    assert fresh not in (800, 801)
+    row = conn.execute("SELECT text, page_ref FROM chunks WHERE id = ?",
+                       (fresh,)).fetchone()
+    assert row["text"] == "Brand New"
+    assert row["page_ref"] == "Unit 2 · Brand New"
+    conn.close()
+
+
+def test_unit_matching_survives_whitespace_and_case_edits(db_path):
+    """A syllabus tidy-up that only changes spacing or capitalisation is not
+    a different unit."""
+    conn = _named_deck(db_path, ["Matrix  Methods", "Fourier Series"])
+    _resyllabus(conn, ["matrix methods", "Fourier Series"])
+
+    paper = service.create_test(conn, 1, "endterm100", "CSE111", units=[0])
+    assert _asked(paper) == {f"[Matrix  Methods] q{k}?" for k in range(4)}
+    conn.close()

@@ -23,6 +23,7 @@ from recall.generate.knowledge import (
     MAX_CARDS_PER_CALL,
     generate_for_unit,
     knowledge_sha,
+    unit_key,
 )
 from recall.testmode.marks import marks_for_card
 from recall.testmode.service import KINDS
@@ -96,7 +97,8 @@ def marks_needed_per_unit(kind: str, n_units: int) -> int:
     return -(-target // n_units)            # ceil, so the units cover the target
 
 
-def _active_marks_per_unit(conn, user_id: int, topic_id: int) -> dict[int, int]:
+def _active_marks_per_unit(conn, user_id: int, topic_id: int,
+                           units: list[str]) -> dict[int, int]:
     """The MARKS this topic already holds, per unit.
 
     Marks rather than cards, because marks are what a paper is measured in and
@@ -112,7 +114,7 @@ def _active_marks_per_unit(conn, user_id: int, topic_id: int) -> dict[int, int]:
     covered.
     """
     rows = conn.execute(
-        "SELECT ch.ordinal AS unit, c.kind, c.answer"
+        "SELECT ch.text AS unit_name, c.kind, c.answer"
         " FROM cards c"
         " JOIN chunks ch ON ch.id = c.chunk_id"
         " JOIN sources s ON s.id = ch.source_id"
@@ -120,11 +122,20 @@ def _active_marks_per_unit(conn, user_id: int, topic_id: int) -> dict[int, int]:
         "   AND s.user_id = ? AND s.sha256 = ?",
         (topic_id, user_id, knowledge_sha(topic_id)),
     ).fetchall()
-    marks: dict[int, int] = {}
+
+    # Keyed by the unit's NAME, then resolved against the syllabus as it
+    # stands now. Grouping by chunk ordinal counted whatever used to sit at
+    # that position, so after a syllabus edit the planner would credit one
+    # unit's cards to another and generate nothing for a unit that was in
+    # fact empty.
+    by_name: dict[str, int] = {}
     for r in rows:
-        marks[r["unit"]] = marks.get(r["unit"], 0) + marks_for_card(
+        key = unit_key(r["unit_name"])
+        by_name[key] = by_name.get(key, 0) + marks_for_card(
             r["kind"], r["answer"])
-    return marks
+
+    return {i: by_name.get(unit_key(name), 0)
+            for i, name in enumerate(units)}
 
 
 def ensure_coverage(conn, cfg: Config, client, *, user_id: int, topic_id: int,
@@ -149,7 +160,7 @@ def ensure_coverage(conn, cfg: Config, client, *, user_id: int, topic_id: int,
 
     per_call = cards_needed_per_unit(kind, len(plan))
     want_marks = marks_needed_per_unit(kind, len(plan))
-    have_marks = _active_marks_per_unit(conn, user_id, topic_id)
+    have_marks = _active_marks_per_unit(conn, user_id, topic_id, units)
 
     generated = rejected = 0
     cost = 0.0
@@ -186,7 +197,7 @@ def ensure_coverage(conn, cfg: Config, client, *, user_id: int, topic_id: int,
             if result.accepted == 0:
                 break
             held = _active_marks_per_unit(
-                conn, user_id, topic_id).get(unit_index, 0)
+                conn, user_id, topic_id, units).get(unit_index, 0)
 
     return CoverageResult(generated, rejected, cost, touched,
                           already_covered=not touched)

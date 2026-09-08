@@ -10,7 +10,7 @@ and difficulty exactly as a wrong answer in review does.
 """
 
 from recall.api.scheduling import iso, record_review, utc_now
-from recall.generate.knowledge import knowledge_sha
+from recall.generate.knowledge import knowledge_sha, unit_chunk_ids, unit_key
 from recall.testmode.assembly import CandidateCard, assemble, shortfall_note
 from recall.testmode.marks import PARTIAL_MIN_MARKS, marks_for_card
 
@@ -94,10 +94,12 @@ def _test_row(conn, user_id: int, test_id: int):
 
 def _candidates(conn, user_id: int, topic_code: str | None,
                 topic_id: int | None = None,
-                units: list[int] | None = None) -> list[CandidateCard]:
+                unit_names: list[str] | None = None) -> list[CandidateCard]:
     """Active cards a paper may draw from, optionally narrowed to units.
 
-    `units` is a list of 0-BASED unit indices. Narrowing to them is only
+    `unit_names` names the units to include — names, not indices, because a
+    unit's identity has to survive the syllabus being edited. Narrowing is
+    only
     possible for knowledge-mode cards: their chunk is the per-unit chunk of
     the topic's synthetic knowledge source, and its `ordinal` IS the unit
     index (see recall.generate.knowledge._unit_chunk_id). A card from an
@@ -115,18 +117,34 @@ def _candidates(conn, user_id: int, topic_code: str | None,
     clause = " AND t.code = ?" if topic_code else ""
     args: tuple = (topic_code,) if topic_code else ()
 
-    if units is not None:
+    if unit_names is not None:
         if topic_id is None:
             raise ValueError("a unit-scoped paper needs a topic")
-        if not units:
+        if not unit_names:
             return []
-        holes = ",".join("?" for _ in units)
-        clause += (
-            " AND ch.source_id = (SELECT id FROM sources"
-            "                     WHERE user_id = ? AND sha256 = ?)"
-            f" AND ch.ordinal IN ({holes})"
-        )
-        args = (*args, user_id, knowledge_sha(topic_id), *units)
+        # Resolved to chunk ids through knowledge.unit_chunk_ids — the ONE
+        # place that answers "which chunk is this unit" — rather than matched
+        # in SQL. Doing it in SQL meant two normalisations, `unit_key` here
+        # and `lower(trim(...))` there, and they disagreed the moment a unit
+        # name carried a double space. Two implementations of one rule is the
+        # bug this whole change exists to remove.
+        #
+        # Names, never ordinals: an ordinal is a position and a syllabus is
+        # editable, so a stored ordinal stops meaning what it did the moment
+        # a unit is inserted, reordered or dropped.
+        source = conn.execute(
+            "SELECT id FROM sources WHERE user_id = ? AND sha256 = ?",
+            (user_id, knowledge_sha(topic_id))).fetchone()
+        if source is None:
+            return []                     # nothing generated for this subject
+        by_name = unit_chunk_ids(conn, source["id"])
+        wanted = [by_name[k] for k in (unit_key(n) for n in unit_names)
+                  if k in by_name]
+        if not wanted:
+            return []                     # those units hold no cards yet
+        holes = ",".join("?" for _ in wanted)
+        clause += f" AND c.chunk_id IN ({holes})"
+        args = (*args, *wanted)
 
     rows = conn.execute(
         "SELECT c.id, c.kind, c.answer, t.code AS topic_code,"
@@ -190,6 +208,7 @@ def create_test(conn, user_id: int, kind: str,
         raise ValueError("choosing units needs a subject to choose them from")
 
     topic_id = None
+    chosen_names: list[str] | None = None
     if topic_code is not None:
         row = conn.execute(
             "SELECT id, meta FROM topics WHERE user_id = ? AND code = ?",
@@ -205,12 +224,14 @@ def create_test(conn, user_id: int, kind: str,
                 f"{topic_code} has no MTE at LPU "
                 f"({meta.get('ca_policy', 'CA/ETE only')})"
             )
+        syllabus = meta.get("units") or []
         if units is not None:
-            units = _clean_units(units, meta.get("units") or [], topic_code)
+            units = _clean_units(units, syllabus, topic_code)
+            chosen_names = [syllabus[u] for u in units]
 
     target, time_limit_s = KINDS[kind]
     paper = assemble(
-        _candidates(conn, user_id, topic_code, topic_id, units),
+        _candidates(conn, user_id, topic_code, topic_id, chosen_names),
         target, now=utc_now())
 
     cur = conn.execute(

@@ -212,3 +212,86 @@ def test_repair_pass_fixes_a_database_the_bad_migration_damaged(tmp_path):
     conn.execute("INSERT INTO test_questions (test_id, card_id, ordinal, marks)"
                  " VALUES (2, 1, 1, 1)")
     assert conn.execute("SELECT COUNT(*) n FROM test_questions").fetchone()["n"] == 2
+
+
+# --- a unit that was renamed under a stored deck -----------------------------
+
+def _knowledge_unit(conn, topic_code, unit_name, ordinal, n_cards=3, cid=700):
+    """A knowledge source for a topic with one unit chunk and some cards."""
+    from recall.generate.knowledge import knowledge_sha
+
+    topic_id = conn.execute("SELECT id FROM topics WHERE code = ?",
+                            (topic_code,)).fetchone()["id"]
+    have = conn.execute("SELECT id FROM sources WHERE sha256 = ?",
+                        (knowledge_sha(topic_id),)).fetchone()
+    if have is None:
+        conn.execute(
+            "INSERT INTO sources (id,user_id,topic_id,filename,kind,sha256,added_at)"
+            " VALUES (?,1,?,'AI knowledge','knowledge',?,'2026-09-01T00:00:00+00:00')",
+            (cid, topic_id, knowledge_sha(topic_id)))
+        source_id = cid
+    else:
+        source_id = have["id"]
+    conn.execute("INSERT INTO chunks (id,source_id,ordinal,text,page_ref)"
+                 " VALUES (?,?,?,?,?)",
+                 (cid + 1 + ordinal, source_id, ordinal, unit_name,
+                  f"Unit {ordinal + 1} · {unit_name}"))
+    for k in range(n_cards):
+        conn.execute(
+            "INSERT INTO cards (chunk_id,topic_id,kind,question,answer,cloze_text,"
+            "arm,state,origin,created_at) VALUES (?,?,'qa',?,'a',NULL,'learned',"
+            "'active','knowledge','2026-09-01T00:00:00+00:00')",
+            (cid + 1 + ordinal, topic_id, f"[{unit_name}] q{k}?"))
+    conn.commit()
+    return cid + 1 + ordinal
+
+
+def test_a_declared_unit_rename_carries_its_cards_across(tmp_path):
+    """MTH165's units were corrected from paraphrases to the syllabus's own
+    wording AFTER cards had been generated against them. Sixteen live cards
+    were left under "Linear Algebra", a unit that by name no longer exists."""
+    conn = connect(str(tmp_path / "rename.db"))
+    init_db(conn)
+    conn.execute("INSERT INTO users (id, name) VALUES (1, 'yash')")
+    seed_topics(conn)
+    chunk = _knowledge_unit(conn, "MTH165", "Linear Algebra", 0)
+
+    result = seed_topics(conn)            # the next boot
+
+    assert any("Linear Algebra" in m for m in result["relabelled"])
+    row = conn.execute("SELECT text, page_ref FROM chunks WHERE id = ?",
+                       (chunk,)).fetchone()
+    assert row["text"] == "Matrix Methods and Linear Systems"
+    assert row["page_ref"] == "Unit 1 · Matrix Methods and Linear Systems"
+    conn.close()
+
+
+def test_the_rename_repair_is_idempotent(tmp_path):
+    conn = connect(str(tmp_path / "twice.db"))
+    init_db(conn)
+    conn.execute("INSERT INTO users (id, name) VALUES (1, 'yash')")
+    seed_topics(conn)
+    _knowledge_unit(conn, "MTH165", "Linear Algebra", 0)
+
+    first = seed_topics(conn)["relabelled"]
+    second = seed_topics(conn)["relabelled"]
+    assert first and not second, "a second boot must find nothing left to do"
+    conn.close()
+
+
+def test_an_undeclared_unit_change_is_left_alone(tmp_path):
+    """MEC103's six units were replaced by six DIFFERENT ones. A positional
+    rule would have relabelled its cards as units they are not about; only
+    declared renames are followed, so this deck is left untouched."""
+    conn = connect(str(tmp_path / "restructure.db"))
+    init_db(conn)
+    conn.execute("INSERT INTO users (id, name) VALUES (1, 'yash')")
+    seed_topics(conn)
+    chunk = _knowledge_unit(conn, "MEC103", "Engineering Scales", 1, cid=750)
+
+    result = seed_topics(conn)
+
+    assert not any("MEC103" in m for m in result["relabelled"])
+    assert conn.execute("SELECT text FROM chunks WHERE id = ?",
+                        (chunk,)).fetchone()["text"] == "Engineering Scales"
+    conn.close()

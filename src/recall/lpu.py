@@ -186,6 +186,35 @@ SUBJECTS: dict[str, dict] = {
     },
 }
 
+#: Units that were RENAMED, per subject: {topic code: {old name: new name}}.
+#:
+#: A knowledge card belongs to the unit whose NAME its chunk carries, which
+#: makes inserting, reordering and deleting units safe on their own — the name
+#: moves and the cards move with it. A rename is the one edit that breaks
+#: that, and it cannot be inferred afterwards: once `topics.meta` is
+#: overwritten the old name is gone, and guessing from position cannot tell a
+#: rename from a restructure. MEC103 is exactly why guessing is not allowed
+#: here — its six units were replaced by six DIFFERENT units, same count, and
+#: a positional rule would have relabelled "Engineering Scales" as
+#: "Projections of Points, Lines and Planes" and quietly filed one unit's
+#: cards under another.
+#:
+#: So renames are declared, once, by a person who knows which they were. Each
+#: entry is applied idempotently at seed: after it runs the old name no longer
+#: matches anything, so a second run is a no-op. Same shape and same reason as
+#: LEGACY_RENAMES above, one level down.
+LEGACY_UNIT_RENAMES: dict[str, dict[str, str]] = {
+    # 2026-09-07: corrected from paraphrases to the wording LPU's own Session
+    # 2026-27 syllabus PDF prints. Same six units, same order, same content —
+    # only the names changed, which is what makes these safe to declare.
+    "MTH165": {
+        "Linear Algebra": "Matrix Methods and Linear Systems",
+        "Multivariate Functions": "Multivariate Differentiation",
+        "Multivariate Integrals": "Multivariable Integration and Applications",
+        "Fourier Series": "Introduction to Fourier Series",
+    },
+}
+
 #: Subjects whose CA/MTE/ETE weights came from a real source (the owner's own
 #: zero-lecture slides, or the published course pages) default to confirmed.
 #: MEC103 and CSE111 carry scheme_confirmed=False today.

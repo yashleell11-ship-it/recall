@@ -92,20 +92,96 @@ def _synthetic_source_id(conn, user_id: int, topic_id: int) -> int:
     return cur.lastrowid
 
 
+def unit_key(unit_name: str) -> str:
+    """A unit's identity, normalised for comparison.
+
+    Whitespace and case only — anything cleverer (stripping punctuation, say)
+    would start merging units that a syllabus deliberately distinguishes.
+    """
+    return " ".join((unit_name or "").split()).casefold()
+
+
+def unit_chunk_ids(conn, source_id: int) -> dict[str, int]:
+    """Every unit chunk under a knowledge source, keyed by unit name.
+
+    THE one place that answers "which chunk is this unit". Three call sites
+    used to work it out independently from the chunk's ORDINAL, and that is
+    exactly how they drifted: an ordinal is a position, and a syllabus is
+    editable, so position stopped meaning what it did when the cards were
+    written.
+    """
+    return {
+        unit_key(r["text"]): r["id"]
+        for r in conn.execute(
+            "SELECT id, text FROM chunks WHERE source_id = ?", (source_id,))
+    }
+
+
 def _unit_chunk_id(conn, source_id: int, unit_index: int, unit_name: str) -> int:
-    """One chunk per unit. Its text is the unit's name and nothing more:
-    padding it into a passage-shaped paragraph would let an intentionally
-    ungrounded card be laundered through a grounding check later."""
+    """One chunk per unit, identified by the unit's NAME.
+
+    Its text is the unit's name and nothing more: padding it into a
+    passage-shaped paragraph would let an intentionally ungrounded card be
+    laundered through a grounding check later. That text is now also the
+    unit's identity.
+
+    It used to look the chunk up by `ordinal` and return whatever sat there,
+    never comparing the name. So the moment a syllabus was edited — a unit
+    inserted, reordered, or dropped — every stored ordinal kept pointing at
+    its old position while `topics.meta` moved on, and cards written for one
+    unit were served under another's name. That is not hypothetical: MEC103's
+    unit list was restructured wholesale in this project (its old units 1-3
+    were folded into one and its old unit 6 split into three), and CSE111's
+    grew a seventh.
+
+    Matching on the name makes reorder and insertion free, and makes a
+    DELETED unit degrade honestly: its cards match no current unit, so they
+    stay out of unit-scoped papers while remaining in whole-subject ones,
+    which is exactly what they still are — real cards about the subject.
+
+    `ordinal` survives as the historical insertion slot and the display
+    position. It carries a UNIQUE(source_id, ordinal) constraint, so it
+    cannot be shuffled freely on a reorder; nothing reads it as a unit index
+    any more, and `page_ref` — which IS printed beside a question — is
+    brought back in line whenever the unit's position moves.
+    """
+    key = unit_key(unit_name)
+    page_ref = f"Unit {unit_index + 1} · {unit_name}"
+
     row = conn.execute(
-        "SELECT id FROM chunks WHERE source_id = ? AND ordinal = ?",
-        (source_id, unit_index),
+        "SELECT id, ordinal, page_ref FROM chunks WHERE source_id = ?"
+        " AND lower(trim(text)) = lower(trim(?))",
+        (source_id, unit_name),
     ).fetchone()
-    if row:
+    if row is None:
+        # Fall back to a Python-side comparison, which normalises interior
+        # whitespace too; SQL's trim() only touches the ends.
+        for candidate in conn.execute(
+                "SELECT id, ordinal, page_ref, text FROM chunks"
+                " WHERE source_id = ?", (source_id,)):
+            if unit_key(candidate["text"]) == key:
+                row = candidate
+                break
+
+    if row is not None:
+        # The unit still exists; only its position may have moved. Correct
+        # the label that gets printed next to every question from it.
+        if row["page_ref"] != page_ref:
+            conn.execute("UPDATE chunks SET page_ref = ? WHERE id = ?",
+                         (page_ref, row["id"]))
         return row["id"]
+
+    # A unit with no chunk yet. Take the first free slot rather than
+    # `unit_index`: after a reorder the slot for this index may be occupied
+    # by a unit that has not moved, and UNIQUE(source_id, ordinal) would
+    # refuse the insert.
+    taken = {r["ordinal"] for r in conn.execute(
+        "SELECT ordinal FROM chunks WHERE source_id = ?", (source_id,))}
+    slot = unit_index if unit_index not in taken else (
+        max(taken) + 1 if taken else unit_index)
     cur = conn.execute(
         "INSERT INTO chunks (source_id, ordinal, text, page_ref) VALUES (?,?,?,?)",
-        (source_id, unit_index, unit_name,
-         f"Unit {unit_index + 1} · {unit_name}"),
+        (source_id, slot, unit_name, page_ref),
     )
     return cur.lastrowid
 
