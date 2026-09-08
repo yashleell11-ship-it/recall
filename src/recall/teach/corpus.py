@@ -267,11 +267,16 @@ def strip_boilerplate(texts: list[str]) -> list[str]:
 _EMBED_BATCH = 32
 
 
-def ensure_vectors(conn, chunk_ids: list[int], embed=None) -> int:
+def ensure_vectors(conn, chunk_ids: list[int], embed=None, on_progress=None) -> int:
     """Compute and store any missing embeddings. Returns how many were added.
 
     Batched and committed as it goes, so an interrupted run keeps what it did
     and a large unit never has more than `_EMBED_BATCH` vectors in flight.
+
+    `on_progress(done, total)` is called after each batch. Indexing a unit
+    takes twenty minutes on the VPS's CPU, and a command that prints one line
+    and then goes silent for twenty minutes is indistinguishable from one that
+    has hung.
     """
     missing = [r["id"] for r in conn.execute(
         "SELECT ch.id FROM chunks ch"
@@ -299,6 +304,8 @@ def ensure_vectors(conn, chunk_ids: list[int], embed=None) -> int:
                 " VALUES (?,?,?)", (cid, int(vec.shape[0]), vec.tobytes()))
         conn.commit()
         done += len(batch)
+        if on_progress is not None:
+            on_progress(done, len(missing))
     return done
 
 

@@ -544,7 +544,7 @@ def cmd_corpus_load(args, cfg) -> int:
         conn.close()
         return 0
 
-    from recall.teach.corpus import ensure_vectors
+    from recall.teach.corpus import _EMBED_BATCH, ensure_vectors
 
     loaded = chunks = failed = 0
     touched: list[int] = []
@@ -570,7 +570,13 @@ def cmd_corpus_load(args, cfg) -> int:
     if touched:
         print(f"\nindexing {len(touched)} passages (free, runs on the CPU)…",
               flush=True)
-        added_vectors = ensure_vectors(conn, touched)
+
+        def progress(done: int, total: int) -> None:
+            # Every batch would be a wall of text; every tenth is a heartbeat.
+            if done % (_EMBED_BATCH * 10) == 0 or done == total:
+                print(f"  {done}/{total}", flush=True)
+
+        added_vectors = ensure_vectors(conn, touched, on_progress=progress)
         print(f"  {added_vectors} new vectors")
 
     print(f"\nloaded {loaded} files, {chunks} new passages"

@@ -780,3 +780,33 @@ def test_alike_passages_are_not_mistaken_for_boilerplate():
              "form and this sentence is long enough to look like a header. "
              f"Item {i}." for i in range(4)]
     assert strip_boilerplate(alike) == alike
+
+
+def test_indexing_reports_progress_as_it_goes():
+    """Indexing a unit takes twenty minutes on the VPS's CPU. A command that
+    prints one line and then goes silent for twenty minutes is
+    indistinguishable from one that has hung."""
+    import numpy as np
+
+    from recall.db import connect, init_db
+    from recall.teach.corpus import ensure_vectors
+
+    conn = connect(":memory:")
+    init_db(conn)
+    conn.execute("INSERT INTO users (id, name) VALUES (1, 'y')")
+    conn.execute("INSERT INTO topics (id,user_id,code,label) VALUES (1,1,'M','M')")
+    conn.execute("INSERT INTO sources (id,user_id,topic_id,filename,kind,sha256,"
+                 "added_at) VALUES (1,1,1,'/c/a.pdf','corpus','s','2026-01-01')")
+    for i in range(70):
+        conn.execute("INSERT INTO chunks (source_id,ordinal,text,page_ref)"
+                     " VALUES (1,?,?,'p1')", (i, f"passage number {i}"))
+    conn.commit()
+
+    seen: list[tuple[int, int]] = []
+    ids = [r["id"] for r in conn.execute("SELECT id FROM chunks")]
+    ensure_vectors(conn, ids, embed=lambda t: np.ones((len(t), 4), dtype=np.float32),
+                   on_progress=lambda d, tot: seen.append((d, tot)))
+    assert seen, "a long job must say where it has got to"
+    assert seen[-1] == (70, 70)
+    assert all(tot == 70 for _, tot in seen)
+    conn.close()
