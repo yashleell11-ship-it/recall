@@ -188,6 +188,34 @@ CREATE INDEX IF NOT EXISTS idx_test_questions_test ON test_questions(test_id);
 -- full scan of every question ever asked, once per candidate card.
 CREATE INDEX IF NOT EXISTS idx_test_questions_card ON test_questions(card_id);
 
+-- Teaching: a written lesson for one syllabus unit.
+--
+-- OWNERSHIP: `chunk_id` -> chunks -> sources.user_id. There is no user_id
+-- column here for the same reason cards has none: the owner is reachable, and
+-- adding a second answer to "whose is this" is how the two drift apart. Every
+-- read below joins sources and filters on it.
+--
+-- IDENTITY: the unit CHUNK, never a unit name or an index. seed.py's
+-- _follow_renamed_units rewrites chunks.text in place for a declared rename
+-- and never changes chunks.id, so a lesson follows its unit across a rename
+-- with no code and no second rename mechanism to forget.
+--
+-- No CHECK constraint on any column: this table will acquire inbound foreign
+-- keys, and a later rebuild to alter a CHECK is what left test_questions
+-- pointing at tests_old. `status` is validated in Python.
+CREATE TABLE IF NOT EXISTS lessons (
+  id          INTEGER PRIMARY KEY,
+  chunk_id    INTEGER NOT NULL REFERENCES chunks(id),
+  topic_id    INTEGER NOT NULL REFERENCES topics(id),
+  body_json   TEXT NOT NULL,
+  status      TEXT NOT NULL DEFAULT 'draft',
+  notes       TEXT,
+  model       TEXT NOT NULL,
+  cost_usd    REAL NOT NULL DEFAULT 0.0,
+  created_at  TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_lessons_chunk ON lessons(chunk_id, id);
+
 -- Teaching: a grounded explanation of a card that was missed. Cached by card
 -- because explanations cost money and the same card gets missed repeatedly.
 CREATE TABLE IF NOT EXISTS card_explanations (

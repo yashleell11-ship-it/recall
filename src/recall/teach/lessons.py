@@ -1,0 +1,272 @@
+"""Writing, checking and storing a lesson for one syllabus unit.
+
+Offline by design. A lesson takes one to two minutes to write and costs money,
+and the per-user daily cap is $1.00 with no resume path, so this is reached
+from `recall lessons`, never from an HTTP request the student is waiting on.
+The request path reads rows.
+
+What is checked, in the order it is checked, cheapest first:
+
+1. **Structure** — the shape the prompt asked for, in Python. A lesson missing
+   its worked examples is not a lesson.
+2. **Notation** — `recall.notation.check_notation`. Free, deterministic, and
+   the one rule the owner stated in his own words.
+3. **Re-derivation** — one fresh call per worked example, given only the
+   question, compared in Python. This is the only check here with real teeth
+   against a confidently wrong derivation, and it is honest about its reach:
+   it catches wrong ANSWERS. Nothing cheap catches bad teaching.
+
+A lesson that fails 1 or 2 is repaired once and re-checked; a lesson that
+fails 3 is stored `status='suspect'` with the mismatch written into `notes`,
+because a wrong worked example is exactly the thing a human should look at
+rather than have silently deleted.
+"""
+
+import json
+import re
+from dataclasses import dataclass, field
+
+from recall.api.scheduling import iso, utc_now
+from recall.generate.knowledge import _synthetic_source_id, _unit_chunk_id
+from recall.generate.unit_guidance import guidance_for
+from recall.config import Config
+from recall.notation import check_notation
+from recall.pipeline import _cost
+from recall.teach.lesson_prompts import (
+    DEFAULT_SHAPE,
+    EXAMPLES_PREFACE,
+    GUIDANCE_PREFACE,
+    LESSON_SYSTEM,
+    LESSON_USER,
+    REDERIVE_SYSTEM,
+    REDERIVE_USER,
+    SHAPE_BY_FORMAT,
+)
+
+#: How many worked examples a lesson must carry. Two, for the reason
+#: unit_guidance gives about its own calibration pair: one cannot show a range,
+#: and three starts to read as a problem set rather than a lesson.
+_WORKED = 2
+_MIN_SECTIONS, _MAX_SECTIONS = 3, 5
+_MIN_CHECK = 2
+
+
+@dataclass
+class LessonResult:
+    body: dict | None
+    status: str                      #: 'draft' | 'suspect' | 'rejected'
+    notes: list[str] = field(default_factory=list)
+    cost_usd: float = 0.0
+    lesson_id: int | None = None
+
+
+def _loads(raw: str) -> dict | None:
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def check_structure(body: dict) -> list[str]:
+    """The shape the prompt asked for, verified rather than assumed."""
+    out: list[str] = []
+    if not isinstance(body.get("why"), str) or not body["why"].strip():
+        out.append("no 'why': the lesson never says what the unit is for")
+
+    sections = body.get("sections")
+    if not isinstance(sections, list) or not (
+            _MIN_SECTIONS <= len(sections) <= _MAX_SECTIONS):
+        out.append(f"needs {_MIN_SECTIONS}-{_MAX_SECTIONS} sections, "
+                   f"got {len(sections) if isinstance(sections, list) else 0}")
+    else:
+        for i, s in enumerate(sections, 1):
+            if not isinstance(s, dict) or not str(s.get("body", "")).strip():
+                out.append(f"section {i} has no body")
+            elif len(str(s["body"]).split()) < 40:
+                out.append(f"section {i} is {len(str(s['body']).split())} words"
+                           " — a heading with a sentence under it is not teaching")
+
+    worked = body.get("worked")
+    if not isinstance(worked, list) or len(worked) != _WORKED:
+        out.append(f"needs exactly {_WORKED} worked examples, "
+                   f"got {len(worked) if isinstance(worked, list) else 0}")
+    else:
+        for i, w in enumerate(worked, 1):
+            if not isinstance(w, dict):
+                out.append(f"worked example {i} is malformed")
+                continue
+            steps = w.get("steps")
+            if not isinstance(steps, list) or len(steps) < 2:
+                out.append(f"worked example {i} has no derivation — the steps "
+                           "are the whole point")
+            if not str(w.get("answer", "")).strip():
+                out.append(f"worked example {i} never reaches an answer")
+            if not str(w.get("question", "")).strip():
+                out.append(f"worked example {i} has no question")
+
+    check = body.get("check")
+    if not isinstance(check, list) or len(check) < _MIN_CHECK:
+        out.append(f"needs at least {_MIN_CHECK} check questions")
+    return out
+
+
+def lesson_text(body: dict) -> str:
+    """Every word a student would read, for the notation check."""
+    parts = [str(body.get("why", ""))]
+    for s in body.get("sections") or []:
+        if isinstance(s, dict):
+            parts += [str(s.get("heading", "")), str(s.get("body", ""))]
+    for w in body.get("worked") or []:
+        if isinstance(w, dict):
+            parts += [str(w.get("question", "")), str(w.get("answer", ""))]
+            parts += [str(x) for x in (w.get("steps") or [])]
+    for c in body.get("check") or []:
+        if isinstance(c, dict):
+            parts += [str(c.get("question", "")), str(c.get("answer", "")),
+                      str(c.get("why", ""))]
+    return "\n".join(parts)
+
+
+_NUM = re.compile(r"-?\d+(?:\.\d+)?")
+
+
+def answers_agree(claimed: str, fresh: str) -> bool:
+    """Do two answers to the same question say the same thing?
+
+    Deliberately crude and deliberately generous. Its job is to catch a lesson
+    whose worked example lands somewhere else entirely, not to adjudicate
+    presentation: "x = 2" and "2" agree, "λ = 3, 5" and "3 and 5" agree.
+
+    Generous on purpose. A comparator that flags style differences produces a
+    review queue of non-problems, which is how a check gets switched off.
+    """
+    a, b = (claimed or "").strip().lower(), (fresh or "").strip().lower()
+    if not a or not b:
+        return False
+    if "cannot solve" in b:
+        return False
+    squash = lambda t: re.sub(r"[\s,;$]+", "", t)
+    if squash(a) == squash(b) or squash(a) in squash(b) or squash(b) in squash(a):
+        return True
+    # Fall back to the numbers: same multiset of numeric values, same answer.
+    na, nb = _NUM.findall(a), _NUM.findall(b)
+    if na and sorted(float(x) for x in na) == sorted(float(x) for x in nb):
+        return True
+    return False
+
+
+def _rederive(client, cfg: Config, *, topic_code: str, full_name: str,
+              unit_name: str, question: str) -> tuple[str, float]:
+    resp = client.complete_json(
+        REDERIVE_SYSTEM,
+        REDERIVE_USER.format(topic_code=topic_code, full_name=full_name,
+                             unit_name=unit_name, question=question))
+    data = _loads(resp.content) or {}
+    return (str(data.get("answer", "")),
+            _cost(cfg, resp.prompt_tokens, resp.completion_tokens))
+
+
+def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
+                 topic_code: str, meta: dict, unit_number: int,
+                 rederive: bool = True) -> LessonResult:
+    """Write, check and store one lesson. `unit_number` is 1-based."""
+    units = meta.get("units") or []
+    if not 1 <= unit_number <= len(units):
+        raise ValueError(
+            f"{topic_code} has {len(units)} units; there is no unit {unit_number}")
+    unit_name = units[unit_number - 1]
+    full_name = meta.get("full_name") or topic_code
+    shape = SHAPE_BY_FORMAT.get(meta.get("exam_format") or "", DEFAULT_SHAPE)
+
+    guidance = guidance_for(topic_code, unit_number)
+    guidance_block = (GUIDANCE_PREFACE.format(guidance=guidance.guidance)
+                      if guidance and guidance.guidance else "")
+    examples_block = ""
+    if guidance and guidance.examples:
+        shown = "\n\n".join(
+            f"Q: {e.question}\nA: {e.answer}\nWorking: {e.detail}"
+            for e in guidance.examples)
+        examples_block = EXAMPLES_PREFACE.format(examples=shown)
+
+    user = LESSON_USER.format(
+        topic_code=topic_code, full_name=full_name, unit_number=unit_number,
+        unit_count=len(units), unit_name=unit_name,
+        all_units="; ".join(f"{i + 1}. {u}" for i, u in enumerate(units)),
+        shape=shape, guidance=guidance_block, examples=examples_block)
+
+    cost = 0.0
+    body: dict | None = None
+    complaints: list[str] = []
+    for attempt in (1, 2):
+        prompt = user if attempt == 1 else (
+            user + "\n\nYour previous attempt was rejected for these reasons. "
+            "Fix every one and write the lesson again:\n- "
+            + "\n- ".join(complaints))
+        resp = client.complete_json(LESSON_SYSTEM, prompt)
+        cost += _cost(cfg, resp.prompt_tokens, resp.completion_tokens)
+        candidate = _loads(resp.content)
+        if candidate is None:
+            complaints = ["the reply was not valid json"]
+            continue
+        complaints = check_structure(candidate) + check_notation(
+            lesson_text(candidate))
+        body = candidate
+        if not complaints:
+            break
+
+    if body is None or complaints:
+        return LessonResult(body, "rejected", complaints, cost)
+
+    notes: list[str] = []
+    status = "draft"
+    if rederive:
+        for i, w in enumerate(body["worked"], 1):
+            fresh, c = _rederive(client, cfg, topic_code=topic_code,
+                                 full_name=full_name, unit_name=unit_name,
+                                 question=str(w["question"]))
+            cost += c
+            if not answers_agree(str(w["answer"]), fresh):
+                status = "suspect"
+                notes.append(
+                    f"worked example {i}: the lesson answers "
+                    f"{str(w['answer'])[:80]!r}; solved fresh it came out "
+                    f"{fresh[:80]!r}")
+
+    source_id = _synthetic_source_id(conn, user_id, topic_id)
+    chunk_id = _unit_chunk_id(conn, source_id, unit_number - 1, unit_name)
+    cur = conn.execute(
+        "INSERT INTO lessons (chunk_id, topic_id, body_json, status, notes,"
+        " model, cost_usd, created_at) VALUES (?,?,?,?,?,?,?,?)",
+        (chunk_id, topic_id, json.dumps(body, ensure_ascii=False), status,
+         "\n".join(notes) or None, cfg.model, cost, iso(utc_now())))
+    conn.commit()
+    return LessonResult(body, status, notes, cost, int(cur.lastrowid))
+
+
+def latest_lesson(conn, user_id: int, topic_id: int, unit_name: str) -> dict | None:
+    """The most recent lesson for one unit, or None.
+
+    Joins `sources` and filters `s.user_id` — chunks carry no owner, so this is
+    the only thing keeping one account's lessons out of another's.
+    """
+    from recall.generate.knowledge import knowledge_sha, unit_key
+
+    row = conn.execute(
+        "SELECT l.id, l.body_json, l.status, l.notes, l.created_at, ch.text AS unit"
+        " FROM lessons l"
+        " JOIN chunks ch ON ch.id = l.chunk_id"
+        " JOIN sources s ON s.id = ch.source_id"
+        " WHERE s.user_id = ? AND s.sha256 = ? AND l.topic_id = ?"
+        " ORDER BY l.id DESC", (user_id, knowledge_sha(topic_id), topic_id)
+    ).fetchall()
+    for r in row:
+        if unit_key(r["unit"]) == unit_key(unit_name):
+            return {"id": r["id"], "body": json.loads(r["body_json"]),
+                    "status": r["status"], "notes": r["notes"],
+                    "created_at": r["created_at"], "unit": r["unit"]}
+    return None
+
+
+__all__ = ["LessonResult", "answers_agree", "check_structure", "latest_lesson",
+           "lesson_text", "write_lesson"]

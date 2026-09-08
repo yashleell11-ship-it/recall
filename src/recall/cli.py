@@ -503,6 +503,128 @@ def cmd_demo(args, cfg) -> int:
     return 0
 
 
+def cmd_lessons(args, cfg) -> int:
+    """Write a lesson for one syllabus unit, or several.
+
+    A CLI command and not an endpoint, deliberately: a lesson takes one to two
+    minutes to write, and the per-user daily cap is $1.00 with no resume path,
+    so a student pressing a button and waiting is the wrong shape. The request
+    path reads rows this writes.
+    """
+    import json as _json
+
+    from recall.llm.client import DeepSeekClient
+    from recall.teach.lessons import latest_lesson, write_lesson
+
+    # init_db, not a bare connect: `lessons` is a new table, and a database
+    # made before it exists would otherwise answer with a raw sqlite
+    # traceback. Idempotent — it is exactly what the container entrypoint
+    # runs on every boot.
+    conn = _conn(cfg)
+    init_db(conn)
+    row = conn.execute(
+        "SELECT id, meta FROM topics WHERE user_id = ? AND code = ?",
+        (args.user_id, args.topic)).fetchone()
+    if row is None:
+        print(f"no topic {args.topic!r} for user {args.user_id}")
+        return 1
+    meta = _json.loads(row["meta"]) if row["meta"] else {}
+    units = meta.get("units") or []
+    if not units:
+        print(f"{args.topic} has no syllabus units recorded")
+        return 1
+
+    wanted = args.units or [1]
+    bad = [u for u in wanted if not 1 <= u <= len(units)]
+    if bad:
+        print(f"{args.topic} has {len(units)} units; no unit "
+              f"{', '.join(str(b) for b in bad)}")
+        return 1
+
+    # Dry run first, always available: what it would write and what it would
+    # cost, with no key needed and no call made. Same discipline as
+    # cmd_ingest_corpus — nothing here spends money without being asked twice.
+    if args.dry_run:
+        print(f"{args.topic} — {meta.get('full_name', args.topic)} "
+              f"({meta.get('exam_format', 'unknown')} paper)")
+        for u in wanted:
+            have = latest_lesson(conn, args.user_id, row["id"], units[u - 1])
+            state = f"have one ({have['status']})" if have else "none yet"
+            print(f"  unit {u}: {units[u - 1]}  [{state}]")
+        n = len(wanted)
+        print(f"\nwould write {n} lesson{'s' if n != 1 else ''}, "
+              f"{1 + (0 if args.no_rederive else 2)} calls each, "
+              f"about ${0.004 * n:.3f} total")
+        conn.close()
+        return 0
+
+    client = DeepSeekClient(cfg)
+    failures = 0
+    for u in wanted:
+        print(f"unit {u}: {units[u - 1]} … ", end="", flush=True)
+        result = write_lesson(conn, client, cfg, user_id=args.user_id,
+                              topic_id=row["id"], topic_code=args.topic,
+                              meta=meta, unit_number=u,
+                              rederive=not args.no_rederive)
+        print(f"{result.status}  ${result.cost_usd:.4f}")
+        for note in result.notes:
+            print(f"    - {note}")
+        if result.status == "rejected":
+            failures += 1
+    conn.close()
+    return 1 if failures else 0
+
+
+def cmd_lesson_show(args, cfg) -> int:
+    """Print a stored lesson as a student would read it."""
+    import json as _json
+
+    from recall.teach.lessons import latest_lesson
+
+    conn = _conn(cfg)
+    init_db(conn)
+    row = conn.execute(
+        "SELECT id, meta FROM topics WHERE user_id = ? AND code = ?",
+        (args.user_id, args.topic)).fetchone()
+    if row is None:
+        print(f"no topic {args.topic!r}")
+        return 1
+    units = (_json.loads(row["meta"]) if row["meta"] else {}).get("units") or []
+    if not 1 <= args.unit <= len(units):
+        print(f"{args.topic} has {len(units)} units")
+        return 1
+    lesson = latest_lesson(conn, args.user_id, row["id"], units[args.unit - 1])
+    conn.close()
+    if lesson is None:
+        print(f"no lesson yet for {args.topic} unit {args.unit}")
+        return 1
+
+    body = lesson["body"]
+    bar = "=" * 74
+    print(bar)
+    print(f"{args.topic} · Unit {args.unit} · {lesson['unit']}")
+    print(f"[{lesson['status']}] written {lesson['created_at'][:16]}")
+    if lesson["notes"]:
+        print(f"NOTES: {lesson['notes']}")
+    print(bar)
+    print(f"\n{body.get('why', '')}\n")
+    for s in body.get("sections") or []:
+        print(f"\n— {s.get('heading', '')} " + "-" * max(0, 68 - len(str(s.get('heading', '')))))
+        print(s.get("body", ""))
+    for i, w in enumerate(body.get("worked") or [], 1):
+        print(f"\n\nWORKED EXAMPLE {i}\n{w.get('question', '')}\n")
+        for step in w.get("steps") or []:
+            print(f"   {step}")
+        print(f"\n   ANSWER: {w.get('answer', '')}")
+    print("\n\nCHECK YOURSELF")
+    for i, c in enumerate(body.get("check") or [], 1):
+        print(f"\n{i}. {c.get('question', '')}")
+        print(f"   answer: {c.get('answer', '')}")
+        print(f"   tests:  {c.get('why', '')}")
+    print()
+    return 0
+
+
 def cmd_serve(args, cfg) -> int:
     import os
 
@@ -583,6 +705,23 @@ def build_parser() -> argparse.ArgumentParser:
     s = sub.add_parser("demo", help="seed sample cards so the app works without a key")
     s.add_argument("--clear", action="store_true")
     s.set_defaults(func=cmd_demo)
+
+    s = sub.add_parser("lessons", help="write a lesson for a syllabus unit")
+    s.add_argument("topic")
+    s.add_argument("--unit", type=int, action="append", dest="units",
+                   help="1-based unit number; repeat for several")
+    s.add_argument("--user-id", type=int, default=1)
+    s.add_argument("--dry-run", action="store_true",
+                   help="say what it would write and cost; makes no call")
+    s.add_argument("--no-rederive", action="store_true",
+                   help="skip the independent re-solve of each worked example")
+    s.set_defaults(func=cmd_lessons)
+
+    s = sub.add_parser("lesson-show", help="print a stored lesson")
+    s.add_argument("topic")
+    s.add_argument("--unit", type=int, default=1)
+    s.add_argument("--user-id", type=int, default=1)
+    s.set_defaults(func=cmd_lesson_show)
 
     s = sub.add_parser("serve", help="run the HTTP API")
     s.add_argument("--host", default="127.0.0.1")
