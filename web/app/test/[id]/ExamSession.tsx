@@ -729,6 +729,19 @@ export function ExamSession({ id }: { id: number }) {
           <p className="telemetry text-[11px] text-fg-3 mt-1.5">
             {tally.attemptedMarks} of {totalMarks} marks attempted
           </p>
+          {/* A paper the deck could not fill is scored out of what it holds,
+              not out of what it was asked for. Saying nothing here meant
+              sitting a "100-mark end term" marked out of 50 and having no way
+              to know — the server has always said so, the screen never did. */}
+          {paper?.short && paper.target_marks ? (
+            <p
+              className="telemetry text-[11px] mt-1 leading-relaxed"
+              style={{ color: "var(--g-hard)" }}
+            >
+              short paper — {totalMarks} marks, not the {paper.target_marks} a
+              full {PAPER_LABEL[paper.kind] ?? paper.kind} carries
+            </p>
+          ) : null}
         </div>
       </div>
     </>

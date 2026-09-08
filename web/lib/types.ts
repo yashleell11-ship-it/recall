@@ -237,6 +237,15 @@ export interface TestPaper {
   total_marks: number;
   /** null (or 0) for `fullday`, which has no limit. */
   time_limit_s: number | null;
+  /**
+   * OPTIONAL / ADDITIVE. The marks the paper was ASKED for, against
+   * `total_marks`, which is what the deck could actually fill. They differ
+   * when the deck runs out, and `short` says so — without these a 50-mark
+   * paper reads as a full 100-mark end term on screen.
+   */
+  target_marks?: number | null;
+  short?: boolean;
+  note?: string | null;
   questions: TestQuestion[];
 }
 
