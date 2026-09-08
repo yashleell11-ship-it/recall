@@ -157,6 +157,11 @@ def _chars(text: str) -> str:
     return (text or "").translate(_SAME_CHAR).strip().lower()
 
 
+def _refused(answer: str) -> bool:
+    """Did the solver decline the question rather than answer it?"""
+    return "cannotsolve" in re.sub(r"[\s_-]+", "", (answer or "").lower())
+
+
 def _canon(text: str) -> str:
     """As above, with separators removed, for the containment test."""
     return re.sub(r"[\s,;$]+", "", _chars(text))
@@ -333,12 +338,27 @@ def verify_worked(client, cfg: Config, body: dict, *, topic_code: str,
             if answers_agree(claimed, fresh):
                 break          # confirmed; a second opinion buys nothing
         else:
-            if answers_agree(votes[0], votes[1]):
+            if all(_refused(v) for v in votes):
+                # Both solvers declined the question rather than answering it
+                # differently. That is not disagreement about the ANSWER, it is
+                # agreement about the QUESTION — and a worked example a
+                # competent solver cannot attempt is a real defect, usually a
+                # hypothesis left out of the statement. Reported as two
+                # attempts "disagreeing" while both said CANNOT SOLVE, which
+                # was nonsense on its face.
+                status = "suspect"
+                notes.append(
+                    f"worked example {i}: two fresh attempts both refused the "
+                    "question as stated, so it is probably missing something a "
+                    "solver needs — check the question, not the answer")
+            elif answers_agree(votes[0], votes[1]):
                 status = "suspect"
                 notes.append(
                     f"worked example {i}: the lesson answers "
                     f"{claimed[:80]!r}; solved fresh twice it came out "
-                    f"{votes[0][:60]!r} and {votes[1][:60]!r}")
+                    f"{votes[0][:60]!r} and {votes[1][:60]!r}. Two solvers "
+                    "agreeing is worth your eyes, not a conviction — on the "
+                    "first run two agreeing solvers were both wrong")
             else:
                 unchecked += 1
                 notes.append(

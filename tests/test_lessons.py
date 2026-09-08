@@ -344,3 +344,30 @@ def test_a_recheck_cannot_reach_another_accounts_lesson(db):
         recheck_lesson(db, FakeLlmClient([]), CFG, user_id=2,
                        lesson_id=first.lesson_id, topic_code="MTH165",
                        full_name="Maths")
+
+
+def test_two_solvers_both_refusing_is_a_defect_in_the_question(db):
+    """They are not disagreeing about the answer; they agree the question
+    cannot be attempted. A worked example a competent solver cannot start is a
+    real defect — usually a hypothesis left out of the statement.
+
+    The first recheck reported this as 'two fresh attempts disagreed with each
+    other (CANNOT SOLVE vs CANNOT SOLVE)', which is nonsense on its face."""
+    llm = FakeLlmClient(_calls(good_body(),
+                               fresh=("CANNOT SOLVE", "CANNOT SOLVE", "k ≠ 3")))
+    result = write_lesson(db, llm, CFG, user_id=1, topic_id=1,
+                          topic_code="MTH165", meta=META, unit_number=1)
+    assert result.status == "suspect"
+    assert any("check the question, not the answer" in n for n in result.notes)
+    assert not any("disagreed with each other" in n for n in result.notes)
+
+
+def test_agreeing_solvers_are_reported_as_worth_a_look_not_as_a_verdict(db):
+    """On the first real run two agreeing solvers were both wrong — k = 5 for a
+    determinant that is k − 4, and an inverse with every sign flipped. The
+    wording must not convict a lesson this check cannot actually convict."""
+    llm = FakeLlmClient(_calls(good_body(), fresh=("7", "7", "k ≠ 3")))
+    result = write_lesson(db, llm, CFG, user_id=1, topic_id=1,
+                          topic_code="MTH165", meta=META, unit_number=1)
+    assert result.status == "suspect"
+    assert any("worth your eyes, not a conviction" in n for n in result.notes)
