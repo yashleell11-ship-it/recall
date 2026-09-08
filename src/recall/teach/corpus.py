@@ -169,6 +169,45 @@ _DOCUMENT_SUFFIXES = (".pdf", ".pptx", ".docx", ".ppt", ".doc")
 #: text; the scrape has the better sentences.
 _RESERVED_FOR_SCRAPED = 0.25
 
+#: LaTeX a scraper left in the text. A citation must stay verbatim, so it
+#: cannot be tidied after the fact — the only place to fix this is BEFORE the
+#: writer sees the passage, and then the quote is verbatim against the cleaned
+#: text. Without this, "(\\operatorname{rank}(A)=k)" reached a student inside a
+#: verified citation, having sailed past the notation law: that law is applied
+#: to the lesson's prose, and a quote is not prose the model is free to write.
+_LATEX_FIXES: tuple[tuple[str, str], ...] = (
+    (r"\\operatorname\{([^}]*)\}", r"\1"),
+    (r"\\(?:mathrm|mathbf|mathit|text|textbf)\{([^}]*)\}", r"\1"),
+    (r"\\mid", "|"),
+    (r"\\(?:ldots|cdots|dots)", "…"),
+    (r"\\(?:leq|le)\b", "≤"),
+    (r"\\(?:geq|ge)\b", "≥"),
+    (r"\\(?:neq|ne)\b", "≠"),
+    (r"\\times\b", "×"),
+    (r"\\lambda\b", "λ"),
+    (r"\\theta\b", "θ"),
+    (r"\\alpha\b", "α"),
+    (r"\\beta\b", "β"),
+    (r"\\pi\b", "π"),
+    (r"\\infty\b", "∞"),
+    (r"\\sum\b", "∑"),
+    (r"\\int\b", "∫"),
+    (r"\\sqrt\b", "√"),
+    (r"\\[()\[\]]", ""),
+    (r"\$+", ""),
+    # Anything still carrying a backslash: keep the word, drop the marker.
+    (r"\\([A-Za-z]+)", r"\1"),
+)
+
+
+def clean_latex(text: str) -> str:
+    """Turn a scraper's leftover LaTeX into the symbols it stood for."""
+    out = text or ""
+    for pattern, repl in _LATEX_FIXES:
+        out = re.sub(pattern, repl, out)
+    return out
+
+
 #: A scraper's placeholder for a formula it could not render. Dropping it makes
 #: the sentence read as written and keeps a quote from having to step over it.
 _FORMULA_PLACEHOLDER = re.compile(r"(?<![A-Za-z])TEXT(?![A-Za-z])")
@@ -242,7 +281,8 @@ def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
         for r, text in zip(group, strip_boilerplate([g["text"] for g in group])):
             cleaned.append((r, text))
 
-    cleaned = [(r, _FORMULA_PLACEHOLDER.sub("", t)) for r, t in cleaned]
+    cleaned = [(r, clean_latex(_FORMULA_PLACEHOLDER.sub("", t)))
+               for r, t in cleaned]
     cleaned = [(r, t) for r, t in cleaned if passage_is_usable(t)]
     if not cleaned:
         return []
@@ -282,5 +322,6 @@ def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
             for r in picked[:limit]]
 
 
-__all__ = ["is_document", "load_source", "passage_is_usable", "plan_load",
+__all__ = ["clean_latex", "is_document", "load_source",
+           "passage_is_usable", "plan_load",
            "read_manifest", "strip_boilerplate", "unit_passages"]

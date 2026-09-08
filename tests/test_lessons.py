@@ -679,3 +679,32 @@ def test_a_scrapers_formula_placeholder_is_removed():
     assert "TEXT" not in out
     assert "Ax = b holds" in out
     assert _FORMULA_PLACEHOLDER.sub("", "read the CONTEXT here") == "read the CONTEXT here"
+
+
+def test_leftover_latex_is_cleaned_before_a_passage_can_be_quoted():
+    r"""A citation must stay verbatim, so it cannot be tidied afterwards — the
+    only place to fix this is before the writer sees the passage.
+
+    Without it, "(\operatorname{rank}(A)=k)" reached a student inside a
+    VERIFIED citation, having sailed past the notation law: that law is applied
+    to the lesson's prose, and a quote is not prose the model is free to write.
+    """
+    from recall.teach.corpus import clean_latex
+
+    assert clean_latex(r"independent exactly when (\operatorname{rank}(A)=k)") \
+        == "independent exactly when (rank(A)=k)"
+    assert clean_latex(r"the matrix ([A\mid b])") == "the matrix ([A| b])"
+    assert clean_latex(r"(v_1,\ldots,v_k)") == "(v_1,…,v_k)"
+    assert clean_latex(r"\(x \leq 3\)") == "x ≤ 3"
+    assert clean_latex("no latex here") == "no latex here"
+
+
+def test_the_notation_law_does_not_reach_citations_which_is_why_this_exists():
+    """Pinning the gap that made the cleaner necessary, so it cannot silently
+    close and leave the cleaner looking redundant."""
+    body = good_body()
+    body["sections"][0]["quote"] = r"when (\operatorname{rank}(A)=k)"
+    assert check_notation(lesson_text(body)) == [], (
+        "lesson_text deliberately excludes quotes — a citation is copied, not "
+        "written, so the notation law cannot apply to it"
+    )
