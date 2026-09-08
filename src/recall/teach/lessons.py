@@ -272,57 +272,10 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
     if body is None or complaints:
         return LessonResult(body, "rejected", complaints, cost)
 
-    notes: list[str] = []
-    status = "draft"
-    unchecked = 0
-    if rederive:
-        for i, w in enumerate(body["worked"], 1):
-            claimed = str(w["answer"])
-            if not is_adjudicable(claimed):
-                # Not a failure and not a pass. Said out loud, because a lesson
-                # nobody could check is a different thing from one that passed.
-                unchecked += 1
-                notes.append(
-                    f"worked example {i}: answer is prose, so re-solving it "
-                    "cannot confirm or contradict it — read this one yourself")
-                continue
-            # Two independent solves, not one. The first real run flagged both
-            # of a lesson's worked examples; checked against numpy, the LESSON
-            # was right both times and the single cold solve was wrong — once
-            # by an arithmetic slip (k = 5 for k = 4) and once by dropping the
-            # sign of det A, returning the exact negative of the true inverse.
-            #
-            # That is the shape of the problem: the checker is weaker than the
-            # thing it checks. The lesson is written with researched guidance
-            # and two calibrated examples in front of it; the re-solve gets a
-            # bare question. So one disagreement is evidence about the SOLVER,
-            # and only two solvers agreeing with each other and disagreeing
-            # with the lesson is evidence about the lesson.
-            votes = []
-            for _ in range(_REDERIVE_VOTES):
-                fresh, c = _rederive(client, cfg, topic_code=topic_code,
-                                     full_name=full_name, unit_name=unit_name,
-                                     question=str(w["question"]))
-                cost += c
-                votes.append(fresh)
-                if answers_agree(claimed, fresh):
-                    break          # confirmed; a second opinion buys nothing
-            else:
-                if answers_agree(votes[0], votes[1]):
-                    status = "suspect"
-                    notes.append(
-                        f"worked example {i}: the lesson answers "
-                        f"{claimed[:80]!r}; solved fresh twice it came out "
-                        f"{votes[0][:60]!r} and {votes[1][:60]!r}")
-                else:
-                    unchecked += 1
-                    notes.append(
-                        f"worked example {i}: two fresh attempts disagreed with "
-                        f"each other ({votes[0][:40]!r} vs {votes[1][:40]!r}), "
-                        "so this says the question is hard to solve cold, not "
-                        "that the lesson is wrong — read this one yourself")
-        if status == "draft" and unchecked:
-            status = "unverified"
+    status, notes, check_cost = verify_worked(
+        client, cfg, body, topic_code=topic_code, full_name=full_name,
+        unit_name=unit_name) if rederive else ("draft", [], 0.0)
+    cost += check_cost
 
     source_id = _synthetic_source_id(conn, user_id, topic_id)
     chunk_id = _unit_chunk_id(conn, source_id, unit_number - 1, unit_name)
@@ -333,6 +286,105 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
          "\n".join(notes) or None, cfg.model, cost, iso(utc_now())))
     conn.commit()
     return LessonResult(body, status, notes, cost, int(cur.lastrowid))
+
+
+def verify_worked(client, cfg: Config, body: dict, *, topic_code: str,
+                  full_name: str, unit_name: str) -> tuple[str, list[str], float]:
+    """Re-solve every worked example and judge the lesson on the result.
+
+    Split out of `write_lesson` so that re-checking a stored lesson runs the
+    SAME check rather than a second copy of it — a second opinion about what
+    "verified" means, computed differently in a second place, is the drift this
+    codebase keeps paying for.
+    """
+    notes: list[str] = []
+    status = "draft"
+    cost = 0.0
+    unchecked = 0
+    for i, w in enumerate(body["worked"], 1):
+        claimed = str(w["answer"])
+        if not is_adjudicable(claimed):
+            # Not a failure and not a pass. Said out loud, because a lesson
+            # nobody could check is a different thing from one that passed.
+            unchecked += 1
+            notes.append(
+                f"worked example {i}: answer is prose, so re-solving it "
+                "cannot confirm or contradict it — read this one yourself")
+            continue
+        # Two independent solves, not one. The first real run flagged both
+        # of a lesson's worked examples; checked against numpy, the LESSON
+        # was right both times and the single cold solve was wrong — once
+        # by an arithmetic slip (k = 5 for k = 4) and once by dropping the
+        # sign of det A, returning the exact negative of the true inverse.
+        #
+        # That is the shape of the problem: the checker is weaker than the
+        # thing it checks. The lesson is written with researched guidance
+        # and two calibrated examples in front of it; the re-solve gets a
+        # bare question. So one disagreement is evidence about the SOLVER,
+        # and only two solvers agreeing with each other and disagreeing
+        # with the lesson is evidence about the lesson.
+        votes = []
+        for _ in range(_REDERIVE_VOTES):
+            fresh, c = _rederive(client, cfg, topic_code=topic_code,
+                                 full_name=full_name, unit_name=unit_name,
+                                 question=str(w["question"]))
+            cost += c
+            votes.append(fresh)
+            if answers_agree(claimed, fresh):
+                break          # confirmed; a second opinion buys nothing
+        else:
+            if answers_agree(votes[0], votes[1]):
+                status = "suspect"
+                notes.append(
+                    f"worked example {i}: the lesson answers "
+                    f"{claimed[:80]!r}; solved fresh twice it came out "
+                    f"{votes[0][:60]!r} and {votes[1][:60]!r}")
+            else:
+                unchecked += 1
+                notes.append(
+                    f"worked example {i}: two fresh attempts disagreed with "
+                    f"each other ({votes[0][:40]!r} vs {votes[1][:40]!r}), "
+                    "so this says the question is hard to solve cold, not "
+                    "that the lesson is wrong — read this one yourself")
+    if status == "draft" and unchecked:
+        status = "unverified"
+    return status, notes, cost
+
+
+def recheck_lesson(conn, client, cfg: Config, *, user_id: int, lesson_id: int,
+                   topic_code: str, full_name: str) -> LessonResult:
+    """Re-run verification on a STORED lesson, leaving its text alone.
+
+    The check improved after the first three lessons were written, and their
+    stored verdicts were left saying the opposite of the truth: two worked
+    examples marked `suspect` were confirmed correct against numpy, while the
+    single cold solve that accused them was the thing in error.
+
+    Rewriting the lesson to fix its label would have thrown away prose the
+    owner was already reading in order to correct a judgement about it. So this
+    re-judges instead: same body, same id, new status.
+
+    Ownership arrives through `sources.user_id` — chunks carry no owner.
+    """
+    row = conn.execute(
+        "SELECT l.id, l.body_json, ch.text AS unit"
+        " FROM lessons l"
+        " JOIN chunks ch ON ch.id = l.chunk_id"
+        " JOIN sources s ON s.id = ch.source_id"
+        " WHERE l.id = ? AND s.user_id = ?", (lesson_id, user_id)).fetchone()
+    if row is None:
+        raise LookupError(f"no lesson {lesson_id}")
+
+    body = json.loads(row["body_json"])
+    status, notes, cost = verify_worked(
+        client, cfg, body, topic_code=topic_code, full_name=full_name,
+        unit_name=row["unit"])
+    conn.execute(
+        "UPDATE lessons SET status = ?, notes = ?, cost_usd = cost_usd + ?"
+        " WHERE id = ?",
+        (status, "\n".join(notes) or None, cost, lesson_id))
+    conn.commit()
+    return LessonResult(body, status, notes, cost, lesson_id)
 
 
 def latest_lesson(conn, user_id: int, topic_id: int, unit_name: str) -> dict | None:
@@ -360,5 +412,6 @@ def latest_lesson(conn, user_id: int, topic_id: int, unit_name: str) -> dict | N
 
 
 __all__ = ["LessonResult", "answers_agree", "check_structure",
-           "is_adjudicable", "latest_lesson",
+           "is_adjudicable", "latest_lesson", "recheck_lesson",
+           "verify_worked",
            "lesson_text", "write_lesson"]

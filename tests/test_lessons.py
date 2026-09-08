@@ -300,3 +300,47 @@ def test_a_confirmed_answer_does_not_pay_for_a_second_opinion(db):
                           topic_code="MTH165", meta=META, unit_number=1)
     assert result.status == "draft"
     assert len(llm.calls) == 3, "one lesson, one solve per worked example"
+
+
+# --- rechecking a stored lesson ----------------------------------------------
+
+def test_a_recheck_rejudges_without_rewriting(db):
+    """The check improved after the first lessons were written and their stored
+    verdicts said the opposite of the truth. Fixing the label must not cost the
+    lesson: same body, same id, new status."""
+    from recall.teach.lessons import recheck_lesson
+
+    llm = FakeLlmClient(_calls(good_body(), fresh=("7", "7", "k ≠ 3")))
+    first = write_lesson(db, llm, CFG, user_id=1, topic_id=1,
+                         topic_code="MTH165", meta=META, unit_number=1)
+    assert first.status == "suspect"
+
+    before = db.execute("SELECT body_json FROM lessons WHERE id = ?",
+                        (first.lesson_id,)).fetchone()["body_json"]
+
+    # Now the re-solves agree with the lesson.
+    llm2 = FakeLlmClient([json.dumps({"answer": "1"}),
+                          json.dumps({"answer": "k ≠ 3"})])
+    again = recheck_lesson(db, llm2, CFG, user_id=1, lesson_id=first.lesson_id,
+                           topic_code="MTH165", full_name="Maths")
+    assert again.status == "draft"
+    assert again.lesson_id == first.lesson_id
+    after = db.execute("SELECT body_json, status FROM lessons WHERE id = ?",
+                       (first.lesson_id,)).fetchone()
+    assert after["body_json"] == before, "the prose must be untouched"
+    assert after["status"] == "draft"
+    assert db.execute("SELECT COUNT(*) n FROM lessons").fetchone()["n"] == 1
+
+
+def test_a_recheck_cannot_reach_another_accounts_lesson(db):
+    from recall.teach.lessons import recheck_lesson
+
+    llm = FakeLlmClient(_calls(good_body()))
+    first = write_lesson(db, llm, CFG, user_id=1, topic_id=1,
+                         topic_code="MTH165", meta=META, unit_number=1)
+    db.execute("INSERT INTO users (id, name) VALUES (2, 'someone else')")
+    db.commit()
+    with pytest.raises(LookupError):
+        recheck_lesson(db, FakeLlmClient([]), CFG, user_id=2,
+                       lesson_id=first.lesson_id, topic_code="MTH165",
+                       full_name="Maths")

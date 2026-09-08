@@ -575,6 +575,59 @@ def cmd_lessons(args, cfg) -> int:
     return 1 if failures else 0
 
 
+def cmd_lesson_recheck(args, cfg) -> int:
+    """Re-verify stored lessons without rewriting them.
+
+    The verification improved after the first lessons were written; this
+    re-judges what is already on disk rather than regenerating prose that is
+    fine, so a corrected verdict never costs you the lesson it was about.
+    """
+    import json as _json
+
+    from recall.llm.client import DeepSeekClient
+    from recall.teach.lessons import recheck_lesson
+
+    conn = _conn(cfg)
+    init_db(conn)
+    rows = conn.execute(
+        "SELECT l.id, l.status, t.code, t.meta, ch.text AS unit"
+        " FROM lessons l"
+        " JOIN topics t ON t.id = l.topic_id"
+        " JOIN chunks ch ON ch.id = l.chunk_id"
+        " JOIN sources s ON s.id = ch.source_id"
+        " WHERE s.user_id = ?"
+        + (" AND t.code = ?" if args.topic else "")
+        + " ORDER BY l.id",
+        (args.user_id, args.topic) if args.topic else (args.user_id,)).fetchall()
+    if args.only_suspect:
+        rows = [r for r in rows if r["status"] != "draft"]
+    if not rows:
+        print("nothing to recheck")
+        return 0
+
+    if args.dry_run:
+        for r in rows:
+            print(f"  lesson {r['id']}  [{r['status']}]  {r['code']} · {r['unit']}")
+        print(f"\nwould recheck {len(rows)}, about ${0.001 * len(rows):.3f}")
+        conn.close()
+        return 0
+
+    client = DeepSeekClient(cfg)
+    for r in rows:
+        meta = _json.loads(r["meta"]) if r["meta"] else {}
+        before = r["status"]
+        result = recheck_lesson(conn, client, cfg, user_id=args.user_id,
+                                lesson_id=r["id"], topic_code=r["code"],
+                                full_name=meta.get("full_name") or r["code"])
+        moved = "" if result.status == before else f"  ({before} -> {result.status})"
+        print(f"  lesson {r['id']}  {r['code']} · {r['unit'][:38]}  "
+              f"{result.status}{moved}")
+        for note in result.notes:
+            print(f"      - {note}")
+    conn.close()
+    return 0
+
+
 def cmd_lesson_show(args, cfg) -> int:
     """Print a stored lesson as a student would read it."""
     import json as _json
@@ -716,6 +769,15 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--no-rederive", action="store_true",
                    help="skip the independent re-solve of each worked example")
     s.set_defaults(func=cmd_lessons)
+
+    s = sub.add_parser("lesson-recheck",
+                       help="re-verify stored lessons without rewriting them")
+    s.add_argument("topic", nargs="?")
+    s.add_argument("--user-id", type=int, default=1)
+    s.add_argument("--only-suspect", action="store_true",
+                   help="skip lessons already passing")
+    s.add_argument("--dry-run", action="store_true")
+    s.set_defaults(func=cmd_lesson_recheck)
 
     s = sub.add_parser("lesson-show", help="print a stored lesson")
     s.add_argument("topic")
