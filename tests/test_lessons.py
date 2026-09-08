@@ -158,9 +158,9 @@ def test_a_clean_lesson_is_stored_as_a_draft(db):
 
 
 def test_a_worked_example_that_does_not_survive_re_solving_is_flagged(db):
-    """The one check with teeth. A plausible wrong derivation survives "does
-    this look right"; it rarely survives being solved again from scratch."""
-    llm = FakeLlmClient(_calls(good_body(), fresh=("7", "k ≠ 3")))
+    """The one check with teeth — but only when two independent solves agree
+    with each other and disagree with the lesson."""
+    llm = FakeLlmClient(_calls(good_body(), fresh=("7", "7", "k ≠ 3")))
     result = write_lesson(db, llm, CFG, user_id=1, topic_id=1,
                           topic_code="MTH165", meta=META, unit_number=1)
     assert result.status == "suspect"
@@ -273,3 +273,30 @@ def test_a_prose_answer_makes_the_lesson_unverified_not_suspect(db):
     assert result.status == "unverified"
     assert len(llm.calls) == 1, "an unjudgeable answer must not pay for a re-solve"
     assert all("read this one yourself" in n for n in result.notes)
+
+
+def test_one_dissenting_solve_is_not_enough_to_doubt_a_lesson(db):
+    """What the first real run proved. Both MTH165 worked examples were flagged
+    by a single cold solve; checked against numpy, the LESSON was right both
+    times — k = 4 not 5, and an inverse whose every sign the solver had flipped.
+
+    The checker is weaker than the thing it checks: the lesson is written with
+    researched guidance and two calibrated examples in front of it, the re-solve
+    gets a bare question. So one disagreement is evidence about the solver."""
+    # Two solves that disagree with the lesson AND with each other.
+    llm = FakeLlmClient(_calls(good_body(), fresh=("7", "9", "k ≠ 3")))
+    result = write_lesson(db, llm, CFG, user_id=1, topic_id=1,
+                          topic_code="MTH165", meta=META, unit_number=1)
+    assert result.status == "unverified", (
+        "two solvers who disagree with each other have said nothing about the "
+        "lesson")
+    assert any("hard to solve cold" in n for n in result.notes)
+
+
+def test_a_confirmed_answer_does_not_pay_for_a_second_opinion(db):
+    """The second solve is only bought when the first one dissents."""
+    llm = FakeLlmClient(_calls(good_body()))
+    result = write_lesson(db, llm, CFG, user_id=1, topic_id=1,
+                          topic_code="MTH165", meta=META, unit_number=1)
+    assert result.status == "draft"
+    assert len(llm.calls) == 3, "one lesson, one solve per worked example"

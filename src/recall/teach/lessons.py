@@ -145,6 +145,12 @@ _SAME_CHAR = str.maketrans({
 #: comparator has no business judging it.
 _PROSE_WORDS = 6
 
+#: How many independent cold solves must AGREE WITH EACH OTHER before their
+#: disagreement with the lesson counts against the lesson. Two, because the
+#: first run proved one is not enough: a single solve contradicted two
+#: worked examples that were, on checking, both correct.
+_REDERIVE_VOTES = 2
+
 
 def _chars(text: str) -> str:
     """Same characters for the same mathematics, spacing untouched."""
@@ -280,15 +286,41 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
                     f"worked example {i}: answer is prose, so re-solving it "
                     "cannot confirm or contradict it — read this one yourself")
                 continue
-            fresh, c = _rederive(client, cfg, topic_code=topic_code,
-                                 full_name=full_name, unit_name=unit_name,
-                                 question=str(w["question"]))
-            cost += c
-            if not answers_agree(claimed, fresh):
-                status = "suspect"
-                notes.append(
-                    f"worked example {i}: the lesson answers {claimed[:80]!r}; "
-                    f"solved fresh it came out {fresh[:80]!r}")
+            # Two independent solves, not one. The first real run flagged both
+            # of a lesson's worked examples; checked against numpy, the LESSON
+            # was right both times and the single cold solve was wrong — once
+            # by an arithmetic slip (k = 5 for k = 4) and once by dropping the
+            # sign of det A, returning the exact negative of the true inverse.
+            #
+            # That is the shape of the problem: the checker is weaker than the
+            # thing it checks. The lesson is written with researched guidance
+            # and two calibrated examples in front of it; the re-solve gets a
+            # bare question. So one disagreement is evidence about the SOLVER,
+            # and only two solvers agreeing with each other and disagreeing
+            # with the lesson is evidence about the lesson.
+            votes = []
+            for _ in range(_REDERIVE_VOTES):
+                fresh, c = _rederive(client, cfg, topic_code=topic_code,
+                                     full_name=full_name, unit_name=unit_name,
+                                     question=str(w["question"]))
+                cost += c
+                votes.append(fresh)
+                if answers_agree(claimed, fresh):
+                    break          # confirmed; a second opinion buys nothing
+            else:
+                if answers_agree(votes[0], votes[1]):
+                    status = "suspect"
+                    notes.append(
+                        f"worked example {i}: the lesson answers "
+                        f"{claimed[:80]!r}; solved fresh twice it came out "
+                        f"{votes[0][:60]!r} and {votes[1][:60]!r}")
+                else:
+                    unchecked += 1
+                    notes.append(
+                        f"worked example {i}: two fresh attempts disagreed with "
+                        f"each other ({votes[0][:40]!r} vs {votes[1][:40]!r}), "
+                        "so this says the question is hard to solve cold, not "
+                        "that the lesson is wrong — read this one yourself")
         if status == "draft" and unchecked:
             status = "unverified"
 
