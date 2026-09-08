@@ -183,6 +183,10 @@ CREATE TABLE IF NOT EXISTS test_questions (
   UNIQUE(test_id, ordinal)
 );
 CREATE INDEX IF NOT EXISTS idx_test_questions_test ON test_questions(test_id);
+-- "Was this card asked recently, and how did it go?" — the lookup that keeps a
+-- new paper from repeating the paper you sat yesterday. Without it that is a
+-- full scan of every question ever asked, once per candidate card.
+CREATE INDEX IF NOT EXISTS idx_test_questions_card ON test_questions(card_id);
 
 -- Teaching: a grounded explanation of a card that was missed. Cached by card
 -- because explanations cost money and the same card gets missed repeatedly.

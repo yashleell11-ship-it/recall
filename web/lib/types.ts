@@ -225,6 +225,16 @@ export interface TestQuestion {
   detail?: string | null;
   /** OPTIONAL / ADDITIVE: absent on servers older than knowledge mode. */
   origin?: CardOrigin;
+  /**
+   * OPTIONAL / ADDITIVE. How this question went the last time it was asked on
+   * a DIFFERENT paper, or null/absent if this is the first time. `"open"`
+   * means it is also sitting on a paper you have not submitted.
+   *
+   * Papers avoid repeating questions, so a repeat is deliberate — it came back
+   * because you got it wrong, or because the deck had nothing else to offer.
+   * Render the reason: an unexplained repeat reads as a broken generator.
+   */
+  asked_before?: Verdict | "open" | null;
 }
 
 /** POST /api/tests and GET /api/tests/{id} */
@@ -246,6 +256,12 @@ export interface TestPaper {
   target_marks?: number | null;
   short?: boolean;
   note?: string | null;
+  /**
+   * OPTIONAL / ADDITIVE. How many questions are new to you and how many have
+   * been asked before. `fresh + repeats === questions.length`.
+   */
+  fresh?: number;
+  repeats?: number;
   questions: TestQuestion[];
 }
 

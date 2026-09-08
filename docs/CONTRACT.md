@@ -182,6 +182,19 @@ within a topic prefers weak cards (high difficulty, low stability, due or overdu
 still including some strong ones so a paper is not purely punishment. Greedy fill to hit
 the target exactly; if the deck cannot reach the target, the paper is short and says so.
 
+**A paper is not yesterday's paper.** Ranking is by `assembly.priority`, which is
+`weakness` minus a penalty for having been asked recently. The penalty is waived
+entirely for a question you got **wrong** or **skipped** — those are the ones worth
+asking again — halved for a partial, and applied in full to one you answered correctly
+or one still sitting on a paper you have not submitted. It decays to nothing over ten
+days.
+
+It is a penalty and never an exclusion: on a deck with room, four papers in a row repeat
+nothing; on a deck with nothing else to offer, the question comes back rather than the
+paper coming up short. The strong-end sample is drawn by `weakness` alone, with recently
+asked cards sorted last — drawing it from the tail of the priority order would make the
+"not purely punishment" rule the very thing that handed yesterday's questions back.
+
 ### Endpoints
 
 | Method | Path | Request | Response |
@@ -205,6 +218,18 @@ topic's synthetic knowledge source and its `ordinal` is the unit index. Cards
 from an uploaded PDF are chunked by page, and a page maps to no unit, so they
 are left out of a unit paper rather than claimed for a unit nobody checked.
 
+**`asked_before`** is how a question went the last time it appeared on a
+DIFFERENT paper, or `null` the first time — `"open"` when it is also on a paper
+you have not submitted. Papers avoid repeats, so a repeat is deliberate and the
+screen must say which reason applies; an unexplained repeat reads as a broken
+generator. The paper also carries **`fresh`** and **`repeats`**, which sum to the
+question count.
+
+It is computed on read rather than stored on `test_questions`, because that table
+is still copied by a positional `INSERT INTO test_questions_new SELECT *` in
+`db.py`'s dormant repair path — adding a column there arms a migration that fires
+years later on somebody's damaged database.
+
 **`submitted_at`** is the honest answer to "is this paper finished".
 `duration_s` was only ever a proxy for it and is wrong in one real case: a
 paper submitted having answered nothing records `duration_s = 0`, which reads
@@ -212,8 +237,9 @@ as falsy and left the paper looking permanently unfinished.
 
 ```
 TestQuestion = {ordinal, card_id, kind, question, answer, cloze_text, marks,
-                topic_code, page_ref, verdict}
+                topic_code, page_ref, verdict, detail, origin, asked_before}
 verdict      = "correct" | "partial" | "wrong" | "skipped" | null
+asked_before = verdict | "open" | null
 TestResult   = {obtained_marks, total_marks, percent, duration_s,
                 by_topic: [{topic_code, obtained, total}],
                 wrong: [TestQuestion], partial: [TestQuestion]}

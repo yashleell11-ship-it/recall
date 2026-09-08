@@ -109,6 +109,20 @@ interface PendingAnswer {
   seconds: number;
 }
 
+/**
+ * Why a question is being asked again. Papers deliberately avoid repeats, so a
+ * repeat that says nothing reads as a bug in the generator; one that gives its
+ * reason reads as the point. Quiet by design — this is telemetry, not a badge,
+ * and colour in this product belongs to grades and the primary action.
+ */
+const ASKED_BEFORE_LABEL: Record<string, string> = {
+  wrong: "asked before · you got it wrong",
+  skipped: "asked before · you skipped it",
+  partial: "asked before · partly right",
+  correct: "asked before · deck had nothing else",
+  open: "also on an unfinished paper",
+};
+
 export function ExamSession({ id }: { id: number }) {
   const router = useRouter();
   const reduced = useReducedMotion();
@@ -880,6 +894,20 @@ export function ExamSession({ id }: { id: number }) {
                 </span>
                 <span>{question.page_ref}</span>
                 <KindTag kind={question.kind} />
+                {question.asked_before && (
+                  <span
+                    title={
+                      question.asked_before === "open"
+                        ? "This question is also on a paper you have not submitted."
+                        : question.asked_before === "wrong" ||
+                            question.asked_before === "skipped"
+                          ? "Papers avoid repeating questions. This one came back because you could not answer it last time."
+                          : "Papers avoid repeating questions. This one came back because the deck had nothing else to ask."
+                    }
+                  >
+                    {ASKED_BEFORE_LABEL[question.asked_before]}
+                  </span>
+                )}
                 {marked.has(question.ordinal) && (
                   <span
                     className="inline-flex items-center gap-1 px-1.5 py-px rounded-xs border text-[10px] font-semibold uppercase tracking-[0.08em]"

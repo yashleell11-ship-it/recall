@@ -34,10 +34,47 @@ GRADE_FOR_VERDICT = {"wrong": 1, "partial": 2, "correct": 3}
 
 _SCORE_FRACTION = {"correct": 1.0, "partial": 0.5, "wrong": 0.0, "skipped": 0.0}
 
+# The most recent paper a card appeared on, and how it went there. Two correlated
+# subselects rather than a join: the answer is scalar and per-card, which is the
+# same shape scheduling.build_queue already uses for last_reviewed_at.
+#
+# `t.user_id` in both is load-bearing and not redundant with the outer query's:
+# test_questions reaches cards directly, so without it another account's paper
+# would get a vote on what this account is asked next.
+_LAST_ASKED_SQL = (
+    " (SELECT t2.started_at FROM test_questions q2"
+    "  JOIN tests t2 ON t2.id = q2.test_id"
+    "  WHERE q2.card_id = c.id AND t2.user_id = ?"
+    "  ORDER BY t2.started_at DESC, t2.id DESC LIMIT 1) AS last_asked_at,"
+    " (SELECT CASE WHEN t3.submitted_at IS NULL THEN 'open'"
+    "         ELSE COALESCE(q3.verdict, 'skipped') END"
+    "  FROM test_questions q3 JOIN tests t3 ON t3.id = q3.test_id"
+    "  WHERE q3.card_id = c.id AND t3.user_id = ?"
+    "  ORDER BY t3.started_at DESC, t3.id DESC LIMIT 1) AS last_verdict"
+)
+
+#: Why this question is on the paper again: how it went the last time it was
+#: asked on some OTHER paper, or NULL if this is the first time. A repeat the
+#: student cannot account for reads as a bug in the generator; one labelled "you
+#: got this wrong last time" reads as the point.
+#:
+#: Deliberately computed here rather than stored on test_questions. That table
+#: is still copied by a positional `INSERT INTO test_questions_new SELECT *` in
+#: db.py's dormant repair path, so adding a column to it arms a migration that
+#: fires years later on somebody's damaged database.
+_ASKED_BEFORE_SQL = (
+    " (SELECT CASE WHEN t4.submitted_at IS NULL THEN 'open'"
+    "         ELSE COALESCE(q4.verdict, 'skipped') END"
+    "  FROM test_questions q4 JOIN tests t4 ON t4.id = q4.test_id"
+    "  WHERE q4.card_id = q.card_id AND t4.user_id = ? AND t4.id <> q.test_id"
+    "  ORDER BY t4.started_at DESC, t4.id DESC LIMIT 1) AS asked_before"
+)
+
 _QUESTION_SQL = (
     "SELECT q.ordinal, q.card_id, q.marks, q.verdict, q.seconds,"
     " c.kind, c.question, c.answer, c.cloze_text, c.detail, c.origin,"
-    " t.code AS topic_code, ch.page_ref"
+    " t.code AS topic_code, ch.page_ref,"
+    + _ASKED_BEFORE_SQL +
     " FROM test_questions q"
     " JOIN cards c ON c.id = q.card_id"
     " JOIN topics t ON t.id = c.topic_id"
@@ -52,7 +89,8 @@ def _question(row) -> dict:
             "answer": row["answer"], "cloze_text": row["cloze_text"],
             "detail": row["detail"], "origin": row["origin"],
             "marks": row["marks"], "topic_code": row["topic_code"],
-            "page_ref": row["page_ref"], "verdict": row["verdict"]}
+            "page_ref": row["page_ref"], "verdict": row["verdict"],
+            "asked_before": row["asked_before"]}
 
 
 def _units_of(row) -> list[int] | None:
@@ -148,19 +186,22 @@ def _candidates(conn, user_id: int, topic_code: str | None,
 
     rows = conn.execute(
         "SELECT c.id, c.kind, c.answer, t.code AS topic_code,"
-        " cs.stability, cs.difficulty, cs.due_at"
+        " cs.stability, cs.difficulty, cs.due_at,"
+        + _LAST_ASKED_SQL +
         " FROM cards c"
         " JOIN topics t ON t.id = c.topic_id"
         " JOIN chunks ch ON ch.id = c.chunk_id"
         " LEFT JOIN card_state cs ON cs.card_id = c.id AND cs.user_id = ?"
         f" WHERE c.state = 'active' AND t.user_id = ?{clause}"
         " ORDER BY c.id",
-        (user_id, user_id, *args),
+        (user_id, user_id, user_id, user_id, *args),
     ).fetchall()
     return [CandidateCard(card_id=r["id"], topic_code=r["topic_code"],
                           marks=marks_for_card(r["kind"], r["answer"]),
                           stability=r["stability"], difficulty=r["difficulty"],
-                          due_at=r["due_at"])
+                          due_at=r["due_at"],
+                          last_asked_at=r["last_asked_at"],
+                          last_verdict=r["last_verdict"])
             for r in rows]
 
 
@@ -253,9 +294,11 @@ def create_test(conn, user_id: int, kind: str,
 def get_test(conn, user_id: int, test_id: int) -> dict:
     """The paper as it stands, verdicts included — this is what resuming reads."""
     test = _test_row(conn, user_id, test_id)
-    rows = conn.execute(_QUESTION_SQL, (test_id,)).fetchall()
+    rows = conn.execute(_QUESTION_SQL, (user_id, test_id)).fetchall()
     note = shortfall_note(test["total_marks"], test["target_marks"], len(rows))
+    repeats = sum(1 for r in rows if r["asked_before"] is not None)
     return {"test_id": test["id"], "kind": test["kind"],
+            "fresh": len(rows) - repeats, "repeats": repeats,
             "topic_code": test["topic_code"],
             "units": _units_of(test),
             "target_marks": test["target_marks"],
@@ -298,7 +341,7 @@ def record_answer(conn, user_id: int, test_id: int, ordinal: int, verdict: str,
 
 def submit_test(conn, user_id: int, test_id: int) -> dict:
     test = _test_row(conn, user_id, test_id)
-    rows = conn.execute(_QUESTION_SQL, (test_id,)).fetchall()
+    rows = conn.execute(_QUESTION_SQL, (user_id, test_id)).fetchall()
 
     obtained = sum(_score(r) for r in rows)
     # Time spent answering, not wall clock: a fullday paper is meant to be put

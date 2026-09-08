@@ -10,7 +10,7 @@ from recall.api import tests_routes
 from recall.api.app import create_app, get_conn
 from recall.api.deps import get_current_user
 from recall.db import connect, init_db
-from recall.testmode import service
+from recall.testmode import assembly, service
 from recall.testmode.assembly import CandidateCard, assemble
 from recall.testmode.marks import marks_for_card
 
@@ -334,7 +334,11 @@ def test_created_questions_carry_the_contract_shape(client):
                       # A paper you cannot learn from is a paper you sat, not
                       # one you studied: the working travels with the answer,
                       # and so does whether the card had a source at all.
-                      "detail", "origin"}
+                      "detail", "origin",
+                      # Why you are seeing this question again. A repeat you
+                      # cannot account for reads as a broken generator; one
+                      # labelled with how it went last time reads as the point.
+                      "asked_before"}
     assert q["ordinal"] == 1
     assert q["verdict"] is None
     assert q["page_ref"]
@@ -1166,3 +1170,197 @@ def test_unit_matching_survives_whitespace_and_case_edits(db_path):
     paper = service.create_test(conn, 1, "endterm100", "CSE111", units=[0])
     assert _asked(paper) == {f"[Matrix  Methods] q{k}?" for k in range(4)}
     conn.close()
+
+
+# --- freshness: a paper is not yesterday's paper -----------------------------
+#
+# _pick_order was a pure function of weakness, and weakness only moves when a
+# review is recorded. Two papers sat back to back on the same subject were
+# therefore the same paper, question for question. The owner's rule: "no
+# question should be same i mean if there is no choice only then same other or
+# if u think that must be important".
+
+def _sat(conn, card_ids, *, verdict="correct", started=None, submitted=True,
+         user_id=1, test_id=None):
+    """Record that these cards were asked on one paper, and how that went."""
+    started = started or ago(0.5)
+    cur = conn.execute(
+        "INSERT INTO tests (id, user_id, kind, topic_id, target_marks,"
+        " total_marks, started_at, submitted_at) VALUES (?,?,?,?,?,?,?,?)",
+        (test_id, user_id, "class30", 1, 30, 30, started,
+         started if submitted else None))
+    tid = test_id or int(cur.lastrowid)
+    for ordinal, cid in enumerate(card_ids, start=1):
+        conn.execute(
+            "INSERT INTO test_questions (test_id, card_id, ordinal, marks,"
+            " verdict) VALUES (?,?,?,?,?)", (tid, cid, ordinal, 1, verdict))
+    conn.commit()
+    return tid
+
+
+def test_a_question_answered_correctly_yesterday_loses_to_a_fresh_one():
+    """The whole feature, at the level of the ranking function."""
+    fresh = CandidateCard(1, "CSE111", 1)
+    stale = CandidateCard(2, "CSE111", 1, last_asked_at=ago(1),
+                          last_verdict="correct")
+    assert assembly.priority(fresh, now()) > assembly.priority(stale, now())
+
+
+def test_a_question_you_got_wrong_is_not_pushed_down_at_all():
+    """His own carve-out. A question you could not answer is the important one,
+    and FSRS has already made it weak — penalising it too would bury it."""
+    wrong = CandidateCard(1, "CSE111", 1, last_asked_at=ago(1),
+                          last_verdict="wrong")
+    assert assembly.repeat_penalty(wrong, now()) == 0.0
+
+
+def test_a_question_you_skipped_is_not_pushed_down_either():
+    """Skipping is not knowing. submit_test already scores a blank as skipped."""
+    skipped = CandidateCard(1, "CSE111", 1, last_asked_at=ago(1),
+                            last_verdict="skipped")
+    assert assembly.repeat_penalty(skipped, now()) == 0.0
+
+
+def test_a_partial_answer_is_pushed_down_less_than_a_correct_one():
+    part = CandidateCard(1, "CSE111", 1, last_asked_at=ago(1),
+                         last_verdict="partial")
+    full = CandidateCard(2, "CSE111", 1, last_asked_at=ago(1),
+                         last_verdict="correct")
+    assert 0 < assembly.repeat_penalty(part, now()) < assembly.repeat_penalty(
+        full, now())
+
+
+def test_a_question_on_a_paper_you_have_not_finished_is_not_served_twice():
+    """Opening a second paper while one is still open used to hand you the same
+    questions on both."""
+    open_paper = CandidateCard(1, "CSE111", 1, last_asked_at=ago(0.1),
+                               last_verdict="open")
+    assert assembly.repeat_penalty(open_paper, now()) > 0
+
+
+def test_being_asked_long_enough_ago_stops_counting():
+    """A penalty that never expires is a deck that shrinks every week."""
+    old = CandidateCard(1, "CSE111", 1, last_asked_at=ago(30),
+                        last_verdict="correct")
+    assert assembly.repeat_penalty(old, now()) == 0.0
+
+
+def test_a_card_never_asked_carries_no_penalty():
+    assert assembly.repeat_penalty(CandidateCard(1, "CSE111", 1), now()) == 0.0
+
+
+def test_an_unknown_verdict_is_treated_as_asked_and_answered():
+    """Defensive: a verdict this code has not heard of must not read as
+    'never asked' and silently defeat the whole feature."""
+    odd = CandidateCard(1, "CSE111", 1, last_asked_at=ago(1),
+                        last_verdict="something-new")
+    assert assembly.repeat_penalty(odd, now()) > 0
+
+
+def test_the_second_paper_of_the_evening_is_not_the_first_one_again(db_path):
+    """The integration case. CSE111 has 18 cards, a class30 takes about half,
+    so there is genuine room to choose differently the second time."""
+    conn = connect(db_path)
+    first = service.create_test(conn, 1, "class30", "CSE111")
+    for q in first["questions"]:
+        service.record_answer(conn, 1, first["test_id"], q["ordinal"], "correct")
+    service.submit_test(conn, 1, first["test_id"])
+
+    second = service.create_test(conn, 1, "class30", "CSE111")
+    overlap = _asked(first) & _asked(second)
+    assert len(overlap) < len(_asked(first)), (
+        "the second paper repeated every question of the first")
+    conn.close()
+
+
+def test_a_repeat_says_why_it_is_back(db_path):
+    """A repeat you cannot account for reads as a broken generator."""
+    conn = connect(db_path)
+    first = service.create_test(conn, 1, "class30", "CSE111")
+    asked = [q["card_id"] for q in first["questions"]]
+    for q in first["questions"]:
+        service.record_answer(conn, 1, first["test_id"], q["ordinal"], "wrong")
+    service.submit_test(conn, 1, first["test_id"])
+
+    second = service.create_test(conn, 1, "class30", "CSE111")
+    repeats = [q for q in second["questions"] if q["card_id"] in asked]
+    assert repeats, "cards answered wrong should come back"
+    assert all(q["asked_before"] == "wrong" for q in repeats)
+    assert second["repeats"] == len(repeats)
+    assert second["fresh"] + second["repeats"] == len(second["questions"])
+    conn.close()
+
+
+def test_a_question_asked_for_the_first_time_says_so(db_path):
+    conn = connect(db_path)
+    paper = service.create_test(conn, 1, "class30", "CSE111")
+    assert all(q["asked_before"] is None for q in paper["questions"])
+    assert paper["repeats"] == 0
+    assert paper["fresh"] == len(paper["questions"])
+    conn.close()
+
+
+def test_a_deck_with_no_alternative_repeats_rather_than_coming_up_short(db_path):
+    """PHY has 3 cards. There is nothing else to ask, so the paper must still
+    be built from them — the penalty ranks, it never excludes."""
+    conn = connect(db_path)
+    ids = [r["id"] for r in conn.execute(
+        "SELECT c.id FROM cards c JOIN topics t ON t.id = c.topic_id"
+        " WHERE t.code = 'PHY' AND c.state = 'active'")]
+    _sat(conn, ids, verdict="correct")
+
+    paper = service.create_test(conn, 1, "class30", "PHY")
+    assert paper["questions"], "a small deck must still produce a paper"
+    assert paper["repeats"] == len(paper["questions"])
+    conn.close()
+
+
+def test_another_accounts_paper_cannot_decide_what_you_are_asked(db_path):
+    """cards carry no owner, so the last-asked lookup reaches them without
+    going through topics. Without tests.user_id in it, a second account sitting
+    a paper would push these questions down this account's ranking."""
+    conn = connect(db_path)
+    conn.execute("INSERT INTO users (id, name) VALUES (2, 'someone else')")
+    conn.commit()
+    ids = [r["id"] for r in conn.execute(
+        "SELECT c.id FROM cards c JOIN topics t ON t.id = c.topic_id"
+        " WHERE t.code = 'CSE111' AND c.state = 'active'")]
+    _sat(conn, ids, verdict="correct", user_id=2)
+
+    cards = service._candidates(conn, 1, "CSE111")
+    assert cards, "the deck must not vanish"
+    assert all(c.last_asked_at is None for c in cards), (
+        "another account's paper leaked into this account's ranking")
+    conn.close()
+
+
+def test_four_papers_in_a_row_on_a_roomy_deck_never_repeat(db_path, tmp_path):
+    """The headline promise, measured end to end. With cards to spare there is
+    no reason to ask the same question twice, and the paper must still land on
+    its mark target exactly rather than buying freshness with a short paper."""
+    path = str(tmp_path / "roomy.db")
+    seed(path, [("BIG", 80)])
+    conn = connect(path)
+    seen: set[int] = set()
+    for _ in range(4):
+        paper = service.create_test(conn, 1, "class30", "BIG")
+        ids = {q["card_id"] for q in paper["questions"]}
+        assert paper["total_marks"] == paper["target_marks"] == 30
+        assert not (ids & seen), "a question came back while fresh ones remained"
+        seen |= ids
+        for q in paper["questions"]:
+            service.record_answer(conn, 1, paper["test_id"], q["ordinal"], "correct")
+        service.submit_test(conn, 1, paper["test_id"])
+    conn.close()
+
+
+def test_the_strong_end_sample_still_happens_on_a_deck_nothing_was_asked_from():
+    """The freshness fix must not have quietly deleted the "not purely
+    punishment" rule: with no history at all, the ordering is unchanged."""
+    cards = [CandidateCard(i, "T", 1, stability=float(i), difficulty=5.0,
+                           due_at=ago(1)) for i in range(1, 13)]
+    order = assembly._pick_order(cards, now())
+    assert len(order) == len(cards)
+    assert {c.card_id for c in order} == {c.card_id for c in cards}
+    # 4th pick is drawn from the well-known end: highest stability = weakest claim.
+    assert order[3].card_id == 12
