@@ -134,7 +134,7 @@ def test_a_paper_on_an_empty_deck_comes_back_with_questions(db_path):
     assert paper["total_marks"] > 0
     assert paper["generated"]["cards"] > 0
     # Units 1-3 and no others.
-    assert paper["generated"]["units"] == [1, 2, 3]
+    assert paper["generated"]["unit_numbers"] == [1, 2, 3]
 
 
 def test_the_generated_questions_are_real_cards_in_the_deck(db_path):
@@ -207,3 +207,58 @@ def test_the_daily_cap_stops_a_paper_before_any_paid_call(db_path, monkeypatch):
     r = client.post("/api/topics/MTH165/paper", json={"kind": "mte40"})
     assert r.status_code == 429
     assert llm.calls == []
+
+
+# --- the one base crossing in the feature ------------------------------------
+#
+# POST /api/topics/{code}/paper speaks 1-based unit NUMBERS, because that is
+# what a student reads off a timetable. Everything inside counts from zero.
+# That conversion is the only place the two bases meet, so it gets its own
+# tests rather than being assumed.
+
+def test_the_paper_route_takes_one_based_unit_numbers(db_path):
+    """Asking for unit 1 must generate for index 0, not index 1."""
+    llm = FakeLlmClient([r for _ in range(6) for r in unit_calls("u1", 20)])
+    client = make_client(db_path, llm)
+    body = client.post("/api/topics/MTH165/paper",
+                       json={"kind": "class30", "units": [1]}).json()
+    assert body["units"] == [0]
+    assert body["generated"]["unit_numbers"] == [1]
+
+
+def test_the_last_unit_is_reachable_and_one_past_it_is_not(db_path):
+    """The classic off-by-one: unit 6 of a six-unit course is legal, unit 7
+    is not, and neither may be silently shifted."""
+    llm = FakeLlmClient([r for _ in range(8) for r in unit_calls("u6", 20)])
+    client = make_client(db_path, llm)
+    ok = client.post("/api/topics/MTH165/paper",
+                     json={"kind": "class30", "units": [len(UNITS)]})
+    assert ok.status_code == 200
+    assert ok.json()["units"] == [len(UNITS) - 1]
+
+    over = client.post("/api/topics/MTH165/paper",
+                       json={"kind": "class30", "units": [len(UNITS) + 1]})
+    assert over.status_code == 422
+    assert f"no unit {len(UNITS) + 1}" in over.json()["detail"]
+
+
+def test_unit_zero_is_refused_on_the_one_based_route(db_path):
+    """0 is a valid INDEX and not a valid unit NUMBER; the route that speaks
+    numbers must not quietly accept it as unit 1."""
+    llm = FakeLlmClient([r for _ in range(6) for r in unit_calls("q", 20)])
+    client = make_client(db_path, llm)
+    r = client.post("/api/topics/MTH165/paper",
+                    json={"kind": "class30", "units": [0]})
+    assert r.status_code == 422
+
+
+def test_the_generated_payload_never_reuses_units_for_two_bases(db_path):
+    """One response carrying `units` (0-based) and `generated.units` (1-based)
+    was a trap; the second is now `unit_numbers`."""
+    llm = FakeLlmClient([r for _ in range(6) for r in unit_calls("q", 20)])
+    client = make_client(db_path, llm)
+    body = client.post("/api/topics/MTH165/paper",
+                       json={"kind": "class30", "units": [2]}).json()
+    assert "units" not in body["generated"]
+    assert body["generated"]["unit_numbers"] == [2]
+    assert body["units"] == [1]

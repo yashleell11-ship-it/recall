@@ -163,9 +163,12 @@ def _clean_units(units: list[int], syllabus: list[str],
         raise ValueError("choose at least one unit")
     bad = [u for u in cleaned if not 0 <= u < len(syllabus)]
     if bad:
+        # Quote the indices as GIVEN. This function is reached only from the
+        # 0-based route, so translating them to unit numbers here told the
+        # caller "no unit 10" about an index they had written as 9.
         raise ValueError(
-            f"{topic_code} has {len(syllabus)} units; "
-            f"no unit {', '.join(str(u + 1) for u in bad)}")
+            f"{topic_code} has {len(syllabus)} units, so its unit indices run "
+            f"0-{len(syllabus) - 1}; got {', '.join(str(u) for u in bad)}")
     return cleaned
 
 

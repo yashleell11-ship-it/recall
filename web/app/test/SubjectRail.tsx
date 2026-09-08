@@ -61,15 +61,28 @@ interface Chip {
   detail: string;
 }
 
-function chipsFor(meta: TopicMeta): Chip[] {
+/**
+ * `chosen` is the units ticked on this card, 1-based. When there are any, the
+ * chip's coverage clause has to change with them: an MTE chip still reading
+ * "units 1–3" while unit 5 is ticked is advertising the opposite of what
+ * pressing it now does.
+ */
+function chipsFor(meta: TopicMeta, chosen: number[] = []): Chip[] {
+  const scope = chosen.length
+    ? `unit${chosen.length > 1 ? "s" : ""} ${chosen.join(", ")}`
+    : null;
   const chips: Chip[] = [
-    { kind: "class30", label: "CA", detail: "30 marks · 45 min" },
+    {
+      kind: "class30",
+      label: "CA",
+      detail: scope ? `30 marks · 45 min · ${scope}` : "30 marks · 45 min",
+    },
   ];
   if (meta.mte_exists) {
     chips.push({
       kind: "mte40",
       label: "MTE",
-      detail: "40 marks · 90 min · units 1–3",
+      detail: `40 marks · 90 min · ${scope ?? "units 1–3"}`,
     });
   }
   // A course whose scheme carries no ETE weight (CSE111 is fully CA-driven)
@@ -78,7 +91,7 @@ function chipsFor(meta: TopicMeta): Chip[] {
     chips.push({
       kind: "endterm100",
       label: "ETE",
-      detail: "100 marks · 3 h · all units",
+      detail: `100 marks · 3 h · ${scope ?? "all units"}`,
     });
   }
   return chips;
@@ -295,7 +308,7 @@ function SubjectCard({
         )}
 
         <div className="mt-auto pt-3 flex flex-wrap items-center gap-1.5">
-          {chipsFor(meta).map((chip) => {
+          {chipsFor(meta, chosen).map((chip) => {
             const key = `${topic.code}:${chip.kind}`;
             const busy = startingKey === key;
             return (

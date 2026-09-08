@@ -121,6 +121,59 @@ def test_migration_rebuilds_tests_check_for_mte40(tmp_path):
                  " VALUES (?, 1, 1, 1)", (new_test,))
 
 
+def _pre_mte40_db(tmp_path, name):
+    """A real database, downgraded to the shape that triggers the rebuild:
+    everything the current schema has, with only the mte40 CHECK missing."""
+    conn = connect(str(tmp_path / name))
+    init_db(conn)
+    conn.execute("INSERT INTO users (id, name) VALUES (1, 'yash')")
+    conn.execute("INSERT INTO tests (id, user_id, kind, target_marks, total_marks,"
+                 " started_at) VALUES (1,1,'class30',30,30,'2026-09-01T00:00:00+00:00')")
+    conn.commit()
+    conn.executescript(
+        "PRAGMA writable_schema=ON;"
+        " UPDATE sqlite_master SET sql = replace(sql, \",'mte40'\", '')"
+        " WHERE name='tests';"
+        " PRAGMA writable_schema=OFF;")
+    conn.commit()
+    conn.close()
+    return connect(str(tmp_path / name))
+
+
+def test_the_rebuild_leaves_foreign_key_enforcement_as_it_found_it(tmp_path):
+    """`PRAGMA foreign_keys` is a NO-OP inside a transaction, and sqlite3 has
+    already opened one by the time the rebuild runs. Both toggles therefore
+    did nothing where they were written, and the connection came out of
+    init_db with enforcement OFF — silently, for the rest of its life."""
+    conn = _pre_mte40_db(tmp_path, "pragma.db")
+    before = conn.execute("PRAGMA foreign_keys").fetchone()[0]
+    assert before == 1, "connect() is expected to turn enforcement on"
+
+    init_db(conn)
+
+    assert conn.execute("PRAGMA foreign_keys").fetchone()[0] == before
+    assert conn.execute("SELECT count(*) n FROM tests").fetchone()["n"] == 1
+
+
+def test_an_interrupted_rebuild_does_not_brick_the_next_migration(tmp_path):
+    """Killed between CREATE and RENAME, the old code left tests_new behind
+    and every later init_db died on "table tests_new already exists" — a
+    half-finished migration that bricks the next one."""
+    import sqlite3
+
+    conn = _pre_mte40_db(tmp_path, "orphan.db")
+    conn.execute("CREATE TABLE tests_new (id INTEGER PRIMARY KEY)")  # the corpse
+    conn.commit()
+
+    init_db(conn)                       # must recover, not raise
+
+    assert conn.execute("SELECT count(*) n FROM tests").fetchone()["n"] == 1
+    conn.execute("INSERT INTO tests (user_id, kind, target_marks, total_marks,"
+                 " started_at) VALUES (1,'mte40',40,40,'2026-09-05T00:00:00+00:00')")
+    with __import__("pytest").raises(sqlite3.OperationalError):
+        conn.execute("SELECT 1 FROM tests_new")   # the corpse is gone
+
+
 def test_repair_pass_fixes_a_database_the_bad_migration_damaged(tmp_path):
     """Databases migrated by the wrong-order rebuild have test_questions
     referencing the dropped tests_old; init_db must repair them."""

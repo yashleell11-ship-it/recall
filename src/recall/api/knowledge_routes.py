@@ -119,7 +119,11 @@ def sit_a_paper(topic_code: str, body: PaperIn,
         "cards": coverage.generated,
         "rejected": coverage.rejected,
         "cost_usd": round(coverage.cost_usd, 6),
-        "units": [i + 1 for i in coverage.units_touched],
+        # `unit_numbers`, not `units`: the paper itself already carries a
+        # `units` key holding 0-based INDICES, and one response using one name
+        # for two different bases is a trap. These are the 1-based numbers a
+        # student reads, and the name now says so.
+        "unit_numbers": [i + 1 for i in coverage.units_touched],
         "deck_already_covered_it": coverage.already_covered,
     }
     return paper

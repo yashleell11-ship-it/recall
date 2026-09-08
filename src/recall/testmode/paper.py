@@ -24,6 +24,7 @@ from recall.generate.knowledge import (
     generate_for_unit,
     knowledge_sha,
 )
+from recall.testmode.marks import marks_for_card
 from recall.testmode.service import KINDS
 from recall.verify.dedupe import embed_texts
 
@@ -33,9 +34,15 @@ from recall.verify.dedupe import embed_texts
 #: short means the paper cannot be built at all.
 _AVG_MARKS_PER_CARD = 1.6
 
-#: Never generate more than this per unit in one paper request, however big the
-#: paper. A 100-mark ETE across six units is already ~10 cards a unit.
+#: One generation call cannot reliably produce more than this many usable
+#: cards, so a unit that needs more gets several calls rather than one
+#: impossible one.
 _MAX_PER_UNIT = MAX_CARDS_PER_CALL
+
+#: How many generation calls one unit may take in a single paper request.
+#: Four rounds of 25 is a hundred cards for one unit — far more than any paper
+#: needs, and a hard stop on what one press can spend.
+_MAX_ROUNDS_PER_UNIT = 4
 
 
 def units_for(kind: str, unit_count: int) -> list[int]:
@@ -65,14 +72,38 @@ class CoverageResult:
 
 
 def cards_needed_per_unit(kind: str, n_units: int) -> int:
+    """How many cards to ask one generation call for. Still a card count,
+    because that is what a prompt can be given; the STOPPING condition is
+    marks — see marks_needed_per_unit."""
     target = KINDS[kind][0]
     if target is None or n_units == 0:      # fullday: whatever exists is the paper
         return 0
     return max(1, round(target / _AVG_MARKS_PER_CARD / n_units))
 
 
-def _active_per_unit(conn, user_id: int, topic_id: int) -> dict[int, int]:
-    """Active cards this topic holds, counted per unit.
+def marks_needed_per_unit(kind: str, n_units: int) -> int:
+    """The marks one unit has to contribute for the paper to reach its target.
+
+    This is what generation now works toward. Working toward a CARD count
+    assumed every card was worth _AVG_MARKS_PER_CARD, and a deck of
+    short-answer cards is worth 1 mark each — which is how a 100-mark end term
+    scoped to a single unit came back holding 25 marks and calling itself
+    short.
+    """
+    target = KINDS[kind][0]
+    if target is None or n_units == 0:
+        return 0
+    return -(-target // n_units)            # ceil, so the units cover the target
+
+
+def _active_marks_per_unit(conn, user_id: int, topic_id: int) -> dict[int, int]:
+    """The MARKS this topic already holds, per unit.
+
+    Marks rather than cards, because marks are what a paper is measured in and
+    a card is worth 1, 2 or 5 of them depending on how long its answer is.
+    Counting cards and assuming an average is how a one-unit end term ended up
+    a quarter length: twenty-five short-answer cards is twenty-five marks, not
+    the sixty-odd the average predicted.
 
     A unit is knowable only for knowledge-mode cards, whose chunk ordinal IS
     the unit index. Cards from an uploaded PDF are tagged by page, and a page
@@ -81,16 +112,19 @@ def _active_per_unit(conn, user_id: int, topic_id: int) -> dict[int, int]:
     covered.
     """
     rows = conn.execute(
-        "SELECT ch.ordinal AS unit, COUNT(*) AS n"
+        "SELECT ch.ordinal AS unit, c.kind, c.answer"
         " FROM cards c"
         " JOIN chunks ch ON ch.id = c.chunk_id"
         " JOIN sources s ON s.id = ch.source_id"
         " WHERE c.topic_id = ? AND c.state = 'active'"
-        "   AND s.user_id = ? AND s.sha256 = ?"
-        " GROUP BY ch.ordinal",
+        "   AND s.user_id = ? AND s.sha256 = ?",
         (topic_id, user_id, knowledge_sha(topic_id)),
     ).fetchall()
-    return {r["unit"]: r["n"] for r in rows}
+    marks: dict[int, int] = {}
+    for r in rows:
+        marks[r["unit"]] = marks.get(r["unit"], 0) + marks_for_card(
+            r["kind"], r["answer"])
+    return marks
 
 
 def ensure_coverage(conn, cfg: Config, client, *, user_id: int, topic_id: int,
@@ -113,30 +147,46 @@ def ensure_coverage(conn, cfg: Config, client, *, user_id: int, topic_id: int,
     if not plan:
         return CoverageResult(0, 0, 0.0, [], already_covered=True)
 
-    want = cards_needed_per_unit(kind, len(plan))
-    have = _active_per_unit(conn, user_id, topic_id)
+    per_call = cards_needed_per_unit(kind, len(plan))
+    want_marks = marks_needed_per_unit(kind, len(plan))
+    have_marks = _active_marks_per_unit(conn, user_id, topic_id)
 
     generated = rejected = 0
     cost = 0.0
     touched: list[int] = []
     for unit_index in plan:
-        missing = want - have.get(unit_index, 0)
-        if missing <= 0:
-            continue
-        result = generate_for_unit(
-            conn, cfg, client, user_id=user_id, topic_id=topic_id,
-            topic_code=topic_code, full_name=full_name,
-            exam_format=exam_format, unit_index=unit_index,
-            unit_name=units[unit_index], n=min(missing, _MAX_PER_UNIT),
-            # Active, not pending: see generate_for_unit's `state` docstring.
-            # A paper you explicitly asked to sit is a stricter review than
-            # the approval queue, and pending cards would leave it empty.
-            state="active", embed=embed,
-        )
-        generated += result.accepted
-        rejected += result.rejected
-        cost += result.cost_usd
-        touched.append(unit_index)
+        held = have_marks.get(unit_index, 0)
+        # Several calls, not one: a single completion tops out at
+        # MAX_CARDS_PER_CALL, which is 25 marks when the answers are short.
+        # A paper scoped to one unit needs the whole target from that unit,
+        # so it needs more than one call to get there.
+        for _round in range(_MAX_ROUNDS_PER_UNIT):
+            if held >= want_marks:
+                break
+            result = generate_for_unit(
+                conn, cfg, client, user_id=user_id, topic_id=topic_id,
+                topic_code=topic_code, full_name=full_name,
+                exam_format=exam_format, unit_index=unit_index,
+                unit_name=units[unit_index],
+                n=min(per_call, _MAX_PER_UNIT),
+                # Active, not pending: see generate_for_unit's `state`
+                # docstring. A paper you explicitly asked to sit is a stricter
+                # review than the approval queue, and pending cards would
+                # leave it empty.
+                state="active", embed=embed,
+            )
+            generated += result.accepted
+            rejected += result.rejected
+            cost += result.cost_usd
+            if unit_index not in touched:
+                touched.append(unit_index)
+            # A round that produced nothing will produce nothing next time
+            # either — the dedup seed guarantees a second identical batch is
+            # dropped — so stop rather than pay for the same refusal again.
+            if result.accepted == 0:
+                break
+            held = _active_marks_per_unit(
+                conn, user_id, topic_id).get(unit_index, 0)
 
     return CoverageResult(generated, rejected, cost, touched,
                           already_covered=not touched)

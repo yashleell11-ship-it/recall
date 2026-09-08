@@ -935,11 +935,16 @@ def test_a_whole_subject_paper_reports_no_scope(client):
 
 
 def test_a_unit_out_of_range_is_refused_rather_than_clamped(db_path):
-    _knowledge_deck(db_path)          # three units
+    """And the refusal quotes the index as GIVEN. This route speaks 0-based
+    indices, so answering "no unit 10" to an input of 9 was telling the
+    caller about a number they never wrote."""
+    _knowledge_deck(db_path)          # three units, indices 0-2
     conn = connect(db_path)
     with pytest.raises(ValueError) as exc:
         service.create_test(conn, 1, "class30", "CSE111", units=[0, 9])
-    assert "no unit 10" in str(exc.value)
+    message = str(exc.value)
+    assert "indices run 0-2" in message
+    assert "got 9" in message
     conn.close()
 
 

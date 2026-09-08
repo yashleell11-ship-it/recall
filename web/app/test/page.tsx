@@ -125,6 +125,13 @@ function OpenPaper({ test, onClosed }: {
       ) : (
         <span className="text-fg-3">all subjects</span>
       )}
+      {/* Stored 0-based, read 1-based — a student counts units from one. */}
+      {test.units?.length ? (
+        <span className="text-accent tnum">
+          {test.units.length === 1 ? "unit" : "units"}{" "}
+          {test.units.map((u) => u + 1).join(", ")}
+        </span>
+      ) : null}
       <span className="text-fg-3 tnum">
         opened {mediumDateTime(test.started_at)}
       </span>
@@ -614,6 +621,14 @@ export default function TestPickerPage() {
                       <span className="font-medium">
                         {KIND_LABEL[t.kind] ?? t.kind}
                       </span>
+                      {t.topic_code ? (
+                        <span className="text-fg-2 ml-2">{t.topic_code}</span>
+                      ) : null}
+                      {t.units?.length ? (
+                        <span className="text-fg-3 ml-2 tnum">
+                          u{t.units.map((u) => u + 1).join(",")}
+                        </span>
+                      ) : null}
                       <span className="text-fg-3 ml-2">
                         {mediumDate(t.started_at)}
                       </span>

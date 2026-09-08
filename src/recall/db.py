@@ -151,8 +151,23 @@ def _migrate(conn: sqlite3.Connection) -> None:
         "SELECT sql FROM sqlite_master WHERE type='table' AND name='tests'"
     ).fetchone()
     if row and "mte40" not in (row["sql"] or ""):
+        # `PRAGMA foreign_keys` is a NO-OP inside a transaction, and the
+        # sqlite3 module has already opened one by the time we get here. So
+        # both the OFF and the ON below did nothing at all — measured: the
+        # connection came in with enforcement on and left with it off,
+        # because the no-op OFF was followed by a DDL statement that
+        # implicitly committed and THEN let a later pragma take effect. Commit
+        # first so each toggle is outside a transaction and actually lands,
+        # and restore what was there rather than assuming it was on.
+        was_on = conn.execute("PRAGMA foreign_keys").fetchone()[0]
+        conn.commit()
         conn.execute("PRAGMA foreign_keys = OFF")
         try:
+            # A previous run killed between CREATE and RENAME leaves this
+            # table behind, and every later migration then dies on "table
+            # tests_new already exists" — a half-finished migration that
+            # bricks the next one is worse than the problem it was fixing.
+            conn.execute("DROP TABLE IF EXISTS tests_new")
             conn.execute(f"CREATE TABLE tests_new {_TESTS_DDL}")
             conn.execute(
                 f"INSERT INTO tests_new ({_TESTS_COLS})"
@@ -162,5 +177,7 @@ def _migrate(conn: sqlite3.Connection) -> None:
             conn.execute(
                 "CREATE INDEX IF NOT EXISTS idx_tests_user ON tests(user_id, started_at)"
             )
+            conn.commit()
         finally:
-            conn.execute("PRAGMA foreign_keys = ON")
+            conn.commit()
+            conn.execute(f"PRAGMA foreign_keys = {'ON' if was_on else 'OFF'}")
