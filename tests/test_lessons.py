@@ -15,6 +15,7 @@ from recall.llm.fake import FakeLlmClient
 from recall.notation import check_notation, strip_code
 from recall.teach.lessons import (
     answers_agree,
+    is_adjudicable,
     check_structure,
     latest_lesson,
     lesson_text,
@@ -219,3 +220,56 @@ def test_another_accounts_lesson_is_invisible(db):
     db.commit()
     assert latest_lesson(db, 2, 1, UNITS[0]) is None
     assert latest_lesson(db, 1, 1, UNITS[0]) is not None
+
+
+# --- what the first real run taught the comparator ---------------------------
+#
+# Three lessons were written against the live model and every one came back
+# "suspect". Two were real catches; three were the comparator being wrong.
+
+def test_a_unicode_minus_is_the_same_sign_as_a_hyphen():
+    """The worst of the three, because it was two of my own rules fighting:
+    the notation law REQUIRES the lesson to write − (U+2212), and the
+    re-derivation call answers with the ASCII hyphen. Compared raw, e^(−1/6)
+    contradicted e^(-1/6)."""
+    assert answers_agree("e^(−1/6)", "e^(-1/6)")
+    assert answers_agree("x = −3", "-3")
+
+
+def test_a_matrix_with_every_sign_flipped_is_a_different_matrix():
+    """A real catch from that run, and it must survive the fix above: making
+    − and - the same character must not make −3 and 3 the same number."""
+    assert not answers_agree("[[1, −3, 2], [−3, 3, −1]]", "[[-1, 3, -2], [3, -3, 1]]")
+
+
+def test_a_different_value_is_still_caught():
+    assert not answers_agree("k = 4; consistent", "k = 5, infinitely many")
+
+
+@pytest.mark.parametrize("answer,adjudicable", [
+    ("1", True),
+    ("A⁻¹ = [[1, −3, 2]]", True),
+    ("k ≠ 3", True),
+    ("e^(−1/6)", True),
+    ("They skipped Define. Define should have produced one focused "
+     "point-of-view problem statement", False),
+])
+def test_only_a_determinate_answer_is_judged_by_string_comparison(
+        answer, adjudicable):
+    """On a design-thinking paper the answer is a sentence, and two correct
+    sentences share almost no characters. The comparator has to say it cannot
+    tell, rather than guess in either direction."""
+    assert is_adjudicable(answer) is adjudicable
+
+
+def test_a_prose_answer_makes_the_lesson_unverified_not_suspect(db):
+    body = good_body()
+    for w in body["worked"]:
+        w["answer"] = ("They skipped the Define stage, which should have "
+                       "produced one focused point-of-view problem statement")
+    llm = FakeLlmClient([json.dumps(body)])
+    result = write_lesson(db, llm, CFG, user_id=1, topic_id=1,
+                          topic_code="INT335", meta=META, unit_number=1)
+    assert result.status == "unverified"
+    assert len(llm.calls) == 1, "an unjudgeable answer must not pay for a re-solve"
+    assert all("read this one yourself" in n for n in result.notes)

@@ -130,27 +130,75 @@ def lesson_text(body: dict) -> str:
 
 _NUM = re.compile(r"-?\d+(?:\.\d+)?")
 
+#: Typographic forms of the same mathematics. The lesson is REQUIRED by the
+#: notation law to write − (U+2212); the re-derivation call, which is told to
+#: answer as compactly as possible, writes the ASCII hyphen. Comparing them
+#: raw made the two rules fight each other, and the first run flagged
+#: e^(−1/6) against e^(-1/6) as a contradiction.
+_SAME_CHAR = str.maketrans({
+    "\u2212": "-", "\u2013": "-", "\u2014": "-", "\u00d7": "*",
+    "\u00f7": "/", "\u2044": "/", "\u2261": "=", "\u2245": "=",
+    "\u2248": "=", "\u00a0": " ",
+})
+
+#: An answer with no digits and more than this many words is prose, and this
+#: comparator has no business judging it.
+_PROSE_WORDS = 6
+
+
+def _chars(text: str) -> str:
+    """Same characters for the same mathematics, spacing untouched."""
+    return (text or "").translate(_SAME_CHAR).strip().lower()
+
+
+def _canon(text: str) -> str:
+    """As above, with separators removed, for the containment test."""
+    return re.sub(r"[\s,;$]+", "", _chars(text))
+
+
+def is_adjudicable(claimed: str) -> bool:
+    """Can string comparison honestly settle this answer?
+
+    Only where the answer is determinate — a number, an expression, a matrix.
+    On a design-thinking paper the answer is a sentence, and two correct
+    sentences share almost no characters: the first run compared "They skipped
+    Define…" against "Define; a point of view statement" and called the lesson
+    suspect, when the two say the same thing.
+
+    A check that cannot adjudicate must say so. Guessing in either direction is
+    worse than the honest answer, because a review queue full of non-problems
+    is how a check gets switched off, and a green tick nobody earned is how a
+    wrong derivation reaches a student.
+    """
+    a = (claimed or "").strip()
+    if not a:
+        return False
+    return bool(_NUM.search(a)) or len(a.split()) <= _PROSE_WORDS
+
 
 def answers_agree(claimed: str, fresh: str) -> bool:
     """Do two answers to the same question say the same thing?
 
-    Deliberately crude and deliberately generous. Its job is to catch a lesson
-    whose worked example lands somewhere else entirely, not to adjudicate
-    presentation: "x = 2" and "2" agree, "λ = 3, 5" and "3 and 5" agree.
-
-    Generous on purpose. A comparator that flags style differences produces a
-    review queue of non-problems, which is how a check gets switched off.
+    Deliberately generous about form and strict about value: "x = 2" and "2"
+    agree, "λ = 3, 5" and "3 and 5" agree, and − and - are the same sign.
+    Only called when `is_adjudicable(claimed)`.
     """
-    a, b = (claimed or "").strip().lower(), (fresh or "").strip().lower()
+    a, b = _canon(claimed), _canon(fresh)
     if not a or not b:
         return False
-    if "cannot solve" in b:
+    if "cannotsolve" in b:
         return False
-    squash = lambda t: re.sub(r"[\s,;$]+", "", t)
-    if squash(a) == squash(b) or squash(a) in squash(b) or squash(b) in squash(a):
+    if a == b or a in b or b in a:
         return True
-    # Fall back to the numbers: same multiset of numeric values, same answer.
-    na, nb = _NUM.findall(a), _NUM.findall(b)
+    # Fall back to the numbers: same multiset of values, same answer. Signs
+    # included — an inverse matrix with every sign flipped is a different
+    # matrix, and that is a real defect this caught on the first run.
+    #
+    # Read off the SPACED text, not the squashed one: squashing turns the
+    # comma in "3, 5" into nothing and the two roots into the single number
+    # thirty-five.
+    na = _NUM.findall(_chars(claimed).replace("^", " "))
+    nb = _NUM.findall(_chars(fresh).replace("^", " "))
     if na and sorted(float(x) for x in na) == sorted(float(x) for x in nb):
         return True
     return False
@@ -220,18 +268,29 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
 
     notes: list[str] = []
     status = "draft"
+    unchecked = 0
     if rederive:
         for i, w in enumerate(body["worked"], 1):
+            claimed = str(w["answer"])
+            if not is_adjudicable(claimed):
+                # Not a failure and not a pass. Said out loud, because a lesson
+                # nobody could check is a different thing from one that passed.
+                unchecked += 1
+                notes.append(
+                    f"worked example {i}: answer is prose, so re-solving it "
+                    "cannot confirm or contradict it — read this one yourself")
+                continue
             fresh, c = _rederive(client, cfg, topic_code=topic_code,
                                  full_name=full_name, unit_name=unit_name,
                                  question=str(w["question"]))
             cost += c
-            if not answers_agree(str(w["answer"]), fresh):
+            if not answers_agree(claimed, fresh):
                 status = "suspect"
                 notes.append(
-                    f"worked example {i}: the lesson answers "
-                    f"{str(w['answer'])[:80]!r}; solved fresh it came out "
-                    f"{fresh[:80]!r}")
+                    f"worked example {i}: the lesson answers {claimed[:80]!r}; "
+                    f"solved fresh it came out {fresh[:80]!r}")
+        if status == "draft" and unchecked:
+            status = "unverified"
 
     source_id = _synthetic_source_id(conn, user_id, topic_id)
     chunk_id = _unit_chunk_id(conn, source_id, unit_number - 1, unit_name)
@@ -268,5 +327,6 @@ def latest_lesson(conn, user_id: int, topic_id: int, unit_name: str) -> dict | N
     return None
 
 
-__all__ = ["LessonResult", "answers_agree", "check_structure", "latest_lesson",
+__all__ = ["LessonResult", "answers_agree", "check_structure",
+           "is_adjudicable", "latest_lesson",
            "lesson_text", "write_lesson"]
