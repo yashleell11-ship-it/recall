@@ -156,6 +156,31 @@ def check_grounding(body: dict, passages: list[dict]) -> list[str]:
     return out
 
 
+def drop_bad_citations(body: dict, passages: list[dict]) -> list[str]:
+    """Remove every quote that cannot be verified, in place. Returns what went.
+
+    Rejecting a whole lesson over a citation detail is the wrong trade: it
+    throws away good teaching, costs a full generation, and — after three runs
+    of it — was refusing lessons over `det(A − λI) = 0` being five words long.
+
+    Dropping the quote certifies nothing, which is the only property that
+    actually matters here. The section simply becomes uncited, and
+    `grounded_share` decides whether enough of the lesson is left anchored for
+    it to be called grounded at all. What is never allowed is a citation that
+    is shown to the student and is not real.
+    """
+    gone: list[str] = []
+    for i, section in enumerate(body.get("sections") or [], 1):
+        if not isinstance(section, dict) or not str(section.get("quote") or "").strip():
+            continue
+        problem = check_grounding({"sections": [section]}, passages)
+        if problem:
+            gone.append(problem[0].replace("section 1", f"section {i}", 1))
+            section.pop("quote", None)
+            section.pop("source", None)
+    return gone
+
+
 def grounded_share(body: dict, passages: list[dict]) -> float:
     """What fraction of the lesson's sections carry a verified citation."""
     if not passages:
@@ -402,6 +427,7 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
     cost = 0.0
     body: dict | None = None
     complaints: list[str] = []
+    citation_notes: list[str] = []
     for attempt in (1, 2):
         prompt = user if attempt == 1 else (
             user + "\n\nYour previous attempt was rejected for these reasons. "
@@ -413,11 +439,18 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
         if candidate is None:
             complaints = ["the reply was not valid json"]
             continue
-        complaints = (check_structure(candidate)
-                      + check_notation(lesson_text(candidate))
-                      + check_grounding(candidate, passages))
+        # Citation problems are worth one repair — the model can usually pick a
+        # better sentence when told which one failed — but they are not worth a
+        # second full generation. On the last attempt they are dropped instead.
+        fatal = check_structure(candidate) + check_notation(lesson_text(candidate))
+        complaints = fatal + check_grounding(candidate, passages)
         body = candidate
         if not complaints:
+            break
+        if attempt == 2 and not fatal:
+            dropped = drop_bad_citations(candidate, passages)
+            complaints = []
+            citation_notes.extend(dropped)
             break
 
     if body is None or complaints:
@@ -432,6 +465,7 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
     # quoted the course material and Python found every quote — that is a real
     # warranty, and it must not be talked down to "unverified" by a solver that
     # was wrong every time it spoke on the first six lessons.
+    notes.extend(citation_notes)
     share = grounded_share(body, passages)
     if passages and share >= _GROUNDED_SHARE:
         status = "grounded"

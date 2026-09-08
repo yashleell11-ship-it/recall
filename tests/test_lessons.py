@@ -471,16 +471,39 @@ def test_a_grounded_lesson_says_so_and_outranks_the_re_solve(db):
     assert "grounded:" in result.notes[0] and "verbatim" in result.notes[0]
 
 
-def test_a_paraphrasing_lesson_is_repaired_then_rejected(db):
-    """The gate has real teeth: it can stop a lesson being stored at all."""
+def test_a_paraphrasing_lesson_keeps_its_teaching_and_loses_its_citations(db):
+    """Rejecting a whole lesson over a citation detail throws away good
+    teaching and pays for a second generation to get nothing. Dropping the
+    quote certifies nothing, which is the property that matters — and with
+    nothing left anchored, the lesson does not get to call itself grounded."""
     bad = json.dumps(grounded_body("a tidied up version of the sentence"))
-    llm = FakeLlmClient([bad, bad])
+    llm = FakeLlmClient([bad, bad, json.dumps({"answer": "1"}),
+                         json.dumps({"answer": "k ≠ 3"})])
     result = write_lesson(
         db, llm, CFG, user_id=1, topic_id=1, topic_code="MTH165", meta=META,
         unit_number=1, _passages=[PASSAGE])
-    assert result.status == "rejected"
-    assert result.lesson_id is None
-    assert db.execute("SELECT COUNT(*) n FROM lessons").fetchone()["n"] == 0
+
+    assert result.status != "grounded", "nothing verified, nothing claimed"
+    assert result.lesson_id is not None, "the teaching is kept"
+    stored = json.loads(db.execute(
+        "SELECT body_json FROM lessons WHERE id = ?",
+        (result.lesson_id,)).fetchone()["body_json"])
+    assert all("quote" not in sec for sec in stored["sections"]), (
+        "an unverifiable citation must never reach the student")
+    assert any("paraphrase" in n for n in result.notes)
+
+
+def test_a_citation_problem_gets_one_repair_before_it_is_dropped(db):
+    """The model can usually pick a better sentence when told which one failed.
+    That is worth one attempt; it is not worth a second full generation."""
+    bad = json.dumps(grounded_body("a tidied up version of the sentence"))
+    good = json.dumps(grounded_body())
+    llm = FakeLlmClient([bad, good, json.dumps({"answer": "1"}),
+                         json.dumps({"answer": "k ≠ 3"})])
+    result = write_lesson(
+        db, llm, CFG, user_id=1, topic_id=1, topic_code="MTH165", meta=META,
+        unit_number=1, _passages=[PASSAGE])
+    assert result.status == "grounded"
 
 
 def test_a_verbatim_quote_of_page_furniture_is_still_refused():
