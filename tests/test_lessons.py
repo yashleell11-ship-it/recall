@@ -838,3 +838,54 @@ def test_a_truncated_reply_says_it_was_truncated(db):
     assert all(t == 8000 for t in llm.calls), (
         "a lesson must ask for room to finish, not the API's default"
     )
+
+
+def test_prose_that_lost_its_mathematics_is_refused():
+    """The worse failure, and the one the orphan-punctuation rule misses.
+
+    From OpenStax Calculus — a PDF, not a scrape: "If is continuous over and
+    differentiable over and then there exists a point such that". Grammatical,
+    quotable, and it says nothing. MTH165 unit 2 ground at 25% because its
+    best-ranked passages were full of this.
+    """
+    from recall.teach.corpus import looks_symbol_stripped, passage_is_usable
+
+    stripped = ("4.4 The Mean Value Theorem If is continuous over and "
+                "differentiable over and then there exists a point such that "
+                "This is Rolle theorem. Figure 4.21 If a differentiable "
+                "function f satisfies then its derivative must be zero at some "
+                "point between and Theorem 4.4 Let be a continuous function "
+                "over the closed interval and differentiable over the open "
+                "interval such that Then there exists at least one point such "
+                "that Access for free at openstax.")
+    assert looks_symbol_stripped(stripped)
+    assert not passage_is_usable(stripped)
+
+
+def test_real_prose_with_few_symbols_is_kept():
+    """The rule must not reject a definition simply for being written in
+    words — most good citations are."""
+    from recall.teach.corpus import looks_symbol_stripped, passage_is_usable
+
+    good = ("The rank of a matrix A is the number of non-zero rows in its row "
+            "echelon form. A system of linear equations is consistent if and "
+            "only if the rank of the coefficient matrix equals the rank of the "
+            "augmented matrix. If the ranks differ there is no solution at "
+            "all. This is examined most years as a short question.")
+    assert not looks_symbol_stripped(good)
+    assert passage_is_usable(good)
+
+
+def test_two_chunks_are_enough_to_spot_a_header():
+    """Requiring three left the navigation bar on every short scrape, which is
+    exactly where it kept showing up."""
+    from recall.teach.corpus import strip_boilerplate
+
+    chrome = ("You are offline Ctrl+K Home Exam Center Revision More Offline "
+              "Library About Contact Request Material Recent Updates Mark all "
+              "read Loading View all updates Support Us Home Exam Center ")
+    filler = ("This section states the definition and the condition that goes "
+              "with it, then works an example at the depth the paper asks. " * 4)
+    out = strip_boilerplate([chrome + "Rank content. " + filler,
+                             chrome + "Eigen content. " + filler])
+    assert all("Exam Center" not in o for o in out)

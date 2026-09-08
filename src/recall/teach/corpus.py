@@ -124,6 +124,32 @@ _MIN_SENTENCES_PER_KCHAR = 2.0
 _MAX_ORPHAN_RATIO = 0.25
 
 
+#: A function word with nothing after it but the next sentence. Real prose does
+#: not end a clause on "such that" or "over and"; extracted mathematics does,
+#: because the formula that belonged there did not survive the PDF.
+#:
+#: This is the failure the orphan-punctuation rule misses, and it is the worse
+#: one: "If is continuous over and differentiable over and then there exists a
+#: point such that" — from OpenStax Calculus, a PDF — reads as grammatical
+#: English, quotes cleanly, and says nothing. Unit 2 ground at 25% because its
+#: best-ranked sources were full of it.
+_DANGLING = re.compile(
+    r"\b(?:such that|equals|is|are|be|over|between|from|of|and|to|where|that)"
+    r"\s+(?=[A-Z0-9])"
+)
+
+#: Per sentence. Some genuine prose does begin a sentence after "that" or
+#: "and"; a passage doing it constantly has lost its symbols.
+_MAX_DANGLING_PER_SENTENCE = 0.6
+
+
+def looks_symbol_stripped(text: str) -> bool:
+    """Did this passage lose the mathematics it was about?"""
+    body = " ".join((text or "").split())
+    sentences = body.count(". ") + body.count("? ") + body.count("! ") + 1
+    return len(_DANGLING.findall(body)) / sentences > _MAX_DANGLING_PER_SENTENCE
+
+
 def passage_is_usable(text: str) -> bool:
     """Is this worth putting in front of a lesson writer to quote?
 
@@ -147,6 +173,8 @@ def passage_is_usable(text: str) -> bool:
     # quoted it with the gap filled in — caught by the quote gate, but the
     # passage should never have been on the table.
     if "__" in body or "….." in body or body.count("...") > 3:
+        return False
+    if looks_symbol_stripped(body):
         return False
     orphans = body.count(" ,") + body.count(" .") + body.count(" ?")
     return orphans / max(sentences, 1) <= _MAX_ORPHAN_RATIO
@@ -241,7 +269,11 @@ def strip_boilerplate(texts: list[str]) -> list[str]:
     advance which sites the corpus was collected from.
     """
     usable = [t for t in texts if t]
-    if len(usable) < 3:
+    # Two chunks are enough. A 180-character prefix shared by two pages of the
+    # same document, and short relative to them, is a header — and requiring
+    # three left the navigation bar on every short scrape, which is exactly
+    # where it kept showing up.
+    if len(usable) < 2:
         return texts
     prefix = usable[0]
     for t in usable[1:]:
@@ -390,5 +422,6 @@ def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
 
 
 __all__ = ["clean_latex", "ensure_vectors", "is_document", "load_source",
+           "looks_symbol_stripped",
            "passage_is_usable", "plan_load",
            "read_manifest", "strip_boilerplate", "unit_passages"]
