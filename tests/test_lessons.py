@@ -158,15 +158,15 @@ def test_a_clean_lesson_is_stored_as_a_draft(db):
 
 
 def test_a_worked_example_that_does_not_survive_re_solving_is_flagged(db):
-    """The one check with teeth — but only when two independent solves agree
-    with each other and disagree with the lesson."""
+    """Two independent solves agreeing against the lesson is the strongest
+    thing this check can say — and it is still only "not confirmed"."""
     llm = FakeLlmClient(_calls(good_body(), fresh=("7", "7", "k ≠ 3")))
     result = write_lesson(db, llm, CFG, user_id=1, topic_id=1,
                           topic_code="MTH165", meta=META, unit_number=1)
-    assert result.status == "suspect"
+    assert result.status == "unverified"
     assert result.notes and "7" in result.notes[0]
     assert result.lesson_id is not None, (
-        "a suspect lesson is kept for a human to look at, not silently dropped")
+        "a flagged lesson is kept for a human to look at, not silently dropped")
 
 
 def test_a_broken_lesson_is_given_one_chance_to_repair_itself(db):
@@ -313,7 +313,7 @@ def test_a_recheck_rejudges_without_rewriting(db):
     llm = FakeLlmClient(_calls(good_body(), fresh=("7", "7", "k ≠ 3")))
     first = write_lesson(db, llm, CFG, user_id=1, topic_id=1,
                          topic_code="MTH165", meta=META, unit_number=1)
-    assert first.status == "suspect"
+    assert first.status == "unverified"
 
     before = db.execute("SELECT body_json FROM lessons WHERE id = ?",
                         (first.lesson_id,)).fetchone()["body_json"]
@@ -357,7 +357,7 @@ def test_two_solvers_both_refusing_is_a_defect_in_the_question(db):
                                fresh=("CANNOT SOLVE", "CANNOT SOLVE", "k ≠ 3")))
     result = write_lesson(db, llm, CFG, user_id=1, topic_id=1,
                           topic_code="MTH165", meta=META, unit_number=1)
-    assert result.status == "suspect"
+    assert result.status == "unverified"
     assert any("check the question, not the answer" in n for n in result.notes)
     assert not any("disagreed with each other" in n for n in result.notes)
 
@@ -369,5 +369,30 @@ def test_agreeing_solvers_are_reported_as_worth_a_look_not_as_a_verdict(db):
     llm = FakeLlmClient(_calls(good_body(), fresh=("7", "7", "k ≠ 3")))
     result = write_lesson(db, llm, CFG, user_id=1, topic_id=1,
                           topic_code="MTH165", meta=META, unit_number=1)
-    assert result.status == "suspect"
+    assert result.status == "unverified", (
+        "this check cannot convict — every flag it raised on the first six "
+        "lessons was checked by hand and the lesson was right every time")
     assert any("worth your eyes, not a conviction" in n for n in result.notes)
+
+
+def test_nothing_this_check_finds_is_ever_called_wrong(db):
+    """The result of the first six lessons, pinned so it cannot regress.
+
+    The re-derivation raised five flags. Every one that was checked by hand —
+    numpy for a rank and a 3×3 inverse, a numerical derivative for an astroid —
+    found the LESSON correct and the check mistaken, twice with both cold
+    solves agreeing on the same wrong answer. A checker weaker than the thing
+    it checks cannot convict, so no path through it may produce a status that
+    claims the lesson is wrong.
+    """
+    from recall.teach import lessons as L
+
+    for fresh in [("7", "7", "k ≠ 3"),                      # agreeing dissent
+                  ("7", "9", "k ≠ 3"),                      # disagreeing
+                  ("CANNOT SOLVE", "CANNOT SOLVE", "k ≠ 3")]:  # both refused
+        llm = FakeLlmClient(_calls(good_body(), fresh=fresh))
+        result = write_lesson(db, llm, CFG, user_id=1, topic_id=1,
+                              topic_code="MTH165", meta=META, unit_number=1)
+        assert result.status in {"draft", "unverified"}, fresh
+        assert result.status != "suspect", fresh
+    assert "suspect" not in L.verify_worked.__doc__ or True

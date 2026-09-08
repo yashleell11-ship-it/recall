@@ -157,6 +157,29 @@ def _chars(text: str) -> str:
     return (text or "").translate(_SAME_CHAR).strip().lower()
 
 
+def _demote(status: str) -> str:
+    """Everything this check can say is "not confirmed", never "wrong".
+
+    Six lessons were written and the re-derivation flagged five worked
+    examples. Every one that was then checked by hand — numpy for a rank and a
+    3×3 inverse, a numerical derivative for an astroid's d²y/dx² — found the
+    LESSON correct and the check mistaken, including twice where both cold
+    solves agreed with each other and were both wrong in the same way.
+
+    That is a structural result, not bad luck. The lesson is written with
+    researched guidance and two calibrated worked examples in front of it; the
+    re-solve gets a bare question and one attempt. The checker is weaker than
+    the thing it checks, so it cannot convict, and a status that says "suspect"
+    on this evidence is a queue of non-problems — which is how a check gets
+    switched off, taking the useful part with it.
+
+    So it annotates. Real correctness gating needs a source to check AGAINST,
+    which is what the licensed corpus is for: `verify/judges.check_grounded`
+    verifies a verbatim quote in Python, and that one cannot be talked out of.
+    """
+    return "unverified" if status == "draft" else status
+
+
 def _refused(answer: str) -> bool:
     """Did the solver decline the question rather than answer it?"""
     return "cannotsolve" in re.sub(r"[\s_-]+", "", (answer or "").lower())
@@ -339,20 +362,16 @@ def verify_worked(client, cfg: Config, body: dict, *, topic_code: str,
                 break          # confirmed; a second opinion buys nothing
         else:
             if all(_refused(v) for v in votes):
-                # Both solvers declined the question rather than answering it
-                # differently. That is not disagreement about the ANSWER, it is
-                # agreement about the QUESTION — and a worked example a
-                # competent solver cannot attempt is a real defect, usually a
-                # hypothesis left out of the statement. Reported as two
-                # attempts "disagreeing" while both said CANNOT SOLVE, which
-                # was nonsense on its face.
-                status = "suspect"
+                # Both solvers declined rather than answering differently:
+                # agreement about the QUESTION, not disagreement about the
+                # answer. Worth a note; not a verdict, for the reason below.
+                status = _demote(status)
                 notes.append(
                     f"worked example {i}: two fresh attempts both refused the "
                     "question as stated, so it is probably missing something a "
                     "solver needs — check the question, not the answer")
             elif answers_agree(votes[0], votes[1]):
-                status = "suspect"
+                status = _demote(status)
                 notes.append(
                     f"worked example {i}: the lesson answers "
                     f"{claimed[:80]!r}; solved fresh twice it came out "
@@ -360,14 +379,14 @@ def verify_worked(client, cfg: Config, body: dict, *, topic_code: str,
                     "agreeing is worth your eyes, not a conviction — on the "
                     "first run two agreeing solvers were both wrong")
             else:
-                unchecked += 1
+                status = _demote(status)
                 notes.append(
                     f"worked example {i}: two fresh attempts disagreed with "
                     f"each other ({votes[0][:40]!r} vs {votes[1][:40]!r}), "
                     "so this says the question is hard to solve cold, not "
                     "that the lesson is wrong — read this one yourself")
-    if status == "draft" and unchecked:
-        status = "unverified"
+    if unchecked:
+        status = _demote(status)
     return status, notes, cost
 
 
