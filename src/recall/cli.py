@@ -544,20 +544,35 @@ def cmd_corpus_load(args, cfg) -> int:
         conn.close()
         return 0
 
+    from recall.teach.corpus import ensure_vectors
+
     loaded = chunks = failed = 0
+    touched: list[int] = []
     for path, entry in files:
         try:
-            _sid, added = load_source(conn, user_id=args.user_id,
-                                      topic_id=row["id"], path=path,
-                                      entry=entry, syllabus=syllabus)
+            sid, added = load_source(conn, user_id=args.user_id,
+                                     topic_id=row["id"], path=path,
+                                     entry=entry, syllabus=syllabus)
         except Exception as exc:  # noqa: BLE001 — one bad file must not end the run
             print(f"  {path.name}: skipped ({exc})")
             failed += 1
             continue
         loaded += 1
         chunks += added
+        touched += [r["id"] for r in conn.execute(
+            "SELECT id FROM chunks WHERE source_id = ?", (sid,))]
         print(f"  {path.name[:56]}: +{added} passages"
               + ("  (already had it)" if added == 0 else ""))
+
+    # Embed here, once, rather than on every lesson. Retrieval used to embed
+    # every candidate chunk per call, which was survivable at 187 and
+    # OOM-killed the backend at 883.
+    if touched:
+        print(f"\nindexing {len(touched)} passages (free, runs on the CPU)…",
+              flush=True)
+        added_vectors = ensure_vectors(conn, touched)
+        print(f"  {added_vectors} new vectors")
+
     print(f"\nloaded {loaded} files, {chunks} new passages"
           + (f", {failed} failed" if failed else ""))
     conn.close()

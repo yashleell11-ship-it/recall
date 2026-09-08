@@ -573,9 +573,15 @@ def test_site_boilerplate_is_stripped_before_a_passage_is_judged():
               "Library About Contact Request Material Recent Updates Mark all "
               "read Loading View all updates Home Exam Center Revision "
               "Offline Library About Contact Request Material Support Us ")
-    out = strip_boilerplate([chrome + "Rank content.", chrome + "Eigen content.",
-                             chrome + "Determinant content."])
-    assert out == ["Rank content.", "Eigen content.", "Determinant content."]
+    # Real chunks carry pages of content after the header; a chunk that were
+    # almost entirely header is handled by its own test below.
+    filler = ("This section states the definition and the condition that goes "
+              "with it, then works an example at the depth the paper asks. " * 4)
+    out = strip_boilerplate([chrome + "Rank content. " + filler,
+                             chrome + "Eigen content. " + filler,
+                             chrome + "Determinant content. " + filler])
+    assert out[0].startswith("Rank content.")
+    assert all("Exam Center" not in o for o in out)
     # A PDF's pages share no such prefix and must be left alone.
     assert strip_boilerplate(["alpha", "beta", "gamma"]) == ["alpha", "beta", "gamma"]
 
@@ -708,3 +714,69 @@ def test_the_notation_law_does_not_reach_citations_which_is_why_this_exists():
         "lesson_text deliberately excludes quotes — a citation is copied, not "
         "written, so the notation law cannot apply to it"
     )
+
+
+def test_retrieval_embeds_only_the_query_once_the_corpus_is_indexed():
+    """The defect this exists to prevent: retrieval embedded every candidate
+    chunk on every call. Survivable for MTH165 unit 1's 187 passages, it
+    OOM-killed the backend on unit 2's 883 — model work proportional to
+    everything ever stored, per lesson, on a 3.8 GB box.
+
+    Loading is a separate, free, offline step. That is where the cost belongs.
+    """
+    import numpy as np
+
+    from recall.db import connect, init_db
+    from recall.teach.corpus import ensure_vectors, unit_passages
+
+    conn = connect(":memory:")
+    init_db(conn)
+    conn.execute("INSERT INTO users (id, name) VALUES (1, 'y')")
+    conn.execute("INSERT INTO topics (id,user_id,code,label) VALUES (1,1,'M','M')")
+    body = ("The rank of a matrix is the number of non-zero rows in echelon "
+            "form. A system is consistent when the two ranks agree. This is "
+            "examined most years as a short computational question. Learn the "
+            "statement exactly as written, conditions included. ")
+    conn.execute("INSERT INTO sources (id,user_id,topic_id,filename,kind,sha256,"
+                 "added_at) VALUES (1,1,1,'/c/a.pdf','corpus','s','2026-01-01')")
+    # Varied text: identical chunks would look like boilerplate, which is a
+    # different behaviour with its own test.
+    for i in range(40):
+        conn.execute(
+            "INSERT INTO chunks (source_id,ordinal,text,page_ref)"
+            " VALUES (1,?,?,'p1')",
+            (i, f"Section {i} of the notes. " + body.replace("rank", f"rank{i}")))
+    conn.execute("INSERT INTO source_units (source_id,unit_name,unit_key)"
+                 " VALUES (1,'U','u')")
+    conn.commit()
+
+    calls: list[int] = []
+
+    def counting_embed(texts):
+        calls.append(len(texts))
+        return np.ones((len(texts), 4), dtype=np.float32)
+
+    ids = [r["id"] for r in conn.execute("SELECT id FROM chunks")]
+    assert ensure_vectors(conn, ids, embed=counting_embed) == 40
+    assert max(calls) <= 32, "vectors must be embedded in batches, not all at once"
+
+    calls.clear()
+    got = unit_passages(conn, user_id=1, topic_id=1, unit_name="U",
+                        query="rank of a matrix", limit=5,
+                        embed=counting_embed)
+    assert len(got) == 5
+    assert calls == [1], (
+        "with the corpus indexed, a lesson embeds the query and nothing else"
+    )
+    conn.close()
+
+
+def test_alike_passages_are_not_mistaken_for_boilerplate():
+    """If the repeated prefix is most of the shortest passage, it is not a
+    header — the passages are simply alike, and stripping would gut them."""
+    from recall.teach.corpus import strip_boilerplate
+
+    alike = ["The rank of a matrix is the number of non-zero rows in echelon "
+             "form and this sentence is long enough to look like a header. "
+             f"Item {i}." for i in range(4)]
+    assert strip_boilerplate(alike) == alike

@@ -21,6 +21,8 @@ import json
 import pathlib
 import re
 
+import numpy as np
+
 from recall.generate.knowledge import knowledge_sha
 from recall.ingest.chunk import chunk_pages
 from recall.ingest.pdf import DOCUMENT_SUFFIXES, file_sha256, read_document
@@ -220,6 +222,10 @@ def is_document(filename: str) -> bool:
 #: A repeated prefix shorter than this is a coincidence, not boilerplate.
 _MIN_BOILERPLATE = 180
 
+#: …and one longer than this share of the shortest passage is not a header
+#: either: the passages are just alike, and stripping would leave nothing.
+_MAX_BOILERPLATE_SHARE = 0.5
+
 
 def strip_boilerplate(texts: list[str]) -> list[str]:
     """Remove the header every page of one scraped source repeats.
@@ -246,8 +252,54 @@ def strip_boilerplate(texts: list[str]) -> list[str]:
         prefix = prefix[:i]
         if len(prefix) < _MIN_BOILERPLATE:
             return texts
+    # If the "boilerplate" is most of the shortest passage, it is not a header
+    # — the passages are simply alike, and stripping would gut them. Seen in a
+    # test with forty near-identical chunks, which is artificial, but a source
+    # of repetitive generated pages would do the same thing for real.
+    if len(prefix) > _MAX_BOILERPLATE_SHARE * min(len(t) for t in usable):
+        return texts
     return [t[len(prefix):].lstrip() if t.startswith(prefix) else t
             for t in texts]
+
+
+#: How many chunks to embed at once. Small enough that a 3.8 GB box holding a
+#: running API server does not fall over, which it did at 883.
+_EMBED_BATCH = 32
+
+
+def ensure_vectors(conn, chunk_ids: list[int], embed=None) -> int:
+    """Compute and store any missing embeddings. Returns how many were added.
+
+    Batched and committed as it goes, so an interrupted run keeps what it did
+    and a large unit never has more than `_EMBED_BATCH` vectors in flight.
+    """
+    missing = [r["id"] for r in conn.execute(
+        "SELECT ch.id FROM chunks ch"
+        " LEFT JOIN chunk_vectors v ON v.chunk_id = ch.id"
+        f" WHERE v.chunk_id IS NULL AND ch.id IN ({','.join('?' * len(chunk_ids))})",
+        chunk_ids)] if chunk_ids else []
+    if not missing:
+        return 0
+    if embed is None:
+        from recall.verify.dedupe import embed_texts as embed
+
+    done = 0
+    for start in range(0, len(missing), _EMBED_BATCH):
+        batch = missing[start:start + _EMBED_BATCH]
+        texts = [r["text"] for r in conn.execute(
+            f"SELECT id, text FROM chunks WHERE id IN ({','.join('?' * len(batch))})"
+            " ORDER BY id", batch)]
+        ids = [r["id"] for r in conn.execute(
+            f"SELECT id FROM chunks WHERE id IN ({','.join('?' * len(batch))})"
+            " ORDER BY id", batch)]
+        vectors = np.asarray(embed(texts), dtype=np.float32)
+        for cid, vec in zip(ids, vectors):
+            conn.execute(
+                "INSERT OR REPLACE INTO chunk_vectors (chunk_id, dim, vec)"
+                " VALUES (?,?,?)", (cid, int(vec.shape[0]), vec.tobytes()))
+        conn.commit()
+        done += len(batch)
+    return done
 
 
 def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
@@ -292,15 +344,23 @@ def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
     if embed is None:
         from recall.verify.dedupe import embed_texts as embed
 
-    texts = [clean_text[id(r)] for r in rows]
-    vectors = embed([query] + texts)
-    q, rest = vectors[0], vectors[1:]
+    # Stored vectors, computed once at load. Only the QUERY is embedded here —
+    # embedding every candidate per call is what killed the box on unit 2.
+    ensure_vectors(conn, [r["id"] for r in rows], embed=embed)
+    stored = {r["chunk_id"]: np.frombuffer(r["vec"], dtype=np.float32)
+              for r in conn.execute(
+                  "SELECT chunk_id, vec FROM chunk_vectors WHERE chunk_id IN"
+                  f" ({','.join('?' * len(rows))})", [r["id"] for r in rows])}
+    rows = [r for r in rows if r["id"] in stored]
+    if not rows:
+        return []
+    q = np.asarray(embed([query]), dtype=np.float32)[0]
 
     def cosine(v):
-        denom = float((q @ q) ** 0.5 * (v @ v) ** 0.5)
-        return 0.0 if denom == 0.0 else float(q @ v / denom)
+        denom = float(np.linalg.norm(q) * np.linalg.norm(v))
+        return 0.0 if denom == 0.0 else float(np.dot(q, v) / denom)
 
-    ranked = [r for r, _ in sorted(zip(rows, rest), key=lambda p: -cosine(p[1]))]
+    ranked = sorted(rows, key=lambda r: -cosine(stored[r["id"]]))
 
     # Relevance decides the order; provenance decides how many scraped pages
     # get in. Filling by relevance alone let a site's pages take most of the
@@ -322,6 +382,6 @@ def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
             for r in picked[:limit]]
 
 
-__all__ = ["clean_latex", "is_document", "load_source",
+__all__ = ["clean_latex", "ensure_vectors", "is_document", "load_source",
            "passage_is_usable", "plan_load",
            "read_manifest", "strip_boilerplate", "unit_passages"]

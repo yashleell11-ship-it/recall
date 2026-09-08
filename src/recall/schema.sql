@@ -188,6 +188,21 @@ CREATE INDEX IF NOT EXISTS idx_test_questions_test ON test_questions(test_id);
 -- full scan of every question ever asked, once per candidate card.
 CREATE INDEX IF NOT EXISTS idx_test_questions_card ON test_questions(card_id);
 
+-- One chunk's embedding, computed once when the corpus is loaded.
+--
+-- Retrieval used to embed every candidate chunk on every call. That was fine
+-- for the 187 chunks of MTH165 unit 1 and OOM-killed the backend on unit 2's
+-- 883 — the model work was O(everything stored) per lesson, on a 3.8 GB box.
+-- Loading is already a separate, free, offline step, which is exactly where
+-- that cost belongs; retrieval is then a dot product.
+--
+-- OWNERSHIP: chunk_id -> chunks -> sources.user_id.
+CREATE TABLE IF NOT EXISTS chunk_vectors (
+  chunk_id INTEGER PRIMARY KEY REFERENCES chunks(id),
+  dim      INTEGER NOT NULL,
+  vec      BLOB NOT NULL
+);
+
 -- Which syllabus units a source serves, for corpus material collected against
 -- a course rather than uploaded blind.
 --
