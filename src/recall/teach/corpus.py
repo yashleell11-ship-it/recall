@@ -19,6 +19,7 @@ already paid for treating a position as an identity.
 
 import json
 import pathlib
+import re
 
 from recall.generate.knowledge import knowledge_sha
 from recall.ingest.chunk import chunk_pages
@@ -149,6 +150,34 @@ def passage_is_usable(text: str) -> bool:
     return orphans / max(sentences, 1) <= _MAX_ORPHAN_RATIO
 
 
+#: Extensions whose text survives extraction with its mathematics intact.
+#: Measured on the MTH165 unit 1 load: 35% of HTML chunks carry a scraper
+#: artefact — a bare "TEXT" marker where a formula was, or leaked LaTeX —
+#: against 2% of PDF chunks. Seventeen times worse.
+_DOCUMENT_SUFFIXES = (".pdf", ".pptx", ".docx", ".ppt", ".doc")
+
+#: …so documents take most of the slots. The rest are RESERVED for scraped
+#: pages rather than merely capped, which is the whole subtlety: this unit has
+#: 161 document chunks against 26 scraped ones, so a cap would have handed
+#: every slot to documents and amounted to a ban.
+#:
+#: A ban would have made the grounding worse. The one verified citation the
+#: first grounded lesson earned — "Ax = b is consistent ⇔ rank(A) =
+#: rank([A|b])" — came from a scraped notes page, because this corpus's PDFs
+#: are textbooks and problem sets, which pose questions and work examples but
+#: rarely state a definition in one crisp sentence. Documents have the better
+#: text; the scrape has the better sentences.
+_RESERVED_FOR_SCRAPED = 0.25
+
+#: A scraper's placeholder for a formula it could not render. Dropping it makes
+#: the sentence read as written and keeps a quote from having to step over it.
+_FORMULA_PLACEHOLDER = re.compile(r"(?<![A-Za-z])TEXT(?![A-Za-z])")
+
+
+def is_document(filename: str) -> bool:
+    return str(filename).lower().endswith(_DOCUMENT_SUFFIXES)
+
+
 #: A repeated prefix shorter than this is a coincidence, not boilerplate.
 _MIN_BOILERPLATE = 180
 
@@ -213,6 +242,7 @@ def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
         for r, text in zip(group, strip_boilerplate([g["text"] for g in group])):
             cleaned.append((r, text))
 
+    cleaned = [(r, _FORMULA_PLACEHOLDER.sub("", t)) for r, t in cleaned]
     cleaned = [(r, t) for r, t in cleaned if passage_is_usable(t)]
     if not cleaned:
         return []
@@ -230,12 +260,27 @@ def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
         denom = float((q @ q) ** 0.5 * (v @ v) ** 0.5)
         return 0.0 if denom == 0.0 else float(q @ v / denom)
 
-    ranked = sorted(zip(rows, rest), key=lambda p: -cosine(p[1]))
+    ranked = [r for r, _ in sorted(zip(rows, rest), key=lambda p: -cosine(p[1]))]
+
+    # Relevance decides the order; provenance decides how many scraped pages
+    # get in. Filling by relevance alone let a site's pages take most of the
+    # slots, and a third of them had lost the mathematics they were about.
+    reserved = max(1, round(limit * _RESERVED_FOR_SCRAPED))
+    docs = [r for r in ranked if is_document(r["filename"])]
+    scraped = [r for r in ranked if not is_document(r["filename"])]
+    picked = docs[: limit - reserved] + scraped[:reserved]
+    # Whichever pool is short, the other fills the gap: a unit held entirely in
+    # PDFs still gets a full set, and so does one held entirely in scrapes.
+    if len(picked) < limit:
+        rest = [r for r in ranked if r not in picked]
+        picked += rest[: limit - len(picked)]
+    picked.sort(key=lambda r: ranked.index(r))
+
     return [{"chunk_id": r["id"], "text": clean_text[id(r)],
              "page_ref": r["page_ref"],
              "filename": pathlib.Path(r["filename"]).name}
-            for r, _ in ranked[:limit]]
+            for r in picked[:limit]]
 
 
-__all__ = ["load_source", "passage_is_usable", "plan_load",
+__all__ = ["is_document", "load_source", "passage_is_usable", "plan_load",
            "read_manifest", "strip_boilerplate", "unit_passages"]

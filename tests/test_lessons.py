@@ -591,3 +591,91 @@ def test_a_fill_in_the_blank_bank_is_not_offered_as_source_material():
               "A system is consistent when the two ranks are __. This bank "
               "covers the whole of unit one and is examined every year.")
     assert not passage_is_usable(gapped)
+
+
+def test_scraped_pages_are_rationed_not_banned():
+    """Measured on the MTH165 unit 1 load: 35% of HTML chunks carry a scraper
+    artefact against 2% of PDF chunks. But the one verified citation the first
+    grounded lesson earned came FROM a scraped notes page, because this
+    corpus's PDFs are textbooks and problem sets that state few crisp
+    definitions. Banning HTML would have made grounding worse."""
+    import numpy as np
+
+    from recall.db import connect, init_db
+    from recall.teach.corpus import unit_passages
+
+    conn = connect(":memory:")
+    init_db(conn)
+    conn.execute("INSERT INTO users (id, name) VALUES (1, 'y')")
+    conn.execute("INSERT INTO topics (id,user_id,code,label) VALUES (1,1,'M','M')")
+    body = ("The rank of a matrix is the number of non-zero rows "
+            "in echelon form. A system is consistent when the ranks agree. "
+            "This is the central theorem of the unit and it is examined most "
+            "years, usually as a short computational question. Learn the "
+            "statement exactly as it is written here, conditions included. "
+            "Marks are lost to a hypothesis nobody checked. ")
+    for i in range(9):
+        name = f"/c/doc{i}.pdf" if i < 6 else f"/c/page{i}.html"
+        conn.execute("INSERT INTO sources (id,user_id,topic_id,filename,kind,"
+                     "sha256,added_at) VALUES (?,1,1,?,'corpus',?,'2026-01-01')",
+                     (i + 1, name, f"sha{i}"))
+        conn.execute("INSERT INTO chunks (source_id,ordinal,text,page_ref)"
+                     " VALUES (?,0,?,'p1')", (i + 1, body + f"Item {i}."))
+        conn.execute("INSERT INTO source_units (source_id,unit_name,unit_key)"
+                     " VALUES (?,'U','u')", (i + 1,))
+    conn.commit()
+
+    got = unit_passages(conn, user_id=1, topic_id=1, unit_name="U", query="rank",
+                        limit=6, embed=lambda t: np.ones((len(t), 3)))
+    html = [p for p in got if p["filename"].endswith(".html")]
+    assert len(got) == 6
+    assert len(html) <= 2, "scraped pages must not take most of the slots"
+    assert html, (
+        "nor be shut out — with 161 document chunks against 26 scraped ones, a "
+        "mere cap hands every slot to documents and amounts to a ban, which "
+        "would have cost the one verified citation this earned")
+    conn.close()
+
+
+def test_a_unit_with_only_scraped_pages_still_gets_a_full_set():
+    """A quota that starved a unit of passages would be worse than no quota."""
+    import numpy as np
+
+    from recall.db import connect, init_db
+    from recall.teach.corpus import unit_passages
+
+    conn = connect(":memory:")
+    init_db(conn)
+    conn.execute("INSERT INTO users (id, name) VALUES (1, 'y')")
+    conn.execute("INSERT INTO topics (id,user_id,code,label) VALUES (1,1,'M','M')")
+    body = ("The rank of a matrix is the number of non-zero rows "
+            "in echelon form. A system is consistent when the ranks agree. "
+            "This is the central theorem of the unit and it is examined most "
+            "years, usually as a short computational question. Learn the "
+            "statement exactly as it is written here, conditions included. "
+            "Marks are lost to a hypothesis nobody checked. ")
+    for i in range(5):
+        conn.execute("INSERT INTO sources (id,user_id,topic_id,filename,kind,"
+                     "sha256,added_at) VALUES (?,1,1,?,'corpus',?,'2026-01-01')",
+                     (i + 1, f"/c/page{i}.html", f"sha{i}"))
+        conn.execute("INSERT INTO chunks (source_id,ordinal,text,page_ref)"
+                     " VALUES (?,0,?,'p1')", (i + 1, body + f"Item {i}."))
+        conn.execute("INSERT INTO source_units (source_id,unit_name,unit_key)"
+                     " VALUES (?,'U','u')", (i + 1,))
+    conn.commit()
+    got = unit_passages(conn, user_id=1, topic_id=1, unit_name="U", query="rank",
+                        limit=4, embed=lambda t: np.ones((len(t), 3)))
+    assert len(got) == 4
+    conn.close()
+
+
+def test_a_scrapers_formula_placeholder_is_removed():
+    """"The Rouché–Capelli theorem states TEXT Ax = b is consistent" — the
+    marker stands where a formula could not be rendered, and a quote should not
+    have to step over it."""
+    from recall.teach.corpus import _FORMULA_PLACEHOLDER
+
+    out = _FORMULA_PLACEHOLDER.sub("", "the theorem states TEXT Ax = b holds")
+    assert "TEXT" not in out
+    assert "Ax = b holds" in out
+    assert _FORMULA_PLACEHOLDER.sub("", "read the CONTEXT here") == "read the CONTEXT here"
