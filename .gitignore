@@ -9,3 +9,8 @@ __pycache__/
 node_modules/
 .next/
 uploads/
+
+# Local editor and tooling config — machine paths, not project config.
+.claude/
+.vscode/
+.idea/
