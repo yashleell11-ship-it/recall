@@ -287,6 +287,15 @@ def is_document(filename: str) -> bool:
     return str(filename).lower().endswith(_DOCUMENT_SUFFIXES)
 
 
+#: How many passages one file may contribute. Similarity ranking alone gave
+#: four of eight slots to Rolle's theorem — the same document, four times —
+#: crowding out the Mean Value Theorem, L'Hopital and Taylor, which the lesson
+#: also had to teach. A lesson covers a unit, so its sources must span one.
+#:
+#: This also dilutes junk without another filter: a chunk that is half
+#: navigation bar can still take a slot, but it can no longer take four.
+_MAX_PER_SOURCE = 2
+
 #: A repeated prefix shorter than this is a coincidence, not boilerplate.
 _MIN_BOILERPLATE = 180
 
@@ -444,16 +453,43 @@ def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
     # Relevance decides the order; provenance decides how many scraped pages
     # get in. Filling by relevance alone let a site's pages take most of the
     # slots, and a third of them had lost the mathematics they were about.
-    reserved = max(1, round(limit * _RESERVED_FOR_SCRAPED))
-    docs = [r for r in ranked if is_document(r["filename"])]
-    scraped = [r for r in ranked if not is_document(r["filename"])]
+    def spread(rows: list, cap: int) -> list:
+        """Best first, but no file may take more than `cap` of the slots."""
+        seen: dict[str, int] = {}
+        out = []
+        for r in rows:
+            key = r["filename"]
+            if seen.get(key, 0) >= cap:
+                continue
+            seen[key] = seen.get(key, 0) + 1
+            out.append(r)
+        return out
+
+    docs = spread([r for r in ranked if is_document(r["filename"])], _MAX_PER_SOURCE)
+    scraped = spread([r for r in ranked if not is_document(r["filename"])],
+                     _MAX_PER_SOURCE)
+    # Reserve for scraped pages only what scraped pages can actually fill.
+    # Reserving a slot on a unit that has none spent a document's place on
+    # nothing, and the top-up below then refilled it from the UNCAPPED list —
+    # so the prolific file quietly took the slot the cap had just denied it.
+    reserved = min(max(1, round(limit * _RESERVED_FOR_SCRAPED)), len(scraped))
     picked = docs[: limit - reserved] + scraped[:reserved]
+
     # Whichever pool is short, the other fills the gap: a unit held entirely in
-    # PDFs still gets a full set, and so does one held entirely in scrapes.
+    # PDFs gets a full set, and so does one held entirely in scrapes. And when
+    # the shortfall is the CAP biting rather than a thin corpus, the cap
+    # relaxes — it is a preference for breadth, the same rule the repeat
+    # penalty on papers follows: rank, never exclude.
     if len(picked) < limit:
-        rest = [r for r in ranked if r not in picked]
-        picked += rest[: limit - len(picked)]
-    picked.sort(key=lambda r: ranked.index(r))
+        chosen = {id(r) for r in picked}
+        for r in ranked:
+            if len(picked) >= limit:
+                break
+            if id(r) not in chosen:
+                picked.append(r)
+                chosen.add(id(r))
+    order = {id(r): i for i, r in enumerate(ranked)}
+    picked.sort(key=lambda r: order[id(r)])
 
     return [{"chunk_id": r["id"], "text": clean_text[id(r)],
              "page_ref": r["page_ref"],

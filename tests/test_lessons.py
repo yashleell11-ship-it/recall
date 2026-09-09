@@ -403,6 +403,20 @@ def test_nothing_this_check_finds_is_ever_called_wrong(db):
 
 # --- grounding: the one gate with a floor under it ---------------------------
 
+#: A passage long enough to be usable. Written once because three separate
+#: tests were built on bodies a few characters under corpus._MIN_CHARS and
+#: failed for that rather than for the thing they were testing.
+def realistic(subject: str) -> str:
+    return (
+        f"{subject} states the condition plainly and then gives the hypotheses "
+        "it needs, which is where the marks are actually lost. It is examined "
+        "most years as a short computational question rather than a proof. "
+        "Learn the statement exactly as written here, every condition "
+        "included, because an unchecked hypothesis is the single most common "
+        "way to lose a mark in this unit."
+    )
+
+
 PASSAGE = {
     "chunk_id": 1, "filename": "ncert-matrices.pdf", "page_ref": "p12",
     "text": ("The rank of a matrix A is the number of non-zero rows in its row "
@@ -942,3 +956,75 @@ def test_plain_text_counts_as_a_document_not_a_scrape():
 
     assert is_document("/c/wikipedia-rolle-s-theorem.txt")
     assert not is_document("/c/MTH165-unit2-notes.html")
+
+
+def test_no_single_document_takes_over_the_passage_slots():
+    """Similarity ranking alone gave four of eight slots to Rolle's theorem —
+    the same page, four times — crowding out the Mean Value Theorem, L'Hopital
+    and Taylor, which the same lesson had to teach. A lesson covers a unit, so
+    its sources must span one."""
+    import numpy as np
+
+    from recall.db import connect, init_db
+    from recall.teach.corpus import unit_passages
+
+    conn = connect(":memory:")
+    init_db(conn)
+    conn.execute("INSERT INTO users (id, name) VALUES (1, 'y')")
+    conn.execute("INSERT INTO topics (id,user_id,code,label) VALUES (1,1,'M','M')")
+    # One prolific file with six passages, three other files with one each.
+    plan = [("rolle.txt", 6), ("mvt.txt", 1), ("hopital.txt", 1), ("taylor.txt", 1)]
+    sid = 0
+    for fname, n in plan:
+        sid += 1
+        conn.execute("INSERT INTO sources (id,user_id,topic_id,filename,kind,"
+                     "sha256,added_at) VALUES (?,1,1,?,'corpus',?,'2026-01-01')",
+                     (sid, f"/c/{fname}", f"sha{sid}"))
+        conn.execute("INSERT INTO source_units (source_id,unit_name,unit_key)"
+                     " VALUES (?,'U','u')", (sid,))
+        for k in range(n):
+            conn.execute(
+                "INSERT INTO chunks (source_id,ordinal,text,page_ref)"
+                " VALUES (?,?,?,'p1')",
+                (sid, k, realistic(f"{fname} part {k}")))
+    conn.commit()
+
+    # Five slots, four files: the cap fits, so it must hold exactly.
+    got = unit_passages(conn, user_id=1, topic_id=1, unit_name="U",
+                        query="theorem", limit=5,
+                        embed=lambda t: np.ones((len(t), 3), dtype=np.float32))
+    from collections import Counter
+    per_file = Counter(p["filename"] for p in got)
+    assert max(per_file.values()) <= 2, per_file
+    assert len(per_file) == 4, ("every document must get a look in, not just "
+                                f"the prolific one: {per_file}")
+    conn.close()
+
+
+def test_the_spread_relaxes_rather_than_returning_a_thin_set(db):
+    """The cap is a preference for breadth, not a quota to starve for — the
+    same rule the repeat penalty on papers follows: rank, never exclude. A unit
+    held in one big textbook still gets a full set of passages."""
+    import numpy as np
+
+    from recall.db import connect, init_db
+    from recall.teach.corpus import unit_passages
+
+    conn = connect(":memory:")
+    init_db(conn)
+    conn.execute("INSERT INTO users (id, name) VALUES (1, 'y')")
+    conn.execute("INSERT INTO topics (id,user_id,code,label) VALUES (1,1,'M','M')")
+    conn.execute("INSERT INTO sources (id,user_id,topic_id,filename,kind,sha256,"
+                 "added_at) VALUES (1,1,1,'/c/only-textbook.pdf','corpus','s','2026-01-01')")
+    for k in range(8):
+        conn.execute("INSERT INTO chunks (source_id,ordinal,text,page_ref)"
+                     " VALUES (1,?,?,'p1')", (k, realistic(f"chapter {k}")))
+    conn.execute("INSERT INTO source_units (source_id,unit_name,unit_key)"
+                 " VALUES (1,'U','u')")
+    conn.commit()
+
+    got = unit_passages(conn, user_id=1, topic_id=1, unit_name="U",
+                        query="theorem", limit=6,
+                        embed=lambda t: np.ones((len(t), 3), dtype=np.float32))
+    assert len(got) == 6, "a one-source unit must not be starved by the cap"
+    conn.close()
