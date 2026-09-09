@@ -266,3 +266,49 @@ def test_every_authored_unit_name_is_a_real_syllabus_unit():
             assert unit_key(name) in current, (
                 f"{code}: guidance is authored for {name!r}, which lpu.py no "
                 "longer lists — re-author it or add the rename")
+
+
+# --- what a unit teaches, as a searchable list -------------------------------
+
+def test_every_mth165_unit_names_what_it_teaches():
+    from recall.generate.unit_guidance import topics_for
+
+    for n in range(1, 7):
+        topics = topics_for("MTH165", n)
+        assert len(topics) >= 5, f"unit {n} has only {len(topics)}"
+        assert all(len(t.split()) >= 3 for t in topics), topics
+
+
+def test_topics_follow_the_unit_across_a_reorder(monkeypatch):
+    """Keyed by name like everything else here: a position is not an identity,
+    and this syllabus has been corrected before."""
+    from recall.generate import unit_guidance as ug
+
+    original = ug.SUBJECTS["MTH165"]["units"]
+    before = ug.topics_for("MTH165", 1)
+    monkeypatch.setitem(ug.SUBJECTS["MTH165"], "units",
+                        [original[1], original[0], *original[2:]])
+    assert ug.topics_for("MTH165", 2) == before
+
+
+def test_an_unresearched_subject_has_no_topics_rather_than_wrong_ones():
+    """() is a supported answer — the caller falls back to the blended query,
+    which is what every unit used before this existed."""
+    from recall.generate.unit_guidance import topics_for
+
+    assert topics_for("CSE111", 1) == ()
+    assert topics_for("MTH165", 99) == ()
+
+
+def test_every_topic_list_belongs_to_a_real_syllabus_unit():
+    """If lpu.py renames a unit, this fails and the topics get re-authored —
+    the same guard _AUTHORED_UNITS carries."""
+    from recall.generate.unit_guidance import _UNIT_TOPICS
+    from recall.lpu import SUBJECTS, unit_key
+
+    for code, by_unit in _UNIT_TOPICS.items():
+        current = {unit_key(u) for u in SUBJECTS[code]["units"]}
+        for name in by_unit:
+            assert unit_key(name) in current, (
+                f"{code}: topics authored for {name!r}, which lpu.py no longer "
+                "lists")

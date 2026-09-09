@@ -3810,6 +3810,89 @@ _AUTHORED_UNITS: dict[str, tuple[str, ...]] = {
 }
 
 
+#: What each unit actually TEACHES, as a list of retrievable topics.
+#:
+#: Separate from `guidance` because they answer different questions. `guidance`
+#: tells a writer how to write for this unit and is prose; this is a list of
+#: the things the unit covers, and its only job is to be searched for.
+#:
+#: It exists because nothing else in the registry holds one. Retrieving course
+#: material for MTH165 unit 2 with a single query built from the unit name and
+#: the guidance returned passages vaguely about all of calculus and precisely
+#: about none, and unit 2's lesson stayed at 25% grounded through a corpus
+#: expansion and a diversity fix. Splitting the guidance PROSE into queries
+#: made it worse — 0% — because two of its sentences are worked-example
+#: questions and several are instructions to the card writer. A topic is
+#: neither. It had to be written down.
+#:
+#: Keyed by unit NAME, like _AUTHORED_UNITS above and for the same reason: a
+#: position is not an identity, and this syllabus has been corrected before.
+_UNIT_TOPICS: dict[str, dict[str, tuple[str, ...]]] = {
+    "MTH165": {
+        "Matrix Methods and Linear Systems": (
+            "rank of a matrix and row echelon form",
+            "linear dependence and independence of vectors",
+            "consistency of a system of linear equations",
+            "eigenvalues and eigenvectors of a matrix",
+            "Cayley-Hamilton theorem and the inverse of a matrix",
+            "determinant of a square matrix",
+        ),
+        "Differential Calculus and Its Applications": (
+            "Rolle's theorem and its hypotheses",
+            "Lagrange's mean value theorem",
+            "L'Hopital's rule for indeterminate forms",
+            "successive differentiation and the nth derivative",
+            "Taylor series and Maclaurin series expansion",
+        ),
+        "Fundamentals of Integral Calculus": (
+            "integration by substitution",
+            "integration by parts",
+            "integration by partial fractions",
+            "definite integrals and their properties",
+            "improper integrals and convergence",
+        ),
+        "Multivariate Differentiation": (
+            "partial derivatives of a function of several variables",
+            "Euler's theorem on homogeneous functions",
+            "total derivative and the chain rule",
+            "maxima and minima of a function of two variables",
+            "Jacobian of a transformation",
+        ),
+        "Multivariable Integration and Applications": (
+            "double integrals over a region",
+            "change of order of integration",
+            "double integrals in polar coordinates",
+            "triple integrals in cylindrical and spherical coordinates",
+            "area and volume by multiple integration",
+        ),
+        "Introduction to Fourier Series": (
+            "Fourier series of a periodic function",
+            "Euler's formulae for Fourier coefficients",
+            "Fourier series of even and odd functions",
+            "half-range sine and cosine series",
+            "Dirichlet conditions for convergence",
+        ),
+    },
+}
+
+
+def topics_for(topic_code: str, unit_number: int) -> tuple[str, ...]:
+    """The things this unit teaches, for retrieval. () when unresearched.
+
+    Resolved exactly like `guidance_for`: the number indexes the syllabus as it
+    stands, and the topics are found by that unit's NAME.
+    """
+    code = (topic_code or "").strip().upper()
+    syllabus = SUBJECTS.get(code, {}).get("units") or []
+    if not 1 <= unit_number <= len(syllabus):
+        return ()
+    wanted = unit_key(syllabus[unit_number - 1])
+    for name, topics in (_UNIT_TOPICS.get(code) or {}).items():
+        if unit_key(name) == wanted:
+            return topics
+    return ()
+
+
 def guidance_for(topic_code: str, unit_number: int) -> UnitGuidance | None:
     """`unit_number` is 1-based, as shown to the student.
 

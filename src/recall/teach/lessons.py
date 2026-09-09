@@ -28,7 +28,7 @@ from dataclasses import dataclass, field
 
 from recall.api.scheduling import iso, utc_now
 from recall.generate.knowledge import _synthetic_source_id, _unit_chunk_id
-from recall.generate.unit_guidance import guidance_for
+from recall.generate.unit_guidance import guidance_for, topics_for
 from recall.config import Config
 from recall.notation import check_notation
 from recall.teach.corpus import unit_passages
@@ -412,20 +412,23 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
     # the one check with a floor under it: a quote Python can find, or cannot.
     passages: list[dict] = list(_passages or [])
     if ground and not passages:
-        # ONE blended query, deliberately, though unit_passages can take a
-        # list. Splitting the guidance into per-sentence queries was tried and
-        # measured WORSE — unit 2 fell from 25% grounded to 0%. Scoring by the
-        # best match among queries means a narrow query wins slots outright,
-        # and the guidance's sentences are not topics: two of them are the
-        # unit's curated worked-example QUESTIONS ("for the curve x = a cos³θ,
-        # find d²y/dx² at θ = π/4") and several are instructions to the card
-        # writer. Retrieval duly went and found parametric differentiation,
-        # and the theorem statements the lesson needed lost their places.
+        # One query per thing the unit teaches, where that list exists.
         #
-        # Per-topic retrieval is still the right idea; it needs a real list of
-        # what a unit teaches, which nothing in the registry holds yet.
-        query = f"{unit_name}. {full_name}. " + (
+        # Splitting the guidance PROSE into queries was tried first and
+        # measured worse — unit 2 fell from 25% grounded to 0% — because a
+        # narrow query takes slots outright and the guidance's sentences are
+        # not topics: two are the unit's worked-example QUESTIONS ("for the
+        # curve x = a cos³θ, find d²y/dx² at θ = π/4") and several are
+        # instructions to the card writer. Retrieval went and found parametric
+        # differentiation, exactly as asked.
+        #
+        # `topics_for` is the list written down for that purpose. Where a unit
+        # has none the blended query is used, which is what every unit had
+        # before and is no worse than it was.
+        topics = topics_for(topic_code, unit_number)
+        blended = f"{unit_name}. {full_name}. " + (
             guidance.guidance if guidance and guidance.guidance else "")
+        query = [f"{unit_name}. {full_name}.", *topics] if topics else blended
         passages = unit_passages(conn, user_id=user_id, topic_id=topic_id,
                                  unit_name=unit_name, query=query,
                                  limit=passage_limit, embed=embed)
