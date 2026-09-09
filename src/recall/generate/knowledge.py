@@ -11,11 +11,19 @@ job is to REJECT cards answerable without the source — is inverted here, so
 it is dropped too. What survives is every check that never needed a source:
 answerability, atomicity, and semantic dedup.
 
-Because of that, and unlike an upload-grounded card, a surviving card here
-still stops at the approval queue (see pipeline.keep_state). Nothing has
-checked it against reality, so a person does — that queue is the only gate it
-has left. The `no source` mark on screen is what makes that a fair fight: the
-student always knows which cards carry no warranty.
+Because of that, a card written here carries less warranty than an
+upload-grounded one — and it is important to be exact about what catches that,
+because this docstring used to claim a gate that no longer exists. There is no
+approval queue: `pipeline.keep_state` returns 'active' unconditionally, and has
+since triage-before-use was removed. A knowledge card goes straight into
+rotation like any other.
+
+What actually stands between a wrong card and a wrong memory is therefore the
+`no source` mark on screen, review itself — a bad card is graded `again`,
+surfaces as a leech, and is suspended with one press — and, where the unit has
+course material loaded, a lesson whose every claim is quoted verbatim from it
+(see recall.teach.lessons). Naming a gate that is not there is worse than
+naming none: it is a promise nobody is keeping.
 
 Every card is written with `origin='knowledge'` so the rest of the app can
 tell the two kinds apart and say so on screen.

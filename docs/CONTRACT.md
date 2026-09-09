@@ -357,8 +357,15 @@ surfaced as a leech, suspended with one press
 (`POST /api/cards/{id}/suspend`).
 
 A knowledge-mode card cleared three, and the two it skipped are exactly the
-ones that check it against reality. It still lands `pending`, because the
-approval queue is the only gate it has left.
+ones that check it against reality. It lands `active` all the same — **there is
+no approval queue**, and `pipeline.keep_state` returns `'active'`
+unconditionally. This paragraph claimed otherwise for months, which is worse
+than claiming nothing: it named a gate nobody was keeping.
+
+What carries the weight instead is the `no source` mark on screen, review
+itself (graded `again` → leech → one-press suspend), and — where the unit has
+corpus material loaded — a lesson whose every claim is quoted verbatim from it
+and checked in Python.
 
 Dedup for this path is seeded with the questions already on the unit. Uploaded
 chunks generate exactly once, so repeats are impossible there; this button can
