@@ -391,7 +391,8 @@ def ensure_vectors(conn, chunk_ids: list[int], embed=None, on_progress=None) -> 
 
 
 def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
-                  query: str, limit: int = 8, embed=None) -> list[dict]:
+                  query: str | list[str], limit: int = 8,
+                  embed=None) -> list[dict]:
     """The corpus passages most worth showing a lesson writer for this unit.
 
     Ranked by cosine against `query` using the CPU-only ONNX embeddings the
@@ -442,13 +443,24 @@ def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
     rows = [r for r in rows if r["id"] in stored]
     if not rows:
         return []
-    q = np.asarray(embed([query]), dtype=np.float32)[0]
+    # Several queries, scored by the BEST match among them, not one query for
+    # the whole unit. A unit is not one topic: MTH165 unit 2 has to teach
+    # Rolle, the Mean Value Theorem, L'Hopital, Maclaurin and parametric
+    # differentiation, and a single blended query retrieves passages that are
+    # vaguely about all five and precisely about none. Loading seven pages that
+    # each state one of those theorems moved the lesson's grounding not at all
+    # until the retrieval could ask for them one at a time.
+    queries = [query] if isinstance(query, str) else [q for q in query if q.strip()]
+    qs = np.asarray(embed(queries or [unit_name]), dtype=np.float32)
+    norms = np.linalg.norm(qs, axis=1)
 
-    def cosine(v):
-        denom = float(np.linalg.norm(q) * np.linalg.norm(v))
-        return 0.0 if denom == 0.0 else float(np.dot(q, v) / denom)
+    def best(v):
+        denom = norms * float(np.linalg.norm(v))
+        with np.errstate(divide="ignore", invalid="ignore"):
+            sims = np.where(denom == 0.0, 0.0, (qs @ v) / np.where(denom == 0.0, 1.0, denom))
+        return float(np.max(sims))
 
-    ranked = sorted(rows, key=lambda r: -cosine(stored[r["id"]]))
+    ranked = sorted(rows, key=lambda r: -best(stored[r["id"]]))
 
     # Relevance decides the order; provenance decides how many scraped pages
     # get in. Filling by relevance alone let a site's pages take most of the

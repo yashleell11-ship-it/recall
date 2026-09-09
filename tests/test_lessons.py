@@ -1028,3 +1028,63 @@ def test_the_spread_relaxes_rather_than_returning_a_thin_set(db):
                         embed=lambda t: np.ones((len(t), 3), dtype=np.float32))
     assert len(got) == 6, "a one-source unit must not be starved by the cap"
     conn.close()
+
+
+def test_each_thing_a_unit_teaches_gets_its_own_query():
+    """A unit is not one topic. MTH165 unit 2 teaches Rolle, the Mean Value
+    Theorem, L'Hopital, Maclaurin and parametric differentiation, and one
+    blended query retrieves passages vaguely about all five and precisely about
+    none — loading seven pages that each state one of them moved the lesson's
+    grounding not at all until retrieval could ask for them separately.
+
+    Passages are scored by their BEST match among the queries, so a page that
+    nails one sub-topic outranks a page that is mildly related to every one.
+    """
+    import numpy as np
+
+    from recall.db import connect, init_db
+    from recall.teach.corpus import unit_passages
+
+    conn = connect(":memory:")
+    init_db(conn)
+    conn.execute("INSERT INTO users (id, name) VALUES (1, 'y')")
+    conn.execute("INSERT INTO topics (id,user_id,code,label) VALUES (1,1,'M','M')")
+    for sid, name in enumerate(["rolle", "hopital", "vague"], start=1):
+        conn.execute("INSERT INTO sources (id,user_id,topic_id,filename,kind,"
+                     "sha256,added_at) VALUES (?,1,1,?,'corpus',?,'2026-01-01')",
+                     (sid, f"/c/{name}.txt", f"sha{sid}"))
+        conn.execute("INSERT INTO chunks (source_id,ordinal,text,page_ref)"
+                     " VALUES (?,0,?,'p1')", (sid, realistic(name)))
+        conn.execute("INSERT INTO source_units (source_id,unit_name,unit_key)"
+                     " VALUES (?,'U','u')", (sid,))
+    conn.commit()
+
+    # rolle=[1,0,0]  hopital=[0,1,0]  vague=[.6,.6,0] — the blend beats each
+    # specialist on a blended query, and loses to it on a specific one.
+    vectors = {"rolle": [1.0, 0.0, 0.0], "hopital": [0.0, 1.0, 0.0],
+               "vague": [0.6, 0.6, 0.0]}
+
+    def embed(texts):
+        out = []
+        for t in texts:
+            if "Rolle" in t or t.startswith("rolle"):
+                out.append([1.0, 0.0, 0.0])
+            elif "Hopital" in t or t.startswith("hopital"):
+                out.append([0.0, 1.0, 0.0])
+            elif t.startswith("vague"):
+                out.append(vectors["vague"])
+            else:
+                out.append([0.6, 0.6, 0.0])       # the blended unit query
+        return np.asarray(out, dtype=np.float32)
+
+    blended = unit_passages(conn, user_id=1, topic_id=1, unit_name="U",
+                            query="the whole unit", limit=2, embed=embed)
+    assert blended[0]["filename"] == "vague.txt", (
+        "one blended query ranks the vaguely-related page first")
+
+    split = unit_passages(conn, user_id=1, topic_id=1, unit_name="U",
+                          query=["Rolle's theorem", "Hopital's rule"], limit=2,
+                          embed=embed)
+    assert {p["filename"] for p in split} == {"rolle.txt", "hopital.txt"}, (
+        "asked one at a time, each specialist page wins its own query")
+    conn.close()
