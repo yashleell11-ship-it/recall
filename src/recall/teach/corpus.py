@@ -390,6 +390,31 @@ def ensure_vectors(conn, chunk_ids: list[int], embed=None, on_progress=None) -> 
     return done
 
 
+#: A sentence ends at ., ! or ? followed by space and something that starts a
+#: new sentence. Deliberately not a general sentence splitter: it only has to
+#: agree with ITSELF, because the same function numbers the sentences shown to
+#: the writer and resolves the number it sends back.
+_SENTENCE = re.compile(r"(?<=[.!?])\s+(?=[A-Z(\[])")
+
+
+def split_sentences(text: str) -> list[str]:
+    """The citable sentences of a passage, in order.
+
+    Only sentences long enough to state something are returned — the same floor
+    the citation check applies — so a writer choosing by number cannot choose a
+    fragment, and the prompt is not padded with lines nobody may cite.
+    """
+    flat = " ".join((text or "").split())
+    return [s.strip() for s in _SENTENCE.split(flat)
+            if len(s.split()) >= _MIN_CITABLE_WORDS]
+
+
+#: Matches lessons._MIN_QUOTE_WORDS. Kept here as its own name because this is
+#: what decides which sentences are OFFERED, and that is a different decision
+#: from what is accepted — they simply agree today.
+_MIN_CITABLE_WORDS = 6
+
+
 def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
                   query: str | list[str], limit: int = 8,
                   embed=None) -> list[dict]:

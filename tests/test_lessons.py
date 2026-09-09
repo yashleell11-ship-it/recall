@@ -427,11 +427,22 @@ PASSAGE = {
 
 
 def grounded_body(quote=None):
+    """A lesson whose sections carry literal quotes — the shape `check_grounding`
+    still judges, and the shape stored lessons have."""
     body = good_body()
     q = quote or "the number of non-zero rows in its row echelon form"
     for sec in body["sections"]:
         sec["quote"] = q
         sec["source"] = "[1] ncert-matrices.pdf p12"
+    return body
+
+
+def cited_body(passage=1, sentence=1):
+    """A lesson as the WRITER now returns one: sentence numbers, no prose
+    copied. `resolve_citations` turns these into quotes."""
+    body = good_body()
+    for sec in body["sections"]:
+        sec["cite"] = {"passage": passage, "sentence": sentence}
     return body
 
 
@@ -476,7 +487,7 @@ def test_a_grounded_lesson_says_so_and_outranks_the_re_solve(db):
     """Every section quoted the course material and Python found every quote.
     That is a real warranty and must not be talked down to "unverified" by a
     solver that was wrong every time it spoke on the first six lessons."""
-    llm = FakeLlmClient(_calls(grounded_body(), fresh=("7", "7", "k ≠ 3")))
+    llm = FakeLlmClient(_calls(cited_body(), fresh=("7", "7", "k ≠ 3")))
     result = write_lesson(
         db, llm, CFG, user_id=1, topic_id=1, topic_code="MTH165", meta=META,
         unit_number=1, embed=lambda texts: __import__("numpy").eye(len(texts)),
@@ -485,12 +496,17 @@ def test_a_grounded_lesson_says_so_and_outranks_the_re_solve(db):
     assert "grounded:" in result.notes[0] and "verbatim" in result.notes[0]
 
 
-def test_a_paraphrasing_lesson_keeps_its_teaching_and_loses_its_citations(db):
+def test_a_lesson_citing_a_sentence_that_does_not_exist_keeps_its_teaching(db):
     """Rejecting a whole lesson over a citation detail throws away good
     teaching and pays for a second generation to get nothing. Dropping the
-    quote certifies nothing, which is the property that matters — and with
-    nothing left anchored, the lesson does not get to call itself grounded."""
-    bad = json.dumps(grounded_body("a tidied up version of the sentence"))
+    citation certifies nothing, which is the property that matters — and with
+    nothing left anchored, the lesson does not get to call itself grounded.
+
+    Note what the failure IS now: a reference to a sentence that is not there.
+    Paraphrase is no longer reachable, because the model never types a quote."""
+    # A reference to a sentence that does not exist: the only way a citation
+    # can now be wrong, since the text itself is inserted rather than typed.
+    bad = json.dumps(cited_body(passage=9, sentence=9))
     llm = FakeLlmClient([bad, bad, json.dumps({"answer": "1"}),
                          json.dumps({"answer": "k ≠ 3"})])
     result = write_lesson(
@@ -503,15 +519,15 @@ def test_a_paraphrasing_lesson_keeps_its_teaching_and_loses_its_citations(db):
         "SELECT body_json FROM lessons WHERE id = ?",
         (result.lesson_id,)).fetchone()["body_json"])
     assert all("quote" not in sec for sec in stored["sections"]), (
-        "an unverifiable citation must never reach the student")
-    assert any("paraphrase" in n for n in result.notes)
+        "an unresolvable citation must never reach the student")
+    assert any("does not exist" in n for n in result.notes), result.notes
 
 
 def test_a_citation_problem_gets_one_repair_before_it_is_dropped(db):
     """The model can usually pick a better sentence when told which one failed.
     That is worth one attempt; it is not worth a second full generation."""
-    bad = json.dumps(grounded_body("a tidied up version of the sentence"))
-    good = json.dumps(grounded_body())
+    bad = json.dumps(cited_body(passage=9, sentence=9))
+    good = json.dumps(cited_body())
     llm = FakeLlmClient([bad, good, json.dumps({"answer": "1"}),
                          json.dumps({"answer": "k ≠ 3"})])
     result = write_lesson(
@@ -1119,3 +1135,72 @@ def test_removing_space_next_to_a_symbol_does_not_admit_a_paraphrase():
                        "quote": "the count of nonzero rows after reduction"}]},
         passage)
     assert out and "paraphrase" in out[0]
+
+
+# --- citing by reference: the model never types a quote ----------------------
+
+def test_a_cited_sentence_is_inserted_not_transcribed():
+    """The whole point. Unit 2's lesson kept failing because the model retyped
+    the Mean Value Theorem's statement — "[a, b]" where the corpus had
+    "[ a , b ]" — a citation that was right in substance and wrong in
+    characters. Choosing a NUMBER removes the typing, so a citation cannot
+    drift from its source at all."""
+    from recall.teach.lessons import numbered_passages, resolve_citations
+
+    passages = [{"filename": "mvt.txt", "page_ref": "p1-p5",
+                 "text": ("Mean value theorem In calculus and real analysis, "
+                          "the mean value theorem is a theorem about "
+                          "differentiable functions of a real variable. "
+                          "Let f : [ a , b ] → R be a continuous function on "
+                          "the closed interval [ a , b ] , and differentiable "
+                          "on the open interval ( a , b ) , where a < b .")}]
+    shown, table = numbered_passages(passages)
+    assert "[1] mvt.txt p1-p5" in shown
+    assert "1.2" in shown, "sentences are numbered for the writer to choose from"
+
+    body = {"sections": [{"heading": "MVT", "cite": {"passage": 1, "sentence": 2}}]}
+    assert resolve_citations(body, passages, table) == []
+    quote = body["sections"][0]["quote"]
+    assert quote.startswith("Let f : [ a , b ] → R"), quote
+    assert quote in " ".join(passages[0]["text"].split()), (
+        "the inserted text must be exactly what the passage says")
+    assert body["sections"][0]["source"] == "[1] mvt.txt p1-p5"
+    assert "cite" not in body["sections"][0], "the reference is consumed"
+
+
+def test_a_reference_to_a_sentence_that_is_not_there_is_refused():
+    from recall.teach.lessons import numbered_passages, resolve_citations
+
+    passages = [{"filename": "a.txt", "page_ref": "p1",
+                 "text": "The rank is the number of non-zero rows in echelon form."}]
+    _, table = numbered_passages(passages)
+    body = {"sections": [{"heading": "R", "cite": {"passage": 4, "sentence": 1}}]}
+    out = resolve_citations(body, passages, table)
+    assert out and "does not exist" in out[0]
+    assert "quote" not in body["sections"][0]
+
+
+def test_a_model_supplied_quote_is_discarded_rather_than_trusted():
+    """A quote in the reply is not a citation any more — it is text the model
+    typed, which is the thing this design removes. Only a resolved reference
+    becomes a quote."""
+    from recall.teach.lessons import numbered_passages, resolve_citations
+
+    passages = [{"filename": "a.txt", "page_ref": "p1",
+                 "text": "The rank is the number of non-zero rows in echelon form."}]
+    _, table = numbered_passages(passages)
+    body = {"sections": [{"heading": "R", "quote": "something I made up",
+                          "source": "[1] a.txt p1"}]}
+    assert resolve_citations(body, passages, table) == []
+    assert "quote" not in body["sections"][0]
+
+
+def test_only_sentences_worth_citing_are_offered():
+    """A writer choosing by number cannot choose a fragment, because fragments
+    are not numbered."""
+    from recall.teach.corpus import split_sentences
+
+    got = split_sentences("Yes. No. The rank of a matrix is the number of "
+                          "non-zero rows in its row echelon form. Ok.")
+    assert got == ["The rank of a matrix is the number of non-zero rows in "
+                   "its row echelon form."]

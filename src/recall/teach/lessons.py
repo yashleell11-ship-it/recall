@@ -135,6 +135,64 @@ def _quote_is_furniture(quote: str) -> str | None:
     return None
 
 
+def numbered_passages(passages: list[dict]) -> tuple[str, list[list[str]]]:
+    """The passages as the writer sees them, and the sentence table behind it.
+
+    Both come from one call so the numbering the writer reads and the numbering
+    the resolver honours cannot drift apart — which is the entire reason this
+    is safer than asking for a transcription.
+    """
+    from recall.teach.corpus import split_sentences
+
+    blocks, table = [], []
+    for i, p in enumerate(passages, 1):
+        sentences = split_sentences(p["text"])
+        table.append(sentences)
+        lines = "\n".join(f"  {i}.{j}  {sent}"
+                           for j, sent in enumerate(sentences, 1))
+        blocks.append(f"[{i}] {p['filename']} {p['page_ref']}\n{lines}")
+    return "\n\n".join(blocks), table
+
+
+def resolve_citations(body: dict, passages: list[dict],
+                      table: list[list[str]]) -> list[str]:
+    """Replace each section's `cite` reference with the sentence it names.
+
+    The model chooses a number; this inserts the text. A citation therefore
+    cannot be a paraphrase, a tidy-up, or a half-remembered sentence — the
+    three ways every previous attempt failed — because the model never types
+    one. What it CAN still be is the wrong sentence, which is why the furniture
+    and length checks stay.
+
+    Returns complaints for references that do not exist; those go back to the
+    writer as a repair, the same as any other structural fault.
+    """
+    out: list[str] = []
+    for i, section in enumerate(body.get("sections") or [], 1):
+        if not isinstance(section, dict):
+            continue
+        cite = section.pop("cite", None)
+        section.pop("quote", None)
+        section.pop("source", None)
+        if cite is None:
+            continue
+        try:
+            pi = int(cite["passage"])
+            si = int(cite["sentence"])
+        except (TypeError, ValueError, KeyError):
+            out.append(f"section {i}: `cite` must be "
+                       '{"passage": <number>, "sentence": <number>}')
+            continue
+        if not (1 <= pi <= len(table)) or not (1 <= si <= len(table[pi - 1])):
+            out.append(f"section {i} cites passage {pi} sentence {si}, which "
+                       f"does not exist — there are {len(table)} passages")
+            continue
+        source = passages[pi - 1]
+        section["quote"] = table[pi - 1][si - 1]
+        section["source"] = f"[{pi}] {source['filename']} {source['page_ref']}"
+    return out
+
+
 def check_grounding(body: dict, passages: list[dict]) -> list[str]:
     """Every section's quote must appear VERBATIM in the supplied passages.
 
@@ -445,10 +503,9 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
                                  unit_name=unit_name, query=query,
                                  limit=passage_limit, embed=embed)
     passages_block = ""
+    sentence_table: list[list[str]] = []
     if passages:
-        shown = "\n\n".join(
-            f"[{i}] {p['filename']} {p['page_ref']}\n{p['text']}"
-            for i, p in enumerate(passages, 1))
+        shown, sentence_table = numbered_passages(passages)
         passages_block = PASSAGES_PREFACE.format(passages=shown)
 
     user = LESSON_USER.format(
@@ -486,15 +543,24 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
         # Citation problems are worth one repair — the model can usually pick a
         # better sentence when told which one failed — but they are not worth a
         # second full generation. On the last attempt they are dropped instead.
+        # Resolve first: a section's quote is INSERTED from the sentence it
+        # named, so everything after this is checking text the corpus supplied
+        # rather than text the model typed.
+        bad_refs = resolve_citations(candidate, passages, sentence_table)
         fatal = check_structure(candidate) + check_notation(lesson_text(candidate))
-        complaints = fatal + check_grounding(candidate, passages)
+        complaints = fatal + bad_refs + check_grounding(candidate, passages)
         body = candidate
         if not complaints:
             break
         if attempt == 2 and not fatal:
-            dropped = drop_bad_citations(candidate, passages)
+            # Keep the teaching, lose the citation — and SAY which citation and
+            # why. `resolve_citations` has already removed an unresolvable one,
+            # so drop_bad_citations finds nothing left to drop; without
+            # carrying bad_refs across, the lesson would silently arrive with
+            # fewer citations than it asked for and no reason given.
+            citation_notes.extend(drop_bad_citations(candidate, passages))
+            citation_notes.extend(bad_refs)
             complaints = []
-            citation_notes.extend(dropped)
             break
 
     if body is None or complaints:
@@ -673,6 +739,7 @@ def latest_lesson(conn, user_id: int, topic_id: int, unit_name: str) -> dict | N
 
 
 __all__ = ["LessonResult", "answers_agree", "check_grounding",
+           "numbered_passages", "resolve_citations",
            "grounded_share",
            "check_structure",
            "is_adjudicable", "latest_lesson", "recheck_lesson",

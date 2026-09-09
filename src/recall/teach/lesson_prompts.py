@@ -62,9 +62,7 @@ Reply with json only, exactly this shape:
 
 {"why": "two sentences: what this unit lets you do, and how it is examined",
  "sections": [{"heading": "short", "body": "the teaching",
-               "quote": "verbatim span from a supplied passage, or omitted
-                         when no course material was supplied",
-               "source": "which passage the quote came from"}],
+               "cite": {"passage": 1, "sentence": 2}}],
  "worked": [{"question": "...", "steps": ["...", "..."], "answer": "..."}],
  "check": [{"question": "...", "answer": "...", "why": "..."}]}
 
@@ -121,26 +119,25 @@ PASSAGES_PREFACE = """
 COURSE MATERIAL. These passages are from the reading list for this course. You
 must teach FROM them.
 
-Every section you write carries a `quote`: a span copied WORD FOR WORD from one
-of these passages, supporting what that section teaches, and a `source` naming
-which passage it came from. The quote is checked against the passages
-character by character before the lesson is shown to anyone, so a paraphrase,
-a tidied-up version, or a sentence you remember rather than copy will be
-rejected.
+Every sentence below is numbered. A section cites one by NUMBER:
 
-Quote course material, never page furniture. A navigation bar, a "Reveal
-Answer" button, a cookie notice or a table of contents may appear in a passage
-because the page was scraped whole; none of them is teaching and a citation
-backed by one is a claim backed by nothing. Those are rejected too.
+    "cite": {{"passage": 2, "sentence": 5}}
 
-Pick a quote that carries the load — the sentence that states the definition,
-the condition, or the rule. Do not quote a heading, a figure caption, or a
-sentence that merely mentions the topic. Twenty to forty words is usually
-right.
+You never type the sentence out. It is looked up and inserted for you, exactly
+as printed, so there is nothing to mistype and no way for a citation to drift
+from what the source says. Cite a number that does not exist and the lesson
+comes back to you to fix.
 
-Teach what the passages support. Where you need a step they do not cover —
-arithmetic in a worked example, say — that is fine and needs no quote; the
-quote belongs to the section that teaches the idea.
+Pick the sentence that carries the load — the one stating the definition, the
+condition, or the rule your section teaches. Not a heading, not a figure
+caption, not a sentence that merely mentions the topic. Some passages are
+scraped web pages and their navigation bars are numbered too; citing one is a
+claim backed by nothing, and is rejected.
+
+A section may omit `cite` entirely. Where you need a step the passages do not
+cover — arithmetic in a worked example, say — write it and cite nothing; that
+is honest, and better than reaching for a sentence that does not support what
+you said.
 
 {passages}
 """
