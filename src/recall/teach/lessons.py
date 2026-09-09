@@ -80,11 +80,23 @@ def _loads(raw: str) -> dict | None:
 def _normalise_quote(text: str) -> str:
     """Whitespace and case only.
 
-    Exactly `teach/explain.py`'s rule, and for its reason: a quote differing by
-    a line break is still a real citation, one differing by a word is a
-    paraphrase, and paraphrase is what this check exists to catch.
+    `teach/explain.py`'s rule and its reason: a quote differing by a line break
+    is still a real citation, one differing by a word is a paraphrase, and
+    paraphrase is what this check exists to catch.
+
+    Spacing AROUND punctuation is dropped too, which whitespace-collapsing
+    alone does not do. A plaintext extract writes mathematics spaced out —
+    "Let f : [ a , b ] → R" — and a model writing the same sentence produces
+    "Let f : [a, b] → R". Those are the same citation. Unit 2's lesson was
+    refused over exactly that: the Mean Value Theorem's formal statement was in
+    the chunk it had been handed, and the quote missed on the spaces inside the
+    brackets.
+
+    Narrow on purpose: removing space next to a symbol cannot turn one word
+    into another, so a paraphrase still fails.
     """
-    return re.sub(r"\s+", " ", text or "").strip().lower()
+    flat = re.sub(r"\s+", " ", text or "").strip().lower()
+    return re.sub(r"\s*([^\w\s])\s*", r"\1", flat)
 
 
 #: Text that is furniture rather than teaching. A page chunk spans several

@@ -1088,3 +1088,34 @@ def test_each_thing_a_unit_teaches_gets_its_own_query():
     assert {p["filename"] for p in split} == {"rolle.txt", "hopital.txt"}, (
         "asked one at a time, each specialist page wins its own query")
     conn.close()
+
+
+def test_spacing_inside_an_expression_does_not_break_a_citation():
+    """Unit 2's lesson was refused over this. The Mean Value Theorem's formal
+    statement was in the chunk it had been handed — "Let f : [ a , b ] → R be a
+    continuous function on the closed interval" — and the model wrote the same
+    sentence as "[a, b]". Same citation, different typography.
+
+    A plaintext extract spaces mathematics out; a model writing prose does not.
+    """
+    passage = [{"text": ("Let f : [ a , b ] → R be a continuous function on "
+                         "the closed interval [ a , b ] , and differentiable "
+                         "on the open interval ( a , b ) , where a < b .")}]
+    ok = check_grounding(
+        {"sections": [{"heading": "MVT",
+                       "quote": ("Let f : [a, b] → R be a continuous function "
+                                 "on the closed interval [a, b], and "
+                                 "differentiable on the open interval (a, b)")}]},
+        passage)
+    assert ok == [], ok
+
+
+def test_removing_space_next_to_a_symbol_does_not_admit_a_paraphrase():
+    """The normalisation is narrow on purpose: it cannot turn one word into
+    another, so the thing this gate exists to catch still fails."""
+    passage = [{"text": "The rank is the number of non-zero rows in echelon form."}]
+    out = check_grounding(
+        {"sections": [{"heading": "R",
+                       "quote": "the count of nonzero rows after reduction"}]},
+        passage)
+    assert out and "paraphrase" in out[0]
