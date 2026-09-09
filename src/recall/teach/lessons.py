@@ -412,19 +412,22 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
     # the one check with a floor under it: a quote Python can find, or cannot.
     passages: list[dict] = list(_passages or [])
     if ground and not passages:
-        # One query per thing the unit has to teach, not one for the unit.
-        # The researched guidance names them — "Rolle's theorem and the Mean
-        # Value Theorem", "L'Hospital's rule", "the Maclaurin formulas" — so
-        # they are already written down and need no model call to discover.
-        queries = [f"{unit_name}. {full_name}."]
-        if guidance and guidance.guidance:
-            queries += [part.strip()
-                        for part in re.split(r"(?<=[.;])\s+", guidance.guidance)
-                        if len(part.split()) >= 5]
-        if guidance:
-            queries += [e.question for e in guidance.examples if e.question]
+        # ONE blended query, deliberately, though unit_passages can take a
+        # list. Splitting the guidance into per-sentence queries was tried and
+        # measured WORSE — unit 2 fell from 25% grounded to 0%. Scoring by the
+        # best match among queries means a narrow query wins slots outright,
+        # and the guidance's sentences are not topics: two of them are the
+        # unit's curated worked-example QUESTIONS ("for the curve x = a cos³θ,
+        # find d²y/dx² at θ = π/4") and several are instructions to the card
+        # writer. Retrieval duly went and found parametric differentiation,
+        # and the theorem statements the lesson needed lost their places.
+        #
+        # Per-topic retrieval is still the right idea; it needs a real list of
+        # what a unit teaches, which nothing in the registry holds yet.
+        query = f"{unit_name}. {full_name}. " + (
+            guidance.guidance if guidance and guidance.guidance else "")
         passages = unit_passages(conn, user_id=user_id, topic_id=topic_id,
-                                 unit_name=unit_name, query=queries,
+                                 unit_name=unit_name, query=query,
                                  limit=passage_limit, embed=embed)
     passages_block = ""
     if passages:
