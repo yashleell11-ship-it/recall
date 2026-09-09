@@ -18,6 +18,11 @@ import type {
   Explanation,
   GenerateResponse,
   Grade,
+  Lesson,
+  LessonBody,
+  LessonIndexEntry,
+  LessonPage,
+  LessonStatus,
   PendingCard,
   PendingResponse,
   QueueCard,
@@ -1957,4 +1962,409 @@ export async function getStudyPlan(): Promise<StudyPlanEntry[]> {
         : "unit 1 is your weakest \u2014 sit a test on it",
     };
   });
+}
+
+/* --- lessons -------------------------------------------------------------
+   Three written lessons and nothing else, which is what the live database
+   actually looks like: a handful of units written by hand over SSH and five
+   subjects' worth of syllabus that nobody has got to yet. Both warranties are
+   represented on purpose — MTH165 unit 1 is fully grounded, MTH165 unit 2 and
+   INT335 unit 1 are not — because the whole point of the screen is that those
+   two must not look the same. */
+
+interface StoredLesson {
+  id: number;
+  status: LessonStatus;
+  /** Verbatim, in the pipeline's own words, one sentence per line. */
+  notes: string[];
+  created_at: string;
+  body: LessonBody;
+}
+
+const MTH165_UNIT1: StoredLesson = {
+  id: 12,
+  status: "grounded",
+  notes: [
+    "grounded: 100% of sections (5 of 5) carry a quote found verbatim in 8 passages of your course material",
+    "1 citation was dropped as paraphrase: the quote first given for “Eigenvalues and eigenvectors” was close to the uploaded text but not word for word, so the section was re-cited from p22.",
+    "worked example 2: the answer is a pair of eigenvectors rather than a single value, so re-solving it could not confirm or contradict it — check this one yourself.",
+  ],
+  created_at: "2026-08-30T11:04:22+00:00",
+  body: {
+    why:
+      "This unit is the machinery for solving a system of linear equations without guessing: reduce the matrix, read off the rank, and say how many solutions the system has before you have found any of them. LPU examines it as short rank-and-consistency questions in CT1 and as a full row reduction plus one eigenvalue problem in the mid-term.",
+    sections: [
+      {
+        heading: "A matrix is a system of equations, written down",
+        body:
+          "Every linear system you will be given in this unit has the same three parts: a coefficient matrix A, an unknown column X, and a right-hand side B, so that the whole system is AX = B. Nothing is lost in that rewriting — the rows of A are the equations and the columns are the unknowns — and everything that follows is an operation on the rows that leaves the solution set alone.\nThat is the reason row operations are allowed at all: swapping two equations, scaling one, or adding a multiple of one to another gives you a different-looking system with exactly the same solutions.",
+        quote:
+          "A matrix is an ordered rectangular array of numbers or functions. The numbers or functions are called the elements or the entries of the matrix.",
+        source: "[1] mth165-unit1-linear-algebra.pdf p3",
+      },
+      {
+        heading: "Elementary row operations and echelon form",
+        body:
+          "There are exactly three elementary row operations: interchange two rows, multiply a row by a non-zero scalar, and add a scalar multiple of one row to another. Applying them in sequence drives the matrix towards row echelon form, where each leading entry sits strictly to the right of the one above it and every all-zero row has sunk to the bottom.\nIn an exam you are marked on the sequence, not the destination. Write the operation you used beside each step (R2 → R2 − 2R1 and so on); a correct final matrix with no working attached loses most of the marks on a ten-mark question.",
+        quote:
+          "Two matrices are said to be row equivalent if one can be obtained from the other by a finite sequence of elementary row operations.",
+        source: "[1] mth165-unit1-linear-algebra.pdf p9",
+      },
+      {
+        heading: "Rank, and the consistency test that follows from it",
+        body:
+          "The rank of a matrix is the number of non-zero rows once it is in echelon form — equivalently, the order of its largest non-vanishing minor. On its own that is a number; paired with the rank of the augmented matrix it becomes the entire theory of when a system can be solved.\nThree outcomes, and only three. If rank(A) is less than rank([A : B]) the system is inconsistent and has no solution. If the two ranks are equal and match the number of unknowns, there is exactly one solution. If they are equal but smaller than the number of unknowns, the system has infinitely many solutions with (n − r) free parameters.",
+        quote:
+          "The system AX = B is consistent if and only if the rank of the coefficient matrix A is equal to the rank of the augmented matrix [A : B].",
+        source: "[2] mth165-ct1-solved-problems.pdf p4",
+      },
+      {
+        heading: "Finding an inverse by Gauss-Jordan",
+        body:
+          "Write A and the identity side by side as [A | I] and row reduce until the left block is the identity. Whatever the right block has become is A inverse. If the left block cannot be driven to the identity — a zero row appears — the matrix is singular and has no inverse, which is the same fact as det A = 0 seen from the other side.\nThis is the method to use under time pressure for a 3 × 3 matrix: the adjoint method needs nine cofactors and one determinant, and the arithmetic is where the marks go.",
+        quote:
+          "If A is reduced to the identity matrix I by a sequence of elementary row operations, then the same sequence of operations applied to I yields the inverse of A.",
+        source: "[1] mth165-unit1-linear-algebra.pdf p14",
+      },
+      {
+        heading: "Eigenvalues and eigenvectors",
+        body:
+          "An eigenvector of A is a non-zero vector whose direction A leaves alone: AX = λX for some scalar λ, the eigenvalue. Rearranged, (A − λI)X = 0 has a non-zero solution only when the matrix A − λI is singular, which is where the characteristic equation comes from.\nTwo checks worth thirty seconds each: the eigenvalues must sum to the trace of A, and their product must equal det A. If either fails, the arithmetic is wrong and there is no point finding eigenvectors for it.",
+        quote:
+          "The characteristic equation of a square matrix A is |A − λI| = 0, and its roots are called the eigenvalues or characteristic roots of A.",
+        source: "[1] mth165-unit1-linear-algebra.pdf p22",
+      },
+    ],
+    worked: [
+      {
+        question:
+          "Test the system x + 2y − z = 3, 3x − y + 2z = 1, 2x − 3y + 3z = −2 for consistency and solve it if it is consistent.",
+        steps: [
+          "Write the augmented matrix [A : B] = [[1, 2, −1, 3], [3, −1, 2, 1], [2, −3, 3, −2]].",
+          "R2 → R2 − 3R1 and R3 → R3 − 2R1, giving [[1, 2, −1, 3], [0, −7, 5, −8], [0, −7, 5, −8]].",
+          "R3 → R3 − R2 clears the last row entirely: [[1, 2, −1, 3], [0, −7, 5, −8], [0, 0, 0, 0]].",
+          "Both the coefficient matrix and the augmented matrix now have two non-zero rows, so rank(A) = rank([A : B]) = 2. The system is consistent.",
+          "Rank 2 against 3 unknowns leaves 3 − 2 = 1 free parameter. Put z = t: from row two, y = (8 + 5t)/7; from row one, x = 3 − 2y + t = (5 − 3t)/7.",
+        ],
+        answer:
+          "Consistent, with infinitely many solutions: x = (5 − 3t)/7, y = (8 + 5t)/7, z = t for any real t.",
+      },
+      {
+        question:
+          "Find the eigenvalues and eigenvectors of A = [[4, 1], [2, 3]].",
+        steps: [
+          "Form A − λI = [[4 − λ, 1], [2, 3 − λ]].",
+          "Set the determinant to zero: (4 − λ)(3 − λ) − 2 = 0, so λ² − 7λ + 10 = 0.",
+          "Factorise: (λ − 5)(λ − 2) = 0, so λ = 5 and λ = 2. Check: 5 + 2 = 7 = trace A, and 5 × 2 = 10 = det A.",
+          "For λ = 5, (A − 5I)X = 0 gives −x + y = 0, so every eigenvector is a multiple of (1, 1).",
+          "For λ = 2, (A − 2I)X = 0 gives 2x + y = 0, so every eigenvector is a multiple of (1, −2).",
+        ],
+        answer:
+          "λ = 5 with eigenvector (1, 1), and λ = 2 with eigenvector (1, −2), each up to a non-zero scalar multiple.",
+      },
+    ],
+    check: [
+      {
+        question:
+          "A 3 × 4 system reduces so that rank(A) = 2 and rank([A : B]) = 3. How many solutions does it have?",
+        answer: "None. The system is inconsistent.",
+        why:
+          "That the two ranks must be equal for a solution to exist at all is the first half of the consistency test, and it is the half people skip.",
+      },
+      {
+        question:
+          "Why does adding a multiple of one row to another leave the solution set unchanged?",
+        answer:
+          "Because the new equation is a consequence of the two it was built from, and the original row can be recovered by reversing the operation — so the two systems imply each other.",
+        why:
+          "Row reduction is only legal because it is reversible. Without that, echelon form would be a different problem, not the same one.",
+      },
+      {
+        question:
+          "The eigenvalues of a 2 × 2 matrix are 3 and −1. What are its trace and determinant?",
+        answer: "Trace 2, determinant −3.",
+        why:
+          "The trace and determinant checks cost thirty seconds and catch nearly every arithmetic slip in a characteristic equation.",
+      },
+    ],
+  },
+};
+
+const MTH165_UNIT2: StoredLesson = {
+  id: 17,
+  status: "unverified",
+  notes: [
+    "unverified: only 1 of 4 sections (25%) carries a quote found verbatim in your course material — the rest is the model's own knowledge",
+    "3 citations were dropped as paraphrase: they were close to sentences in the uploaded notes but not word for word, and a near-quote is not a quote.",
+    "the uploaded material for this unit is 6 pages of a 40-page chapter, so most of the syllabus has nothing to check against.",
+    "worked example 2: the answer is prose rather than a value, so re-solving it cannot confirm or contradict it — read this one yourself.",
+  ],
+  created_at: "2026-09-02T19:41:07+00:00",
+  body: {
+    why:
+      "This unit turns the derivative from a formula you can compute into a tool that answers questions: where a quantity is largest, how fast an error grows, and what a function looks like near a point you care about. LPU examines it as a mean-value or Taylor question in CT1 and as one full maxima-minima problem in the mid-term.",
+    sections: [
+      {
+        heading: "Rolle's theorem and the mean value theorem",
+        body:
+          "Rolle's theorem is the special case worth memorising exactly, because every other existence result in this unit is proved from it. Its three conditions are not decoration: continuity on the closed interval, differentiability on the open one, and equal values at the endpoints. Drop any one and the conclusion fails, and examiners set exactly those counterexamples.\nThe mean value theorem removes the third condition and replaces the horizontal tangent with a tangent parallel to the chord. Everything about rates of change over an interval — including the error bounds later in this unit — comes out of it.",
+        quote:
+          "If f is continuous on [a, b], differentiable on (a, b), and f(a) = f(b), then there exists at least one c in (a, b) such that f′(c) = 0.",
+        source: "[1] mth165-unit2-calculus-notes.pdf p7",
+      },
+      {
+        heading: "Taylor and Maclaurin expansions",
+        body:
+          "A Taylor expansion is a polynomial that agrees with a function in value and in as many derivatives as you keep, at one chosen point. A Maclaurin series is the same thing with that point fixed at zero.\nFor the exam you need four expansions cold — e^x, sin x, cos x, and log(1 + x) — and the habit of writing the remainder term rather than an ellipsis. Marks in this section are usually lost by stopping too early, not by getting a coefficient wrong.",
+      },
+      {
+        heading: "Maxima and minima of a function of one variable",
+        body:
+          "Stationary points come from f′(x) = 0; classifying them is the part that carries the marks. The second derivative test is fastest when f″ at the stationary point is non-zero: positive means a local minimum, negative a local maximum.\nWhen f″ vanishes the test says nothing at all, and you must fall back on the sign of f′ either side of the point. A candidate written as a maximum on the strength of an inconclusive second derivative is a wrong answer, not a rounding error.",
+      },
+      {
+        heading: "Indeterminate forms and L'Hôpital's rule",
+        body:
+          "L'Hôpital's rule applies only to the forms 0/0 and ∞/∞. Everything else — 0 × ∞, ∞ − ∞, 1^∞ — has to be rearranged into one of those two first, usually by taking a logarithm or by writing the product as a quotient.\nDifferentiate the numerator and denominator separately. Applying the quotient rule here is the single most common error in this section, and it produces an answer that is wrong in a way that looks like arithmetic.",
+      },
+    ],
+    worked: [
+      {
+        question:
+          "Verify Rolle's theorem for f(x) = x² − 4x + 3 on [1, 3] and find the value of c.",
+        steps: [
+          "f is a polynomial, so it is continuous on [1, 3] and differentiable on (1, 3). The first two conditions hold everywhere.",
+          "f(1) = 1 − 4 + 3 = 0 and f(3) = 9 − 12 + 3 = 0, so f(1) = f(3) and the third condition holds.",
+          "Rolle's theorem therefore guarantees at least one c in (1, 3) with f′(c) = 0.",
+          "f′(x) = 2x − 4. Setting 2c − 4 = 0 gives c = 2.",
+          "c = 2 lies inside (1, 3), so the theorem is verified.",
+        ],
+        answer: "The theorem holds, with c = 2.",
+      },
+      {
+        question:
+          "A student computes lim (x → 0) of (x · cot x) by applying L'Hôpital's rule directly. What is wrong, and what is the limit?",
+        steps: [
+          "As x → 0, x → 0 and cot x → ∞, so the expression is of the form 0 × ∞.",
+          "L'Hôpital's rule applies to 0/0 and ∞/∞ only, so it cannot be used on this expression as written.",
+          "Rewrite the product as a quotient: x · cot x = x / tan x, which is 0/0 as x → 0.",
+          "Now the rule applies. Differentiating top and bottom separately gives 1 / sec² x.",
+          "As x → 0, sec² x → 1, so the limit is 1.",
+        ],
+        answer:
+          "The rule was applied to a 0 × ∞ form, which is not one of its two cases; rewritten as x / tan x it is 0/0 and the limit is 1.",
+      },
+    ],
+    check: [
+      {
+        question:
+          "Rolle's theorem fails for f(x) = |x| on [−1, 1] even though f(−1) = f(1). Which condition is broken?",
+        answer:
+          "Differentiability on the open interval — f has no derivative at x = 0.",
+        why:
+          "Checking the conditions one at a time, rather than reciting them, is what the verification questions are actually testing.",
+      },
+      {
+        question:
+          "f′(2) = 0 and f″(2) = 0. Is x = 2 a maximum, a minimum, or neither?",
+        answer:
+          "The second derivative test is inconclusive; you cannot say without examining the sign of f′ on either side of 2.",
+        why:
+          "An inconclusive test is not permission to guess, and this is where the classification marks are usually dropped.",
+      },
+      {
+        question: "Write the first four terms of the Maclaurin series for e^x.",
+        answer: "1 + x + x²/2! + x³/3!",
+        why:
+          "Four standard expansions are assumed knowledge in this unit; deriving one under exam time costs you the question it was needed for.",
+      },
+    ],
+  },
+};
+
+const INT335_UNIT1: StoredLesson = {
+  id: 21,
+  status: "unverified",
+  notes: [
+    "unverified: 2 of 5 sections (40%) carry a quote found verbatim in your course material",
+    "2 citations were dropped as paraphrase: the uploaded slides state the idea but not in the wording the lesson used.",
+    "no course material has been uploaded for units 3 to 6 of this subject, so nothing later in the syllabus can be anchored at all.",
+    "worked example 2: the answer is a judgement about a design brief rather than a computable result, so nothing could be re-derived — read this one yourself.",
+  ],
+  created_at: "2026-09-05T08:12:44+00:00",
+  body: {
+    why:
+      "This unit gives you the vocabulary to describe how a design problem is framed before anyone starts solving it, and the standard five-stage model every later unit refers back to. LPU examines it as definition-and-stage MCQs in the first CA and as one short written question asking you to place a scenario in the right stage.",
+    sections: [
+      {
+        heading: "Design thinking is a process, not a talent",
+        body:
+          "The claim the whole subject rests on is that good design comes from a repeatable process rather than from inspiration. That is why the syllabus is organised around stages: each one has an output the next one consumes, and skipping a stage shows up as a specific, predictable failure later.\nFor the exam, the useful framing is that design thinking is human-centred (it starts from a person's need rather than a technology), iterative (stages are revisited, not completed once), and bias-to-action (a rough prototype beats another meeting).",
+        quote:
+          "Design thinking is a human-centred approach to innovation that draws from the designer's toolkit to integrate the needs of people, the possibilities of technology, and the requirements for business success.",
+        source: "[1] int335-unit1-intro-slides.pdf p6",
+      },
+      {
+        heading: "The five stages, and what each one hands on",
+        body:
+          "Empathise produces observations. Define turns those observations into one problem statement. Ideate turns the problem statement into a wide set of candidate solutions. Prototype turns the most promising of those into something testable at the lowest cost that still teaches you something. Test turns the prototype into evidence, which usually sends you back to an earlier stage.\nThe order matters less than the handover: every exam question about a broken project is really a question about which handover did not happen.",
+        quote:
+          "The five stages of design thinking are Empathise, Define, Ideate, Prototype and Test; they are modes rather than sequential steps and are frequently revisited.",
+        source: "[1] int335-unit1-intro-slides.pdf p11",
+      },
+      {
+        heading: "Convergent and divergent thinking",
+        body:
+          "Divergent thinking widens the set of possibilities; convergent thinking narrows it to one. The double-diamond diagram in your slides is just those two moves performed twice — once on the problem, once on the solution.\nThe practical rule, and the one that gets tested: never do both at once. Judging ideas while generating them is what produces a list of five safe options and no interesting ones.",
+      },
+      {
+        heading: "Creativity, fixation and how it is blocked",
+        body:
+          "Functional fixedness is the tendency to see an object only in terms of its usual use, and it is the standard example of a creative block in this unit. The others worth naming are premature commitment to a first solution, and confirmation bias when interpreting what a user said.\nEach block has a named counter-technique in the syllabus — analogy, forced association, reframing the question as a 'How might we' — and questions tend to pair a block with its counter.",
+      },
+      {
+        heading: "Learning, unlearning and reflective practice",
+        body:
+          "The unit closes on the learner rather than the design: the argument is that a designer improves by reflecting on completed cycles, and that unlearning an assumption is as much work as learning a technique.\nThis section is thin in the uploaded slides and is the part of the unit most likely to appear as a two-mark definition question rather than anything longer.",
+      },
+    ],
+    worked: [
+      {
+        question:
+          "A team interviews twelve hostel students about laundry, then immediately builds an app for booking machines. Which stage did they skip, and what is the predictable consequence?",
+        steps: [
+          "Interviews are the output of the Empathise stage, so that stage was done.",
+          "Building the booking app is a Prototype activity — the team jumped from stage one to stage four.",
+          "That skips Define, so the twelve interviews were never turned into a single problem statement.",
+          "It also skips Ideate, so exactly one solution was ever considered, and it was the first one anybody said out loud.",
+          "The predictable consequence: the prototype tests whether the app works, not whether booking was the problem. If the real complaint was drying time, the test will pass and the project will still fail.",
+        ],
+        answer:
+          "Define and Ideate were skipped; the team will end up validating a solution to a problem they never stated.",
+      },
+        {
+        question:
+          "Two briefs: 'design a better queue display for the laundry room' and 'help students spend less time waiting for laundry'. Which is the stronger Define output, and why?",
+        steps: [
+          "A Define output is a problem statement, so the test is whether the brief names a need rather than a thing to build.",
+          "The first brief names an artefact — a queue display — so the solution has already been chosen before Ideate begins.",
+          "The second names an outcome, waiting less, and leaves the form open.",
+          "Divergent thinking needs that openness: the second brief admits scheduling changes, more machines, or a notification, none of which the first brief can reach.",
+          "The second is also testable in the Test stage against a measurable outcome, where the first can only be tested for whether the display works.",
+        ],
+        answer:
+          "The second. A problem statement should name the need and leave the form of the solution open; the first has quietly performed Ideate's job and picked one.",
+      },
+    ],
+    check: [
+      {
+        question: "What is the output of the Define stage?",
+        answer:
+          "A single problem statement, framed around a user need, that the Ideate stage can generate against.",
+        why:
+          "Nearly every scenario question in this unit is answered by naming the missing handover between two stages.",
+      },
+      {
+        question:
+          "Why should judgement be held back during a divergent session?",
+        answer:
+          "Because evaluating ideas as they appear suppresses the unusual ones, and the point of diverging is to widen the set before it is narrowed.",
+        why:
+          "The convergent/divergent distinction is the most frequently examined idea in the unit.",
+      },
+      {
+        question: "Give an example of functional fixedness.",
+        answer:
+          "Failing to see that a chair can be a step-ladder, because it has been categorised as a thing to sit on.",
+        why:
+          "Blocks are examined by example, not by definition, so one concrete instance is worth more than the wording.",
+      },
+    ],
+  },
+};
+
+/** Topic code → 1-based unit number → the lesson stored for that unit. */
+const LESSONS: Record<string, Record<number, StoredLesson>> = {
+  MTH165: { 1: MTH165_UNIT1, 2: MTH165_UNIT2 },
+  INT335: { 1: INT335_UNIT1 },
+};
+
+/** The server counts these in Python over `body["sections"]`; so does this. */
+function citedSections(body: LessonBody): number {
+  return (body.sections ?? []).filter((s) => (s.quote ?? "").trim() !== "")
+    .length;
+}
+
+function toLesson(stored: StoredLesson): Lesson {
+  return {
+    id: stored.id,
+    status: stored.status,
+    notes: stored.notes,
+    created_at: stored.created_at,
+    cited_sections: citedSections(stored.body),
+    section_count: (stored.body.sections ?? []).length,
+    body: stored.body,
+  };
+}
+
+export async function getLessonIndex(): Promise<LessonIndexEntry[]> {
+  await delay(110);
+  const entries: LessonIndexEntry[] = [];
+  for (const t of TOPIC_META) {
+    const meta = metaFor(t.code);
+    // A subject with no syllabus on record cannot have a lesson written for
+    // it, so it is omitted rather than shown as six empty rows.
+    if (!meta || meta.units.length === 0) continue;
+    const written = LESSONS[t.code] ?? {};
+    entries.push({
+      topic_code: t.code,
+      full_name: meta.full_name || t.label,
+      written: meta.units.filter((_, i) => written[i + 1]).length,
+      units: meta.units.map((name, i) => {
+        const l = written[i + 1];
+        return {
+          number: i + 1,
+          name,
+          lesson: l
+            ? { id: l.id, status: l.status, created_at: l.created_at }
+            : null,
+        };
+      }),
+    });
+  }
+  return entries;
+}
+
+export async function getLesson(
+  topicCode: string,
+  unit: number,
+): Promise<LessonPage> {
+  await delay(180);
+  const path = `/api/teach/lessons/${topicCode}/${unit}`;
+  const topic = TOPIC_META.find((t) => t.code === topicCode);
+  // Same 404 for an unknown code and for someone else's subject: the server
+  // gives no existence oracle, and neither does the fixture.
+  if (!topic) {
+    throw new ApiError(404, path, `no topic '${topicCode}'`);
+  }
+  const meta = metaFor(topicCode);
+  const units = meta?.units ?? [];
+  if (units.length === 0) {
+    throw new ApiError(422, path, `${topicCode} has no syllabus units on record`);
+  }
+  if (!Number.isInteger(unit) || unit < 1 || unit > units.length) {
+    throw new ApiError(
+      422,
+      path,
+      `${topicCode} has ${units.length} units; there is no unit ${unit}`,
+    );
+  }
+  const stored = (LESSONS[topicCode] ?? {})[unit];
+  return {
+    topic_code: topicCode,
+    full_name: meta?.full_name || topic.label,
+    unit_number: unit,
+    unit_name: units[unit - 1],
+    lesson: stored ? toLesson(stored) : null,
+  };
 }

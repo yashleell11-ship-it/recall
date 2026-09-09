@@ -36,6 +36,10 @@ import { Kbd } from "./ui";
 const NAV = [
   { href: "/", label: "Today" },
   { href: "/review", label: "Review" },
+  // Between Review and Test because that is where the need appears: review is
+  // where you find out you do not actually understand unit 2, and a lesson is
+  // upstream of the paper you sit once you think you do.
+  { href: "/learn", label: "Learn" },
   { href: "/test", label: "Test" },
   { href: "/upload", label: "Upload" },
   { href: "/sources", label: "Sources" },
@@ -46,6 +50,7 @@ const NAV = [
 const GOTO: Record<string, string> = {
   d: "/",
   r: "/review",
+  l: "/learn",
   t: "/test",
   u: "/upload",
   o: "/sources",

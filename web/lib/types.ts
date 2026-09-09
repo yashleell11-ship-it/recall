@@ -363,6 +363,126 @@ export interface Explanation {
   cached: boolean;
 }
 
+/* --- lessons ------------------------------------------------------------- */
+
+/**
+ * How much of a written lesson Python was actually able to check.
+ *
+ * `grounded` — at least half the sections carry a quote found VERBATIM in the
+ * student's own uploaded course material, verified in Python. A real warranty.
+ * `unverified` — written and checked for structure and notation, but not
+ * anchored to anything: most of it is the model's own knowledge.
+ * `draft` — legacy rows written before the gate existed. The UI renders these
+ * exactly like `unverified`, because that is what they are.
+ *
+ * The two must never look the same on screen. See app/learn/Warranty.tsx.
+ */
+export type LessonStatus = "grounded" | "unverified" | "draft";
+
+/** One passage of the lesson. */
+export interface LessonSection {
+  heading: string;
+  body: string;
+  /**
+   * OPTIONAL / ADDITIVE. A quote the pipeline found word for word in the
+   * corpus. Absent means the section was written from the model's own
+   * knowledge — the reader marks it "model only" and shows no quote block.
+   * Anything the checker could not match verbatim was dropped before the
+   * lesson was stored, so a quote that IS here is one Python confirmed.
+   */
+  quote?: string;
+  /**
+   * OPTIONAL / ADDITIVE. Where the quote came from, e.g.
+   * "[1] ncert-matrices.pdf p12". A quote shown without any attribution is
+   * the exact failure the grounding gate exists to prevent, so the reader
+   * falls back to "your course material" rather than rendering the quote
+   * bare.
+   */
+  source?: string;
+}
+
+/** A derivation, shown in full. The steps are never hidden behind a control. */
+export interface LessonWorked {
+  question: string;
+  steps: string[];
+  answer: string;
+}
+
+/** A retrieval-practice question; `why` says what it is testing. */
+export interface LessonCheck {
+  question: string;
+  answer: string;
+  why: string;
+}
+
+/** `lessons.body_json`, parsed. */
+export interface LessonBody {
+  /** Two sentences: what this unit lets you do, and how it is examined. */
+  why: string;
+  /**
+   * OPTIONAL / ADDITIVE on all three. A legacy `draft` row predates the
+   * structure check and may carry none of them; every block renders only
+   * when its array is non-empty, and the page is still readable without it.
+   */
+  sections?: LessonSection[];
+  worked?: LessonWorked[];
+  check?: LessonCheck[];
+}
+
+/** A stored lesson, as GET /api/teach/lessons/{topic}/{unit} returns it. */
+export interface Lesson {
+  id: number;
+  status: LessonStatus;
+  /**
+   * What the checks recorded, one plain sentence per line — how much is
+   * grounded, which citations were dropped as paraphrase, what the
+   * re-derivation saw. Already split by the server so the client never has
+   * to string-split prose. Empty when the pipeline recorded nothing.
+   */
+  notes: string[];
+  created_at: string;
+  /** Sections carrying a non-empty quote, counted server-side in Python. */
+  cited_sections: number;
+  section_count: number;
+  body: LessonBody;
+}
+
+/** One syllabus unit on the index. `lesson` is null when nothing is written. */
+export interface LessonIndexUnit {
+  /** 1-based, the number printed on a timetable. */
+  number: number;
+  name: string;
+  lesson: {
+    id: number;
+    status: LessonStatus;
+    created_at: string;
+  } | null;
+}
+
+/** GET /api/teach/lessons — one entry per subject with syllabus units. */
+export interface LessonIndexEntry {
+  topic_code: string;
+  full_name: string;
+  /** How many of `units` have a lesson. Convenience; derivable from `units`. */
+  written: number;
+  units: LessonIndexUnit[];
+}
+
+/**
+ * GET /api/teach/lessons/{topic}/{unit}.
+ *
+ * 200 in both cases. `lesson: null` is a state, not an error — the unit name
+ * still comes back so the screen can name what is missing and print the exact
+ * command that writes it.
+ */
+export interface LessonPage {
+  topic_code: string;
+  full_name: string;
+  unit_number: number;
+  unit_name: string;
+  lesson: Lesson | null;
+}
+
 /* --- upload -------------------------------------------------------------- */
 
 /** POST /api/sources/upload */

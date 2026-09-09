@@ -14,6 +14,8 @@ import type {
   Explanation,
   GenerateResponse,
   Grade,
+  LessonIndexEntry,
+  LessonPage,
   PendingResponse,
   QueueResponse,
   ReviewResponse,
@@ -292,6 +294,36 @@ export function abandonTest(id: number): Promise<{ ok: true }> {
 }
 
 /* --- teaching ------------------------------------------------------------ */
+
+/**
+ * GET /api/teach/lessons — which syllabus units have a written lesson.
+ *
+ * A pure read. Lessons are written offline by `recall lessons <TOPIC>
+ * --unit N` because each one costs money and takes a minute or two; nothing
+ * on this path can start one. That is what makes it safe for the shell to
+ * fire on route intent — a hover must never turn into a paid call.
+ */
+export function getLessonIndex(): Promise<LessonIndexEntry[]> {
+  if (MOCK) return mock.getLessonIndex();
+  return request<LessonIndexEntry[]>("/api/teach/lessons");
+}
+
+/**
+ * GET /api/teach/lessons/{topic}/{unit} — one stored lesson, or null.
+ *
+ * 200 with `lesson: null` when nothing has been written for the unit: that is
+ * a state, not an error, and the unit name comes back either way. 404 for an
+ * unknown topic, 422 for a unit outside the syllabus. Also a pure read.
+ */
+export function getLesson(
+  topicCode: string,
+  unit: number,
+): Promise<LessonPage> {
+  if (MOCK) return mock.getLesson(topicCode, unit);
+  return request<LessonPage>(
+    `/api/teach/lessons/${encodeURIComponent(topicCode)}/${unit}`,
+  );
+}
 
 /** POST /api/teach/explain — 422 when the model could not cite its source. */
 export function postExplain(cardId: number): Promise<Explanation> {

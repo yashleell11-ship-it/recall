@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  getLessonIndex,
   getQueue,
   getSettings,
   getSources,
@@ -91,6 +92,7 @@ const RESOURCES: Record<string, () => Promise<unknown>> = {
   "test-picker": fetchPicker,
   sources: getSources,
   "upload-context": fetchUploadContext,
+  learn: getLessonIndex,
 };
 
 /** Which screen a path belongs to. Unlisted paths simply prefetch nothing. */
@@ -99,6 +101,10 @@ const ROUTE_KEY: Record<string, string> = {
   "/test": "test-picker",
   "/sources": "sources",
   "/upload": "upload-context",
+  // The reader's own key is per-unit (`lesson:MTH165:1`) and deliberately not
+  // here: there is nothing to prefetch until the path names a unit, and a
+  // registry entry that can never fire reads as a bug.
+  "/learn": "learn",
 };
 
 /**

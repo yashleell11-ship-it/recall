@@ -24,6 +24,7 @@ export const SHORTCUT_GROUPS: ShortcutGroup[] = [
       { keys: ["g", "d"], joiner: "then", description: "Go to today" },
       { keys: ["g", "r"], joiner: "then", description: "Start a review session" },
       { keys: ["g", "t"], joiner: "then", description: "Go to test" },
+      { keys: ["g", "l"], joiner: "then", description: "Go to lessons" },
       { keys: ["g", "u"], joiner: "then", description: "Go to upload" },
       { keys: ["g", "o"], joiner: "then", description: "Go to sources" },
       { keys: ["g", "s"], joiner: "then", description: "Go to settings" },

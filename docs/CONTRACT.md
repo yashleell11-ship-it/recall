@@ -307,6 +307,76 @@ Rules:
 - Explanations are prose for a first-year student: what the answer is, why, and the one
   distinction most likely to have caused the mistake. No preamble, no encouragement.
 
+## Reading a lesson
+
+A lesson is a unit's worth of teaching — a `why`, three to five sections, exactly two
+worked examples with their derivations, and a short self-check — written offline by
+`recall lessons <TOPIC> --unit N` and stored in `lessons`. **Writing one is never
+reachable over HTTP.** It takes a minute or two, costs money against the $1.00 per-user
+daily cap, and has no resume path.
+
+Reading one is two GETs, and they are the reason the feature exists at all: until they
+landed the only way to see a lesson was `docker exec ... python -m recall.cli
+lesson-show` over SSH, which is the `card_explanations` failure from the other
+end — the one teaching feature that shipped has zero rows because it sits behind a
+button nobody presses.
+
+| Method | Path | Request | Response |
+|---|---|---|---|
+| GET | `/api/teach/lessons` | — | `[{topic_code, full_name, written, units: [{number, name, lesson}]}]` |
+| GET | `/api/teach/lessons/{topic_code}/{unit}` | `unit` is **1-based** | `{topic_code, full_name, unit_number, unit_name, lesson}` |
+
+```
+lesson (index)  = null | {id, status, created_at}
+lesson (reader) = null | {id, status, notes, created_at,
+                          cited_sections, section_count, body}
+status          = "grounded" | "unverified" | "draft"
+                  "grounded"   — at least half the sections carry a quote Python found
+                                 VERBATIM in the uploaded course material. A warranty.
+                  "unverified" — written, and checked for structure and notation, but
+                                 anchored to nothing. Most of it is the model's own
+                                 knowledge.
+                  "draft"      — legacy; read it as "unverified".
+notes           = the pipeline's own sentences, one per line in the column, split into a
+                  list here so the client never string-splits prose. `[]` when null.
+body            = {why, sections: [{heading, body, quote?, source?}],
+                   worked: [{question, steps: [str], answer}] (exactly 2),
+                   check:  [{question, answer, why}]}
+```
+
+Rules:
+- **Neither route may cost money.** No `Depends(get_llm)`, no `DeepSeekClient` reachable
+  from either, ever. `web/lib/resources.ts::prefetchFor` fires on route *intent*, so a
+  paid GET here bills the owner for a hover. Neither route writes either — no cache row,
+  no view counter, no commit.
+- **A unit with nothing written is a 200 with `lesson: null`**, not a 404. It is a state,
+  not an error — it mirrors `latest_lesson` returning None — and the client needs
+  `unit_name` in hand to print `recall lessons MTH165 --unit 3` in its empty state, which
+  a 404 body cannot carry. There is no "write this lesson" button anywhere, for the
+  reason in the first paragraph.
+- `404` for a topic that is not yours, which is the same 404 an unknown code gets:
+  answering the two differently would make this route an oracle for what other accounts
+  study. `422` for a topic carrying no syllabus units, or a unit past the end of one.
+- **Ownership reaches lessons through `sources.user_id`.** `chunks` carries no user_id,
+  so that join is the only column that can refuse a chunk; `topics.user_id` is applied
+  as a second, independent gate on the same request. The index reproduces
+  `latest_lesson`'s selection rule exactly — same synthetic knowledge source, same
+  `unit_key` match, same newest-id-wins — so the list and the page it links to can never
+  disagree about which lesson is current.
+- The index lists **every** syllabus unit, written or not: "MTH165 unit 4 has nothing" is
+  information a student wants. Topics with no `meta.units` are omitted entirely — nothing
+  can be written for them. A stored lesson whose unit name matches no current syllabus
+  unit is dropped rather than filed under a neighbour, which is the `_unit_chunk_id`
+  ordinal bug arriving from the index side.
+- `cited_sections` / `section_count` count sections carrying a non-empty `quote`. This is
+  **not** a re-verification and does not call `check_grounding`: `drop_bad_citations`
+  already removed every quote that failed before the lesson was stored, so a stored quote
+  is by construction one Python found verbatim. Counting is honest and free; re-checking
+  would need the corpus on a read path and would become a second, drifting definition of
+  "verified". These two numbers are what the client's coverage meter and its
+  one-sentence warranty are built from, so no client ever parses `notes` to decide what
+  to show.
+
 ## Image and file upload
 
 Uploading is how notes get in from a phone, so this must work on a small screen over a

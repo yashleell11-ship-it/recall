@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
-from recall.api import auth_routes, knowledge_routes, scheduling
+from recall.api import auth_routes, knowledge_routes, learn_routes, scheduling
 from recall.api import teach_routes, tests_routes, upload_routes
 from recall.api.deps import get_conn, get_current_user
 from recall.db import connect, init_db
@@ -215,6 +215,7 @@ def create_app() -> FastAPI:
     app.include_router(knowledge_routes.router)
     app.include_router(tests_routes.router)
     app.include_router(teach_routes.router)
+    app.include_router(learn_routes.router)
     app.include_router(upload_routes.router)
 
     return app
