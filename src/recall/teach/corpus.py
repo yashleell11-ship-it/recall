@@ -117,10 +117,18 @@ _MIN_CHARS = 250
 #: full stop in sight. Measured per thousand characters.
 _MIN_SENTENCES_PER_KCHAR = 2.0
 
-#: " ," and " ." — a space before punctuation is where an inline symbol used to
-#: be. A scraped page whose MathML did not survive reads "For what value of
-#: does the matrix have rank ?", which is fluent, quotable, and teaches
-#: nothing. Above this share of the passage's sentences, it is a shell.
+#: Punctuation left hanging after a WORD is where an inline symbol used to be:
+#: a scraped page whose MathML did not survive reads "For what value of does
+#: the matrix have rank ?", which is fluent, quotable, and teaches nothing.
+#:
+#: It must be a word. Counting every " ," and " ." rejected the best paragraph
+#: on the Mean Value Theorem page, because a plaintext extract spaces its
+#: mathematics out — "f ( b ) ," and "f ( x ) ." tripped the rule thirteen
+#: times in a passage whose symbols were all present and correct. The symbols
+#: being THERE is the opposite of the failure this looks for.
+_ORPHAN = re.compile(r"(?<=[A-Za-z]{2})\s+[,.?](?=\s|$)")
+
+#: Above this share of the passage's sentences, it is a shell.
 _MAX_ORPHAN_RATIO = 0.25
 
 
@@ -176,7 +184,7 @@ def passage_is_usable(text: str) -> bool:
         return False
     if looks_symbol_stripped(body):
         return False
-    orphans = body.count(" ,") + body.count(" .") + body.count(" ?")
+    orphans = len(_ORPHAN.findall(body))
     return orphans / max(sentences, 1) <= _MAX_ORPHAN_RATIO
 
 
@@ -184,7 +192,7 @@ def passage_is_usable(text: str) -> bool:
 #: Measured on the MTH165 unit 1 load: 35% of HTML chunks carry a scraper
 #: artefact — a bare "TEXT" marker where a formula was, or leaked LaTeX —
 #: against 2% of PDF chunks. Seventeen times worse.
-_DOCUMENT_SUFFIXES = (".pdf", ".pptx", ".docx", ".ppt", ".doc")
+_DOCUMENT_SUFFIXES = (".pdf", ".pptx", ".docx", ".ppt", ".doc", ".txt")
 
 #: …so documents take most of the slots. The rest are RESERVED for scraped
 #: pages rather than merely capped, which is the whole subtlety: this unit has
@@ -230,9 +238,41 @@ _LATEX_FIXES: tuple[tuple[str, str], ...] = (
 )
 
 
+def _strip_displaystyle(text: str) -> str:
+    """Remove Wikipedia's `{\\displaystyle …}` twins.
+
+    A plaintext extract prints every formula twice: once in real characters and
+    once as LaTeX, e.g.
+
+        f ′ ( c ) = f ( b ) − f ( a ) b − a . {\\displaystyle f'(c)={\\frac {f(b)-f(a)}{b-a}}.}
+
+    The first half is readable and uses the right symbols; the second is noise
+    that doubles the passage's length. That length is what made the quality
+    filter reject the best paragraph on the Mean Value Theorem page — sentences
+    per thousand characters fell below the floor because half the characters
+    were a duplicate nobody reads.
+
+    Brace-matched rather than regexed: these nest, and a lazy `\\{[^}]*\\}` stops
+    at the first inner brace and leaves the tail behind.
+    """
+    for marker in ("{\\displaystyle", "{\\textstyle"):
+        while (start := text.find(marker)) != -1:
+            depth, i = 0, start
+            while i < len(text):
+                if text[i] == "{":
+                    depth += 1
+                elif text[i] == "}":
+                    depth -= 1
+                    if depth == 0:
+                        break
+                i += 1
+            text = text[:start] + text[i + 1:] if i < len(text) else text[:start]
+    return text
+
+
 def clean_latex(text: str) -> str:
     """Turn a scraper's leftover LaTeX into the symbols it stood for."""
-    out = text or ""
+    out = _strip_displaystyle(text or "")
     for pattern, repl in _LATEX_FIXES:
         out = re.sub(pattern, repl, out)
     return out

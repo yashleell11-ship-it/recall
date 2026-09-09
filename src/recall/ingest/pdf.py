@@ -8,8 +8,15 @@ import fitz
 #: those are pages, not PDFs — PyMuPDF renders one into laid-out pages with
 #: script and style already dropped, so no HTML parser is needed and no new
 #: dependency comes with it. EPUB and XPS come along for free.
+#:
+#: `.txt` is here for the opposite reason: it is the format with nothing to go
+#: wrong. A PDF can lose its symbols in extraction — OpenStax Calculus reached
+#: a lesson as "If is continuous over and differentiable over and then there
+#: exists a point such that" — and a scraped page arrives wrapped in its
+#: navigation. Plain text is already the thing, and PyMuPDF paginates it like
+#: anything else.
 DOCUMENT_SUFFIXES = frozenset({".pdf", ".html", ".htm", ".xhtml", ".epub",
-                               ".xps", ".fb2", ".mobi"})
+                               ".xps", ".fb2", ".mobi", ".txt"})
 
 
 def document_kind(path: str) -> str:

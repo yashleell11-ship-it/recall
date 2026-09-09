@@ -889,3 +889,56 @@ def test_two_chunks_are_enough_to_spot_a_header():
     out = strip_boilerplate([chrome + "Rank content. " + filler,
                              chrome + "Eigen content. " + filler])
     assert all("Exam Center" not in o for o in out)
+
+
+def test_spaced_out_mathematics_is_not_mistaken_for_stripped_mathematics():
+    """The orphan rule counted every " ," and " ." as a symbol that had been
+    deleted. A plaintext extract spaces its mathematics out instead — "f ( b ) ,"
+    and "f ( x ) ." — and that tripped it thirteen times in the best paragraph
+    on the Mean Value Theorem page, whose symbols were all present and correct.
+    The symbols being THERE is the opposite of the failure being looked for.
+
+    Measured: 13% of the reference pages survived the filter before this, 80%
+    after.
+    """
+    from recall.teach.corpus import passage_is_usable
+
+    wiki = ("In calculus and real analysis, the mean value theorem is a theorem "
+            "about differentiable functions. There exists some c in ( a , b ) "
+            "such that f ′ ( c ) = f ( b ) − f ( a ) , which is the slope of "
+            "the chord joining ( a , f ( a ) ) and ( b , f ( b ) ) . This "
+            "generalises Rolle's theorem, which assumes f ( a ) = f ( b ) . It "
+            "is examined most years and the hypotheses matter.")
+    assert passage_is_usable(wiki)
+
+    # The failure it must still catch: symbols REMOVED, punctuation stranded
+    # after a word.
+    gutted = ("Reveal Answer Correct Answer: Explanation: From , multiply by to "
+              "get . Substitution gives . Incorrect! Try again. For what value "
+              "of does the matrix have rank ? Rank of a matrix Medium A. B. C. "
+              "D. Correct Answer . This bank covers the whole unit.")
+    assert not passage_is_usable(gutted)
+
+
+def test_a_plaintext_extracts_duplicate_latex_is_removed():
+    r"""A Wikipedia plaintext extract prints every formula twice — once in real
+    characters, once as {\displaystyle …}. The duplicate is noise that doubles
+    the passage's length, and length is what the quality filter divides by."""
+    from recall.teach.corpus import clean_latex
+
+    out = clean_latex(
+        "such that f ′ ( c ) = f ( b ) − f ( a ) . "
+        "{\\displaystyle f'(c)={\\frac {f(b)-f(a)}{b-a}}.} The theorem "
+        "generalises Rolle's.")
+    assert "displaystyle" not in out and "frac" not in out
+    assert "f ′ ( c ) = f ( b ) − f ( a ) ." in out
+    assert "The theorem generalises Rolle's." in out
+
+
+def test_plain_text_counts_as_a_document_not_a_scrape():
+    """It is the format with nothing to go wrong: no extraction to lose the
+    symbols, no navigation wrapped around it."""
+    from recall.teach.corpus import is_document
+
+    assert is_document("/c/wikipedia-rolle-s-theorem.txt")
+    assert not is_document("/c/MTH165-unit2-notes.html")
