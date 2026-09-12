@@ -52,12 +52,52 @@ _BANNED: tuple[tuple[str, str], ...] = (
     (r"\\sum\b", "∑"),
     (r"\\sqrt\b", "√"),
     (r"\\lambda\b|\\theta\b|\\alpha\b|\\beta\b|\\pi\b", "the Greek letter itself"),
-    (r"\^\{", "a real superscript, x²"),
     (r"\$[^$\n]{1,80}\$", "no LaTeX math mode"),
     # `2 * x`, `a*b` — multiplication typed as code. Not `**` (Python power in
     # a code span is already exempt) and not a lone asterisk used as a bullet.
     (r"(?<![\w*])[\w)\]]\s*\*\s*[\w(\[](?!\*)", "× or juxtaposition"),
 )
+
+#: Every character Unicode actually gives a superscript for. This is the
+#: whole set — there is no superscript π, no superscript θ, and no way to
+#: stack "2π" or "π/4" at all.
+_SUPERSCRIPT = {
+    "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴",
+    "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹",
+    "+": "⁺", "-": "⁻", "−": "⁻", "=": "⁼", "(": "⁽", ")": "⁾",
+    "a": "ᵃ", "b": "ᵇ", "c": "ᶜ", "d": "ᵈ", "e": "ᵉ", "f": "ᶠ", "g": "ᵍ",
+    "h": "ʰ", "i": "ⁱ", "j": "ʲ", "k": "ᵏ", "l": "ˡ", "m": "ᵐ", "n": "ⁿ",
+    "o": "ᵒ", "p": "ᵖ", "r": "ʳ", "s": "ˢ", "t": "ᵗ", "u": "ᵘ", "v": "ᵛ",
+    "w": "ʷ", "x": "ˣ", "y": "ʸ", "z": "ᶻ",
+}
+
+#: `x^{2}`, `A^{-1}`, `∫₀^{2π}` — the LaTeX brace form.
+_BRACED_SUPERSCRIPT = re.compile(r"\^\{([^{}]{1,24})\}")
+
+
+def _as_superscript(content: str) -> str | None:
+    """The real superscript for `content`, or None if Unicode has no way
+    to write it.
+
+    This is the difference between a rule with teeth and a rule that
+    cannot be obeyed. `x^{2}` really should be `x²` and `A^{-1}` really
+    should be `A⁻¹` — those exist. But an integral limit like `2π` or
+    `π/4` has no superscript form at all, and banning `^{...}` outright
+    demanded something impossible: MTH165 unit 5 (multiple integrals) was
+    rejected twice in a row, entirely on limits like ∫₀^{2π}, with every
+    complaint unfixable by construction. A gate nobody can satisfy is a
+    gate that gets switched off, taking the useful part with it.
+    """
+    if not content:
+        return None
+    out = []
+    for ch in content:
+        mapped = _SUPERSCRIPT.get(ch.lower() if ch.isalpha() else ch)
+        if mapped is None:
+            return None
+        out.append(mapped)
+    return "".join(out)
+
 
 #: Spelled-out Greek in running prose. Word-boundaried and lower-cased so
 #: "Lambda expression" and "Beta release" survive; only the standalone
@@ -87,6 +127,15 @@ def check_notation(text: str) -> list[str]:
             snippet = prose[max(0, m.start() - 24):m.end() + 24].strip()
             found.append(f"wrote {m.group(0)!r} where mathematics wants "
                          f"{instead} — near: …{snippet}…")
+    for m in _BRACED_SUPERSCRIPT.finditer(prose):
+        real = _as_superscript(m.group(1))
+        if real is None:
+            # No Unicode superscript exists for this content (∫₀^{2π},
+            # ∫₀^{π/4}). Allowed — see _as_superscript.
+            continue
+        snippet = prose[max(0, m.start() - 24):m.end() + 24].strip()
+        found.append(f"wrote {m.group(0)!r} where mathematics wants "
+                     f"{real} — near: …{snippet}…")
     for m in _SPELLED_GREEK.finditer(prose):
         snippet = prose[max(0, m.start() - 24):m.end() + 24].strip()
         found.append(f"spelled out {m.group(1)!r} instead of using the letter "

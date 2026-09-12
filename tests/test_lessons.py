@@ -1204,3 +1204,48 @@ def test_only_sentences_worth_citing_are_offered():
                           "non-zero rows in its row echelon form. Ok.")
     assert got == ["The rank of a matrix is the number of non-zero rows in "
                    "its row echelon form."]
+
+
+# --- superscripts: the rule has to be satisfiable -------------------------
+#
+# MTH165 unit 5 (multiple integrals) was rejected twice in a row, entirely
+# on integral limits like ∫₀^{2π}. Every complaint was unfixable by
+# construction: Unicode has no superscript π, so there is no way to write
+# what the gate was demanding. A gate nobody can satisfy is a gate that
+# gets switched off, taking the useful part with it — so `^{...}` is now
+# banned only where a real superscript actually exists.
+
+
+def test_braced_superscript_is_caught_when_unicode_has_one():
+    assert check_notation("the inverse A^{-1} appears")
+    assert check_notation("x^{2} + 1")
+    assert check_notation("the nth power x^{n}")
+
+
+def test_complaint_names_the_actual_replacement():
+    """A repair pass told 'wants ²' can fix it; 'wants a real superscript'
+    is a hint it has to guess at."""
+    (complaint,) = check_notation("x^{2}")
+    assert "²" in complaint
+
+
+def test_integral_limits_unicode_cannot_write_are_allowed():
+    # There is no superscript π, and no way to stack "2π" or "π/4".
+    assert check_notation("∫₀^{2π} cos⁴θ dθ") == []
+    assert check_notation("∫₀^{π/4} sin φ dφ") == []
+    assert check_notation("V = ∫₀^{2π} ∫₀^{π/4} ρ² sin φ dρ dφ dθ") == []
+
+
+def test_a_mixed_expression_complains_only_about_the_fixable_part():
+    complaints = check_notation("∫₀^{2π} ∫₀^{π/4} ∫₀^{2} ρ² sin φ")
+    assert len(complaints) == 1
+    assert "^{2}" in complaints[0]
+
+
+def test_multi_character_superscripts_that_do_exist_are_still_caught():
+    (complaint,) = check_notation("(-1)^{n+1} sin(nx)")
+    assert "ⁿ⁺¹" in complaint
+
+
+def test_superscripts_inside_code_are_left_alone():
+    assert check_notation("the expression `x^{2}` in LaTeX source") == []
