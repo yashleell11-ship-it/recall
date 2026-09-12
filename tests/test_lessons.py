@@ -1249,3 +1249,223 @@ def test_multi_character_superscripts_that_do_exist_are_still_caught():
 
 def test_superscripts_inside_code_are_left_alone():
     assert check_notation("the expression `x^{2}` in LaTeX source") == []
+
+
+# ---------------------------------------------------------------------------
+# What MTH165 unit 5 actually shipped, and the three bugs behind it.
+#
+# The unit's first grounded lesson cited, verbatim and verifiably:
+#
+#   "MATH A=int_α^βint_0^{R(θ)}r\,dr\,dthe =frac12int_α^β R(θ)^2\,dθ"
+#
+# Every gate passed it. `check_grounding` proved the span was copied from the
+# course material; the notation law never saw it, because that law is applied to
+# the lesson's prose and a quote is not prose. What reached the student was
+# LaTeX wreckage wearing a citation's warranty.
+#
+# Three causes, each tested below:
+#
+#   1. `\b` is the wrong boundary for a LaTeX command. `_` is a word character,
+#      so `\int_0`, `\geq0` and `\lambda_1` had NO word boundary after the
+#      command name and matched none of the symbol rules. 1424 chunks of this
+#      corpus contain `int_`.
+#   2. The catch-all kept the command's letters — `\frac12\int` became
+#      `frac12int`, which reads as a word and passes every shell filter. That is
+#      worse than leaving the LaTeX alone, because the LaTeX was obviously broken.
+#   3. `MATH` is a formula placeholder, like `TEXT`, in 352 chunks.
+# ---------------------------------------------------------------------------
+
+
+def test_an_integral_keeps_its_symbol_when_a_subscript_follows():
+    r"""The boundary bug, at its most expensive. `\int_0` is the normal way to
+    write a definite integral, and `\\int\b` never matched it."""
+    from recall.teach.corpus import clean_latex
+
+    assert clean_latex(r"\int_0^{2\pi}") == "∫_0^{2π}"
+    assert clean_latex(r"\sum_{i=1}^n a_i") == "∑_{i=1}^n a_i"
+    assert clean_latex(r"\lambda_1 and \lambda_2") == "λ_1 and λ_2"
+    assert clean_latex(r"\(f(x,y)\geq0\)") == "f(x,y)≥0"
+
+
+def test_the_longer_integral_is_not_read_as_the_shorter_one():
+    """`\\iiint` must not resolve to ∬ with a stray i in front of it."""
+    from recall.teach.corpus import clean_latex
+
+    assert clean_latex(r"\iiint_V dV") == "∭_V dV"
+    assert clean_latex(r"\iint_R f\,dA") == "∬_R f dA"
+    assert clean_latex(r"\oint_C") == "∮_C"
+
+
+def test_an_unresolved_command_is_dropped_not_turned_into_a_word():
+    """The second bug. Keeping the letters manufactures prose out of a formula:
+    `frac12int` is quotable, survives every filter, and says nothing."""
+    from recall.teach.corpus import clean_latex
+
+    out = clean_latex(r"\qquad\varnothing\mathscr{X}")
+    assert "qquad" not in out and "varnothing" not in out and "mathscr" not in out
+
+
+def test_the_exact_citation_mth165_unit_5_shipped():
+    """End to end, on the real bytes from MTH165-unit5-notes.html."""
+    from recall.teach.corpus import clean_latex, _FORMULA_PLACEHOLDER
+
+    raw = (r"then MATH A=\int_\alpha^\beta\int_0^{R(\theta)}r\,dr\,d\the "
+           r"=\frac12\int_\alpha^\beta R(\theta)^2\,d\theta.")
+    out = clean_latex(_FORMULA_PLACEHOLDER.sub("", raw))
+    # Every piece of debris the student was shown, gone.
+    for debris in ("MATH", "int_α", "frac12", "\\,", "dthe"):
+        assert debris not in out, debris
+    # And the mathematics that was underneath it, present.
+    assert "∫_α^β" in out and "1/2" in out and "dθ" in out
+
+
+def test_a_fraction_becomes_the_notation_law_s_own_prescription():
+    """The law says write a/b. A quote is read the same way as the prose."""
+    from recall.teach.corpus import clean_latex
+
+    assert clean_latex(r"\frac{a}{b}") == "a/b"
+    assert clean_latex(r"\frac{4}{3}\pi a^3") == "4/3π a^3"
+    assert clean_latex(r"\frac12") == "1/2"
+
+
+def test_formula_spacing_becomes_a_space_not_a_join():
+    r"""`r\,dr` is `r dr`, not `rdr` — the one edit here that cannot change
+    what a formula says is also the one that must not run words together."""
+    from recall.teach.corpus import clean_latex
+
+    assert clean_latex(r"r\,dr\,d\theta") == "r dr dθ"
+
+
+def test_an_environment_leaves_no_name_behind():
+    r"""Dropping only `\begin` left `{align}` sitting in the prose."""
+    from recall.teach.corpus import clean_latex
+
+    assert clean_latex(r"\begin{align} x=1 \end{align}").strip() == "x=1"
+
+
+def test_the_second_spelling_of_the_formula_placeholder_is_stripped():
+    from recall.teach.corpus import _FORMULA_PLACEHOLDER
+
+    assert _FORMULA_PLACEHOLDER.sub("", "then MATH V=1") == "then  V=1"
+    # ...and a word that merely contains it is left alone.
+    assert _FORMULA_PLACEHOLDER.sub("", "MATHS and MATHEMATICS") \
+        == "MATHS and MATHEMATICS"
+
+
+# ---------------------------------------------------------------------------
+# The scaffolding, stripped rather than refused.
+# ---------------------------------------------------------------------------
+
+
+def test_furniture_is_removed_so_the_explanation_behind_it_survives():
+    """Why stripping beats refusing. The scaffolding is glued to the FRONT of a
+    real explanation with no full stop between them, so the sentence splitter
+    offers the writer one span containing both — and refusing that quote threw
+    the explanation away too, after the generation was paid for."""
+    from recall.teach.corpus import strip_furniture
+
+    out = strip_furniture(
+        "A. B. C. D. Reveal Answer Hide Answer Correct Answer: Explanation: "
+        "The notation states that row two is replaced by itself plus three "
+        "times row one.")
+    assert "Reveal Answer" not in out and "Correct Answer:" not in out
+    assert ("The notation states that row two is replaced by itself plus "
+            "three times row one." in out)
+
+
+def test_a_run_of_markers_goes_in_one_piece():
+    """Four in a row is the real shape. Removing them one at a time would leave
+    the whitespace between them behind."""
+    from recall.teach.corpus import strip_furniture
+
+    out = strip_furniture("D. Reveal Answer Hide Answer Correct Answer: "
+                          "Explanation: The matrix has 2 rows.")
+    assert "  " not in out.replace("D.  ", "D. ")
+
+
+def test_furniture_matching_ignores_case_because_scrapers_do_not():
+    from recall.teach.corpus import strip_furniture
+
+    assert "reveal" not in strip_furniture("REVEAL ANSWER The rank is 2.").lower()
+
+
+def test_the_strip_list_and_the_reject_list_are_the_same_list():
+    """Two places deciding what furniture is, computed differently, is the drift
+    this codebase keeps paying for."""
+    from recall.teach.corpus import FURNITURE
+    from recall.teach import lessons as L
+
+    assert L._FURNITURE is FURNITURE
+
+
+# ---------------------------------------------------------------------------
+# The backstop: debris is withheld from the writer, not rejected after the fact.
+# ---------------------------------------------------------------------------
+
+
+def test_debris_is_caught_even_when_the_backslashes_are_already_gone():
+    """The case no cleaner can reach. Some scrapes arrive with the backslashes
+    already stripped, so there is no marker left to find the command by —
+    "(z=f(x,y)geq0)" and "rho^2sinphi" are both real, from MTH165 unit 5. The
+    glue against a symbol or a digit is the only signal there is."""
+    from recall.teach.corpus import looks_like_latex_debris
+
+    assert looks_like_latex_debris("(z=f(x,y)geq0) above (R)")
+    assert looks_like_latex_debris("rho^2sinphi drho")
+    assert looks_like_latex_debris("then MATH V=iint_R f dA")
+    assert looks_like_latex_debris(r"a stray \, backslash")
+
+
+def test_ordinary_prose_is_not_debris():
+    """A check that cries wolf gets switched off, and then there is no check."""
+    from recall.teach.corpus import looks_like_latex_debris
+
+    for clean in ("A citation must stay verbatim in the course material.",
+                  "The interval from 0 to 5 contains the point.",
+                  "The matrix has 2 rows and 3 columns, so its order is 2x3.",
+                  "Integration by parts is the reverse of the product rule.",
+                  "Summing the series gives a finite limit."):
+        assert not looks_like_latex_debris(clean), clean
+
+
+def test_a_debris_sentence_is_never_OFFERED_to_the_writer():
+    """The whole point of putting the check here. The writer cites by NUMBER, so
+    a sentence that is not in the table cannot be quoted — no repair round, no
+    paid generation thrown away, and no way for the debris to reach a student."""
+    from recall.teach.corpus import split_sentences
+
+    got = split_sentences(
+        "A double integral is evaluated as two successive single integrals. "
+        "MATH A=int_alpha^beta int_0^{R(theta)} r dr dtheta. "
+        "The outer limits must be constants for the iteration to work.")
+    assert len(got) == 2
+    assert all("int_" not in s and "MATH" not in s for s in got)
+
+
+def test_the_numbering_the_writer_reads_and_the_resolver_honours_still_agree():
+    """`split_sentences` both offers the sentences and resolves the number sent
+    back, so a filter added to it must be applied to both or neither."""
+    from recall.teach.lessons import numbered_passages
+
+    passages = [{"text": "The rank of a matrix is the number of independent "
+                         "rows it has. MATH r=frac{a}{b}. A matrix is "
+                         "consistent when its ranks agree.",
+                 "filename": "notes.html", "page_ref": "p1"}]
+    shown, table = numbered_passages(passages)
+    assert len(table[0]) == 2
+    for i, sentence in enumerate(table[0], 1):
+        assert sentence in shown
+        assert "MATH" not in sentence
+
+
+def test_a_stored_lesson_quoting_debris_is_still_convicted():
+    """`lesson-recheck` runs over lessons written before the cleaner was fixed,
+    and MTH165 unit 5's is one of them."""
+    from recall.teach.lessons import _quote_is_furniture
+
+    # The length check is cheaper and fires first, so use the full span that
+    # actually shipped rather than a fragment of it.
+    why = _quote_is_furniture(
+        r"• Polar area: If (R) is described by (α≤θ≤β) and (0≤ r≤ R(θ)), then "
+        r"MATH A=int_α^βint_0^{R(θ)}r\,dr\,dthe =frac12int_α^β R(θ)^2\,dθ.")
+    assert why is not None and "wreckage" in why

@@ -207,34 +207,84 @@ _DOCUMENT_SUFFIXES = (".pdf", ".pptx", ".docx", ".ppt", ".doc", ".txt")
 #: text; the scrape has the better sentences.
 _RESERVED_FOR_SCRAPED = 0.25
 
+#: The Greek a scraper's LaTeX was standing in for. Listed rather than pulled
+#: from a library so the set is reviewable, and because the notation law names
+#: the real characters as the whole point.
+_GREEK: tuple[tuple[str, str], ...] = (
+    ("alpha", "α"), ("beta", "β"), ("gamma", "γ"), ("delta", "δ"),
+    ("varepsilon", "ε"), ("epsilon", "ε"), ("zeta", "ζ"), ("eta", "η"),
+    ("vartheta", "θ"), ("theta", "θ"), ("iota", "ι"), ("kappa", "κ"),
+    ("lambda", "λ"), ("mu", "μ"), ("nu", "ν"), ("xi", "ξ"), ("rho", "ρ"),
+    ("sigma", "σ"), ("tau", "τ"), ("upsilon", "υ"), ("varphi", "φ"),
+    ("phi", "φ"), ("chi", "χ"), ("psi", "ψ"), ("omega", "ω"), ("pi", "π"),
+    ("Gamma", "Γ"), ("Delta", "Δ"), ("Theta", "Θ"), ("Lambda", "Λ"),
+    ("Xi", "Ξ"), ("Sigma", "Σ"), ("Upsilon", "Υ"), ("Phi", "Φ"),
+    ("Psi", "Ψ"), ("Omega", "Ω"), ("Pi", "Π"),
+)
+
 #: LaTeX a scraper left in the text. A citation must stay verbatim, so it
 #: cannot be tidied after the fact — the only place to fix this is BEFORE the
 #: writer sees the passage, and then the quote is verbatim against the cleaned
 #: text. Without this, "(\\operatorname{rank}(A)=k)" reached a student inside a
 #: verified citation, having sailed past the notation law: that law is applied
 #: to the lesson's prose, and a quote is not prose the model is free to write.
+#:
+#: **The boundary is `(?![A-Za-z])`, never `\\b`.** That was the bug that let
+#: MTH165 unit 5 ship the grounded citation "A=int_α^βint_0^{R(θ)}r\\,dr\\,dthe
+#: =frac12int_α^β R(θ)^2\\,dθ". A command ends where its NAME ends, and `_` is
+#: a word character — so `\\int_0`, `\\geq0` and `\\lambda_1` had no word
+#: boundary after the command, matched none of these rules, and fell through to
+#: the catch-all. 1424 chunks of this corpus contain `int_`; every definite
+#: integral in it had lost its ∫.
 _LATEX_FIXES: tuple[tuple[str, str], ...] = (
     (r"\\operatorname\{([^}]*)\}", r"\1"),
-    (r"\\(?:mathrm|mathbf|mathit|text|textbf)\{([^}]*)\}", r"\1"),
-    (r"\\mid", "|"),
-    (r"\\(?:ldots|cdots|dots)", "…"),
-    (r"\\(?:leq|le)\b", "≤"),
-    (r"\\(?:geq|ge)\b", "≥"),
-    (r"\\(?:neq|ne)\b", "≠"),
-    (r"\\times\b", "×"),
-    (r"\\lambda\b", "λ"),
-    (r"\\theta\b", "θ"),
-    (r"\\alpha\b", "α"),
-    (r"\\beta\b", "β"),
-    (r"\\pi\b", "π"),
-    (r"\\infty\b", "∞"),
-    (r"\\sum\b", "∑"),
-    (r"\\int\b", "∫"),
-    (r"\\sqrt\b", "√"),
+    (r"\\(?:mathrm|mathbf|mathbb|mathcal|mathit|text|textbf)\{([^}]*)\}", r"\1"),
+    # An environment's name is not text. `\begin{align}` left `{align}` behind
+    # when only the command was dropped.
+    (r"\\(?:begin|end)\{[^{}]*\}", ""),
+    # The notation law prescribes a/b for a fraction, so a quote gets the same
+    # — a student reads a quote and the prose around it the same way.
+    (r"\\frac\{([^{}]*)\}\{([^{}]*)\}", r"\1/\2"),
+    (r"\\[dt]?frac(\d)(\d)", r"\1/\2"),
+    (r"\\mid(?![A-Za-z])", "|"),
+    (r"\\(?:ldots|cdots|dots)(?![A-Za-z])", "…"),
+    (r"\\(?:leq|le)(?![A-Za-z])", "≤"),
+    (r"\\(?:geq|ge)(?![A-Za-z])", "≥"),
+    (r"\\(?:neq|ne)(?![A-Za-z])", "≠"),
+    (r"\\approx(?![A-Za-z])", "≈"),
+    (r"\\times(?![A-Za-z])", "×"),
+    (r"\\cdot(?![A-Za-z])", "·"),
+    (r"\\pm(?![A-Za-z])", "±"),
+    (r"\\(?:to|rightarrow)(?![A-Za-z])", "→"),
+    (r"\\partial(?![A-Za-z])", "∂"),
+    (r"\\infty(?![A-Za-z])", "∞"),
+    (r"\\nabla(?![A-Za-z])", "∇"),
+    (r"\\sum(?![A-Za-z])", "∑"),
+    (r"\\prod(?![A-Za-z])", "∏"),
+    # Longest first: `\iiint` must not be read as `\iint` with a stray i.
+    (r"\\iiint(?![A-Za-z])", "∭"),
+    (r"\\iint(?![A-Za-z])", "∬"),
+    (r"\\oint(?![A-Za-z])", "∮"),
+    (r"\\int(?![A-Za-z])", "∫"),
+    (r"\\sqrt(?![A-Za-z])", "√"),
+    (r"\\in(?![A-Za-z])", "∈"),
+    (r"\\cup(?![A-Za-z])", "∪"),
+    (r"\\cap(?![A-Za-z])", "∩"),
+) + tuple((rf"\\{name}(?![A-Za-z])", ch) for name, ch in _GREEK) + (
+    # A formula's whitespace. Removing it is the one edit here that cannot
+    # change what the formula says.
+    (r"\\hspace\{[^{}]*\}", " "),
+    (r"\\(?:quad|qquad)(?![A-Za-z])", " "),
+    (r"\\[,;:!>]", " "),
     (r"\\[()\[\]]", ""),
     (r"\$+", ""),
-    # Anything still carrying a backslash: keep the word, drop the marker.
-    (r"\\([A-Za-z]+)", r"\1"),
+    # Anything still carrying a backslash is a command with no symbol here, so
+    # DROP it, name and all. Keeping the letters — which is what this used to do
+    # — is worse than leaving the LaTeX alone: `\frac12\int` became `frac12int`,
+    # which reads as a word, quotes cleanly, passes every shell filter, and
+    # teaches nothing. A dropped command leaves a hole instead, and a passage
+    # full of holes is exactly what `passage_is_usable` already refuses.
+    (r"\\[A-Za-z]+", ""),
 )
 
 
@@ -280,7 +330,80 @@ def clean_latex(text: str) -> str:
 
 #: A scraper's placeholder for a formula it could not render. Dropping it makes
 #: the sentence read as written and keeps a quote from having to step over it.
-_FORMULA_PLACEHOLDER = re.compile(r"(?<![A-Za-z])TEXT(?![A-Za-z])")
+#:
+#: `MATH` is the second spelling, found in the MTH165 unit 5 notes — 352 chunks
+#: carry it, and one reached a student inside a grounded citation reading "then
+#: MATH A=int_α^β…". Every scraper picks its own word for this, which is why the
+#: sentence-level backstop below exists as well.
+_FORMULA_PLACEHOLDER = re.compile(r"(?<![A-Za-z])(?:TEXT|MATH)(?![A-Za-z])")
+
+
+#: Text that is furniture rather than teaching: a scraped site's quiz
+#: scaffolding and navigation, which a page chunk carries into the same passage
+#: as the real content.
+#:
+#: Stripped here, not merely refused later. MTH165 unit 5 ground at 50% because
+#: two of its four sections cited sentences that BEGAN "Reveal Answer Hide
+#: Answer Correct Answer: Explanation:" — the scaffolding is glued to the front
+#: of a real explanation with no full stop between them, so the sentence
+#: splitter offers the writer one span containing both. Refusing that quote threw
+#: the explanation away with it, and it happened only after the generation was
+#: paid for. Removing the scaffolding leaves the explanation citable.
+#:
+#: `lessons.py` checks stored quotes against this same tuple, so the two cannot
+#: drift into disagreeing about what furniture is.
+FURNITURE: tuple[str, ...] = (
+    "reveal answer", "hide answer", "correct answer:", "incorrect!",
+    "try again", "explanation:", "ctrl+k", "view all updates", "mark all read",
+    "you're offline", "exam center", "offline library", "request material",
+    "loading…", "click here", "download pdf", "table of contents",
+)
+
+#: A RUN of markers, not one at a time: the real text is "Reveal Answer Hide
+#: Answer Correct Answer: Explanation:", four of them in a row, and removing
+#: them one by one would leave the whitespace between them behind.
+_FURNITURE_RUN = re.compile(
+    r"(?:(?:" + "|".join(re.escape(m) for m in FURNITURE) + r")\s*)+",
+    re.IGNORECASE)
+
+
+def strip_furniture(text: str) -> str:
+    """Remove a scraped page's scaffolding, leaving the teaching behind."""
+    return _FURNITURE_RUN.sub(" ", text or "")
+
+
+#: LaTeX command names, for finding wreckage a cleaner could not name. Only the
+#: distinctive ones: `mu`, `pi` and `end` are words and short identifiers as
+#: often as they are commands, and a check that cries wolf gets switched off.
+_LATEX_NAMES = (
+    "iiint", "iint", "oint", "int", "sum", "prod", "frac", "sqrt", "cdot",
+    "qquad", "quad", "displaystyle", "operatorname", "mathrm", "mathbb",
+    "mathcal", "leq", "geq", "neq", "infty", "partial", "alpha", "beta",
+    "gamma", "delta", "theta", "lambda", "sigma", "rho", "varphi", "phi",
+    "psi", "omega",
+)
+
+#: Debris `clean_latex` could not fix. Two kinds: a surviving backslash, and a
+#: command name butted straight against a symbol or a digit in a source whose
+#: backslashes were ALREADY stripped before it reached us — "(z=f(x,y)geq0)"
+#: and "rho^2sinphi" are both real, from MTH165 unit 5, and there is no marker
+#: left in them to find the command by except the glue. In ordinary prose these
+#: words are followed by a space or a full stop.
+_DEBRIS = re.compile(
+    r"\\"
+    r"|(?<![A-Za-z])(?:" + "|".join(_LATEX_NAMES) + r")[_^{}\d]"
+    r"|(?<![A-Za-z])(?:MATH|TEXT)(?![A-Za-z])")
+
+
+def looks_like_latex_debris(text: str) -> bool:
+    """True when a span still carries the wreckage of a formula.
+
+    The backstop under `clean_latex`, because no list of commands is ever
+    complete. It runs where sentences are OFFERED rather than where quotes are
+    judged: the writer cites by number, so a sentence this refuses cannot be
+    quoted at all, and nothing has to be generated, paid for and then rejected.
+    """
+    return _DEBRIS.search(text or "") is not None
 
 
 def is_document(filename: str) -> bool:
@@ -406,7 +529,8 @@ def split_sentences(text: str) -> list[str]:
     """
     flat = " ".join((text or "").split())
     return [s.strip() for s in _SENTENCE.split(flat)
-            if len(s.split()) >= _MIN_CITABLE_WORDS]
+            if len(s.split()) >= _MIN_CITABLE_WORDS
+            and not looks_like_latex_debris(s)]
 
 
 #: Matches lessons._MIN_QUOTE_WORDS. Kept here as its own name because this is
@@ -447,7 +571,9 @@ def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
         for r, text in zip(group, strip_boilerplate([g["text"] for g in group])):
             cleaned.append((r, text))
 
-    cleaned = [(r, clean_latex(_FORMULA_PLACEHOLDER.sub("", t)))
+    # Scaffolding first, then the formula placeholders, then the LaTeX: each
+    # one is noise the NEXT step would otherwise have to read around.
+    cleaned = [(r, clean_latex(_FORMULA_PLACEHOLDER.sub("", strip_furniture(t))))
                for r, t in cleaned]
     cleaned = [(r, t) for r, t in cleaned if passage_is_usable(t)]
     if not cleaned:
@@ -534,7 +660,8 @@ def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
             for r in picked[:limit]]
 
 
-__all__ = ["clean_latex", "ensure_vectors", "is_document", "load_source",
-           "looks_symbol_stripped",
+__all__ = ["FURNITURE", "clean_latex", "ensure_vectors", "is_document",
+           "load_source", "looks_like_latex_debris", "looks_symbol_stripped",
            "passage_is_usable", "plan_load",
-           "read_manifest", "strip_boilerplate", "unit_passages"]
+           "read_manifest", "strip_boilerplate", "strip_furniture",
+           "unit_passages"]

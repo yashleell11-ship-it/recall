@@ -31,7 +31,8 @@ from recall.generate.knowledge import _synthetic_source_id, _unit_chunk_id
 from recall.generate.unit_guidance import guidance_for, topics_for
 from recall.config import Config
 from recall.notation import check_notation
-from recall.teach.corpus import unit_passages
+from recall.teach.corpus import (FURNITURE, looks_like_latex_debris,
+                                 unit_passages)
 from recall.pipeline import _cost
 from recall.teach.lesson_prompts import (
     DEFAULT_SHAPE,
@@ -103,12 +104,13 @@ def _normalise_quote(text: str) -> str:
 #: pages, so a scraped site's navigation bar and its real content land in the
 #: same passage and no passage-level filter separates them. What can be checked
 #: is the QUOTE — the span that actually reaches the student.
-_FURNITURE = (
-    "reveal answer", "hide answer", "correct answer:", "try again",
-    "ctrl+k", "view all updates", "mark all read", "you're offline",
-    "exam center", "offline library", "request material", "loading…",
-    "click here", "download pdf", "table of contents",
-)
+#:
+#: Imported, not restated. `corpus.strip_furniture` now removes these from the
+#: passage before the writer ever sees it, which is the cheaper place to do it
+#: — a quote refused here has already been paid for. This check stays as the
+#: backstop, and reads the same tuple so the two cannot come to disagree about
+#: what furniture is.
+_FURNITURE = FURNITURE
 
 #: A citation shorter than this is not carrying a definition or a condition.
 #: Six, not eight: the first grounded run was refused partly over
@@ -132,6 +134,12 @@ def _quote_is_furniture(quote: str) -> str | None:
         if marker in low:
             return (f"contains {marker!r}, which is page furniture from a "
                     "scraped site, not course material")
+    if looks_like_latex_debris(quote or ""):
+        # A formula that did not survive being scraped. Verbatim, verifiable,
+        # and unreadable: MTH165 unit 5 shipped "MATH A=int_α^βint_0^{R(θ)}
+        # r\,dr\,dthe =frac12int_α^β R(θ)^2\,dθ" as a grounded citation.
+        return ("still carries the wreckage of a formula the scrape lost, so "
+                "a student would read LaTeX debris, not mathematics")
     return None
 
 
