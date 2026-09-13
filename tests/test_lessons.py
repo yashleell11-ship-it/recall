@@ -2250,3 +2250,41 @@ def test_the_rule_lives_outside_the_debris_check_and_says_something_different():
     why = _quote_is_furniture(quote)
     assert why is not None
     assert "ten times too large" in why
+
+
+def test_the_private_use_rule_is_presence_based_on_purpose():
+    """Against its own verification, and on evidence gathered afterwards.
+
+    That verification measured a presence rule BEFORE `_PUA_SYMBOL` existed, found
+    it removing 19% of one file's sentences, and reasonably asked for a share
+    guard. With recovery in place presence refuses 0.39% of the corpus's 116,586
+    offered sentences, worst case 2.40% in MEC103.
+
+    A share guard would also be the wrong shape. What survives recovery is not one
+    lost symbol in good prose but whole words in a subsetted font: 87 distinct code
+    points, of which this is "ISOMETRIC PROJECTION". High share and low share are
+    the same defect."""
+    from recall.teach.corpus import looks_like_latex_debris
+
+    scrambled = ("CHAPTER 1 ⊆"
+                 "∠⊆√"
+                 " 1.2 ISOMETRIC PROJECTION follows on from this.")
+    assert looks_like_latex_debris(scrambled)
+    # One stray glyph in otherwise good prose is refused too, deliberately: the
+    # sentence is still showing a student a box where a character belongs.
+    assert looks_like_latex_debris("the sunk key  is shown in the figure")
+
+
+def test_recovery_stops_where_the_font_stops_being_guessable():
+    """`_PUA_SYMBOL` works because Adobe Symbol's low byte is the ASCII of the
+    glyph slot — U+F070 is its "p", which draws π. The scrambled-subset fonts are
+    not that: U+F0D7's low byte is 0xD7 and U+F0DB's is 0xDB, neither a letter, so
+    there is nothing to map from."""
+    from recall.teach.corpus import _PUA_SYMBOL, clean_latex
+
+    mapped = {bad for bad, _good in _PUA_SYMBOL}
+    # The recoverable ones are in Symbol's letter and punctuation range.
+    assert "" in mapped and clean_latex("") == "π"
+    # The scrambled-subset ones are not claimed.
+    for unguessable in ("", "", "", ""):
+        assert unguessable not in mapped, unguessable

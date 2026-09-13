@@ -700,8 +700,30 @@ _LATEX_NAMES = (
 #: left in them to find the command by except the glue. In ordinary prose these
 #: words are followed by a space or a full stop.
 #: A private-use code point is, by definition, text no font can draw, so a
-#: sentence carrying one shows a student a tofu box. 413 offered sentences carry
-#: one that `clean_latex` had no mapping for.
+#: sentence carrying one shows a student a tofu box.
+#:
+#: Presence, not share — and that is the opposite of what the verification
+#: recommended, because the verification measured a presence rule BEFORE
+#: `_PUA_SYMBOL` existed. It found presence removing 199 of 1,043 sentences in the
+#: CBSE textbook, 19%, and reasonably asked for a share guard instead. Measured
+#: again with recovery in place, presence now refuses 457 of 116,586 offered
+#: sentences across the whole corpus — 0.39%, and at worst 2.40% in MEC103:
+#:
+#:     CSE111 0.25%   CSE326 0.00%   INT108 0.12%
+#:     INT335 0.00%   MEC103 2.40%   MTH165 0.82%
+#:
+#: A share guard would be the wrong shape anyway, because what is left is not one
+#: lost symbol in good prose. 87 distinct code points survive, and they are whole
+#: WORDS in a subsetted font with no ToUnicode map — "ISOMETRIC PROJECTION" arrives
+#: as `\uf0d7\uf0cd\uf0d1\uf0d3\uf0db\uf0cc⊆\uf0d7\uf0dd\uf020∠⊆\uf0d1√\uf0db\uf0dd\uf0cc\uf0d7\uf0d1\uf0d2`,
+#: which is most of its sentence. A high-share sentence and a low-share one are the
+#: same defect here.
+#:
+#: Nor can the rest be recovered the way `_PUA_SYMBOL` recovers Adobe Symbol. That
+#: table works because Symbol's low byte is the ASCII of the glyph slot: U+F070 is
+#: its "p", which draws π. These are not that — U+F0D7's low byte is 0xD7, U+F0DB's
+#: is 0xDB, and neither is a letter. The font carries its own subset encoding, so
+#: there is nothing to map from and the sentence has to go.
 #:
 #: **Deliberately NOT here: "Z" for ∫.** MIT's LaTeX PDFs use Computer Modern
 #: extensible glyphs and PyMuPDF maps them to Latin letters — ∫ becomes "Z", ∬
