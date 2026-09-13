@@ -2063,35 +2063,42 @@ def test_the_section_number_strip_is_deliberately_absent():
         assert _flat(kept) == kept
 
 
-def test_the_header_mega_nav_is_left_in_the_passage_and_refused_at_the_offer():
-    """Two different jobs, and only one of them is deletion.
+def test_the_menu_is_stopped_in_three_places_and_none_of_them_is_furniture():
+    """Three layers, each doing what the others cannot, and the order they were
+    added in matters.
 
-    No boundary for MDN's 340-word header could be proved safe to CUT: an
-    anchored run from "Skip to main content" has no reliable end marker, and
-    refusing any span with four or more bullets drops 656 offered CSE326
-    sentences, some of them real bullet-list teaching. So the text stays in the
-    passage — and is withheld where candidates are OFFERED instead, which costs
-    nothing because a candidate the writer is never shown cannot be cited.
+    1. At INGEST, MDN's header nav and sidebar trees are dropped with the
+       elements that hold them, before PyMuPDF lays the page out. That is the
+       only thing that reaches the curriculum tree and the property-index dumps.
+    2. What survives as a run — the skip-links, the pager, the footer — is
+       removed here, anchored as whole multi-word shapes.
+    3. Anything still menu-shaped is REFUSED where candidates are offered,
+       deleting nothing.
 
-    Adding "skip to main content" to FURNITURE would have been actively worse
-    than doing nothing: measured, it leaves the 1,784-character menu usable and
-    citable while deleting the one fingerprint a backstop could match, so
-    `_quote_is_furniture` then returns None and the evidence is hidden."""
+    Adding the bare phrase "skip to main content" to FURNITURE was rejected and
+    stays rejected: measured, it deleted the one fingerprint a backstop could
+    match while leaving the 1,784-character menu citable, hiding the evidence and
+    keeping the menu. The anchored PAIR is safe only because layer 1 removed the
+    menu that fingerprint used to stand for."""
     from recall.teach.corpus import FURNITURE, split_sentences
 
-    # Bulleted ITEMS, the way the menu actually renders — not bulleted words.
+    assert "skip to main content" not in FURNITURE
+    assert "skip to search" not in FURNITURE
+
+    # Layer 2: the skip-links, welded to the page title and opening definition.
+    assert _flat("•  Skip to main content •  Skip to search The box model "
+                 "Everything in CSS has a box around it.")         == "The box model Everything in CSS has a box around it."
+
+    # Layer 3: a menu that reached the offering step anyway is withheld, not cut.
     nav = " ".join("• " + item for item in (
         "Skip to main content", "Skip to search", "HTML", "CSS", "JavaScript",
         "Guides", "Reference", "Elements", "Global attributes", "Attributes",
         "Events", "Learn", "Tutorials", "Curriculum", "Blog", "Play", "Tools",
         "About", "Advertise with us", "Donate", "MDN Plus", "FAQ",
         "Accessibility", "Web development", "Web standards"))
-    # Nothing is deleted from the passage...
-    assert "Skip to main content" in _flat(nav)
-    assert "skip to main content" not in FURNITURE
-    # ...and nothing of it is offered to a writer either.
     assert split_sentences(nav) == []
-    # The real bullet-list teaching a blunt rule would have taken is still offered.
+
+    # ...and the real bullet-list teaching a blunt rule would have taken is kept.
     teaching = ("• The alternative box model (accessed via box-sizing: "
                 "border-box) and how it differs from the regular box model. "
                 "• Margin collapsing. • Basic display values and how they "

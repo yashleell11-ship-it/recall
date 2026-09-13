@@ -586,6 +586,16 @@ _PAGE_CHROME: tuple[tuple[str, int], ...] = (
     # makes it safe: the bare phrase "in this article" is real prose in about 39
     # CSE326 sentences and 1 OpenStax one.
     (r"In this article(?:\s*•[^\n]*)+", 0),
+    # The accessibility skip-links, as an anchored PAIR.
+    #
+    # A bare "skip to main content" entry was rejected earlier, and rightly: it
+    # deleted the one fingerprint a backstop could match while leaving MDN's
+    # 1,784-character menu citable, hiding the evidence and keeping the menu.
+    # That menu is now removed at ingest, before PyMuPDF ever lays the page out,
+    # so there is no longer anything behind these two links for the fingerprint to
+    # stand for — and they are what remains welded to the front of the page title
+    # and the opening definition.
+    (r"•\s*Skip to main content\s*•\s*Skip to search", re.I),
     # Anchored, NOT a bare "learn how to contribute" entry. That phrase as
     # furniture destroys a real 39-word Pro Git sentence in CSE111 — "you'll learn
     # how to contribute code successfully to a project…" — and because FURNITURE
