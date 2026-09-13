@@ -2162,3 +2162,91 @@ def test_the_refusal_deletes_nothing_so_code_cannot_be_damaged():
            "border-box; } That sets every control to one width.")
     offered = split_sentences(css)
     assert any("box-sizing: border-box; }" in s for s in offered), offered
+
+
+# ---------------------------------------------------------------------------
+# The angle whose degree sign became a digit.
+#
+# The drawing PDFs set ° as a small raised ring in a symbol font, and
+# page.get_text() returns the ASCII digit "0" — so "inclined at 75° to the H.P"
+# becomes "inclined at 750 to the H.P". It is the worst shape a defect can take:
+# no hole, just a plausible wrong number, in the one subject where the angle IS
+# the question. 188 of MEC103's 9,671 offered sentences.
+# ---------------------------------------------------------------------------
+
+LOST_DEGREES = (
+    "inclined at 750 to the H.P. and passing through the apex",
+    "makes an angle of 300 with VP",
+    "locks at 150 intervals",
+    "The isometric axes are inclined at 1200 to each other",
+    "a line measuring 900 to the xy line",
+)
+
+#: Every one measured as a false positive of the obvious version of this rule.
+#: The first is from Python for Everybody and the codebase's own notation law
+#: says code is the exception that must never be corrected; the next four are a
+#: web course where 1200, 900 and 1500 are viewport sizes and timeouts; the rest
+#: are MEC103's own unit 1, whose syllabus line is "Dimensioning, Scales and
+#: Conic Sections".
+REAL_NUMBERS = (
+    "second = '150' and print(first + second) gives 100150",
+    "setTimeout(fn, 1500) schedules the callback",
+    "for i in range(1500): total += i",
+    "The HTTP status code 300 means multiple choices",
+    "A canvas element with width 1200 and height 900",
+    "font-size: 150% of the parent element",
+    "the works of Eudoxus (440 B.C.) and Archimedes (300 B.C.)",
+    "In 1800 Gauss proved the fundamental theorem of algebra",
+    "Matrix A has eigenvalue 150 with multiplicity two",
+    "Designation Length X Width (mm) D0 1500 X 1000 A0 D1 1000 X 700",
+    "A2 420 x 594 450 x 625 A3 297 x 420 330 x 450",
+    "RF such as 10:1; 150:1 etc are the enlarged scales",
+    "Chennai - 600 032",
+    "Leonardo's Canon Foundry 1500 AD 1488",
+    "COVERS HORIZONTAL DISTANCE 150 M ON GROUND",
+)
+
+
+def test_an_angle_that_lost_its_degree_sign_is_refused():
+    from recall.teach.corpus import looks_like_lost_degree
+
+    for sentence in LOST_DEGREES:
+        assert looks_like_lost_degree(sentence), sentence
+
+
+def test_a_number_that_is_really_a_number_is_left_alone():
+    """This is why the rule needs drawing context and not just the token shapes.
+    Without it: three hits across 1,371 non-MEC103 sentences, three false
+    positives, zero true positives."""
+    from recall.teach.corpus import looks_like_lost_degree
+
+    for sentence in REAL_NUMBERS:
+        assert not looks_like_lost_degree(sentence), sentence
+
+
+def test_a_degree_sentence_is_never_offered_to_a_writer():
+    from recall.teach.corpus import split_sentences
+
+    text = ("A pentagonal pyramid rests on its base on the ground. "
+            "Its axis is inclined at 750 to the H.P. and the base edge is "
+            "parallel to the V.P. "
+            "Draw its projections using the change of position method.")
+    offered = split_sentences(text)
+    assert not any("750" in s for s in offered), offered
+    assert any("change of position method" in s for s in offered)
+
+
+def test_the_rule_lives_outside_the_debris_check_and_says_something_different():
+    """Two reasons it is its own predicate. The message differs — a flattened
+    superscript is not "the wreckage of a formula the scrape lost" — and _DEBRIS
+    is global, so anything put there applies to every subject, including the
+    Python REPL transcript above."""
+    from recall.teach.corpus import looks_like_latex_debris
+    from recall.teach.lessons import _quote_is_furniture
+
+    quote = ("The axis of the pyramid is inclined at 750 to the H.P. and the "
+             "base is parallel to the vertical plane of projection.")
+    assert not looks_like_latex_debris(quote)
+    why = _quote_is_furniture(quote)
+    assert why is not None
+    assert "ten times too large" in why

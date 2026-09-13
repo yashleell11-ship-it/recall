@@ -854,6 +854,67 @@ def ensure_vectors(conn, chunk_ids: list[int], embed=None, on_progress=None) -> 
 _SENTENCE = re.compile(r"(?<=[.!?])\s+(?=[A-Z(\[])")
 
 
+#: An angle whose degree sign became a digit.
+#:
+#: In the drawing-course PDFs the degree sign is drawn as a small raised ring in a
+#: symbol font, and `page.get_text()` returns it as the ASCII digit "0" — so every
+#: angle silently gains a decimal place and "inclined at 75° to the H.P" becomes
+#: "inclined at 750 to the H.P". This is the worst shape a defect can take: it
+#: leaves no hole, it leaves a PLAUSIBLE WRONG NUMBER, and MEC103 is a subject
+#: where the angle is the question. 188 of its 9,671 offered sentences.
+#:
+#: Refused, not repaired, and kept as its own predicate rather than folded into
+#: `_DEBRIS`. Two reasons. The message differs — a flattened superscript is not
+#: "the wreckage of a formula the scrape lost" — and `_DEBRIS` is global, so
+#: anything put there is applied to every subject.
+#:
+#: That globality is exactly what makes the obvious version unshippable. Matching
+#: these tokens without context rejects, measured: a Python for Everybody REPL
+#: transcript (">>> second = '150' >>> print(first + second) 100150"), "the works
+#: of Eudoxus (440 B.C.) and Archimedes (300 B.C.)", "setTimeout(fn, 1500)",
+#: "range(1500)", "HTTP status code 300", "width 1200 and height 900",
+#: "font-size: 150%" and "eigenvalue 150" — and CSE326 is a web course where
+#: 1200, 900 and 1500 are viewport sizes and timeouts. Three hits across 1,371
+#: non-MEC103 sentences, three false positives, zero true positives.
+#:
+#: Inside MEC103 the naive form is only 83% precise, and its collateral lands on
+#: unit 1, whose syllabus line is "Dimensioning, Scales and Conic Sections": the
+#: drawing-board table "D0 1500 X 1000", the sheet sizes "450 x 625", the scale
+#: ratios "150:1", "Chennai - 600 032", "Leonardo's Canon Foundry 1500 AD".
+#:
+#: So the token shapes that are literal numbers are excluded, and a drawing word
+#: must appear within 45 characters. That rejects 140 rather than 188, keeps every
+#: prose case that is a true degree loss, and fires zero times outside MEC103.
+_DEGREE_ZERO = re.compile(
+    r"(?<![\d.:/–-])(?:15|30|45|60|75|90|105|120|135|150|180)0(?![\d:])"
+    r"(?!\s*(?:[Mm]{1,2}|[Cc][Mm]|[Kk][Mm]|kg|rpm|[Nn]|AD|BC|[Xx×]|\d{3})\b)")
+
+#: The vocabulary of a drawing office. Without it this rule is unshippable.
+_DEGREE_CTX = re.compile(
+    r"inclin|angle|degree|chamfer|countersunk|counter sunk|csk|measur|"
+    r"perpendicular|isometric|flank|apex|bevel|rotat|interval|"
+    r"to (the )?(H\.?P|V\.?P|xy|axis)|with (the )?(H\.?P|V\.?P)", re.I)
+
+#: How far either side of the number a drawing word may sit.
+_DEGREE_CTX_WINDOW = 45
+
+
+def looks_like_lost_degree(text: str) -> bool:
+    """True when a number in this span was almost certainly an angle.
+
+    A repair would be better than a refusal and is possible — 83% of these carry
+    the evidence in the PDF, as a raised or smaller glyph that `rawdict` exposes —
+    but that changes `read_document` for every subject and needs the whole corpus
+    re-loaded. This is the cheap half, and it is the half that stops a wrong
+    number reaching a student now.
+    """
+    for m in _DEGREE_ZERO.finditer(text or ""):
+        start = max(0, m.start() - _DEGREE_CTX_WINDOW)
+        if _DEGREE_CTX.search(text[start:m.end() + _DEGREE_CTX_WINDOW]):
+            return True
+    return False
+
+
 #: The glyphs a rendered link list is built from. `○` is not decoration: Google's
 #: nav nests it inside `•`, so a set without it leaves that menu citable.
 _BULLET = re.compile(r"[•○‣▪▸»]")
@@ -907,6 +968,7 @@ def split_sentences(text: str) -> list[str]:
     return [s.strip() for s in _SENTENCE.split(flat)
             if len(s.split()) >= _MIN_CITABLE_WORDS
             and not looks_like_latex_debris(s)
+            and not looks_like_lost_degree(s)
             and not _is_link_list(s)]
 
 
@@ -1038,7 +1100,8 @@ def unit_passages(conn, *, user_id: int, topic_id: int, unit_name: str,
 
 
 __all__ = ["FURNITURE", "clean_latex", "ensure_vectors", "is_document",
-           "load_source", "looks_like_latex_debris", "looks_symbol_stripped",
+           "load_source", "looks_like_latex_debris", "looks_like_lost_degree",
+           "looks_symbol_stripped",
            "passage_is_usable", "plan_load",
            "read_manifest", "strip_boilerplate", "strip_furniture",
            "strip_running_heads", "unit_passages"]

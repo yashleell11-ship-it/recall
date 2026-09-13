@@ -32,7 +32,7 @@ from recall.generate.unit_guidance import guidance_for, topics_for
 from recall.config import Config
 from recall.notation import check_notation, fix_notation
 from recall.teach.corpus import (FURNITURE, looks_like_latex_debris,
-                                 unit_passages)
+                                 looks_like_lost_degree, unit_passages)
 from recall.pipeline import _cost
 from recall.teach.lesson_prompts import (
     DEFAULT_SHAPE,
@@ -134,6 +134,12 @@ def _quote_is_furniture(quote: str) -> str | None:
         if marker in low:
             return (f"contains {marker!r}, which is page furniture from a "
                     "scraped site, not course material")
+    if looks_like_lost_degree(quote or ""):
+        # Its own message, not the debris one. A flattened superscript is not
+        # "the wreckage of a formula the scrape lost", and a student needs to
+        # know the NUMBER is wrong rather than the typography.
+        return ("contains an angle whose degree sign was extracted as a digit, "
+                "so the number a student would read is ten times too large")
     if looks_like_latex_debris(quote or ""):
         # A formula that did not survive being scraped. Verbatim, verifiable,
         # and unreadable: MTH165 unit 5 shipped "MATH A=int_α^βint_0^{R(θ)}
