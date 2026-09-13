@@ -275,9 +275,15 @@ _LATEX_FIXES: tuple[tuple[str, str], ...] = (
     # change what the formula says.
     (r"\\hspace\{[^{}]*\}", " "),
     (r"\\(?:quad|qquad)(?![A-Za-z])", " "),
+    # A row or line break inside a matrix or an aligned block. It must come
+    # before the single-character unescape below, or `\\` becomes a lone
+    # backslash — which is how "(A=begin{bmatrix} 1&1\\0&2end{bmatrix})" reached a
+    # student inside a grounded MTH165 unit 1 citation even after `\begin` was
+    # being dropped: every rule here matched a backslash followed by LETTERS, and
+    # this one is followed by another backslash.
+    (r"\\\\", " "),
     (r"\\[,;:!>]", " "),
     (r"\\[()\[\]]", ""),
-    (r"\$+", ""),
     # Anything still carrying a backslash is a command with no symbol here, so
     # DROP it, name and all. Keeping the letters — which is what this used to do
     # — is worse than leaving the LaTeX alone: `\frac12\int` became `frac12int`,
@@ -285,6 +291,11 @@ _LATEX_FIXES: tuple[tuple[str, str], ...] = (
     # teaches nothing. A dropped command leaves a hole instead, and a passage
     # full of holes is exactly what `passage_is_usable` already refuses.
     (r"\\[A-Za-z]+", ""),
+    # ...and a backslash before anything else was escaping a literal: \{ \} \%
+    # \& \_ \# all stand for the character itself. Last, so no rule above has
+    # to guard against a stray backslash it did not expect.
+    (r"\\(.)", r"\1"),
+    (r"\$+", ""),
 )
 
 

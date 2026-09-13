@@ -1675,3 +1675,66 @@ def test_a_lesson_with_no_fields_does_not_explode():
                  {"sections": [{"heading": 3}], "check": ["not a dict"]}):
         repair_notation(body)
         assert isinstance(lesson_text(body), str)
+
+
+# ---------------------------------------------------------------------------
+# Four citations that were live on study.yashnas.xyz.
+#
+# Taken verbatim from the lessons a student could open on 2026-09-13 — three of
+# the six grounded MTH165 lessons carried one. They are the regression fixtures
+# for the cleaner, because they are what the corpus actually did to us rather
+# than what we imagined it might.
+# ---------------------------------------------------------------------------
+
+LIVE_DEBRIS_CITATIONS = (
+    # unit 3, "Integration by parts" — a spacing command survived whole.
+    (r"• (du=u'(x)\,dx) and (dv=v'(x)\,dx). • Choice of factors: Select (u) so "
+     r"that differentiating it simplifies the expression.", "\\"),
+    # unit 1, "Cayley-Hamilton" — an environment, and a line break read as \0.
+    (r"• Worked example: For (A=begin{bmatrix} 1&1\0&2end{bmatrix}), "
+     r"p(λ) = (λ−1)(λ−2) = λ²−3λ+2.", "\\"),
+    # unit 5, polar area — the placeholder plus the boundary bug together.
+    (r"• Polar area: If (R) is described by (α≤θ≤β) and (0≤ r≤ R(θ)), then MATH "
+     r"A=int_α^βint_0^{R(θ)}r\,dr\,dthe =frac12int_α^β R(θ)^2\,dθ.", "MATH"),
+    # unit 5, spherical bounds — \leq with its backslash ALREADY stripped, so
+    # there is no marker left to find the command by except the glue.
+    ("• Worked example: For a sphere of radius (a>0), spherical bounds are "
+     "(0≤rho≤ a), (0≤phi≤π), and (0≤θleq2π).", "leq2"),
+)
+
+
+def test_every_citation_that_was_live_is_caught():
+    from recall.teach.corpus import looks_like_latex_debris
+    from recall.teach.lessons import _quote_is_furniture
+
+    for quote, _tell in LIVE_DEBRIS_CITATIONS:
+        assert looks_like_latex_debris(quote), quote[:60]
+        assert _quote_is_furniture(quote) is not None, quote[:60]
+
+
+def test_the_hardest_one_had_no_backslash_left_to_find_it_by():
+    """`(0≤θleq2π)` is what `\\leq2\\pi` becomes when the scrape strips the
+    backslashes before we ever see it. No cleaner can reach that — only the glue
+    between a command name and a digit gives it away, which is the whole reason
+    the sentence-level backstop exists."""
+    from recall.teach.corpus import looks_like_latex_debris
+
+    assert "\\" not in "(0≤θleq2π)"
+    assert looks_like_latex_debris("(0≤θleq2π)")
+
+
+def test_the_fixed_cleaner_would_not_have_produced_them():
+    """Each of these came out of a passage the OLD cleaner had already been
+    over. Run the current one on the LaTeX behind them and the debris is gone —
+    which is what makes regenerating these three lessons worth the money."""
+    from recall.teach.corpus import clean_latex, looks_like_latex_debris
+
+    for source, cleaned_should_not_contain in (
+            (r"(du=u'(x)\,dx) and (dv=v'(x)\,dx)", "\\"),
+            (r"(A=\begin{bmatrix} 1&1\\0&2\end{bmatrix})", "begin"),
+            (r"(0\leq\theta\leq2\pi)", "leq"),
+            (r"A=\int_\alpha^\beta\frac12", "frac"),
+    ):
+        out = clean_latex(source)
+        assert cleaned_should_not_contain not in out, (source, out)
+        assert not looks_like_latex_debris(out), (source, out)
