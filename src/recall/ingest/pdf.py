@@ -56,6 +56,36 @@ def document_kind(path: str) -> str:
 #: <main> at all and would come through empty.
 _CHROME_ELEMENTS = frozenset({"nav", "aside", "footer", "header"})
 
+#: How wide to lay a markup document out, and why it is not left to the default.
+#:
+#: PyMuPDF hard-clips a non-wrapping <pre> line at the right margin — the tail is
+#: DISCARDED, not wrapped onto the next line. In a web-programming course the code
+#: IS the teaching content, so this silently truncates the thing the page exists to
+#: show: unterminated attributes, unclosed tags, half-written statements. On
+#: /corpus/CSE326/u3-mdn-box-model.html alone, 8 of its 33 code lines of 30
+#: characters or more were losing their tails, among them
+#:
+#:     <span>words</span> have been wrapped in a <span>span element</span>.
+#:
+#: which arrived as 53 of its 68 characters.
+#:
+#: Two separate things had to be true, both measured on a 176-character line:
+#: `layout()` must be CALLED at all — without it 56 of 176 characters survive, at
+#: A4 86 — and the page must be WIDE — 1000pt keeps 147, 1600 keeps all 176.
+#: Calling `layout()` with no rect raises "bad page size".
+#:
+#: The cost of a wide page is fewer laid-out pages: that file goes from 20 to 4.
+#: That would matter if a page number meant anything here, and it does not — an MDN
+#: page has no pages, so the number is a PyMuPDF artifact that no student can look
+#: up, and the filename is the real provenance. Chunk count is unchanged at 8,
+#: because chunking splits on characters rather than on pages.
+#:
+#: The residual limit, named rather than left to be discovered: a line beyond
+#: roughly 190 characters still loses its tail. Teaching code is rarely that long,
+#: and going wider collapses the document toward one page for no further gain.
+_MARKUP_PAGE = fitz.Rect(0, 0, 1600, 2200)
+
+
 #: A last-resort net for a parse that went badly wrong. Deliberately very low:
 #: the real hazard is detected exactly (see `unterminated`), and a share-based
 #: guard set anywhere near a sensible-looking value silently disables the strip
@@ -200,6 +230,7 @@ def read_document(path: str) -> list[tuple[int, str]]:
     if Path(path).suffix.lower() in _MARKUP_SUFFIXES:
         stream = strip_html_chrome(Path(path).read_bytes())
         doc = fitz.open(stream=stream, filetype="html")
+        doc.layout(rect=_MARKUP_PAGE)
     else:
         doc = fitz.open(path)
     out: list[tuple[int, str]] = []

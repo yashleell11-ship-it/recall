@@ -219,3 +219,36 @@ def test_an_escaped_code_sample_comes_through_as_the_code_it_shows():
     to write an entity."""
     text = _text_of(ESCAPING_PAGE)
     assert "if (a &lt; b) { return a &amp; b; }" in text
+
+
+def test_a_long_code_line_keeps_its_tail():
+    """PyMuPDF hard-clips a non-wrapping <pre> line at the right margin — the tail
+    is DISCARDED, not wrapped. In a web course the code IS the teaching content, so
+    this silently truncated the thing the page exists to show. On the real
+    u3-mdn-box-model.html, 8 of its 33 code lines of 30+ characters lost their
+    tails, among them "<span>words</span> have been wrapped in a <span>span
+    element</span>." which arrived as 53 of its 68 characters.
+
+    Two separate things had to be true, both measured on a 176-character line:
+    layout() must be CALLED (without it 56 of 176 survive; at A4, 86) and the page
+    must be WIDE (1000pt keeps 147, 1600 keeps all 176)."""
+    long_line = ("document.querySelector('#very-long-selector-name')"
+                 ".addEventListener('click', (event) => { "
+                 "event.preventDefault(); console.log('a fairly long line of "
+                 "teaching code indeed'); });")
+    assert len(long_line) > 170
+    page = ("<html><body><main><p>Before.</p><pre>%s</pre><p>After.</p>"
+            "</main></body></html>" % long_line).encode()
+    text = " ".join(_text_of(page).split())
+    assert " ".join(long_line.split()) in text
+
+
+def test_layout_needs_an_explicit_rect():
+    """`layout()` with no argument raises "bad page size", which is why the size is
+    named in a constant rather than left out."""
+    import fitz
+
+    from recall.ingest.pdf import _MARKUP_PAGE
+
+    assert isinstance(_MARKUP_PAGE, fitz.Rect)
+    assert _MARKUP_PAGE.width >= 1600, "narrower pages clip long code lines"
