@@ -585,6 +585,11 @@ def cmd_corpus_load(args, cfg) -> int:
     return 0
 
 
+#: What one lesson call costs on deepseek-chat, near enough for a pre-flight.
+#: From what MTH165 actually billed: $0.0112 and $0.0116 for a three-call run.
+_COST_PER_CALL_USD = 0.004
+
+
 def cmd_lessons(args, cfg) -> int:
     """Write a lesson for one syllabus unit, or several.
 
@@ -634,9 +639,15 @@ def cmd_lessons(args, cfg) -> int:
             state = f"have one ({have['status']})" if have else "none yet"
             print(f"  unit {u}: {units[u - 1]}  [{state}]")
         n = len(wanted)
+        # Per CALL, not per lesson. The estimate used to multiply one call's
+        # price by the lesson count while printing "3 calls each" beside it,
+        # so it understated a rederive run threefold — and this number is the
+        # last thing read before money is spent. Measured against what
+        # MTH165 actually cost: $0.0112 and $0.0116 for three calls.
+        calls = 1 + (0 if args.no_rederive else 2)
         print(f"\nwould write {n} lesson{'s' if n != 1 else ''}, "
-              f"{1 + (0 if args.no_rederive else 2)} calls each, "
-              f"about ${0.004 * n:.3f} total")
+              f"{calls} call{'s' if calls != 1 else ''} each, "
+              f"about ${_COST_PER_CALL_USD * calls * n:.3f} total")
         conn.close()
         return 0
 

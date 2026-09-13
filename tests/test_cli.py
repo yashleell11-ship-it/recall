@@ -245,3 +245,22 @@ def test_ingest_corpus_says_so_when_there_is_no_manifest(tmp_path, capsys):
             ["ingest-corpus", "--manifest", str(tmp_path / "nope.jsonl")]), cfg)
     assert code == 2
     assert "no manifest at" in capsys.readouterr().err
+
+
+def test_the_lesson_dry_run_estimate_counts_every_call():
+    """This number is the last thing read before money is spent.
+
+    It used to multiply ONE call's price by the lesson count while printing
+    "3 calls each" beside it, so a rederive run was understated threefold. Checked
+    against what MTH165 actually billed: $0.0112 and $0.0116 for three calls,
+    against an estimate of $0.004.
+    """
+    from recall.cli import _COST_PER_CALL_USD
+
+    # Three calls a lesson with the re-derivation on, one without.
+    assert abs(_COST_PER_CALL_USD * 3 - 0.012) < 1e-9
+    assert abs(_COST_PER_CALL_USD * 3 * 33 - 0.396) < 1e-9
+    assert abs(_COST_PER_CALL_USD * 1 * 33 - 0.132) < 1e-9
+    # And it is in the right neighbourhood of what was really charged.
+    for observed in (0.0112, 0.0116):
+        assert 0.5 < observed / (_COST_PER_CALL_USD * 3) < 1.5, observed
