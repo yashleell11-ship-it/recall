@@ -235,15 +235,44 @@ def strip_code(text: str) -> str:
     return _CODE_SPAN.sub(lambda m: " " * len(m.group(0)), text or "")
 
 
-def check_notation(text: str) -> list[str]:
+#: Subjects whose examinable content IS code, where the programming operators
+#: and `lambda` are the subject matter rather than a lapse in typography.
+#:
+#: The law exists because "a student revising for an LPU paper reads ≤, not <=".
+#: An INT108 student reads `==`, and a lesson that says "so a == 0.3 is False" is
+#: correct where "so a = 0.3 is False" would be wrong — assignment is not
+#: comparison. Told to write `=` instead, the writer either obeys and teaches
+#: something false or refuses and the lesson is rejected: five of INT108's six
+#: units were rejected this way, on complaints about `==` in prose about Python
+#: and about `lambda` inside the list "if, import, in, is, lambda, nonlocal".
+#:
+#: This is NOT the backtick exemption, which already works for both inline and
+#: fenced code. It is prose ABOUT code, which a programming lesson is mostly made
+#: of. CSE111 is here because it teaches git commands and number systems even
+#: though its six lessons happened to pass without it.
+CODE_SUBJECTS = frozenset({"INT108", "CSE326", "CSE111"})
+
+#: The rules that stop applying in those subjects: the programming operators and
+#: the multiplication asterisk, all of which are correct as typed, plus the
+#: spelled-out Greek that catches Python's `lambda`. LaTeX stays banned
+#: everywhere — no course wants \frac{a}{b} in its prose.
+_CODE_EXEMPT = frozenset({"<=", ">=", "!=", "==", "->"})
+
+
+def check_notation(text: str, *, code_subject: bool = False) -> list[str]:
     """Every notation violation in `text`, as plain sentences. [] when clean.
 
     Returns the complaints rather than a bool so a repair pass can be told
     exactly what to fix, and so a human reading a rejection knows why.
+
+    `code_subject` turns off the rules that a programming course's own prose
+    breaks by being correct. See `CODE_SUBJECTS`.
     """
     prose = strip_code(text)
     found: list[str] = []
     for pattern, instead, _repair in _BANNED:
+        if code_subject and (pattern in _CODE_EXEMPT or r"\*" in pattern):
+            continue
         for m in re.finditer(pattern, prose):
             snippet = prose[max(0, m.start() - 24):m.end() + 24].strip()
             found.append(f"wrote {m.group(0)!r} where mathematics wants "
@@ -259,11 +288,12 @@ def check_notation(text: str) -> list[str]:
             snippet = prose[max(0, m.start() - 24):m.end() + 24].strip()
             found.append(f"wrote {m.group(0)!r} where mathematics wants "
                          f"{written} — near: …{snippet}…")
-    for m in _SPELLED_GREEK.finditer(prose):
+    for m in () if code_subject else _SPELLED_GREEK.finditer(prose):
         snippet = prose[max(0, m.start() - 24):m.end() + 24].strip()
         found.append(f"spelled out {m.group(1)!r} instead of using the letter "
                      f"— near: …{snippet}…")
     return found
 
 
-__all__ = ["NOTATION_LAW", "check_notation", "fix_notation", "strip_code"]
+__all__ = ["CODE_SUBJECTS", "NOTATION_LAW", "check_notation", "fix_notation",
+           "strip_code"]

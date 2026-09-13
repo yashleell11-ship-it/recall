@@ -2485,3 +2485,78 @@ def test_a_command_that_is_not_a_name_is_still_dropped():
     out = clean_latex(r"\qquad\varnothing\mathscr{X}")
     for noise in ("qquad", "varnothing", "mathscr"):
         assert noise not in out, noise
+
+
+# ---------------------------------------------------------------------------
+# The notation law does not apply to a programming course's own prose.
+#
+# Five of INT108's six units were REJECTED on this, and CSE326's JavaScript
+# unit with them. Not on unfenced code — `strip_code` handles inline and fenced
+# blocks correctly — but on prose ABOUT code, which is most of what a
+# programming lesson is.
+# ---------------------------------------------------------------------------
+
+#: Verbatim from the INT108 unit 1 rejection.
+REAL_INT108_REJECTIONS = (
+    "in the last bits, so a == 0.3 is False.",
+    "The keywords are: if, import, in, is, lambda, nonlocal, not, or, pass.",
+)
+
+
+def test_a_programming_lesson_is_not_told_to_write_equals():
+    """"so a == 0.3 is False" is correct; "so a = 0.3 is False" would be wrong,
+    because assignment is not comparison. Told to write `=`, the writer either
+    obeys and teaches something false or refuses and the lesson is rejected."""
+    from recall.notation import check_notation
+
+    for sentence in REAL_INT108_REJECTIONS:
+        assert check_notation(sentence), sentence  # a maths subject complains
+        assert check_notation(sentence, code_subject=True) == [], sentence
+
+
+def test_python_s_lambda_is_a_keyword_not_a_greek_letter():
+    from recall.notation import check_notation
+
+    keywords = "and, as, assert, lambda, nonlocal, not, or, pass, raise"
+    assert check_notation(keywords)
+    assert check_notation(keywords, code_subject=True) == []
+    # ...but in a mathematics subject it is still the letter.
+    assert check_notation("the eigenvalue lambda = 3 of the matrix")
+
+
+def test_the_operators_and_the_asterisk_are_exempt_together():
+    """All of them are correct as typed in the subject that teaches them."""
+    from recall.notation import check_notation
+
+    code_prose = "compare with x <= 10, y != z, a == b, and the product a*b"
+    assert len(check_notation(code_prose)) >= 4
+    assert check_notation(code_prose, code_subject=True) == []
+
+
+def test_latex_stays_banned_in_every_subject():
+    """The exemption is for operators a course teaches, not a licence for LaTeX.
+    No course wants \\frac{a}{b} in its prose."""
+    from recall.notation import check_notation
+
+    for latex in (r"write \frac{a}{b} here", r"the integral \int f dx",
+                  r"$x^2 + 1$ inline"):
+        assert check_notation(latex, code_subject=True), latex
+
+
+def test_the_exemption_is_keyed_on_the_subject_not_guessed():
+    from recall.notation import CODE_SUBJECTS
+
+    assert {"INT108", "CSE326", "CSE111"} <= CODE_SUBJECTS
+    assert "MTH165" not in CODE_SUBJECTS
+    assert "MEC103" not in CODE_SUBJECTS
+    assert "INT335" not in CODE_SUBJECTS
+
+
+def test_write_lesson_passes_the_subject_through():
+    import inspect
+
+    from recall.teach import lessons
+
+    source = inspect.getsource(lessons.write_lesson)
+    assert "CODE_SUBJECTS" in source
+    assert "code_subject=" in source

@@ -30,7 +30,7 @@ from recall.api.scheduling import iso, utc_now
 from recall.generate.knowledge import _synthetic_source_id, _unit_chunk_id
 from recall.generate.unit_guidance import guidance_for, topics_for
 from recall.config import Config
-from recall.notation import check_notation, fix_notation
+from recall.notation import CODE_SUBJECTS, check_notation, fix_notation
 from recall.teach.corpus import (FURNITURE, looks_like_latex_debris,
                                  looks_like_lost_degree, unit_passages)
 from recall.pipeline import _cost
@@ -605,7 +605,13 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
         # judgement is worth a second generation. Runs AFTER resolve_citations so
         # the inserted quotes are already in place and visibly out of scope.
         repair_notation(candidate)
-        fatal = check_structure(candidate) + check_notation(lesson_text(candidate))
+        # A programming course's own prose breaks the notation law by being
+        # correct: "so a == 0.3 is False" must not become "a = 0.3", and
+        # `lambda` in "if, import, in, is, lambda" is a keyword. Five of
+        # INT108's six units were rejected on exactly those two complaints.
+        fatal = check_structure(candidate) + check_notation(
+            lesson_text(candidate),
+            code_subject=topic_code.strip().upper() in CODE_SUBJECTS)
         complaints = fatal + bad_refs + check_grounding(candidate, passages)
         body = candidate
         if not complaints:
