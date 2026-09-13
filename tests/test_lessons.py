@@ -1469,3 +1469,191 @@ def test_a_stored_lesson_quoting_debris_is_still_convicted():
         r"• Polar area: If (R) is described by (α≤θ≤β) and (0≤ r≤ R(θ)), then "
         r"MATH A=int_α^βint_0^{R(θ)}r\,dr\,dthe =frac12int_α^β R(θ)^2\,dθ.")
     assert why is not None and "wreckage" in why
+
+
+# ---------------------------------------------------------------------------
+# Repairing what the gate used to reject.
+#
+# MTH165 unit 5 is multiple integrals, so nearly every line carries an integral
+# or a sum with limits. The writer produced `∑_{i=1}^{n}` and `∫_{y}^{1}` and
+# `∫_{x²}^{4}`; the gate complained, correctly, that ⁿ and ¹ and ⁴ are real
+# characters. But notation faults are FATAL after two attempts, so the unit was
+# rejected and about a cent bought nothing — twice, on two different days.
+#
+# None of those complaints needed judgement. `^{n}` → `ⁿ` is a table lookup, and
+# a gate should only reject what it cannot repair itself.
+# ---------------------------------------------------------------------------
+
+
+def test_the_three_expressions_that_rejected_mth165_unit_5():
+    """Verbatim from the two rejection reports."""
+    from recall.notation import fix_notation
+
+    assert fix_notation("= lim_{ΔA_i → 0} ∑_{i=1}^{n} f(xᵢ*, yᵢ*) ΔA_i") \
+        == "= lim_{ΔA_i → 0} ∑ᵢ₌₁ⁿ f(xᵢ*, yᵢ*) ΔA_i"
+    assert fix_notation("the inner integral is ∫_{y}^{1} e^{x²} dx") \
+        == "the inner integral is ∫_y¹ e^{x²} dx"
+    assert fix_notation("reverse the integration in ∫₀² ∫_{x²}^{4} f(x, y) dy dx") \
+        == "reverse the integration in ∫₀² ∫_{x²}⁴ f(x, y) dy dx"
+
+
+def test_a_repaired_expression_leaves_nothing_to_complain_about():
+    """The point of the whole change: no second generation, no rejection."""
+    from recall.notation import check_notation, fix_notation
+
+    for original in ("∑_{i=1}^{n} f(xᵢ) Δx",
+                     "∫_{y}^{1} e^{x²} dx",
+                     "(-1)^{n+1} over n^{2}",
+                     "A^{-1} exists when det A != 0",
+                     "if x <= 10 and y >= 3 then a -> b"):
+        assert check_notation(fix_notation(original)) == [], original
+
+
+def test_repair_leaves_alone_what_unicode_cannot_write():
+    """The limits from the first fix stay untouched, and stay allowed."""
+    from recall.notation import check_notation, fix_notation
+
+    for kept in ("∫₀^{2π} cos⁴θ dθ", "∫₀^{π/4} sin φ dφ", "lim_{ΔV_i → 0}"):
+        assert fix_notation(kept) == kept
+        assert check_notation(kept) == []
+
+
+def test_multi_character_groups_keep_their_braces():
+    """`∫_x²⁴` and `∫_{x²}⁴` are not the same claim, so only a SINGLE character
+    loses its braces."""
+    from recall.notation import fix_notation
+
+    assert fix_notation("∫_{x²}^{4}") == "∫_{x²}⁴"
+    assert fix_notation("∫_{y}^{4}") == "∫_y⁴"
+
+
+def test_repair_does_not_touch_code():
+    """`x <= 10` is correct Python, and INT108 and CSE326 are programming
+    courses — the same exemption the check has always had."""
+    from recall.notation import fix_notation
+
+    assert fix_notation("write `x <= 10` and `a != b` in Python") \
+        == "write `x <= 10` and `a != b` in Python"
+    assert fix_notation("`for i in range(n): total += a[i]**2`") \
+        == "`for i in range(n): total += a[i]**2`"
+    # ...and prose either side of a code span is still repaired.
+    assert fix_notation("when x <= 3, write `x <= 3`") == "when x ≤ 3, write `x <= 3`"
+
+
+def test_the_ambiguous_ones_are_still_complaints_not_silent_edits():
+    """`a*b` may be a pointer, a glob or emphasis, and a sentence carrying
+    \\frac{a}{b} wants rewriting rather than patching. Python must not guess."""
+    from recall.notation import check_notation, fix_notation
+
+    for ambiguous in ("the product a*b grows", r"write \frac{a}{b} here"):
+        assert fix_notation(ambiguous) == ambiguous
+        assert check_notation(ambiguous) != []
+
+
+def test_every_banned_pattern_declares_whether_it_can_be_repaired():
+    """The third field is what keeps complaining and repairing from drifting:
+    a pattern with a repair is never complained about, and one without is never
+    silently edited."""
+    from recall.notation import _BANNED
+
+    for entry in _BANNED:
+        assert len(entry) == 3, entry
+        pattern, instead, repair = entry
+        assert isinstance(instead, str) and instead
+        assert repair is None or isinstance(repair, str)
+
+
+# ---------------------------------------------------------------------------
+# Repairing a lesson body, and the one field that must never be touched.
+# ---------------------------------------------------------------------------
+
+
+def _lesson_with_bad_notation(quote: str) -> dict:
+    return {
+        "why": "Integrals accumulate a quantity over a region.",
+        "sections": [{
+            "heading": "Summing over a region",
+            "body": "The double integral is the limit of ∑_{i=1}^{n} f(xᵢ) ΔA_i "
+                    "as ΔA_i -> 0, and it is written ∫_{y}^{1} in one variable.",
+            "quote": quote,
+            "source": "[1] notes.html p1",
+        }],
+        "worked": [{
+            "question": "Evaluate ∫₀² x^{2} dx.",
+            "answer": "8/3",
+            "steps": ["Antidifferentiate to get x^{3}/3.", "Evaluate at 2 and 0."],
+        }],
+        "check": [{"question": "What is n^{2} at n = 3?", "answer": "9",
+                   "why": "Because 3^{2} = 9."}],
+    }
+
+
+def test_repair_notation_reaches_every_field_a_student_reads():
+    from recall.teach.lessons import lesson_text, repair_notation
+    from recall.notation import check_notation
+
+    body = _lesson_with_bad_notation("a quote with no notation problem in it")
+    repair_notation(body)
+    assert check_notation(lesson_text(body)) == []
+    # Each field individually, so a miss cannot hide in the join.
+    assert "∑ᵢ₌₁ⁿ" in body["sections"][0]["body"]
+    assert "→" in body["sections"][0]["body"]
+    assert "x²" in body["worked"][0]["question"]
+    assert "x³/3" in body["worked"][0]["steps"][0]
+    assert "n²" in body["check"][0]["question"]
+    assert "3² = 9" in body["check"][0]["why"]
+
+
+def test_repair_never_touches_a_quote_because_grounding_would_break():
+    """The load-bearing safety property. A quote is INSERTED from the sentence
+    the writer named, so it must stay byte-identical to the course material —
+    `check_grounding` searches the passages for it verbatim. Repairing a quote
+    would turn a real citation into a failed one."""
+    from recall.teach.lessons import check_grounding, repair_notation
+
+    raw = "The area element in polar coordinates is dA = r^{2} dr dθ."
+    passages = [{"text": "Some preamble. " + raw + " And a closing sentence.",
+                 "filename": "notes.pdf", "page_ref": "p3"}]
+    body = _lesson_with_bad_notation(raw)
+
+    assert check_grounding(body, passages) == []
+    repair_notation(body)
+    assert body["sections"][0]["quote"] == raw, "the quote was rewritten"
+    assert check_grounding(body, passages) == [], "repair broke the citation"
+
+
+def test_lesson_text_and_the_repair_walk_the_same_fields():
+    """A field the check reads and the repair does not is a complaint nothing
+    can fix — the exact shape of bug this gate has already produced twice."""
+    from recall.teach.lessons import _readable_fields, lesson_text, repair_notation
+
+    body = _lesson_with_bad_notation("irrelevant")
+    fields = list(_readable_fields(body))
+
+    # lesson_text IS the join of the walked fields — so the check can never read
+    # a field the repair did not visit.
+    assert lesson_text(body) == "\n".join(
+        str(container[key]) for container, key in fields)
+
+    # why + heading + body + worked question/answer + two steps + three check
+    # fields = ten. The quote and its source are not among them.
+    keys = [key for _container, key in fields]
+    assert keys == ["why", "heading", "body", "question", "answer", 0, 1,
+                    "question", "answer", "why"], keys
+    assert "quote" not in keys and "source" not in keys
+
+    # And the repair is idempotent: a second pass has nothing left to change,
+    # which is what makes it safe to run before every attempt.
+    repair_notation(body)
+    once = lesson_text(body)
+    repair_notation(body)
+    assert lesson_text(body) == once
+
+
+def test_a_lesson_with_no_fields_does_not_explode():
+    from recall.teach.lessons import lesson_text, repair_notation
+
+    for body in ({}, {"sections": []}, {"why": None, "worked": [None]},
+                 {"sections": [{"heading": 3}], "check": ["not a dict"]}):
+        repair_notation(body)
+        assert isinstance(lesson_text(body), str)

@@ -30,7 +30,7 @@ from recall.api.scheduling import iso, utc_now
 from recall.generate.knowledge import _synthetic_source_id, _unit_chunk_id
 from recall.generate.unit_guidance import guidance_for, topics_for
 from recall.config import Config
-from recall.notation import check_notation
+from recall.notation import check_notation, fix_notation
 from recall.teach.corpus import (FURNITURE, looks_like_latex_debris,
                                  unit_passages)
 from recall.pipeline import _cost
@@ -324,21 +324,60 @@ def check_structure(body: dict) -> list[str]:
     return out
 
 
+def _readable_fields(body: dict):
+    """Every (container, key) holding a word a student would read.
+
+    One walk, two callers: `lesson_text` joins these for the notation check and
+    `repair_notation` rewrites them. Kept as one function because the two must
+    cover exactly the same fields — a field the check reads and the repair does
+    not is a complaint nothing can fix, which is the shape of bug this gate has
+    already produced twice.
+
+    A section's `quote` and `source` are deliberately absent. A quote is
+    INSERTED from the sentence the writer named, so it must stay byte-identical
+    to the course material: the notation law does not apply to it, and repairing
+    it would break `check_grounding` on the spot.
+    """
+    if isinstance(body.get("why"), str):
+        yield body, "why"
+    for section in body.get("sections") or []:
+        if isinstance(section, dict):
+            for key in ("heading", "body"):
+                if isinstance(section.get(key), str):
+                    yield section, key
+    for worked in body.get("worked") or []:
+        if isinstance(worked, dict):
+            for key in ("question", "answer"):
+                if isinstance(worked.get(key), str):
+                    yield worked, key
+            steps = worked.get("steps")
+            if isinstance(steps, list):
+                for i, step in enumerate(steps):
+                    if isinstance(step, str):
+                        yield steps, i
+    for check in body.get("check") or []:
+        if isinstance(check, dict):
+            for key in ("question", "answer", "why"):
+                if isinstance(check.get(key), str):
+                    yield check, key
+
+
 def lesson_text(body: dict) -> str:
     """Every word a student would read, for the notation check."""
-    parts = [str(body.get("why", ""))]
-    for s in body.get("sections") or []:
-        if isinstance(s, dict):
-            parts += [str(s.get("heading", "")), str(s.get("body", ""))]
-    for w in body.get("worked") or []:
-        if isinstance(w, dict):
-            parts += [str(w.get("question", "")), str(w.get("answer", ""))]
-            parts += [str(x) for x in (w.get("steps") or [])]
-    for c in body.get("check") or []:
-        if isinstance(c, dict):
-            parts += [str(c.get("question", "")), str(c.get("answer", "")),
-                      str(c.get("why", ""))]
-    return "\n".join(parts)
+    return "\n".join(str(container[key]) for container, key
+                      in _readable_fields(body))
+
+
+def repair_notation(body: dict) -> None:
+    """Make every mechanical notation edit in place, before the gate looks.
+
+    The gate's job is to refuse what it cannot fix. `^{n}` → `ⁿ` needs no
+    judgement at all, and asking a model for it cost a cent and a rejected
+    MTH165 unit 5 twice over — notation faults are fatal after two attempts, so
+    a unit whose every line carries an integral limit could not get through.
+    """
+    for container, key in _readable_fields(body):
+        container[key] = fix_notation(str(container[key]))
 
 
 _NUM = re.compile(r"-?\d+(?:\.\d+)?")
@@ -555,6 +594,11 @@ def write_lesson(conn, client, cfg: Config, *, user_id: int, topic_id: int,
         # named, so everything after this is checking text the corpus supplied
         # rather than text the model typed.
         bad_refs = resolve_citations(candidate, passages, sentence_table)
+        # Repair before judging. Everything mechanical — a braced superscript, a
+        # programming operator — is Python's to fix, and only what needs
+        # judgement is worth a second generation. Runs AFTER resolve_citations so
+        # the inserted quotes are already in place and visibly out of scope.
+        repair_notation(candidate)
         fatal = check_structure(candidate) + check_notation(lesson_text(candidate))
         complaints = fatal + bad_refs + check_grounding(candidate, passages)
         body = candidate
@@ -751,5 +795,6 @@ __all__ = ["LessonResult", "answers_agree", "check_grounding",
            "grounded_share",
            "check_structure",
            "is_adjudicable", "latest_lesson", "recheck_lesson",
+           "repair_notation",
            "verify_worked",
            "lesson_text", "write_lesson"]

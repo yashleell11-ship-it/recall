@@ -39,23 +39,32 @@ Code is the one exception, and it is quoted exactly as it would be typed —
 `x <= 10` is correct Python and must not be prettified. Put code in backticks
 so it is unmistakable."""
 
-#: (pattern, what to write instead). Only the unambiguous ones: a check that
-#: cries wolf gets switched off, and then the rule has no teeth at all.
-_BANNED: tuple[tuple[str, str], ...] = (
-    (r"<=", "≤"),
-    (r">=", "≥"),
-    (r"!=", "≠"),
-    (r"==", "="),
-    (r"->", "→"),
-    (r"\\frac\b", "a/b"),
-    (r"\\int\b", "∫"),
-    (r"\\sum\b", "∑"),
-    (r"\\sqrt\b", "√"),
-    (r"\\lambda\b|\\theta\b|\\alpha\b|\\beta\b|\\pi\b", "the Greek letter itself"),
-    (r"\$[^$\n]{1,80}\$", "no LaTeX math mode"),
+#: (pattern, what to write instead, the exact text to write when Python can make
+#: the edit itself). Only the unambiguous ones: a check that cries wolf gets
+#: switched off, and then the rule has no teeth at all.
+#:
+#: The third field is the difference between complaining and repairing. Where it
+#: is set, `fix_notation` performs the substitution and there is nothing left to
+#: complain about. Where it is None the edit needs judgement Python does not
+#: have — `a*b` may be a pointer, a glob or emphasis, and `\frac{a}{b}` inside a
+#: sentence usually wants the sentence rewritten rather than patched — so it
+#: stays a complaint and the writer is asked again.
+_BANNED: tuple[tuple[str, str, str | None], ...] = (
+    (r"<=", "≤", "≤"),
+    (r">=", "≥", "≥"),
+    (r"!=", "≠", "≠"),
+    (r"==", "=", "="),
+    (r"->", "→", "→"),
+    (r"\\frac\b", "a/b", None),
+    (r"\\int\b", "∫", None),
+    (r"\\sum\b", "∑", None),
+    (r"\\sqrt\b", "√", None),
+    (r"\\lambda\b|\\theta\b|\\alpha\b|\\beta\b|\\pi\b",
+     "the Greek letter itself", None),
+    (r"\$[^$\n]{1,80}\$", "no LaTeX math mode", None),
     # `2 * x`, `a*b` — multiplication typed as code. Not `**` (Python power in
     # a code span is already exempt) and not a lone asterisk used as a bullet.
-    (r"(?<![\w*])[\w)\]]\s*\*\s*[\w(\[](?!\*)", "× or juxtaposition"),
+    (r"(?<![\w*])[\w)\]]\s*\*\s*[\w(\[](?!\*)", "× or juxtaposition", None),
 )
 
 #: Every character Unicode actually gives a superscript for. This is the
@@ -71,8 +80,24 @@ _SUPERSCRIPT = {
     "w": "ʷ", "x": "ˣ", "y": "ʸ", "z": "ᶻ",
 }
 
+#: The same for subscripts, and a smaller set — Unicode has no subscript b, c,
+#: d, f, g, q, w, y or z, and no Greek at all.
+_SUBSCRIPT = {
+    "0": "\u2080", "1": "\u2081", "2": "\u2082", "3": "\u2083", "4": "\u2084",
+    "5": "\u2085", "6": "\u2086", "7": "\u2087", "8": "\u2088", "9": "\u2089",
+    "+": "\u208a", "-": "\u208b", "\u2212": "\u208b", "=": "\u208c",
+    "(": "\u208d", ")": "\u208e",
+    "a": "\u2090", "e": "\u2091", "h": "\u2095", "i": "\u1d62", "j": "\u2c7c",
+    "k": "\u2096", "l": "\u2097", "m": "\u2098", "n": "\u2099", "o": "\u2092",
+    "p": "\u209a", "r": "\u1d63", "s": "\u209b", "t": "\u209c", "u": "\u1d64",
+    "v": "\u1d65", "x": "\u2093",
+}
+
 #: `x^{2}`, `A^{-1}`, `∫₀^{2π}` — the LaTeX brace form.
 _BRACED_SUPERSCRIPT = re.compile(r"\^\{([^{}]{1,24})\}")
+
+#: `∑_{i=1}`, `a_{n}`, `∫_{y}` — the same, one line lower.
+_BRACED_SUBSCRIPT = re.compile(r"_\{([^{}]{1,24})\}")
 
 
 def _as_superscript(content: str) -> str | None:
@@ -99,6 +124,90 @@ def _as_superscript(content: str) -> str | None:
     return "".join(out)
 
 
+def _as_subscript(content: str) -> str | None:
+    """The real subscript for `content`, or None if Unicode has no way to write
+    it. The sibling of `_as_superscript`, and a stricter one — `∫_{y}` has no
+    form at all, because there is no subscript y."""
+    if not content:
+        return None
+    out = []
+    for ch in content:
+        mapped = _SUBSCRIPT.get(ch.lower() if ch.isalpha() else ch)
+        if mapped is None:
+            return None
+        out.append(mapped)
+    return "".join(out)
+
+
+def _edits(prose: str) -> list[tuple[int, int, str]]:
+    """Every (start, end, replacement) the law makes mechanical.
+
+    Offsets are into `prose`, which is the code-blanked copy — `strip_code`
+    replaces a code span with spaces of the same length, so an offset found
+    there addresses the same character in the original.
+    """
+    out: list[tuple[int, int, str]] = []
+    for pattern, real, marker in ((_BRACED_SUPERSCRIPT, _as_superscript, "^"),
+                                  (_BRACED_SUBSCRIPT, _as_subscript, "_")):
+        for m in pattern.finditer(prose):
+            content = m.group(1)
+            written = real(content)
+            if written is not None:
+                out.append((m.start(), m.end(), written))
+            elif len(content) == 1:
+                # No real character for it — `∫_{y}` has none, there is no
+                # subscript y — but the braces around a SINGLE character say
+                # nothing that the marker alone does not, and `∫_y¹` is how it
+                # is written by hand. Multi-character groups keep their braces,
+                # because `∫_x²⁴` and `∫_{x²}⁴` are not the same claim.
+                out.append((m.start(), m.end(), marker + content))
+    for pattern, _instead, repair in _BANNED:
+        if repair is None:
+            continue
+        for m in re.finditer(pattern, prose):
+            out.append((m.start(), m.end(), repair))
+    return out
+
+
+def fix_notation(text: str) -> str:
+    """Make every edit the law makes mechanical, and no others.
+
+    This exists because asking cost money and did not work. MTH165 unit 5 is
+    multiple integrals, so nearly every line of it carries an integral or a sum
+    with limits, and the writer kept producing `∑_{i=1}^{n}` and `∫_{y}^{1}`.
+    Those complaints are correct — ⁿ and ¹ are real characters — but notation
+    faults are fatal after two attempts, so the unit was rejected and about a
+    cent was spent to store nothing, twice.
+
+    There is no judgement in `^{n}` → `ⁿ`. It is a table lookup, and Python does
+    table lookups perfectly, so the gate should only ever reject what it cannot
+    repair itself. What is left over is genuinely ambiguous: `a*b` may be a
+    pointer or a glob, and a sentence containing `\frac{a}{b}` usually wants
+    rewriting rather than patching.
+
+    Code is untouched, for the same reason it is exempt from the check — `x <= 10`
+    is correct Python and INT108 and CSE326 are programming courses.
+    """
+    if not text:
+        return text
+    prose = strip_code(text)
+    edits = sorted(_edits(prose), key=lambda e: e[0])
+    if not edits:
+        return text
+    # Overlaps are possible in principle (`<==`), and applying both would
+    # corrupt the text. First match wins; the leftovers get complained about.
+    kept: list[tuple[int, int, str]] = []
+    for start, end, written in edits:
+        if kept and start < kept[-1][1]:
+            continue
+        kept.append((start, end, written))
+    out = text
+    # Right to left, so an earlier edit cannot shift a later one's offsets.
+    for start, end, written in reversed(kept):
+        out = out[:start] + written + out[end:]
+    return out
+
+
 #: Spelled-out Greek in running prose. Word-boundaried and lower-cased so
 #: "Lambda expression" and "Beta release" survive; only the standalone
 #: mathematical use is caught.
@@ -122,20 +231,22 @@ def check_notation(text: str) -> list[str]:
     """
     prose = strip_code(text)
     found: list[str] = []
-    for pattern, instead in _BANNED:
+    for pattern, instead, _repair in _BANNED:
         for m in re.finditer(pattern, prose):
             snippet = prose[max(0, m.start() - 24):m.end() + 24].strip()
             found.append(f"wrote {m.group(0)!r} where mathematics wants "
                          f"{instead} — near: …{snippet}…")
-    for m in _BRACED_SUPERSCRIPT.finditer(prose):
-        real = _as_superscript(m.group(1))
-        if real is None:
-            # No Unicode superscript exists for this content (∫₀^{2π},
-            # ∫₀^{π/4}). Allowed — see _as_superscript.
-            continue
-        snippet = prose[max(0, m.start() - 24):m.end() + 24].strip()
-        found.append(f"wrote {m.group(0)!r} where mathematics wants "
-                     f"{real} — near: …{snippet}…")
+    for pattern, real in ((_BRACED_SUPERSCRIPT, _as_superscript),
+                          (_BRACED_SUBSCRIPT, _as_subscript)):
+        for m in pattern.finditer(prose):
+            written = real(m.group(1))
+            if written is None:
+                # Unicode has no form for this content (∫₀^{2π}, ∫₀^{π/4}, and
+                # every `_{y}`). Allowed — see _as_superscript.
+                continue
+            snippet = prose[max(0, m.start() - 24):m.end() + 24].strip()
+            found.append(f"wrote {m.group(0)!r} where mathematics wants "
+                         f"{written} — near: …{snippet}…")
     for m in _SPELLED_GREEK.finditer(prose):
         snippet = prose[max(0, m.start() - 24):m.end() + 24].strip()
         found.append(f"spelled out {m.group(1)!r} instead of using the letter "
@@ -143,4 +254,4 @@ def check_notation(text: str) -> list[str]:
     return found
 
 
-__all__ = ["NOTATION_LAW", "check_notation", "strip_code"]
+__all__ = ["NOTATION_LAW", "check_notation", "fix_notation", "strip_code"]
