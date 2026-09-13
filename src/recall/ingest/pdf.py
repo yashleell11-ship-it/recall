@@ -20,14 +20,27 @@ DOCUMENT_SUFFIXES = frozenset({".pdf", ".html", ".htm", ".xhtml", ".epub",
                                ".xps", ".fb2", ".mobi", ".txt"})
 
 
+#: The formats PyMuPDF lays out from markup, and so the ones whose chrome is
+#: still in the bytes when we get them — and the ones with no real pages.
+_MARKUP_SUFFIXES = frozenset({".html", ".htm", ".xhtml"})
+
+
+def is_markup(path: str) -> bool:
+    """True for a format PyMuPDF paginates from markup rather than from a page.
+
+    The distinction matters to anything reasoning about PAGES. A PDF's pages are
+    real: a running head is printed on each one. An HTML page has no pages at all
+    until PyMuPDF lays it out at a fixed width, so "a line that repeats on most
+    pages" means nothing there — it just means the line occurs often, which for a
+    tutorial is its example code.
+    """
+    return Path(path).suffix.lower() in _MARKUP_SUFFIXES
+
+
 def document_kind(path: str) -> str:
     """The `sources.kind` to record — the suffix, without its dot."""
     return Path(path).suffix.lower().lstrip(".") or "unknown"
 
-
-#: The formats PyMuPDF lays out from markup, and so the ones whose chrome is
-#: still in the bytes when we get them.
-_MARKUP_SUFFIXES = frozenset({".html", ".htm", ".xhtml"})
 
 #: Elements whose whole subtree is page furniture rather than teaching. Dropping
 #: them is the only fix that reaches MDN's sidebar curriculum tree and its CSS

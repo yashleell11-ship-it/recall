@@ -25,7 +25,8 @@ import numpy as np
 
 from recall.generate.knowledge import knowledge_sha
 from recall.ingest.chunk import chunk_pages
-from recall.ingest.pdf import DOCUMENT_SUFFIXES, file_sha256, read_document
+from recall.ingest.pdf import (DOCUMENT_SUFFIXES, file_sha256, is_markup,
+                               read_document)
 from recall.lpu import unit_key
 from recall.pipeline import _now
 
@@ -85,9 +86,13 @@ def load_source(conn, *, user_id: int, topic_id: int, path: pathlib.Path,
             " added_at) VALUES (?,?,?,?,?,?)",
             (user_id, topic_id, str(path), "corpus", sha, _now()))
         source_id = int(cur.lastrowid)
-        # Running heads go before chunking, because a page is the unit
-        # they repeat on and a chunk spans several pages.
-        chunks = chunk_pages(strip_running_heads(read_document(str(path))))
+        # Running heads go before chunking, because a page is the unit they
+        # repeat on and a chunk spans several pages — and ONLY for formats with
+        # real pages. See strip_running_heads for why markup is excluded.
+        pages = read_document(str(path))
+        if not is_markup(str(path)):
+            pages = strip_running_heads(pages)
+        chunks = chunk_pages(pages)
         for ch in chunks:
             conn.execute(
                 "INSERT INTO chunks (source_id, ordinal, text, page_ref)"
@@ -179,6 +184,23 @@ def strip_running_heads(pages: list[tuple[int, str]]) -> list[tuple[int, str]]:
 
     Takes and returns `read_document`'s shape, so it slots in ahead of
     `chunk_pages` and nothing downstream knows it ran.
+
+    **Only for formats with real pages.** `load_source` does not call this for
+    HTML, and that exclusion was bought with a near miss. A PDF's pages are real
+    and a running head is printed on each; an HTML document has no pages at all
+    until PyMuPDF lays it out at a fixed width, so "repeats on most pages" there
+    just means "occurs often" — and in a tutorial what occurs often is its example
+    code. Printing the deletion set for CSE326 showed exactly that:
+
+        17/24 (71%) '.container {'
+        16/24 (67%) 'display: grid;'          'font-family: sans-serif;'
+        12/23 (52%) 'box-sizing: border-box;' '<div class="wrapper">'
+
+    which is the code-damage class this codebase exists to avoid. Worse, it was
+    an interaction nothing had measured: the chrome strip in `read_document` cuts
+    an MDN page from 34 laid-out pages to 20, so declarations that sat under the
+    50% threshold rose above it. The verification that approved these thresholds
+    ran on the unstripped pages and reported no code flagged anywhere.
     """
     if len(pages) < _RUNNING_HEAD_MIN_PAGES:
         # A short document has no running head worth finding, and the one

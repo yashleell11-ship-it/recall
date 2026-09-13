@@ -103,3 +103,51 @@ def test_a_pdf_is_not_touched_by_any_of_this():
     source = inspect.getsource(pdf.read_document)
     assert "_MARKUP_SUFFIXES" in source
     assert ".pdf" not in str(pdf._MARKUP_SUFFIXES)
+
+
+def test_html_gets_no_running_head_strip_because_it_has_no_pages():
+    """A near miss, caught only by printing the deletion set before re-loading.
+
+    `strip_running_heads` drops a line that repeats on most PAGES of a document.
+    A PDF's pages are real and a running head is printed on each. An HTML page
+    has none until PyMuPDF lays it out at a fixed width — so there, "repeats on
+    most pages" just means "occurs often", and in a tutorial what occurs often is
+    its example code. Run over CSE326 it flagged:
+
+        17/24 (71%) '.container {'
+        16/24 (67%) 'display: grid;'   'font-family: sans-serif;'
+        12/23 (52%) 'box-sizing: border-box;'   '<div class="wrapper">'
+
+    It was an INTERACTION, too: the chrome strip cuts an MDN page from 34 laid-out
+    pages to 20, so declarations that had sat under the 50% threshold rose above
+    it. The verification that approved those thresholds ran on unstripped pages
+    and reported no code flagged in any of 296 documents."""
+    import inspect
+
+    from recall.ingest.pdf import is_markup
+    from recall.teach import corpus
+
+    assert is_markup("u3-mdn-grids.html")
+    assert is_markup("/corpus/CSE326/x.HTM")
+    assert not is_markup("mrcet-r18-engineering-graphics-notes.pdf")
+    assert not is_markup("wikipedia-rolle.txt")
+
+    # The exclusion lives at the call site, so assert it is actually wired there.
+    source = inspect.getsource(corpus.load_source)
+    assert "is_markup" in source
+    assert "strip_running_heads" in source
+
+
+def test_the_css_that_would_have_been_deleted_survives_a_load():
+    """The concrete loss that exclusion prevents: a grid tutorial re-states its
+    full rule in every example, which is the whole point of the page."""
+    from recall.teach.corpus import strip_running_heads
+
+    # 24 laid-out pages, each repeating the same declarations — a tutorial, not
+    # a running head. Nothing may be removed from markup, so the guard is the
+    # call site; here we simply pin what the rule WOULD do, to explain the guard.
+    pages = [(i, ".container {\ndisplay: grid;\nbox-sizing: border-box;\n"
+                 "Example %d explains one property." % i) for i in range(1, 25)]
+    stripped = strip_running_heads(pages)
+    assert "display: grid;" not in stripped[0][1], (
+        "if this ever stops being true, re-check why markup is excluded")
