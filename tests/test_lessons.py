@@ -1971,3 +1971,109 @@ def test_digit_blanking_can_collapse_real_lines_and_that_is_the_known_cost():
     out = strip_running_heads(pages)
     assert all("Example" not in t for _n, t in out)
     assert all("Unique prose" in t for _n, t in out)
+
+
+# ---------------------------------------------------------------------------
+# MDN and the WHATWG spec: 184 of CSE326's 206 files, and the dirtiest material
+# in the corpus — 13.6% of the sentences offered from its HTML were artefacts
+# rather than teaching. Every number below is measured over those files.
+# ---------------------------------------------------------------------------
+
+
+def _flat(text):
+    from recall.teach.corpus import strip_furniture
+    return " ".join(strip_furniture(text).split())
+
+
+def test_the_pager_no_longer_fuses_to_the_opening_definition():
+    """None of MDN's per-page furniture ends in a full stop, so it welds itself to
+    the next real sentence. The CSS box model page's opening definition — the
+    sentence a unit 3 lesson would obviously cite — could not be quoted clean.
+
+    The newline handling is the whole difficulty: strip_furniture runs on raw
+    chunk text where the pager's items are still newline-separated, and a pattern
+    requiring the next bullet immediately after matched 29 of 210 occurrences."""
+    out = _flat("Box model\n• Previous\n• Overview: Styling basics\n• Next\n"
+                "Everything in CSS has a box around it.")
+    assert out == "Box model Everything in CSS has a box around it."
+
+
+def test_the_in_page_contents_go_but_the_same_words_as_prose_stay():
+    """The bullet run is what makes this safe. A bare "in this article" entry
+    would kill about 39 real CSE326 sentences and one OpenStax one."""
+    assert _flat("In this article\n• The box model\n• Margin collapsing\n"
+                 "• See also\nBlock and inline boxes exist.") \
+        == "Block and inline boxes exist."
+    assert _flat("In this article we cover the basics of syntax.") \
+        == "In this article we cover the basics of syntax."
+
+
+def test_the_contribute_line_is_anchored_and_pro_git_survives():
+    """A bare "learn how to contribute" entry destroys a real 39-word Pro Git
+    sentence in CSE111 — and because FURNITURE is the same tuple
+    `_quote_is_furniture` checks, a lesson that cited it would be refused AFTER
+    the generation was paid for. So it is anchored to its MDN pair instead."""
+    assert _flat("The cascade decides. Help improve MDN Learn how to contribute "
+                 "View this page on GitHub Content available under a Creative "
+                 "Commons license.").rstrip(" .") == "The cascade decides"
+    kept = ("you'll learn how to contribute code successfully to a project and "
+            "make it as easy on you and the project maintainer as possible")
+    assert _flat(kept) == kept
+
+
+def test_the_spec_s_support_table_stops_riding_on_the_definition():
+    """WHATWG's per-feature annotation box, flattened into running prose: the
+    spec's crispest definitional sentences all carried a browser support matrix
+    stapled to the end. 529 annotation matches, longest 98 characters, no prose."""
+    out = _flat("The title attribute represents advisory information. ✔MDN\n"
+                "Document/title\nSupport in all current engines. "
+                "Firefox 1+ Safari 1+ Chrome 1+ Edge (Legacy)12+ "
+                "Internet ExplorerNo")
+    assert out == "The title attribute represents advisory information."
+
+
+def test_a_single_browser_version_in_prose_is_left_alone():
+    """The two-or-more run is the guard. MDN compatibility notes do write
+    "supported in Chrome 1+" as ordinary prose."""
+    for kept in ("This is supported in Chrome 1+ only.",
+                 "Safari 14 introduced the feature.",
+                 "Use Firefox for the debugger."):
+        assert _flat(kept) == kept
+
+
+def test_structural_patterns_run_before_single_phrases():
+    """Ordering, held by a test because getting it wrong leaves wreckage rather
+    than failing loudly: the phrase "help improve mdn" ate its own anchor, so the
+    paired regex could no longer match and "Learn how to contribute" survived on
+    its own in the middle of a lesson's citation."""
+    assert "Learn how to contribute" not in _flat(
+        "Done. Help improve MDN Learn how to contribute Next section.")
+
+
+def test_the_section_number_strip_is_deliberately_absent():
+    """A regression guard. Stripping a leading "3.1.1 " looks obviously right and
+    manufactures the worst defect class in this file's taxonomy: in the one CSE326
+    file whose whole subject is JavaScript operator precedence it turns "50 plus
+    1.25 plus 2 equals 53.25" into "50 plus plus 2 equals 53.25" — a number gone,
+    reading as fluent English, saying nothing, quotable through every filter."""
+    for kept in ("10 divided by 8 equals 1.25, then 50 plus 1.25 plus 2 equals 53.25.",
+                 "js 3.1415926 .123456789 3.1E+12 .1e-23",
+                 "6.170 Software Studio",
+                 "see CSS Display 9.4.1 for the exact rule"):
+        assert _flat(kept) == kept
+
+
+def test_the_header_mega_nav_is_still_there_and_that_is_recorded():
+    """An admission, not an oversight. No boundary for MDN's 340-word header
+    could be proved safe: an anchored run from "Skip to main content" has no
+    reliable end marker, and refusing any span with four or more bullets drops 656
+    offered CSE326 sentences, some of them real bullet-list teaching. So 154 nav
+    spans remain citable, and this test says so out loud rather than letting a
+    later reader assume the chrome work is finished."""
+    nav = "• Skip to main content\n• Skip to search\n• HTML\n• CSS\n• JavaScript"
+    assert "Skip to main content" in _flat(nav)
+    # ...and the real bullet-list teaching that a blunt rule would have taken.
+    teaching = ("• The alternative box model (accessed via box-sizing: "
+                "border-box) and how it differs from the regular box model. "
+                "• Margin collapsing. • Basic display values.")
+    assert _flat(teaching) == teaching

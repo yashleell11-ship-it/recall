@@ -532,6 +532,12 @@ FURNITURE: tuple[str, ...] = (
     # did, so the best-written definitions in the LPU material could not be
     # cited clean: 137 offered sentences, 6 of CSE326's 206 files.
     "show detailed answer",
+    # MDN's page footer. Each is a whole distinctive phrase, checked against every
+    # other subject's prose: 0 spans removed across INT108's 37 files, CSE111
+    # apart from one licence footer, MTH165's 40 and MEC103's 40.
+    "view this page on github", "report a problem with this content",
+    "content available under a creative commons license",
+    "this page was last modified", "help improve mdn",
 )
 
 #: Furniture that is not a phrase but a SHAPE — a footer, a notice, a stamp —
@@ -564,7 +570,60 @@ _PAGE_CHROME: tuple[tuple[str, int], ...] = (
     (r"©\s*20\d\d\s+LPU Notes", re.I),
     (r"Part of the LPU Verto Network", re.I),
     (r"Made with\s*\S{0,3}\s*for Vertos", re.I),
+    # MDN's per-page pager and in-page table of contents. Neither ends in a full
+    # stop, so both fuse to the adjacent real sentence — the CSS box model page's
+    # opening definition, the sentence a unit 3 lesson would obviously cite,
+    # could not be quoted without the pager in front of it.
+    #
+    # The bullet anchors are load-bearing and the newline handling is the whole
+    # difficulty: `strip_furniture` runs on raw chunk text where the pager's items
+    # are still newline-separated, so a `[^•\n]*` that must be followed
+    # immediately by `•` matched 29 of 210 real occurrences. Allowing the
+    # whitespace before the next bullet reaches 210 of 210.
+    (r"•\s*Previous(?:\s*•[^•\n]*)*\s*•\s*Next", 0),
+    # 214 matches, and every span ends at the last TOC item because that item is
+    # newline-terminated and the next line is a heading. The bullet run is what
+    # makes it safe: the bare phrase "in this article" is real prose in about 39
+    # CSE326 sentences and 1 OpenStax one.
+    (r"In this article(?:\s*•[^\n]*)+", 0),
+    # Anchored, NOT a bare "learn how to contribute" entry. That phrase as
+    # furniture destroys a real 39-word Pro Git sentence in CSE111 — "you'll learn
+    # how to contribute code successfully to a project…" — and because FURNITURE
+    # is the same tuple `_quote_is_furniture` checks, a lesson that cited it would
+    # be refused AFTER the generation was paid for.
+    (r"Help improve MDN\s*Learn how to contribute", re.I),
+    # WHATWG's per-feature annotation box, flattened into running prose. The
+    # spec's crispest definitional sentences all carry a support table stapled to
+    # the end. 529 matches, median 24 characters, longest 98, no prose.
+    (r"[✔⚠]MDN[^\n]*(?:\n[^\n]*)?", 0),
+    (r"Support in (?:all current engines|one engine only|no engines)\.?", 0),
+    # ...and the browser-version run the same table becomes. The two-or-more
+    # requirement is what keeps a legitimate "supported in Chrome 1+" intact, and
+    # the alternation is browser names, so no code is touched.
+    (r"(?:(?:Firefox|Safari|Chrome|Opera|Edge|Internet Explorer|WebView"
+     r"|Samsung Internet)(?:\s*(?:Android|iOS|\(Legacy\)))?\s*(?:\U0001f530\s*)?"
+     r"(?:\d+(?:\.\d+)*\+?|\?|No|Yes)\s*){2,}", 0),
 )
+
+#: Deliberately NOT here, both rejected on measurement.
+#:
+#: A section-number strip `(?m)^\d+(?:\.\d+)+\s` manufactures the worst defect
+#: class in this file's own taxonomy. In u4-mdn-math.html — the one CSE326 file
+#: whose whole subject is JavaScript operator precedence — it turns "50 plus 1.25
+#: plus 2 equals 53.25" into "50 plus plus 2 equals 53.25": a number gone, reading
+#: as fluent English, saying nothing, quotable through every filter. It also eats
+#: the first entry of the canonical float-literal list "3.1415926 .123456789
+#: 3.1E+12 .1e-23", "6.170 " from five MIT OCW headers and "9.4.1 " from a real
+#: CSS-spec citation. 181 hits that do not fix the problem, against 2 passages
+#: actively corrupted.
+#:
+#: MDN's 340-word header mega-nav stays too, and that is an admission rather than
+#: a decision: no boundary for it could be proved safe. An anchored run from "Skip
+#: to main content" has no reliable end marker, and the blunt alternative —
+#: refusing any span with four or more bullets — drops 656 offered CSE326
+#: sentences, some of them real bullet-list teaching ("• The alternative box model
+#: (accessed via box-sizing: border-box) and how it differs…"). It needs its own
+#: measurement, so 154 nav spans remain citable for now.
 
 _PAGE_CHROME_RE = tuple(re.compile(pat, flags) for pat, flags in _PAGE_CHROME)
 
@@ -577,11 +636,18 @@ _FURNITURE_RUN = re.compile(
 
 
 def strip_furniture(text: str) -> str:
-    """Remove a scraped page's scaffolding, leaving the teaching behind."""
-    out = _FURNITURE_RUN.sub(" ", text or "")
+    r"""Remove a scraped page's scaffolding, leaving the teaching behind.
+
+    Structural patterns first, single phrases second. The other order left
+    wreckage: the phrase "help improve mdn" ate its own anchor, so the paired
+    regex `Help improve MDN\s*Learn how to contribute` could no longer match and
+    "Learn how to contribute" survived on its own. A multi-word shape has to be
+    matched before anything is allowed to break it up.
+    """
+    out = text or ""
     for pattern in _PAGE_CHROME_RE:
         out = pattern.sub(" ", out)
-    return out
+    return _FURNITURE_RUN.sub(" ", out)
 
 
 #: LaTeX command names, for finding wreckage a cleaner could not name. Only the
