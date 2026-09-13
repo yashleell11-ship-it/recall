@@ -96,8 +96,45 @@ def looks_like_what_it_claims(data: bytes, rel_path: str) -> None:
         raise FetchError(f"suspiciously small HTML, {len(data)} bytes — likely an error page")
 
 
-def fetch_one(url: str, dest: Path) -> int:
-    """Download to `dest` atomically. Returns bytes written."""
+#: Above this many bytes per page the manifest's page count is not describing
+#: this file. Measured on the entry that taught us: INT335's
+#: "openstax-entrepreneurship-ch7-pitching-the-idea.pdf" declares 40 pages, but
+#: its source_url is Entrepreneurship-WEB.pdf — the complete volume — so 129 MB
+#: and 631 pages landed under a chapter's name, and INT335 unit 6's passage pool
+#: became 732 of its ~1000 chunks from one mismapped book.
+#:
+#: The fetcher was right and the manifest was wrong, which is exactly the case a
+#: size check can see and a magic-byte check cannot. Three sibling entries share
+#: that whole-book URL — the two other Entrepreneurship chapters and a Psychology
+#: one, all declaring 32-34 pages — and escaped only because per-chapter files
+#: already existed on disk. Delete those and the next run pulls three more whole
+#: textbooks onto a disk that shares 38 GB with manhwamaniacs.
+#:
+#: 1 MB/page is deliberately loose: an image-heavy OpenStax chapter runs at
+#: 0.28 MB/page and the full 939-page computer-science volume at 0.06, while the
+#: mismapped entry is at 3.2. A warning, not a rejection — the file may still be
+#: wanted, and a fetcher that refuses real material is worse than a noisy one.
+BYTES_PER_PAGE_WARN = 1024 * 1024
+
+
+def warn_if_bigger_than_claimed(data: bytes, rel_path: str, pages: object) -> str | None:
+    """A note when the download is far too large for the pages claimed."""
+    try:
+        claimed = int(pages)
+    except (TypeError, ValueError):
+        return None
+    if claimed <= 0:
+        return None
+    per_page = len(data) / claimed
+    if per_page < BYTES_PER_PAGE_WARN:
+        return None
+    return (f"{len(data) / 1024 / 1024:.0f} MB for {claimed} claimed pages "
+            f"({per_page / 1024 / 1024:.1f} MB/page) — the source_url probably "
+            f"serves a whole volume, not this one part of it")
+
+
+def fetch_one(url: str, dest: Path, pages: object = None) -> tuple[int, str | None]:
+    """Download to `dest` atomically. Returns (bytes written, warning or None)."""
     check_host(url)
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
 
@@ -117,6 +154,7 @@ def fetch_one(url: str, dest: Path) -> int:
         raise FetchError(str(last))
 
     looks_like_what_it_claims(data, str(dest))
+    warning = warn_if_bigger_than_claimed(data, str(dest), pages)
 
     dest.parent.mkdir(parents=True, exist_ok=True)
     # Temp-then-rename: a killed run must not leave a partial file that the
@@ -124,7 +162,7 @@ def fetch_one(url: str, dest: Path) -> int:
     temp = dest.with_suffix(dest.suffix + ".part")
     temp.write_bytes(data)
     temp.rename(dest)
-    return len(data)
+    return len(data), warning
 
 
 def main() -> int:
@@ -175,6 +213,7 @@ def main() -> int:
     downloaded = 0
     ok = 0
     failures: list[tuple[str, str]] = []
+    oversized: list[tuple[str, str]] = []
 
     for i, entry in enumerate(pending, 1):
         rel = entry["path"]
@@ -184,10 +223,13 @@ def main() -> int:
             print(f"{len(pending) - i + 1} still pending; re-run to continue.")
             break
         try:
-            size = fetch_one(url, root / rel)
+            size, warning = fetch_one(url, root / rel, entry.get("pages"))
             downloaded += size
             ok += 1
             print(f"[{i}/{len(pending)}] {rel}  {size / 1024:.0f} KB")
+            if warning:
+                oversized.append((rel, warning))
+                print(f"              WARNING: {warning}")
         except FetchError as exc:
             failures.append((rel, str(exc)))
             print(f"[{i}/{len(pending)}] {rel}  FAILED: {exc}")
@@ -206,6 +248,14 @@ def main() -> int:
         print(f"failures written to {report}")
         print("\nA failure here is usually a moved URL, not a bug. The manifest line")
         print("still describes a real source — re-find it or drop the line.")
+
+    if oversized:
+        print(f"\n{len(oversized)} file(s) came back far larger than the manifest's")
+        print("page count implies. Nothing was rejected — the file may still be what")
+        print("is wanted — but the manifest is describing a PART and the URL is")
+        print("serving a WHOLE, so the filename now lies about its contents:")
+        for rel, why in oversized:
+            print(f"  {rel}\n      {why}")
 
     return 0
 
