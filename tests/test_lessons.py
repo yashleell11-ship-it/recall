@@ -2318,3 +2318,108 @@ def test_the_bare_chapter_titles_are_left_alone_because_they_are_prose():
                  "Computer Networks are classified by their span.",
                  "She studies computer science at a university."):
         assert _flat(kept) == kept
+
+
+# ---------------------------------------------------------------------------
+# A figure cross-reference pointing at a figure that did not survive extraction.
+#
+# NIMI's manuals put it at the head of the paragraph it introduces, and the
+# sentence splitter glues it to the front of the definition that follows.
+# ---------------------------------------------------------------------------
+
+#: Real MEC103 sentences, and what a strip turns them into. 422 carry one.
+FIGURE_LED = (
+    "(Fig 3) Obtuse angle: This refers to an angle between 90 and 180.",
+    "(Fig 4) - Solid bounded by warped surfaces.",
+    "(Fig 9) Ring nut: Its diameter is 1.8 d and thickness is 0.5 d.",
+    "(Fig 18) - Symbol for 3rd angle projection.",
+    "(Figs 1 & 2) Margin: Margin enables the prints to be trimmed.",
+    "(Fig 5a) If rivets are staggered it is called zig-zag riveted.",
+)
+
+
+def test_a_dead_figure_reference_is_stripped_and_the_definition_survives():
+    from recall.teach.corpus import strip_figure_refs
+
+    for sentence in FIGURE_LED:
+        out = strip_figure_refs(sentence)
+        assert not out.startswith("("), out
+        assert "Fig" not in out.split(".")[0], out
+        assert len(out) > 20, out
+
+
+def test_refusing_these_was_measured_and_is_worse_than_break_even():
+    """The finding proposed refusing a sentence whose payload is a figure pointer.
+    Measured over MEC103's 9,671 offered sentences it refuses 45 of legitimate
+    course material to remove 42 empty ones — and the casualties are the corpus's
+    best short statements, because NIMI writes terse one-line definitions: the
+    definition of an obtuse angle, all three classes of curved-surface solids,
+    "Ring nut: Its diameter is 1.8 d", the symbol for third-angle projection. In a
+    subject whose whole content is drawing conventions, that is the filter that
+    gets switched off and takes the useful part with it.
+
+    So these are STRIPPED and every one stays offerable."""
+    from recall.teach.corpus import split_sentences, strip_figure_refs
+
+    passage = " ".join(FIGURE_LED)
+    offered = split_sentences(strip_figure_refs(passage))
+    for keep in ("Obtuse angle", "Ring nut", "Margin", "zig-zag riveted"):
+        assert any(keep in s for s in offered), keep
+
+
+def test_the_strip_can_push_the_tersest_definitions_under_the_word_floor():
+    """An interaction worth naming rather than hiding.
+
+    NIMI writes definitions so terse that removing the figure reference drops them
+    below `_MIN_CITABLE_WORDS`: "(Fig 4) - Solid bounded by warped surfaces." is
+    seven tokens and offerable, and "Solid bounded by warped surfaces." is five and
+    is not. So for the very shortest ones the strip trades a citation carrying a
+    dead reference for no citation at all.
+
+    That is the right trade and it is the FLOOR's decision, not this rule's: the
+    floor exists because "a citation shorter than this is not carrying a definition
+    or a condition". Worth knowing if MEC103's grounding comes out low — the
+    material is there, it is just too terse to quote."""
+    from recall.teach.corpus import split_sentences, strip_figure_refs
+
+    terse = "(Fig 4) - Solid bounded by warped surfaces."
+    assert len(terse.split()) >= 6
+    assert len(strip_figure_refs(terse).split()) < 6
+    assert split_sentences(strip_figure_refs(terse)) == []
+
+
+def test_the_parenthetical_that_is_the_subject_is_left_alone():
+    """The one shape whose meaning a strip destroys: "(Fig 2) shows a V belt
+    pulley…" would become "shows a V belt pulley…". This guard is the difference
+    between repairing 421 of 422 and 422 of 422 with a casualty."""
+    from recall.teach.corpus import strip_figure_refs
+
+    for kept in ("(Fig 2) shows a V belt pulley having three V grooves.",
+                 "(Fig 7) illustrates the parallel line method.",
+                 "(Fig 4) depicts the development of a cone."):
+        assert strip_figure_refs(kept) == kept
+
+
+def test_a_reference_that_is_not_parenthesised_is_untouched():
+    """Only the parenthesised form gets glued to a sentence head by the splitter,
+    and only it is dead weight. An inline reference is part of the sentence's own
+    grammar — and these two are the offset-section rule and the linear-spacing
+    rule, both real teaching."""
+    from recall.teach.corpus import strip_figure_refs
+
+    for kept in ("In such cases, the cutting plane is off-set as shown in Fig 8.",
+                 "Linear spacings may be dimensioned as in Fig 27 a&b.",
+                 "Conventional representation of materials is shown in Table 1."):
+        assert strip_figure_refs(kept) == kept
+
+
+def test_the_strip_happens_at_passage_level_not_per_sentence():
+    """It has to. A quote is checked VERBATIM against the passage, so repairing a
+    sentence after it was split would turn every citation from these files into a
+    paraphrase and fail the grounding gate outright."""
+    import inspect
+
+    from recall.teach import corpus
+
+    assert "strip_figure_refs" in inspect.getsource(corpus.strip_furniture)
+    assert "strip_figure_refs" not in inspect.getsource(corpus.split_sentences)

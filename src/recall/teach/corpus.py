@@ -560,6 +560,8 @@ FURNITURE: tuple[str, ...] = (
     "view this page on github", "report a problem with this content",
     "content available under a creative commons license",
     "this page was last modified", "help improve mdn",
+    # A NIMI exercise instruction, 22 offered sentences.
+    "read and write the following",
 )
 
 #: Furniture that is not a phrase but a SHAPE — a footer, a notice, a stamp —
@@ -677,6 +679,51 @@ _PAGE_CHROME: tuple[tuple[str, int], ...] = (
 
 _PAGE_CHROME_RE = tuple(re.compile(pat, flags) for pat, flags in _PAGE_CHROME)
 
+#: A figure cross-reference in parentheses, pointing at a figure that did not
+#: survive extraction.
+#:
+#: MEC103's NIMI manuals put it at the head of the paragraph it introduces, and
+#: the sentence splitter then glues it to the front of the definition that
+#: follows: "(Fig 3) Obtuse angle: This refers to an angle between 90° and 180°."
+#: Removing it leaves a clean citable definition. 422 MEC103 sentences carry one.
+#:
+#: STRIPPED, not refused, and the difference is the whole finding. Refusing a
+#: sentence for carrying a figure pointer was measured and is worse than
+#: break-even: 45 sentences of legitimate course material lost to remove 42 empty
+#: ones — and the casualties are the corpus's best short statements, because NIMI
+#: writes terse one-line definitions. It would refuse the definition of an obtuse
+#: angle, all three classes of curved-surface solids, "Ring nut: Its diameter is
+#: 1.8 d and thickness is 0.5 d", and the symbol for third-angle projection, in a
+#: subject whose entire content is drawing conventions. That is the filter that
+#: gets switched off, taking the useful part with it.
+#:
+#: Done at PASSAGE level rather than per sentence, because a quote must stay
+#: verbatim against the passage it is checked against — repairing the sentence
+#: after it was split would turn every citation from these files into a
+#: paraphrase and fail the grounding gate outright.
+_FIGURE_REF = re.compile(r"\(\s*Figs?\.?\s*[^)]{0,24}\)[\s\-–—:]*")
+
+#: ...except where the parenthetical is the grammatical SUBJECT of what follows,
+#: which is the one shape whose meaning the strip would destroy: "(Fig 2) shows a
+#: V belt pulley having three V grooves." becomes "shows a V belt pulley…".
+#: Measured: this guard is the difference between repairing 421 of 422 and 422 of
+#: 422 with one casualty.
+_FIGURE_REF_SUBJECT = re.compile(
+    r"^\s*(?:shows|gives|illustrates|indicates|represents|depicts)\b")
+
+
+def strip_figure_refs(text: str) -> str:
+    """Remove a dead figure cross-reference, keeping the sentence around it."""
+    out = []
+    pos = 0
+    for m in _FIGURE_REF.finditer(text or ""):
+        if _FIGURE_REF_SUBJECT.match(text[m.end():m.end() + 24]):
+            continue
+        out.append(text[pos:m.start()])
+        pos = m.end()
+    out.append((text or "")[pos:])
+    return "".join(out)
+
 #: A RUN of markers, not one at a time: the real text is "Reveal Answer Hide
 #: Answer Correct Answer: Explanation:", four of them in a row, and removing
 #: them one by one would leave the whitespace between them behind.
@@ -697,6 +744,7 @@ def strip_furniture(text: str) -> str:
     out = text or ""
     for pattern in _PAGE_CHROME_RE:
         out = pattern.sub(" ", out)
+    out = strip_figure_refs(out)
     return _FURNITURE_RUN.sub(" ", out)
 
 
@@ -1143,5 +1191,5 @@ __all__ = ["FURNITURE", "clean_latex", "ensure_vectors", "is_document",
            "load_source", "looks_like_latex_debris", "looks_like_lost_degree",
            "looks_symbol_stripped",
            "passage_is_usable", "plan_load",
-           "read_manifest", "strip_boilerplate", "strip_furniture",
-           "strip_running_heads", "unit_passages"]
+           "read_manifest", "strip_boilerplate", "strip_figure_refs",
+           "strip_furniture", "strip_running_heads", "unit_passages"]
