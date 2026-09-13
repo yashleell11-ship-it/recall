@@ -2063,17 +2063,95 @@ def test_the_section_number_strip_is_deliberately_absent():
         assert _flat(kept) == kept
 
 
-def test_the_header_mega_nav_is_still_there_and_that_is_recorded():
-    """An admission, not an oversight. No boundary for MDN's 340-word header
-    could be proved safe: an anchored run from "Skip to main content" has no
-    reliable end marker, and refusing any span with four or more bullets drops 656
-    offered CSE326 sentences, some of them real bullet-list teaching. So 154 nav
-    spans remain citable, and this test says so out loud rather than letting a
-    later reader assume the chrome work is finished."""
-    nav = "• Skip to main content\n• Skip to search\n• HTML\n• CSS\n• JavaScript"
+def test_the_header_mega_nav_is_left_in_the_passage_and_refused_at_the_offer():
+    """Two different jobs, and only one of them is deletion.
+
+    No boundary for MDN's 340-word header could be proved safe to CUT: an
+    anchored run from "Skip to main content" has no reliable end marker, and
+    refusing any span with four or more bullets drops 656 offered CSE326
+    sentences, some of them real bullet-list teaching. So the text stays in the
+    passage — and is withheld where candidates are OFFERED instead, which costs
+    nothing because a candidate the writer is never shown cannot be cited.
+
+    Adding "skip to main content" to FURNITURE would have been actively worse
+    than doing nothing: measured, it leaves the 1,784-character menu usable and
+    citable while deleting the one fingerprint a backstop could match, so
+    `_quote_is_furniture` then returns None and the evidence is hidden."""
+    from recall.teach.corpus import FURNITURE, split_sentences
+
+    # Bulleted ITEMS, the way the menu actually renders — not bulleted words.
+    nav = " ".join("• " + item for item in (
+        "Skip to main content", "Skip to search", "HTML", "CSS", "JavaScript",
+        "Guides", "Reference", "Elements", "Global attributes", "Attributes",
+        "Events", "Learn", "Tutorials", "Curriculum", "Blog", "Play", "Tools",
+        "About", "Advertise with us", "Donate", "MDN Plus", "FAQ",
+        "Accessibility", "Web development", "Web standards"))
+    # Nothing is deleted from the passage...
     assert "Skip to main content" in _flat(nav)
-    # ...and the real bullet-list teaching that a blunt rule would have taken.
+    assert "skip to main content" not in FURNITURE
+    # ...and nothing of it is offered to a writer either.
+    assert split_sentences(nav) == []
+    # The real bullet-list teaching a blunt rule would have taken is still offered.
     teaching = ("• The alternative box model (accessed via box-sizing: "
                 "border-box) and how it differs from the regular box model. "
-                "• Margin collapsing. • Basic display values.")
+                "• Margin collapsing. • Basic display values and how they "
+                "affect box behavior - block, inline, inline-block, none.")
     assert _flat(teaching) == teaching
+    assert any("alternative box model" in s for s in split_sentences(teaching))
+
+
+def test_a_link_list_is_refused_by_density_not_by_taste():
+    """Both thresholds come from both sides of the gap. MDN's header arrives as
+    one candidate with 81 bullets at 4.26 per 100 characters; the most
+    bullet-heavy quote any writer has actually chosen across this project's 45
+    stored citations has 9 bullets at 1.34 per 100."""
+    from recall.teach.corpus import _is_link_list
+
+    assert _is_link_list("• x" * 20)
+    assert not _is_link_list("• a • b • c and then some ordinary prose follows")
+    # Long and dense: refused. Long and sparse: kept.
+    assert _is_link_list("• item " * 50)
+    assert not _is_link_list("Some ordinary prose. " * 20 + "• one bullet")
+
+
+def test_google_s_nested_circle_bullet_counts_too():
+    """Google's SEO guide nests ○ inside •, so a bullet set without it leaves that
+    menu citable — measured: after stripping the outer run, sentence 1.1 was still
+    "○ Do you need an SEO? ○ Guidance on third-party SEO tools…"."""
+    from recall.teach.corpus import _is_link_list
+
+    assert _is_link_list(
+        "○ Do you need an SEO? ○ Guidance on third-party SEO tools and advice "
+        "○ Crawling and indexing ○ Sitemaps ○ robots.txt ○ Canonical URLs "
+        "○ Redirects ○ JavaScript SEO basics ○ Page experience ○ Core Web "
+        "Vitals ○ Mobile-friendly test ○ Structured data general guidelines "
+        "○ Article ○ Breadcrumb ○ Carousel ○ Course ○ Dataset ○ Event ○ FAQ "
+        "○ Local business ○ Product ○ Recipe ○ Review snippet ○ Sitelinks "
+        "○ Video ○ Site names ○ Favicons ○ Meta description ○ Title links")
+
+
+def test_a_short_dense_list_is_a_known_blind_spot():
+    """Named rather than quietly widened. The density branch needs 300 characters,
+    so a 250-character span at 4.5 bullets per 100 slips through with fewer than
+    20 bullets. Both thresholds were measured against the real gap — nav at 4.26
+    per 100 against a real quote's worst 1.34 — and moving one without measuring
+    again is how a filter starts crying wolf. The six-word floor already discards
+    the shortest candidates, so what gets through is a handful of mid-length
+    lists."""
+    from recall.teach.corpus import _is_link_list
+
+    assert not _is_link_list("○ one ○ two ○ three ○ four ○ five ○ six ○ seven")
+
+
+def test_the_refusal_deletes_nothing_so_code_cannot_be_damaged():
+    """The alternative was measured and is far worse. Dropping lines that repeat
+    across a unit's files deletes code: at a 10-file threshold "}" (48 files),
+    "body {" (25), "</div>" (24), "color: white;" (20) and "display: flex;" (15)
+    all go, and 282 of 567 chunks of CSE326 unit 3 lose at least one code line."""
+    from recall.teach.corpus import split_sentences
+
+    css = ("The rule below is what the passage is about. input, textarea, "
+           "select, button { width: 150px; padding: 0; margin: 0; box-sizing: "
+           "border-box; } That sets every control to one width.")
+    offered = split_sentences(css)
+    assert any("box-sizing: border-box; }" in s for s in offered), offered

@@ -822,6 +822,48 @@ def ensure_vectors(conn, chunk_ids: list[int], embed=None, on_progress=None) -> 
 _SENTENCE = re.compile(r"(?<=[.!?])\s+(?=[A-Z(\[])")
 
 
+#: The glyphs a rendered link list is built from. `○` is not decoration: Google's
+#: nav nests it inside `•`, so a set without it leaves that menu citable.
+_BULLET = re.compile(r"[•○‣▪▸»]")
+
+#: A menu is not a sentence, and the thresholds come from both sides of the gap
+#: rather than from taste. MDN's header mega-nav arrives as one candidate with 81
+#: bullets at 4.26 per 100 characters; the most bullet-heavy quote any writer has
+#: actually chosen across this project's 45 stored citations has 9 bullets at 1.34
+#: per 100. These sit between the two with about 2x margin either way.
+_LINK_LIST_BULLETS = 20
+_LINK_LIST_MIN_CHARS = 300
+_LINK_LIST_DENSITY = 2.5
+
+
+def _is_link_list(sentence: str) -> bool:
+    """True when a candidate is a navigation menu wearing a sentence's clothes.
+
+    Refusing it HERE is the cheap place: the writer cites by number, so a
+    candidate `split_sentences` does not return can never reach a student, and
+    nothing is deleted from any passage — no code, no formula, no quote can be
+    altered by a rule that only withholds.
+
+    The alternative was tried and measured far worse. Dropping lines that repeat
+    across a unit's files deletes CODE: at a 10-file threshold `}` (48 files),
+    `body {` (25), `</div>` (24), `color: white;` (20) and `display: flex;` (15)
+    all go, and 282 of 567 chunks of CSE326 unit 3 lose at least one code line —
+    turning the very declaration a passage exists to teach, "input, textarea,
+    select, button { width: 150px; padding: 0; margin: 0; box-sizing: border-box;
+    }", into "input, textarea, select, button { width: 150px;".
+
+    Measured over all 184 CSE326 files: 354 of 36,509 offered candidates refused
+    (0.97%), 151 of them the header menu, in 151 of the 153 files that carry it.
+    Mathematics is untouched, because extracted mathematics has no bullets.
+    """
+    bullets = len(_BULLET.findall(sentence))
+    if bullets >= _LINK_LIST_BULLETS:
+        return True
+    if len(sentence) <= _LINK_LIST_MIN_CHARS:
+        return False
+    return bullets / (len(sentence) / 100.0) >= _LINK_LIST_DENSITY
+
+
 def split_sentences(text: str) -> list[str]:
     """The citable sentences of a passage, in order.
 
@@ -832,7 +874,8 @@ def split_sentences(text: str) -> list[str]:
     flat = " ".join((text or "").split())
     return [s.strip() for s in _SENTENCE.split(flat)
             if len(s.split()) >= _MIN_CITABLE_WORDS
-            and not looks_like_latex_debris(s)]
+            and not looks_like_latex_debris(s)
+            and not _is_link_list(s)]
 
 
 #: Matches lessons._MIN_QUOTE_WORDS. Kept here as its own name because this is
