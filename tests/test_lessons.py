@@ -2288,3 +2288,33 @@ def test_recovery_stops_where_the_font_stops_being_guessable():
     # The scrambled-subset ones are not claimed.
     for unguessable in ("", "", "", ""):
         assert unguessable not in mapped, unguessable
+
+
+def test_two_running_heads_are_handled_here_instead_of_by_a_re_load():
+    """INT335, CSE111, INT108 and MTH165 are not being re-loaded, so the page-level
+    running-head strip never reaches their PDFs.
+
+    Re-loading them for it was measured and declined: their whole deletion set is
+    about 6,900 characters against MEC103's 44,300, and most of it — "Access for
+    free at openstax.org" (50% of pages), "Reprint #-#" (100%), "Explanation:"
+    (54%) — is already removed at this step. That left roughly 0.3% of their
+    offered sentences for the price of re-embedding some three thousand chunks on a
+    box shared with a production site."""
+    assert _flat("the mindset matters. d.school at Stanford University "
+                 "Bootleg 2018 Next, reframe.") \
+        == "the mindset matters. Bootleg 2018 Next, reframe."
+    assert "Computer Science" not in _flat(
+        "A bus carries signals. Computer Science – Class xi 12 The control unit")
+    assert "Computer Science" not in _flat(
+        "Networks connect hosts. Computer Science - Class XII 8 A protocol is")
+
+
+def test_the_bare_chapter_titles_are_left_alone_because_they_are_prose():
+    """The same measurement turned up "Computer System" on 50% of an NCERT
+    chapter's pages and "Computer Networks" on 50% of another. Both are ordinary
+    prose in a computer-fundamentals course — CSE111 unit 2 is literally about
+    computer systems — so neither is taken as a phrase."""
+    for kept in ("A computer system has three functional units.",
+                 "Computer Networks are classified by their span.",
+                 "She studies computer science at a university."):
+        assert _flat(kept) == kept

@@ -608,6 +608,24 @@ _PAGE_CHROME: tuple[tuple[str, int], ...] = (
     # makes it safe: the bare phrase "in this article" is real prose in about 39
     # CSE326 sentences and 1 OpenStax one.
     (r"In this article(?:\s*•[^\n]*)+", 0),
+    # Two running heads from subjects that are NOT being re-loaded, so
+    # strip_running_heads will not reach them. Measured on the raw files: the
+    # d.school byline is on 88 of 88 pages of the Bootleg, and NCERT's class line
+    # on half the pages of every chapter it appears in.
+    #
+    # Re-loading those subjects to catch these was measured and declined: their
+    # whole deletion set is about 6,900 characters against MEC103's 44,300, and
+    # most of it — "Access for free at openstax.org", "Reprint #-#",
+    # "Explanation:" — is already removed here. That left ~0.3% of their offered
+    # sentences for the price of re-embedding some three thousand chunks.
+    #
+    # Only the UNAMBIGUOUS ones are taken as phrases. The bare chapter titles the
+    # same measurement turned up — "Computer System" (50% of pages) and "Computer
+    # Networks" (50%) — are left alone, because they are ordinary prose in a
+    # computer-fundamentals course and CSE111 unit 2 is literally about computer
+    # systems.
+    (r"d\.school at Stanford University", re.I),
+    (r"Computer Science\s*[-–—]\s*Class\s*(?:xi{1,2}|\d{1,2})", re.I),
     # The accessibility skip-links, as an anchored PAIR.
     #
     # A bare "skip to main content" entry was rejected earlier, and rightly: it
