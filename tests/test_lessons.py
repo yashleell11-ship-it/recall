@@ -1878,3 +1878,96 @@ def test_the_integral_as_Z_rule_is_deliberately_absent():
             "@keyframes spin animates the element",
     ):
         assert not looks_like_latex_debris(legitimate), legitimate
+
+
+# ---------------------------------------------------------------------------
+# Running heads, the PDF form of "Reveal Answer Hide Answer".
+#
+# PyMuPDF extracts a page's header and footer into the text flow, and the footer
+# of page n precedes the continuation of the sentence running onto page n+1 — so
+# the header welds itself into the middle of real teaching. The thresholds below
+# come from measuring all 40 MEC103 files and 296 documents in the other five
+# subjects; the numbers in each docstring are that measurement.
+# ---------------------------------------------------------------------------
+
+
+def _paged(lines_per_page, n=22):
+    """n pages, each built by lines_per_page(i)."""
+    return [(i, "\n".join(lines_per_page(i))) for i in range(1, n + 1)]
+
+
+def test_a_long_running_head_and_a_short_stamp_both_go():
+    """Tier A is the header; tier B is the short stamp a header breaks into.
+    A flat 12-character floor cleared only 55% of MEC103's stamps because
+    "AITS KADAPA" is 11 characters, "I B.Tech" 8 and "Page #" 6."""
+    from recall.teach.corpus import strip_running_heads
+
+    # The teaching line must DIFFER per page, because a sentence repeated
+    # verbatim on every page of a document is a running head — that is what the
+    # word means, and the rule cannot and should not tell them apart.
+    pages = _paged(lambda i: [
+        "MRCET(UGC AUTONOMOUS) Dept. of Mechanical Engineering",
+        "Page %d" % i,
+        "Section %s: projection casts an image of %s onto a plane."
+        % ("abcdefghijklmnopqrstuv"[i - 1], "xyz"[i % 3]),
+    ])
+    out = strip_running_heads(pages)
+    for _n, text in out:
+        assert "MRCET" not in text
+        assert "Page" not in text
+        assert "projection casts an image" in text
+
+
+def test_a_label_on_half_the_pages_survives_because_code_needs_it():
+    """The load-bearing threshold. "Output:" sits on 59% of the pages of an
+    NCERT Python chapter and is the label separating every program from its
+    output; "Ans:" does the same in a CBSE marking scheme. A 4-character floor
+    at the 50% share deletes both — measured, and rejected for it."""
+    from recall.teach.corpus import strip_running_heads
+
+    pages = _paged(lambda i: (
+        ["Output:"] if i <= 13 else []) + [
+        "Some prose about control flow on page %d that differs each time." % i,
+    ])
+    out = strip_running_heads(pages)
+    assert sum("Output:" in t for _n, t in out) == 13
+
+
+def test_a_short_document_is_left_alone():
+    """The one measured false positive lived here: a 10-page lab sheet repeats
+    "Q. 3 Draw the orthographic projections of Fig. 4" on 9 of its pages, and
+    that is the assignment, not furniture."""
+    from recall.teach.corpus import strip_running_heads
+
+    pages = _paged(lambda i: ["Q. %d Draw the orthographic projections of Fig. %d"
+                              % (i, i)], n=10)
+    assert strip_running_heads(pages) == pages
+
+
+def test_pages_and_their_numbers_survive_the_strip():
+    """It takes and returns read_document's shape, so chunk_pages and every page
+    reference downstream cannot tell that it ran."""
+    from recall.teach.corpus import strip_running_heads
+
+    pages = _paged(lambda i: ["FOOTER LINE THAT REPEATS EVERYWHERE",
+                              "Content %s." % "abcdefghijklmnopqrstuv"[i - 1]])
+    out = strip_running_heads(pages)
+    assert [n for n, _t in out] == [n for n, _t in pages]
+    assert all("FOOTER" not in t for _n, t in out)
+    assert all("Content" in t for _n, t in out)
+
+
+def test_digit_blanking_can_collapse_real_lines_and_that_is_the_known_cost():
+    """Named rather than hidden. "Page 12" and "Page 13" have to count as one
+    line, so digits are blanked — which also makes "Example 7 shows…" and
+    "Example 8 shows…" one line. The tier widths and page shares are what hold
+    it down, and the deletion set is meant to be read before a re-load."""
+    from recall.teach.corpus import _normalise_line, strip_running_heads
+
+    assert _normalise_line("Page 12") == _normalise_line("Page 13") == "Page #"
+    # A line that IS the same modulo its number, on every page, does go.
+    pages = _paged(lambda i: ["Example %d shows the construction" % i,
+                              "Unique prose for page %s." % chr(96 + i)])
+    out = strip_running_heads(pages)
+    assert all("Example" not in t for _n, t in out)
+    assert all("Unique prose" in t for _n, t in out)

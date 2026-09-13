@@ -85,7 +85,9 @@ def load_source(conn, *, user_id: int, topic_id: int, path: pathlib.Path,
             " added_at) VALUES (?,?,?,?,?,?)",
             (user_id, topic_id, str(path), "corpus", sha, _now()))
         source_id = int(cur.lastrowid)
-        chunks = chunk_pages(read_document(str(path)))
+        # Running heads go before chunking, because a page is the unit
+        # they repeat on and a chunk spans several pages.
+        chunks = chunk_pages(strip_running_heads(read_document(str(path))))
         for ch in chunks:
             conn.execute(
                 "INSERT INTO chunks (source_id, ordinal, text, page_ref)"
@@ -107,6 +109,105 @@ def load_source(conn, *, user_id: int, topic_id: int, path: pathlib.Path,
                 " unit_key) VALUES (?,?,?)", (source_id, name, unit_key(name)))
     conn.commit()
     return source_id, added
+
+
+#: A running head is a line that repeats on most pages of a document, and it is
+#: the PDF form of the failure "Reveal Answer Hide Answer" was on scraped pages:
+#: PyMuPDF extracts a page's header and footer into the text flow, and the footer
+#: of page n precedes the continuation of the sentence that runs onto page n+1.
+#: So the header welds itself into the MIDDLE of real teaching:
+#:
+#:     "ENGINEERING GRAPHICS(23HES0301) AITS KADAPA Dept. of Mechanical
+#:      Engineering Page 1 UNIT-1 INTRODUCTION TO ENGINEERING DRAWING Engineering
+#:      drawing is a two dimensional representation of three dimensional objects."
+#:
+#: That last clause is the single most quotable sentence in MEC103's corpus, and
+#: it could not be cited without a college name and a page number in front of it.
+#: In 594 header-carrying sentences across the 8 worst files the header is a
+#: PREFIX on real teaching, so refusing the quote throws the definition away too.
+#:
+#: `strip_boilerplate` cannot reach this. That rule removes the prefix common to
+#: every CHUNK of one source, and a chunk of a PDF starts mid-page — measured, it
+#: altered 0 of 573 chunks across 40 of 40 MEC103 files. Pages are the unit a
+#: running head repeats on, so this runs on pages, before chunking.
+#:
+#: Two tiers, because the worst headers extract as several SHORT lines and a flat
+#: 12-character floor cleared only 55% of them. It is the 90% threshold on short
+#: lines that is load-bearing: at ≥50% a 4-character floor deletes "Output:"
+#: (59% of pages of an NCERT Python chapter), which is the label separating every
+#: program from its output, and "Ans:" from a CBSE marking scheme, which welds
+#: question to answer. That is the code-damage class this codebase exists to
+#: avoid. At ≥90% the same floor takes "Reprint #-#" (100%) and "Page #" (93-95%)
+#: and leaves "Output:", "Ans:", "Notes" and "Functions" alone.
+#:
+#: Measured end to end on all 40 MEC103 files: 453 → 437 usable chunks (-3.5%),
+#: 9,671 → 9,401 offered sentences (-2.8%), 496 → 115 sentences carrying a stamp
+#: (77% cleared). Across 296 documents in the other five subjects it flags ~25
+#: lines, every one a running head, and NO code line anywhere — nothing with an
+#: include, import, def, print or operator reaches even half the pages of a file.
+_RUNNING_HEAD_MIN_PAGES = 20
+
+#: (shortest, longest, share of pages). Tier A is an ordinary running head; tier
+#: B is the short stamp a header breaks into, and pays for its width with a much
+#: higher threshold.
+_RUNNING_HEAD_TIERS: tuple[tuple[int, int, float], ...] = (
+    (12, 90, 0.50),
+    (4, 11, 0.90),
+)
+
+
+def _normalise_line(line: str) -> str:
+    """A line with its whitespace collapsed and its digits blanked.
+
+    "Page 12" and "Page 13" are the same running head, so the page number has to
+    stop distinguishing them before they can be counted together.
+
+    The cost of that is real and worth naming: blanking digits also makes
+    genuinely different lines look identical, so a document whose pages each
+    carry "Example 7 shows the construction" would see them counted as one line
+    and, above the threshold, deleted as furniture. The tier widths and page
+    shares are what hold this down, and they were chosen against the whole
+    corpus — 336 documents, ~25 lines flagged, every one a running head. Before
+    a re-load, print the deletion set and read it; this is a rule to verify by
+    looking, not by trusting.
+    """
+    return re.sub(r"\d+", "#", " ".join((line or "").split()))
+
+
+def strip_running_heads(pages: list[tuple[int, str]]) -> list[tuple[int, str]]:
+    """Drop each line that repeats on most pages of one document.
+
+    Takes and returns `read_document`'s shape, so it slots in ahead of
+    `chunk_pages` and nothing downstream knows it ran.
+    """
+    if len(pages) < _RUNNING_HEAD_MIN_PAGES:
+        # A short document has no running head worth finding, and the one
+        # measured false positive was exactly here: a 10-page lab sheet repeats
+        # "Q. # Draw the orthographic projections of Fig. #" on 9 of its pages,
+        # which is the assignment, not furniture.
+        return pages
+
+    # Pages carrying each line, not occurrences of it — a header printed twice on
+    # one page is still one page.
+    pages_with: dict[str, int] = {}
+    for _number, text in pages:
+        for line in {_normalise_line(ln) for ln in (text or "").splitlines()}:
+            if line:
+                pages_with[line] = pages_with.get(line, 0) + 1
+
+    total = len(pages)
+    doomed = {
+        line for line, count in pages_with.items()
+        if any(lo <= len(line) <= hi and count >= share * total
+               for lo, hi, share in _RUNNING_HEAD_TIERS)
+    }
+    if not doomed:
+        return pages
+    return [
+        (number, "\n".join(ln for ln in (text or "").splitlines()
+                           if _normalise_line(ln) not in doomed))
+        for number, text in pages
+    ]
 
 
 #: A passage shorter than this cannot carry a definition worth quoting.
@@ -799,4 +900,4 @@ __all__ = ["FURNITURE", "clean_latex", "ensure_vectors", "is_document",
            "load_source", "looks_like_latex_debris", "looks_symbol_stripped",
            "passage_is_usable", "plan_load",
            "read_manifest", "strip_boilerplate", "strip_furniture",
-           "unit_passages"]
+           "strip_running_heads", "unit_passages"]
