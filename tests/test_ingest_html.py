@@ -53,16 +53,26 @@ def test_keeping_only_main_would_have_emptied_the_spec_pages():
     assert "HTML Standard" not in out  # it was inside <header>
 
 
-def test_entities_survive_verbatim_because_one_decode_is_already_too_many():
-    """`convert_charrefs=False` is load-bearing, not a detail.
+def test_entities_come_out_with_one_extra_level_of_escaping():
+    """`convert_charrefs=False` is load-bearing, not a detail: with the default,
+    `handle_data` receives DECODED text and this class could not tell an entity
+    from the character it stands for.
 
-    With the default, `handle_data` receives DECODED text, so re-emitting it would
-    silently undo one level of escaping — and that is the bug that made an MDN
-    page teach that the character reference for "<" is "<". A page writes
-    `&amp;lt;` in order to DISPLAY `&lt;`, and both levels have to come through."""
+    Verbatim preservation was only the intermediate step and is NOT the contract.
+    PyMuPDF decodes twice, so the parser adds one level on the way out, which
+    cancels the extra decode exactly:
+
+        &lt;      -> &amp;lt;      -> two decodes -> <
+        &amp;lt;  -> &amp;amp;lt;  -> two decodes -> &lt;
+
+    What matters is the laid-out text, asserted separately below; this pins the
+    mechanism that produces it."""
     out = strip_html_chrome(PAGE).decode()
-    assert "a &amp;lt; b" in out
-    assert "return a &amp; b" in out
+    assert "a &amp;amp;lt; b" in out
+    assert "return a &amp;amp; b" in out
+    # An attribute is left alone: it is not rendered, and a query string's
+    # ampersand has nothing to do with what a student reads.
+    assert '<main id="content">' in out
 
 
 def test_an_unclosed_chrome_tag_falls_back_rather_than_eating_the_article():
@@ -151,3 +161,61 @@ def test_the_css_that_would_have_been_deleted_survives_a_load():
     stripped = strip_running_heads(pages)
     assert "display: grid;" not in stripped[0][1], (
         "if this ever stops being true, re-check why markup is excluded")
+
+
+# ---------------------------------------------------------------------------
+# The escaping lesson. Character references are a CSE326 unit 1 syllabus topic,
+# and this is the worst class of defect in the corpus: fluent, verbatim, citable,
+# and FALSE.
+# ---------------------------------------------------------------------------
+
+ESCAPING_PAGE = b"""<html><body><main>
+<table><tr><th>Literal</th><th>Reference</th></tr>
+<tr><td>&lt;</td><td>&amp;lt;</td></tr>
+<tr><td>&gt;</td><td>&amp;gt;</td></tr>
+<tr><td>&amp;</td><td>&amp;amp;</td></tr></table>
+<p>For example, &lt; becomes &amp;lt;, and &amp; becomes &amp;amp;.</p>
+<p>AT&amp;T and Q&amp;A and 5 &lt; 6.</p>
+<pre>if (a &amp;lt; b) { return a &amp;amp; b; }</pre>
+</main></body></html>"""
+
+
+def _text_of(data: bytes) -> str:
+    import pathlib
+    import tempfile
+
+    path = pathlib.Path(tempfile.mkdtemp()) / "page.html"
+    path.write_bytes(data)
+    from recall.ingest.pdf import read_document
+
+    return "\n".join(t for _n, t in read_document(str(path)))
+
+
+def test_the_two_columns_of_an_escaping_table_stay_different():
+    """PyMuPDF decodes character references TWICE — measured, not assumed: `&lt;`
+    arrives as "<", which one decode would also give, but `&amp;lt;` arrives as
+    "<" too, and one decode would have given "&lt;".
+
+    A page writes `&amp;lt;` precisely in order to DISPLAY `&lt;`. Under two
+    decodes the table collapsed into two identical columns of "<" and the sentence
+    beside it read "For example, < becomes <, and & becomes &."."""
+    text = _text_of(ESCAPING_PAGE)
+    assert "For example, < becomes &lt;, and & becomes &amp;." in text
+    # Both halves of every row present and distinct.
+    for literal, reference in (("<", "&lt;"), (">", "&gt;"), ("&", "&amp;")):
+        assert reference in text, reference
+        assert literal in text
+
+
+def test_a_literal_ampersand_in_prose_is_not_mangled_by_the_compensation():
+    """Adding a level of escaping must not cost the ampersands a page meant
+    literally. "AT&T" is a real sentence in CSE326's corpus."""
+    text = _text_of(ESCAPING_PAGE)
+    assert "AT&T and Q&A and 5 < 6." in text
+
+
+def test_an_escaped_code_sample_comes_through_as_the_code_it_shows():
+    """The one place this could have gone wrong quietly: a code block showing how
+    to write an entity."""
+    text = _text_of(ESCAPING_PAGE)
+    assert "if (a &lt; b) { return a &amp; b; }" in text

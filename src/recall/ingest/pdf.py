@@ -63,13 +63,36 @@ _CHROME_ELEMENTS = frozenset({"nav", "aside", "footer", "header"})
 _MIN_KEPT_SHARE = 0.05
 
 
+#: PyMuPDF decodes character references TWICE on its way to laid-out text, and
+#: that is measured, not assumed: `&lt;` arrives as "<", which one decode would
+#: also give — but `&amp;lt;` arrives as "<" too, and one decode would have given
+#: "&lt;".
+#:
+#: A page writes `&amp;lt;` precisely in order to DISPLAY `&lt;`, which is how
+#: every escaping lesson on the web is written. Under two decodes MDN's
+#: literal-character/character-reference table collapses into two identical
+#: columns, and the sentence beside it becomes "For example, < becomes <, and &
+#: becomes &." — fluent, verbatim, citable, and teaching something FALSE. Character
+#: references are a CSE326 unit 1 syllabus topic.
+#:
+#: Since the parser is already re-emitting every token, adding one level of
+#: escaping on the way out cancels the extra decode exactly:
+#:
+#:     &lt;      -> &amp;lt;      -> two decodes -> <       (still right)
+#:     &amp;lt;  -> &amp;amp;lt;  -> two decodes -> &lt;    (right at last)
+#:
+#: Attribute text inside a start tag is left alone: it is not rendered, and a URL
+#: with `&amp;` in a query string has nothing to do with what a student reads.
+_COMPENSATES_FOR_A_SECOND_DECODE = True
+
+
 class _DropChrome(HTMLParser):
     """Re-emit HTML with every nav/aside/footer/header subtree removed.
 
     `convert_charrefs=False` is load-bearing, not a detail. With the default,
-    `handle_data` receives DECODED text and re-emitting it would silently undo
-    one level of escaping — which is the bug that made an MDN page teach that the
-    character reference for "<" is "<". Entities are passed through verbatim.
+    `handle_data` receives DECODED text, so this class could not tell an entity
+    from the character it stands for and the compensation above would be
+    impossible.
     """
 
     def __init__(self) -> None:
@@ -119,13 +142,18 @@ class _DropChrome(HTMLParser):
             self.kept.append(text)
 
     def handle_data(self, data):
-        self._emit(data)
+        # A bare "&" is an ampersand the page meant literally ("AT&T"). It needs
+        # the same extra level, or the second decode eats it.
+        self._emit(data.replace("&", "&amp;"))
 
+    # Entities and bare ampersands are re-emitted with ONE EXTRA level of
+    # escaping, which is what makes an escaping lesson survive. See
+    # `_COMPENSATES_FOR_A_SECOND_DECODE`.
     def handle_entityref(self, name):
-        self._emit(f"&{name};")
+        self._emit(f"&amp;{name};")
 
     def handle_charref(self, name):
-        self._emit(f"&#{name};")
+        self._emit(f"&amp;#{name};")
 
     def handle_comment(self, data):
         self._emit(f"<!--{data}-->")
