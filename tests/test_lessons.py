@@ -2423,3 +2423,57 @@ def test_the_strip_happens_at_passage_level_not_per_sentence():
 
     assert "strip_figure_refs" in inspect.getsource(corpus.strip_furniture)
     assert "strip_figure_refs" not in inspect.getsource(corpus.split_sentences)
+
+
+# ---------------------------------------------------------------------------
+# The worst thing the cleaner did, found by reading a real citation.
+#
+# "Drop an unresolved command, name and all" is right for \frac and \qquad,
+# where the letters are noise. It is exactly wrong for a function name, where
+# the letters ARE the mathematics — and it shipped: MTH165 unit 5's grounded
+# citation read "ρ^2φ dρ dφ dθ" where the source says ρ² sin φ, in a unit whose
+# whole subject is spherical coordinates.
+#
+# A hole a reader can see is recoverable. A deleted function name reads as
+# correct and is not.
+# ---------------------------------------------------------------------------
+
+FUNCTION_NAMES_MUST_SURVIVE = (
+    (r"\rho^2\sin\phi", "ρ^2sinφ"),
+    (r"\int\sin x\,dx = -\cos x + C", "∫sin x dx = -cos x + C"),
+    (r"\log_{10} x and \ln y", "log_{10} x and ln y"),
+    (r"\lim_{x\to0}\frac{\sin x}{x}=1", "lim_{x→0}sin x/x=1"),
+    (r"\det A and \dim V and \gcd(a,b)", "det A and dim V and gcd(a,b)"),
+    (r"\arcsin x + \tan\theta + \exp(y)", "arcsin x + tanθ + exp(y)"),
+    (r"\max\{a,b\} and \min\{a,b\}", "max{a,b} and min{a,b}"),
+    (r"\sinh x and \cosh x and \tanh x", "sinh x and cosh x and tanh x"),
+)
+
+
+def test_a_function_name_is_never_dropped():
+    from recall.teach.corpus import clean_latex
+
+    for source, expected in FUNCTION_NAMES_MUST_SURVIVE:
+        assert clean_latex(source) == expected, source
+
+
+def test_the_longer_function_name_wins_over_its_prefix():
+    r"""`\sinh` must not be read as `\sin` plus a stray h, and `\sigma` must not
+    be read as `\sin`. The `(?![A-Za-z])` lookahead is what makes the order of the
+    alternation irrelevant."""
+    from recall.teach.corpus import clean_latex
+
+    assert clean_latex(r"\sigma and \sec\theta") == "σ and secθ"
+    assert clean_latex(r"\cot\theta vs \coth\theta") == "cotθ vs cothθ"
+    assert clean_latex(r"\lim vs \liminf") == "lim vs liminf"
+
+
+def test_a_command_that_is_not_a_name_is_still_dropped():
+    """The original rule was right for these: the letters of `\\qquad` and
+    `\\varnothing` are noise, not mathematics, and keeping them manufactured words
+    like "frac12int" that read as prose and pass every filter."""
+    from recall.teach.corpus import clean_latex
+
+    out = clean_latex(r"\qquad\varnothing\mathscr{X}")
+    for noise in ("qquad", "varnothing", "mathscr"):
+        assert noise not in out, noise

@@ -407,6 +407,26 @@ _LATEX_FIXES: tuple[tuple[str, str], ...] = (
     (r"\\\\", " "),
     (r"\\[,;:!>]", " "),
     (r"\\[()\[\]]", ""),
+    # ...but a function or operator name is the OPPOSITE case, and getting this
+    # wrong produced confidently FALSE mathematics inside grounded citations.
+    # For `\frac` and `\qquad` the letters are noise; for these the letters ARE
+    # the mathematics, and the drop-everything rule below turned
+    #
+    #     \int\sin x\,dx = -\cos x + C   into   ∫ x dx = - x + C
+    #     \lim_{x\to0}\frac{\sin x}{x}=1  into   _{x→0} x/x=1
+    #     \rho^2\sin\phi                 into   ρ^2φ
+    #
+    # The last one shipped: it was a verified citation in MTH165 unit 5, whose
+    # subject is multiple integrals in spherical coordinates, where every volume
+    # element carries a sin φ. A hole a reader can see is recoverable; a deleted
+    # function name reads as correct and is not.
+    #
+    # These are LaTeX's own log-like operators, listed in full so the next reader
+    # can check the set rather than trust it.
+    (r"\\(arccos|arcsin|arctan|arg|bmod|cosh|cos|coth|cot|csc|deg|det|dim"
+     r"|exp|gcd|hom|injlim|inf|ker|lg|liminf|limsup|lim|ln|log|max|min|mod"
+     r"|pmod|projlim|Pr|sec|sinh|sin|sup|tanh|tan|varliminf|varlimsup"
+     r")(?![A-Za-z])", r"\1"),
     # Anything still carrying a backslash is a command with no symbol here, so
     # DROP it, name and all. Keeping the letters — which is what this used to do
     # — is worse than leaving the LaTeX alone: `\frac12\int` became `frac12int`,
