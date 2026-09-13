@@ -1876,6 +1876,14 @@ def test_the_integral_as_Z_rule_is_deliberately_absent():
             "decorate it with @property and @staticmethod",
             "@media (min-width: 600px) narrows the layout",
             "@keyframes spin animates the element",
+            # Linear programming: Z is the objective function by convention, and
+            # two tokens in one sentence is the NORM, not a signal.
+            "Minimum Z = 300 at (60, 0); Maximum Z = 600 at all the points",
+            # And the one that kills every version of this rule: a Z inside a
+            # regex character class. INT108 unit 6 IS regular expressions.
+            'the pattern r"^[A-Za-z][A-Za-z0-9_]{2,11}" matches an identifier',
+            "/^(?=[A-Za-z0-9_]{3,16})(?=.*[0-9])[A-Za-z][A-Za-z0-9_]*/",
+            '<input required pattern="[A-Za-z0-9]{4,12}">',
     ):
         assert not looks_like_latex_debris(legitimate), legitimate
 

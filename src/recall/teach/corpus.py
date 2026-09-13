@@ -828,8 +828,29 @@ _LATEX_NAMES = (
 #: and Python material, and "@" is worse still — it would refuse @property,
 #: @staticmethod, @media and @keyframes, which are syllabus content for INT108
 #: unit 5 and CSE326 unit 3. The verification that proposed this measured MTH165
-#: alone; on the whole corpus the sign flips. A check that cries wolf gets
-#: switched off, and then there is no check.
+#: alone; on the whole corpus the sign flips.
+#:
+#: Two NARROWER versions were then measured, after a real citation was found
+#: carrying "Z 2π Z π/4 Z √ 2", and both fail too. Recording them so the next
+#: attempt starts from the third failure rather than the first:
+#:
+#:   Require TWO or more standalone Z tokens. Refuses 268 MTH165 sentences and
+#:   destroys linear programming, where Z is the objective function by
+#:   convention: "Minimum Z = 300 at (60, 0); Maximum Z = 600 at all the points
+#:   on the line segment joining (120, 0) and (60, 30)."
+#:
+#:   Add "and never followed by =", which does spare linear programming — and
+#:   then refuses 16 sentences outside MTH165, every one of them the same thing:
+#:   `[A-Za-z]` in a REGULAR EXPRESSION, whose `Za` reads as a Z before a limit.
+#:   INT108 unit 6 is "Files, Exceptions and Regular Expressions" and CSE326
+#:   unit 5 teaches them, so this deletes exactly the material those units exist
+#:   for — r"^[A-Za-z][A-Za-z0-9_]{2,11}", /^(?=[A-Za-z0-9_]{3,16})…/ and the
+#:   WHATWG email-validation expression.
+#:
+#: Three independent false-positive classes in three different subjects' core
+#: syllabus content. The 201 MTH165 sentences a working rule would catch are MIT
+#: exercise and solution answer keys, which make weak citations anyway. A check
+#: that cries wolf gets switched off, and then there is no check.
 _DEBRIS = re.compile(
     r"\\"
     r"|(?<![A-Za-z])(?:" + "|".join(_LATEX_NAMES) + r")[_^{}\d]"
