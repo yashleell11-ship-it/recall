@@ -293,11 +293,50 @@ def test_topics_follow_the_unit_across_a_reorder(monkeypatch):
 
 def test_an_unresearched_subject_has_no_topics_rather_than_wrong_ones():
     """() is a supported answer — the caller falls back to the blended query,
-    which is what every unit used before this existed."""
+    which is what every unit used before this existed.
+
+    This used to assert CSE111 unit 1, which was simply a subject nobody had
+    written topics for yet. That is a state, not a behaviour, and it stopped
+    being true the day the topics were written. What must hold forever is the
+    FALLBACK: an unknown subject, and a unit number off the end of a real
+    syllabus, both return () rather than guessing."""
     from recall.generate.unit_guidance import topics_for
 
-    assert topics_for("CSE111", 1) == ()
+    assert topics_for("ZZZ999", 1) == ()
+    assert topics_for("", 1) == ()
     assert topics_for("MTH165", 99) == ()
+    assert topics_for("MTH165", 0) == ()
+
+
+def test_a_unit_whose_corpus_cannot_support_a_query_is_absent_not_empty():
+    """CSE111's "Profile Creation" is the one unit with no topics, and it is
+    left OUT of the table rather than given an empty tuple.
+
+    Its only mapped source is lpu-cse111-syllabus.pdf, whose single chunk
+    `passage_is_usable` rejects, so the retrieval pool is zero characters —
+    Figma, HackerRank, HackerEarth and Leetcode each occur exactly once across
+    all 33 files, inside that same syllabus listing. An empty tuple would read
+    as "researched, found nothing", which is indistinguishable from
+    "unresearched" at the call site; absence plus the comment says which."""
+    from recall.generate.unit_guidance import _UNIT_TOPICS, topics_for
+
+    assert "Profile Creation" not in _UNIT_TOPICS["CSE111"]
+    assert topics_for("CSE111", 7) == ()
+    # ...and no OTHER unit in the table was given an empty tuple either.
+    for code, units in _UNIT_TOPICS.items():
+        for name, topics in units.items():
+            assert topics, "%s / %s has an empty topic tuple" % (code, name)
+
+
+def test_every_syllabus_unit_except_that_one_has_topics():
+    """The coverage this table was written for, asserted rather than assumed."""
+    from recall.generate.unit_guidance import SUBJECTS, topics_for
+
+    missing = [(code, i, u)
+               for code in SUBJECTS
+               for i, u in enumerate(SUBJECTS[code].get("units") or [], 1)
+               if not topics_for(code, i)]
+    assert missing == [("CSE111", 7, "Profile Creation")], missing
 
 
 def test_every_topic_list_belongs_to_a_real_syllabus_unit():

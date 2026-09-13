@@ -331,9 +331,58 @@ def _strip_displaystyle(text: str) -> str:
     return text
 
 
+#: What a PDF's own fonts did to its mathematics. Computer Modern's extensible
+#: delimiters and radicals, and Adobe Symbol's Greek, are subsetted glyphs with
+#: no usable ToUnicode map, so PyMuPDF returns either a C0 control character or a
+#: private-use code point — text no font on earth can draw.
+#:
+#: Measured in this corpus: 365 offered sentences across 86 MTH165 files carry a
+#: control character where a bracket belongs, and 413 across 21 files carry a
+#: private-use glyph. A student sees a row of tofu boxes, or — worse, depending
+#: on the client — nothing at all, leaving "the amount is r k A = P 1 +".
+#:
+#: The Adobe Symbol ones are RECOVERABLE, because the code point says which glyph
+#: the font drew. Written out rather than computed, like `_GREEK`, so the set
+#: stays reviewable.
+_PUA_SYMBOL: tuple[tuple[str, str], ...] = (
+    ("\uf070", "π"), ("\uf071", "θ"), ("\uf066", "φ"), ("\uf0d0", "∠"),
+    ("\uf0b0", "°"), ("\uf03d", "="), ("\uf02b", "+"), ("\uf0b4", "×"),
+    ("\uf05e", "⊥"), ("\uf0b7", "•"), ("\uf061", "α"), ("\uf062", "β"),
+    ("\uf067", "γ"), ("\uf064", "δ"), ("\uf06c", "λ"), ("\uf06d", "μ"),
+    ("\uf073", "σ"), ("\uf077", "ω"), ("\uf0ce", "⊆"), ("\uf0b9", "≠"),
+    ("\uf0a3", "≤"), ("\uf0b3", "≥"), ("\uf0d6", "√"), ("\uf0a5", "∞"),
+)
+
+#: A matrix bracket, brace or big parenthesis, built from stretch pieces. The
+#: opening and closing pieces carry the shape; the middle extension pieces carry
+#: nothing and are dropped.
+_BRACKET_OPEN = "\uf8ee\uf8f0\uf8f1\uf8f2\u239b\u239d\u23a1\u23a3"
+_BRACKET_CLOSE = "\uf8f9\uf8fa\uf8fb\uf8f4\u239e\u23a0\u23a4\u23a6"
+_BRACKET_EXTEND = "\uf8ef\uf8f3\uf8f5\uf8f6\uf8f7\uf8f8\u239c\u239f\u23a2\u23a5"
+
+#: Any private-use code point at all, for the backstop. By definition the range
+#: carries no meaning, so nothing legitimate is ever matched.
+_PUA_ANY = "\ue000-\uf8ff"
+
+#: C0 controls, minus tab, newline and carriage return. \x10-\x15 and \x1a are
+#: where Computer Modern's ( ) [ ] and brace pieces land.
+_CONTROL = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
+
+
 def clean_latex(text: str) -> str:
     """Turn a scraper's leftover LaTeX into the symbols it stood for."""
     out = _strip_displaystyle(text or "")
+    # First, because a control character is not text and every rule below would
+    # otherwise have to step over one.
+    out = _CONTROL.sub("", out)
+    for bad, good in _PUA_SYMBOL:
+        out = out.replace(bad, good)
+    for ch in _BRACKET_OPEN:
+        out = out.replace(ch, "[")
+    for ch in _BRACKET_CLOSE:
+        out = out.replace(ch, "]")
+    for ch in _BRACKET_EXTEND:
+        out = out.replace(ch, "")
     for pattern, repl in _LATEX_FIXES:
         out = re.sub(pattern, repl, out)
     return out
@@ -346,7 +395,16 @@ def clean_latex(text: str) -> str:
 #: carry it, and one reached a student inside a grounded citation reading "then
 #: MATH A=int_α^β…". Every scraper picks its own word for this, which is why the
 #: sentence-level backstop below exists as well.
-_FORMULA_PLACEHOLDER = re.compile(r"(?<![A-Za-z])(?:TEXT|MATH)(?![A-Za-z])")
+#:
+#: `[image]` is the third, and it is not a scraper's word but PyMuPDF's: its HTML
+#: renderer writes the literal string for every <img> it cannot fetch, and the
+#: scrapes carry no image files, so every one. 302 occurrences across 97 of
+#: CSE326's 206 files. The alt text — which was the figure's only description —
+#: is discarded, so there is nothing to recover and nothing to lose by dropping
+#: the marker. Bracketed, so it cannot collide with prose: course material about
+#: images writes `<img>` or "image", never "[image]".
+_FORMULA_PLACEHOLDER = re.compile(
+    r"(?<![A-Za-z])(?:TEXT|MATH)(?![A-Za-z])|\[image\]")
 
 
 #: Text that is furniture rather than teaching: a scraped site's quiz
@@ -368,7 +426,46 @@ FURNITURE: tuple[str, ...] = (
     "try again", "explanation:", "ctrl+k", "view all updates", "mark all read",
     "you're offline", "exam center", "offline library", "request material",
     "loading…", "click here", "download pdf", "table of contents",
+    # The subjective bank's reveal control, on the same site "reveal answer"
+    # came from. It fuses to the front of the model answer exactly as that one
+    # did, so the best-written definitions in the LPU material could not be
+    # cited clean: 137 offered sentences, 6 of CSE326's 206 files.
+    "show detailed answer",
 )
+
+#: Furniture that is not a phrase but a SHAPE — a footer, a notice, a stamp —
+#: and so cannot go in the tuple above.
+#:
+#: Every one is measured, and every one was welded into the MIDDLE of a real
+#: sentence rather than sitting tidily at the top: PyMuPDF interleaves a page's
+#: footer with the prose, and the footer of page n precedes the continuation of
+#: the sentence that runs onto page n+1. `strip_boilerplate` cannot see any of
+#: it — that rule removes a prefix common to every chunk of one source, and a
+#: chunk of a PDF starts mid-page, so it altered 0 of 573 chunks across 40 of 40
+#: MEC103 files.
+#:
+#: Counts are offered citable sentences carrying the marker, over the corpus as
+#: loaded on 2026-09-13.
+_PAGE_CHROME: tuple[tuple[str, int], ...] = (
+    # MIT OCW's five-line end notice, welded to the tail of each file's last
+    # real sentence. 171 sentences in 171 files — one per OCW PDF.
+    (r"MIT OpenCourseWare\s+https?://ocw\.mit\.edu.*?ocw\.mit\.edu/terms\.?", re.S),
+    (r"For information about citing these materials[^.]*?\.\s*\S*", 0),
+    # OpenStax's page footer: an advertisement inside a citation. 723 sentences.
+    (r"Access for free at openstax\.org", 0),
+    (r"\(?https?://(?:www\.)?openstax\.org/l/\S+\)?", 0),
+    # NCERT's print-run stamp, which lands inside any citation spanning a page
+    # boundary — and the NCERT chapters are MTH165 unit 1 and 3's main textbook.
+    # 293 sentences across 10 files.
+    (r"Reprint \d{4}-\d{2}", 0),
+    # The LPU notes site's footer and network byline, 28% of the 528 offered LPU
+    # sentences carry one of these.
+    (r"©\s*20\d\d\s+LPU Notes", re.I),
+    (r"Part of the LPU Verto Network", re.I),
+    (r"Made with\s*\S{0,3}\s*for Vertos", re.I),
+)
+
+_PAGE_CHROME_RE = tuple(re.compile(pat, flags) for pat, flags in _PAGE_CHROME)
 
 #: A RUN of markers, not one at a time: the real text is "Reveal Answer Hide
 #: Answer Correct Answer: Explanation:", four of them in a row, and removing
@@ -380,7 +477,10 @@ _FURNITURE_RUN = re.compile(
 
 def strip_furniture(text: str) -> str:
     """Remove a scraped page's scaffolding, leaving the teaching behind."""
-    return _FURNITURE_RUN.sub(" ", text or "")
+    out = _FURNITURE_RUN.sub(" ", text or "")
+    for pattern in _PAGE_CHROME_RE:
+        out = pattern.sub(" ", out)
+    return out
 
 
 #: LaTeX command names, for finding wreckage a cleaner could not name. Only the
@@ -400,10 +500,34 @@ _LATEX_NAMES = (
 #: and "rho^2sinphi" are both real, from MTH165 unit 5, and there is no marker
 #: left in them to find the command by except the glue. In ordinary prose these
 #: words are followed by a space or a full stop.
+#: A private-use code point is, by definition, text no font can draw, so a
+#: sentence carrying one shows a student a tofu box. 413 offered sentences carry
+#: one that `clean_latex` had no mapping for.
+#:
+#: **Deliberately NOT here: "Z" for ∫.** MIT's LaTeX PDFs use Computer Modern
+#: extensible glyphs and PyMuPDF maps them to Latin letters — ∫ becomes "Z", ∬
+#: "ZZ", ∑ "X", ∂ "@" — and a reader is shown a letter where an operator belongs.
+#: It is real, it was verified, and refusing it is still the wrong trade. The
+#: rule `Z{1,3}\s+(?=[0-9a-zπ(])` matches 63 of this corpus's 122,011 offered
+#: sentences, and 9 of the 63 are legitimate text in FOUR different subjects:
+#:
+#:     n ∈ Z and cotangent function is continuous except…   ← Z is the integers
+#:     git checkout tags/vX.Y.Z, where vX.Y.Z corresponds…  ← CSE111 unit 5
+#:     commands M moveto, L lineto, C curveto, Z closepath  ← CSE326 SVG paths
+#:     the Unicode value of uppercase Z is less than…       ← INT108 unit 3
+#:     Ctrl-Z then Enter on Windows                         ← INT108 unit 1
+#:
+#: Fifty-odd damaged MIT sentences are not worth refusing set-theory, git, SVG
+#: and Python material, and "@" is worse still — it would refuse @property,
+#: @staticmethod, @media and @keyframes, which are syllabus content for INT108
+#: unit 5 and CSE326 unit 3. The verification that proposed this measured MTH165
+#: alone; on the whole corpus the sign flips. A check that cries wolf gets
+#: switched off, and then there is no check.
 _DEBRIS = re.compile(
     r"\\"
     r"|(?<![A-Za-z])(?:" + "|".join(_LATEX_NAMES) + r")[_^{}\d]"
-    r"|(?<![A-Za-z])(?:MATH|TEXT)(?![A-Za-z])")
+    r"|(?<![A-Za-z])(?:MATH|TEXT)(?![A-Za-z])"
+    r"|[" + _PUA_ANY + r"]")
 
 
 def looks_like_latex_debris(text: str) -> bool:

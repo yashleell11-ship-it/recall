@@ -1738,3 +1738,143 @@ def test_the_fixed_cleaner_would_not_have_produced_them():
         out = clean_latex(source)
         assert cleaned_should_not_contain not in out, (source, out)
         assert not looks_like_latex_debris(out), (source, out)
+
+
+# ---------------------------------------------------------------------------
+# What a seven-subject audit of the corpus turned up, and what it did not.
+#
+# Each artefact below was found by reading real course files, reproduced through
+# the actual retrieval pipeline, and counted. The counts are offered citable
+# sentences over the corpus as loaded on 2026-09-13 (122,011 of them).
+# ---------------------------------------------------------------------------
+
+
+def test_the_extractor_s_own_image_placeholder_is_stripped():
+    """PyMuPDF's HTML renderer writes the literal "[image]" for every <img> it
+    cannot fetch — and the scrapes carry no image files, so every one. 302
+    occurrences across 97 of CSE326's 206 files, with the alt text discarded."""
+    from recall.teach.corpus import _FORMULA_PLACEHOLDER
+
+    assert _FORMULA_PLACEHOLDER.sub("", "[image] Home Revision About") \
+        == " Home Revision About"
+    # Bracketed course content is NOT a placeholder: A = [aij] is matrix
+    # notation (52 chunks), and [branch] / [commit] / [path] are git syntax from
+    # CSE111 unit 5. A generic "[word]" rule would have destroyed both.
+    for kept in ("A = [aij] where i is the row", "git switch [branch]",
+                 "run git commit [commit] on [path]"):
+        assert _FORMULA_PLACEHOLDER.sub("", kept) == kept
+
+
+def test_control_characters_from_computer_modern_are_stripped():
+    r"""Computer Modern's extensible delimiters map into the C0 range, so \x10
+    to \x15 appear where ( ) [ ] and brace pieces belong. 365 offered sentences
+    across 86 files. A control character is not renderable text: depending on
+    the client it vanishes, shows as a box, or breaks the JSON on the way out."""
+    from recall.teach.corpus import clean_latex
+
+    assert clean_latex("the amount is r \x10k A = P 1 +\x11") \
+        == "the amount is r k A = P 1 +"
+    # Tab, newline and carriage return are real whitespace and must survive.
+    assert clean_latex("a\tb\nc") == "a\tb\nc"
+
+
+def test_a_symbol_font_s_greek_is_recovered_not_refused():
+    """Adobe Symbol's π θ φ ∠ ° arrive as private-use code points. The code point
+    says which glyph the font drew, so this one IS recoverable — "The
+    circumference is equal to □D" becomes readable again."""
+    from recall.teach.corpus import clean_latex
+
+    assert clean_latex("area =  r²") == "area = π r²"
+    assert clean_latex(" ABC = 90") == "∠ ABC = 90°"
+    assert clean_latex("the angle  and ") == "the angle θ and φ"
+
+
+def test_matrix_bracket_stretch_pieces_become_brackets():
+    """Matrix brackets are built from stretch pieces in the private-use area.
+    The opening and closing pieces carry the shape; the middle extension pieces
+    carry nothing. 413 offered sentences across 21 files — and it lands on the
+    matrices and determinants chapters, which are MTH165 unit 1."""
+    from recall.teach.corpus import clean_latex
+
+    assert clean_latex("1 2") == "[1 2]"
+    assert clean_latex("⎛ x ⎞") == "[ x ]"
+    assert clean_latex("a  b") == "a  b"
+
+
+def test_an_unmapped_private_use_glyph_is_refused_as_a_backstop():
+    """No mapping table is ever complete, and a private-use code point is by
+    definition text no font can draw — so the sentence is never offered."""
+    from recall.teach.corpus import looks_like_latex_debris
+
+    assert looks_like_latex_debris("the sunk key  is shown")
+    assert not looks_like_latex_debris("the sunk key is shown")
+
+
+def test_page_chrome_welded_into_a_sentence_is_removed():
+    """None of these sit tidily at the top. PyMuPDF interleaves a page's footer
+    with the prose, and the footer of page n precedes the continuation of the
+    sentence running onto page n+1 — so a citation spanning a page boundary
+    carries a copyright notice through its middle.
+
+    `strip_boilerplate` cannot see any of it: that rule removes a prefix common
+    to every chunk of one source, and a chunk of a PDF starts mid-page. It
+    altered 0 of 573 chunks across 40 of 40 MEC103 files."""
+    from recall.teach.corpus import strip_furniture
+
+    def flat(t):
+        return " ".join(strip_furniture(t).split())
+
+    # MIT OCW's end notice — 171 sentences in 171 files, one per OCW PDF.
+    assert flat("…and so it converges. MIT OpenCourseWare http://ocw.mit.edu "
+                "18.01SC Single Variable Calculus For information about citing "
+                "these materials or our Terms of Use, visit: "
+                "http://ocw.mit.edu/terms.") == "…and so it converges."
+    # OpenStax's footer: an advertisement inside a citation. 723 sentences.
+    assert flat("A set is a collection. Access for free at openstax.org The "
+                "next idea") == "A set is a collection. The next idea"
+    # NCERT's print-run stamp. 293 sentences across 10 files, and the NCERT
+    # chapters are MTH165 unit 1 and 3's primary textbook.
+    assert "Reprint" not in flat("the determinant is zero. Reprint 2026-27 "
+                                 "Hence the inverse")
+    # The LPU notes site's footer — 28% of its 528 offered sentences.
+    assert flat("multiplication is defined. © 2026 LPU Notes Part of the LPU "
+                "Verto Network So") == "multiplication is defined. So"
+
+
+def test_the_subjective_bank_s_reveal_control_joins_the_furniture():
+    """The same site "reveal answer" came from, and the same failure: it fuses
+    to the front of the model answer, so the best-written definitions in the LPU
+    material could not be cited clean. 137 offered sentences."""
+    from recall.teach.corpus import strip_furniture
+
+    out = strip_furniture("Q3. Define rank. Show Detailed Answer The rank of a "
+                          "matrix is the number of independent rows.")
+    assert "Show Detailed Answer" not in out
+    assert "The rank of a matrix is the number of independent rows." in out
+
+
+def test_the_integral_as_Z_rule_is_deliberately_absent():
+    """A regression guard, not an omission.
+
+    PyMuPDF maps Computer Modern's ∫ to "Z" and ∂ to "@", and refusing those
+    looks obviously right — it was found by a scan, reproduced by a skeptic, and
+    measured at 306 sentences ACROSS ONE SUBJECT. Over the whole corpus the rule
+    matches 63 of 122,011 offered sentences and 9 are legitimate text in four
+    different subjects. Fifty-odd damaged MIT sentences do not buy refusing set
+    theory, git, SVG and Python material, and the "@" half is worse: @property,
+    @staticmethod, @media and @keyframes are syllabus content.
+
+    If someone adds it again, this fails and points them at the measurement."""
+    from recall.teach.corpus import looks_like_latex_debris
+
+    for legitimate in (
+            "x = nπ, n ∈ Z and cotangent is continuous elsewhere",
+            "use git checkout tags/vX.Y.Z for that release",
+            "path commands M moveto, L lineto, C curveto, Z closepath",
+            "the Unicode value of uppercase Z is less than that of lowercase a",
+            "press Ctrl-Z then Enter on Windows",
+            "decorate it with @property and @staticmethod",
+            "@media (min-width: 600px) narrows the layout",
+            "@keyframes spin animates the element",
+    ):
+        assert not looks_like_latex_debris(legitimate), legitimate
