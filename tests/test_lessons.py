@@ -1504,8 +1504,7 @@ def test_a_repaired_expression_leaves_nothing_to_complain_about():
     for original in ("∑_{i=1}^{n} f(xᵢ) Δx",
                      "∫_{y}^{1} e^{x²} dx",
                      "(-1)^{n+1} over n^{2}",
-                     "A^{-1} exists when det A != 0",
-                     "if x <= 10 and y >= 3 then a -> b"):
+                     "A^{-1} exists when det A ≠ 0"):
         assert check_notation(fix_notation(original)) == [], original
 
 
@@ -1536,8 +1535,27 @@ def test_repair_does_not_touch_code():
         == "write `x <= 10` and `a != b` in Python"
     assert fix_notation("`for i in range(n): total += a[i]**2`") \
         == "`for i in range(n): total += a[i]**2`"
-    # ...and prose either side of a code span is still repaired.
-    assert fix_notation("when x <= 3, write `x <= 3`") == "when x ≤ 3, write `x <= 3`"
+    # A braced superscript inside code is left alone too — it is LaTeX source
+    # being quoted, not mathematics being written.
+    assert fix_notation("the LaTeX `x^{2}` compiles") == "the LaTeX `x^{2}` compiles"
+    # ...and the same expression outside the fence is repaired.
+    assert fix_notation("the power x^{2} grows") == "the power x² grows"
+
+
+def test_programming_operators_are_never_repaired_even_outside_code():
+    """The exemption covers code in backticks. It cannot cover code the writer
+    FORGOT to fence, and INT108 is Python while CSE326 is JavaScript — so
+    repairing `if x == 10` into `if x = 10` would turn a comparison into an
+    assignment and teach a first-year student broken code with a verified
+    lesson's authority. A rejected lesson costs a cent; that costs trust.
+
+    They stay complaints, so the writer is asked to fence its code (or, in a
+    mathematics unit, to write the real symbol)."""
+    from recall.notation import check_notation, fix_notation
+
+    unfenced = "if x == 10 and y <= 3: return ptr->field"
+    assert fix_notation(unfenced) == unfenced
+    assert len(check_notation(unfenced)) == 3
 
 
 def test_the_ambiguous_ones_are_still_complaints_not_silent_edits():
@@ -1574,7 +1592,7 @@ def _lesson_with_bad_notation(quote: str) -> dict:
         "sections": [{
             "heading": "Summing over a region",
             "body": "The double integral is the limit of ∑_{i=1}^{n} f(xᵢ) ΔA_i "
-                    "as ΔA_i -> 0, and it is written ∫_{y}^{1} in one variable.",
+                    "as ΔA_i → 0, and it is written ∫_{y}^{1} in one variable.",
             "quote": quote,
             "source": "[1] notes.html p1",
         }],
@@ -1597,7 +1615,7 @@ def test_repair_notation_reaches_every_field_a_student_reads():
     assert check_notation(lesson_text(body)) == []
     # Each field individually, so a miss cannot hide in the join.
     assert "∑ᵢ₌₁ⁿ" in body["sections"][0]["body"]
-    assert "→" in body["sections"][0]["body"]
+    assert "∫_y¹" in body["sections"][0]["body"]
     assert "x²" in body["worked"][0]["question"]
     assert "x³/3" in body["worked"][0]["steps"][0]
     assert "n²" in body["check"][0]["question"]

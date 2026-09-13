@@ -45,16 +45,28 @@ so it is unmistakable."""
 #:
 #: The third field is the difference between complaining and repairing. Where it
 #: is set, `fix_notation` performs the substitution and there is nothing left to
-#: complain about. Where it is None the edit needs judgement Python does not
-#: have — `a*b` may be a pointer, a glob or emphasis, and `\frac{a}{b}` inside a
-#: sentence usually wants the sentence rewritten rather than patched — so it
-#: stays a complaint and the writer is asked again.
+#: complain about. Where it is None the edit needs judgement Python does not have,
+#: so it stays a complaint and the writer is asked again.
+#:
+#: **Every programming operator here is None on purpose, and that is the whole
+#: reason this field exists rather than a blanket repair.** The exemption below
+#: covers code in backticks; it cannot cover code the writer FORGOT to fence, and
+#: INT108 is Python and CSE326 is JavaScript. Repairing `if x == 10` to `if x =
+#: 10` turns a comparison into an assignment, and `ptr->field` and `x <= 10` are
+#: correct as typed. A rejected lesson costs a cent; a lesson that teaches a
+#: first-year student broken Python with a verified lesson's authority is worse
+#: than no lesson, which is the trade this whole codebase is built on. So an
+#: unfenced operator stays a complaint — the writer is told to fence its code, and
+#: in a mathematics unit to write the real symbol.
+#:
+#: Nothing here was ever observed causing a rejection either. The two MTH165 unit
+#: 5 rejections were `^{n}`, `^{1}` and `^{4}`, every one of them a table lookup.
 _BANNED: tuple[tuple[str, str, str | None], ...] = (
-    (r"<=", "≤", "≤"),
-    (r">=", "≥", "≥"),
-    (r"!=", "≠", "≠"),
-    (r"==", "=", "="),
-    (r"->", "→", "→"),
+    (r"<=", "≤", None),
+    (r">=", "≥", None),
+    (r"!=", "≠", None),
+    (r"==", "=", None),
+    (r"->", "→", None),
     (r"\\frac\b", "a/b", None),
     (r"\\int\b", "∫", None),
     (r"\\sum\b", "∑", None),
