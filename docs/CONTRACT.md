@@ -287,6 +287,106 @@ reviewing can make, and a test does not ask.
 
 ---
 
+## Yash Made Test — the curated MCQ bank
+
+A second test mode, switched from the top of `/test` (**Recall | Yash Made
+Test**, remembered per browser). Recall's test mode grades cards the app
+generated; this one sits a **hand-curated bank** of multiple-choice questions
+written per subject and unit from the lecture decks, the same for every user.
+Every attempt draws a fresh sample and shuffles both the questions and each
+question's options, so two sittings never look the same; the answer is
+revealed one question at a time, in green or red, with a teaching note.
+
+### The bank is shared — the one deliberate exception to the user_id rule
+
+`mcq_questions` has **no `user_id`**. It is course content, like the LPU
+registry in `lpu.py`, not something a user owns; every user reads the same
+rows. Everything a user *does* with it — attempts and answers — is scoped by
+`user_id` exactly as the rest of the app is, and a route that reaches an
+attempt without `WHERE user_id = ?` is a leak.
+
+The bank lives in the repo as JSON under `src/recall/mcq/bank/` (one file per
+subject-unit, `{subject_code, unit, questions: [...]}`) and is **seeded on
+every boot** by `seed_mcq_bank(conn)` — from the container entrypoint next to
+`seed_topics`, and from the app lifespan after `init_db`, so a local dev
+database has it too. Seeding upserts on the stable `key`
+(`CSE111-U1-042`), so editing a question's text in the JSON fixes it in place
+without orphaning the attempts that already used it; a question removed from
+the JSON is **retired** (`active = 0`), never deleted, for the same reason.
+
+A question is: `key`, `subject_code`, `unit` (the number printed on the deck,
+1-based), `topic` (a short group label such as `Linux`), `kind`
+(`recall` | `situation`), `question`, `options` (exactly 4), `correct` (0–3 in
+the stored order), `explain` (2–4 sentences teaching the point), `why_wrong`
+(exactly 4 strings aligned with `options`; the correct one's entry is `""`).
+No CHECK constraints on any of these tables — validate in Python.
+
+Unit labels and which units exist per subject live in
+`recall.mcq.registry.MCQ_UNITS`, so a unit that has no questions yet still
+appears on the picker with a count of 0 and a "waiting for material" note
+rather than vanishing.
+
+### Sitting an attempt
+
+`length` is `30`, `60` or `"full"`. The attempt draws `min(length, available)`
+active questions across the chosen units, **without replacement**, shuffled;
+each question's four options are independently shuffled and the permutation is
+stored on the attempt, so the client only ever sees the shown order and
+`chosen` / `correct_index` are always positions in that shown order. The
+stored `question_ids_json` + `option_orders_json` are what make an attempt
+resumable and gradable later without recomputing anything.
+
+Answering is one call per question, idempotent by refusal: a second answer to
+the same position is **409**, never overwritten — the first click is the
+answer. An answered question is revealed immediately: correct or not, which
+option was right, the explanation, and the `why_wrong` note for the option
+that was picked (empty when it was right).
+
+Submitting closes the attempt with the same guarded
+`UPDATE ... WHERE submitted_at IS NULL` idiom as `/api/tests/{id}/submit`;
+the loser of a race re-reads the stored result. **Unanswered questions score
+0** — "Finish & see score" mid-way is allowed and the total stays the number
+of questions drawn, so a 12/30 read after twelve questions is an honest 12/30.
+Nothing here feeds the scheduler: these are not cards.
+
+### Endpoints
+
+| Method | Path | Request | Response |
+|---|---|---|---|
+| GET | `/api/mcq/subjects` | — | `[McqSubject]` — every subject in `MCQ_UNITS`, each unit with its `count` of active questions |
+| POST | `/api/mcq/attempts` | `{subject_code, units: [1], length}` | `McqAttempt`. **422** for an unknown subject, a unit not in the registry, a bad length, or a selection with zero questions |
+| GET | `/api/mcq/attempts/{id}` | — | `McqAttempt` with recorded answers, for resuming. **404** if not yours |
+| POST | `/api/mcq/attempts/{id}/answer` | `{position, chosen}` | `McqFeedback`. **409** if that position is already answered or the attempt is submitted; **422** if position or chosen is out of range |
+| POST | `/api/mcq/attempts/{id}/submit` | — | `McqResult` |
+| DELETE | `/api/mcq/attempts/{id}` | — | `{ok: true}`. **409** once submitted, **404** if not yours |
+| GET | `/api/mcq/attempts` | — | `[McqAttemptSummary]`, newest first, mine only |
+| GET | `/api/mcq/leaderboard?subject_code=&units=1,2&length=30` | — | `[McqLeaderboardRow]` — each user's **best submitted** attempt for exactly that selection, ranked by percent then shorter duration, top 25 |
+
+```
+McqLength         = 30 | 60 | "full"
+McqSubject        = {subject_code, label, units: [{unit, label, count}], lengths: [30, 60, "full"]}
+McqQuestion       = {position, topic, kind, question, options: [string ×4],   // shown order
+                     answer: McqFeedback | null}
+McqAttempt        = {attempt_id, subject_code, units, length, total,
+                     started_at, submitted_at, questions: [McqQuestion]}
+McqFeedback       = {position, chosen, correct_index, is_correct,
+                     explain, why_wrong,            // why_wrong is "" when correct
+                     answered, correct_so_far}
+McqResult         = {attempt_id, score, total, answered, percent, duration_s,
+                     by_topic: [{topic, correct, total}],
+                     missed: [{position, topic, question, options, chosen | null,
+                               correct_index, explain, why_wrong}],
+                     rank: {position, of} | null}    // on the leaderboard for this selection
+McqAttemptSummary = {id, subject_code, units, length, total, answered, score,
+                     started_at, submitted_at, duration_s}
+McqLeaderboardRow = {user_id, name, score, total, percent, duration_s, submitted_at}
+```
+
+`percent` is `round(100 * score / total)`; the client still derives what it
+prints from `score` and `total`. `missed` lists every question that was
+answered wrongly **or not answered at all** (`chosen: null`), in attempt order,
+so the result screen doubles as the review sheet.
+
 ## Teaching: explain what you got wrong
 
 After a test (or a lapse in daily review), you can ask for an explanation of a card you

@@ -512,3 +512,130 @@ export interface AuthUser {
   name: string;
   email: string;
 }
+
+/* --- Yash Made Test (curated MCQ bank) ----------------------------------- */
+
+/** How many questions an attempt draws; `"full"` is every active question in
+ *  the chosen units. The server draws `min(length, available)`. */
+export type McqLength = 30 | 60 | "full";
+
+export type McqKind = "recall" | "situation";
+
+export interface McqUnit {
+  /** The unit number printed on the lecture deck, 1-based. */
+  unit: number;
+  label: string;
+  /** Active questions available. 0 means the picker shows the unit as
+   *  "waiting for material" and refuses to start it. */
+  count: number;
+}
+
+/** GET /api/mcq/subjects */
+export interface McqSubject {
+  subject_code: string;
+  label: string;
+  units: McqUnit[];
+  lengths: McqLength[];
+}
+
+/**
+ * The reveal for one answered question. `chosen` and `correct_index` are
+ * positions in the SHOWN option order — the client never learns the stored
+ * order. `why_wrong` is the note for the option that was picked, and "" when
+ * it was right.
+ */
+export interface McqFeedback {
+  position: number;
+  chosen: number;
+  correct_index: number;
+  is_correct: boolean;
+  explain: string;
+  why_wrong: string;
+  /** Running totals for the attempt after this answer. */
+  answered: number;
+  correct_so_far: number;
+}
+
+export interface McqQuestion {
+  position: number;
+  topic: string;
+  kind: McqKind;
+  question: string;
+  /** Exactly four, already shuffled for this attempt. */
+  options: string[];
+  /** null until answered. */
+  answer: McqFeedback | null;
+}
+
+/** POST /api/mcq/attempts and GET /api/mcq/attempts/{id} */
+export interface McqAttempt {
+  attempt_id: number;
+  subject_code: string;
+  units: number[];
+  length: McqLength;
+  total: number;
+  started_at: string;
+  submitted_at: string | null;
+  questions: McqQuestion[];
+}
+
+export interface McqTopicScore {
+  topic: string;
+  correct: number;
+  total: number;
+}
+
+/** A question answered wrongly or not at all (`chosen: null`). */
+export interface McqMissed {
+  position: number;
+  topic: string;
+  question: string;
+  options: string[];
+  chosen: number | null;
+  correct_index: number;
+  explain: string;
+  why_wrong: string;
+}
+
+/** POST /api/mcq/attempts/{id}/submit */
+export interface McqResult {
+  attempt_id: number;
+  score: number;
+  total: number;
+  answered: number;
+  /** round(100 * score / total). Derive what you print from score/total. */
+  percent: number;
+  duration_s: number;
+  by_topic: McqTopicScore[];
+  missed: McqMissed[];
+  /** Where this attempt lands on the leaderboard for its selection, or null
+   *  when nothing was answered. */
+  rank: { position: number; of: number } | null;
+}
+
+/** GET /api/mcq/attempts */
+export interface McqAttemptSummary {
+  id: number;
+  subject_code: string;
+  units: number[];
+  length: McqLength;
+  total: number;
+  answered: number;
+  /** null while the attempt is still open. */
+  score: number | null;
+  started_at: string;
+  submitted_at: string | null;
+  duration_s: number | null;
+}
+
+/** GET /api/mcq/leaderboard — one row per user, their best submitted attempt
+ *  for exactly this subject + units + length. */
+export interface McqLeaderboardRow {
+  user_id: number;
+  name: string;
+  score: number;
+  total: number;
+  percent: number;
+  duration_s: number;
+  submitted_at: string;
+}
