@@ -17,6 +17,14 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
+# The four tiers live in the registry, next to the units and the lengths, and
+# are re-exported here because this is where they are ENFORCED. `difficulty` is
+# required on every question and has no default: a bank where some questions
+# carry a tier and some do not cannot be filtered honestly — "Easy, 30
+# questions" would silently mean "easy, plus everything nobody labelled". The
+# column's DEFAULT in schema.sql exists only so a live database migrates.
+from recall.mcq.registry import DIFFICULTIES
+
 #: Where a question lives on the shelf. `recall` is "do you know this";
 #: `situation` is "here is a case, what applies".
 KINDS = ("recall", "situation")
@@ -77,6 +85,11 @@ def validate_question(question: dict, *, where: str = "") -> None:
     if kind not in KINDS:
         raise _fail(key, f"kind must be one of {', '.join(KINDS)}, got {kind!r}")
 
+    difficulty = question.get("difficulty")
+    if difficulty not in DIFFICULTIES:
+        raise _fail(key, f"difficulty must be one of {', '.join(DIFFICULTIES)},"
+                         f" got {difficulty!r}")
+
     options = question.get("options")
     if not isinstance(options, list) or len(options) != N_OPTIONS:
         n = len(options) if isinstance(options, list) else "none"
@@ -131,6 +144,7 @@ def _normalise(question: dict, subject_code: str, unit: int,
         "unit_label": unit_label,
         "topic": question["topic"].strip(),
         "kind": question["kind"],
+        "difficulty": question["difficulty"],
         "question": question["q"].strip(),
         "options": list(question["options"]),
         "correct": int(question["correct"]),
@@ -209,5 +223,5 @@ def load_questions(bank_dir: Path | str | None = None) -> list[dict]:
     return [q for f in load_bank(bank_dir) for q in f.questions]
 
 
-__all__ = ["BANK_DIR", "KINDS", "N_OPTIONS", "BankFile", "load_bank",
+__all__ = ["BANK_DIR", "DIFFICULTIES", "KINDS", "N_OPTIONS", "BankFile", "load_bank",
            "load_file", "load_questions", "validate_question"]

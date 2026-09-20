@@ -27,14 +27,15 @@ from recall.mcq.registry import MCQ_UNITS
 
 _UPSERT = """
 INSERT INTO mcq_questions
-  (key, subject_code, unit, topic, kind, question, options_json, correct,
-   explain, why_wrong_json, active, updated_at)
-VALUES (?,?,?,?,?,?,?,?,?,?,1,?)
+  (key, subject_code, unit, topic, kind, difficulty, question, options_json,
+   correct, explain, why_wrong_json, active, updated_at)
+VALUES (?,?,?,?,?,?,?,?,?,?,?,1,?)
 ON CONFLICT(key) DO UPDATE SET
   subject_code = excluded.subject_code,
   unit         = excluded.unit,
   topic        = excluded.topic,
   kind         = excluded.kind,
+  difficulty   = excluded.difficulty,
   question     = excluded.question,
   options_json = excluded.options_json,
   correct      = excluded.correct,
@@ -62,7 +63,8 @@ def seed_mcq_bank(conn: sqlite3.Connection,
         for q in bank_file.questions:
             conn.execute(_UPSERT, (
                 q["key"], q["subject_code"], q["unit"], q["topic"], q["kind"],
-                q["question"], json.dumps(q["options"]), q["correct"],
+                q["difficulty"], q["question"], json.dumps(q["options"]),
+                q["correct"],
                 q["explain"], json.dumps(q["why_wrong"]), now,
             ))
             questions += 1

@@ -25,6 +25,8 @@ import type {
   LessonStatus,
   McqAttempt,
   McqAttemptSummary,
+  McqDifficulty,
+  McqDifficultyScore,
   McqFeedback,
   McqKind,
   McqLeaderboardRow,
@@ -2394,6 +2396,10 @@ interface BankQuestion {
   unit: number;
   topic: string;
   kind: McqKind;
+  /** Which rung of the ladder. The fixture spreads all four across CSE111
+   *  unit 1, and leaves unit 2 without a `max` question on purpose, so the
+   *  picker's disabled-tier state is reachable offline. */
+  difficulty: McqDifficulty;
   question: string;
   /** Exactly four, in the stored order. */
   options: string[];
@@ -2411,6 +2417,7 @@ const MCQ_BANK: BankQuestion[] = [
     unit: 1,
     topic: "Pointers",
     kind: "recall",
+    difficulty: "easy",
     question: "What does the unary & operator give you when applied to a variable?",
     options: [
       "The number of bytes the variable occupies",
@@ -2434,6 +2441,7 @@ const MCQ_BANK: BankQuestion[] = [
     unit: 1,
     topic: "Pointers",
     kind: "recall",
+    difficulty: "medium",
     question: "Given int *p; what is the type of the expression *p?",
     options: ["int *", "void", "int", "char"],
     correct: 2,
@@ -2452,6 +2460,7 @@ const MCQ_BANK: BankQuestion[] = [
     unit: 1,
     topic: "Pointers",
     kind: "situation",
+    difficulty: "hard",
     question:
       "You write void swap(int a, int b) to exchange two values, call it, and the caller's variables are unchanged. Why?",
     options: [
@@ -2476,6 +2485,7 @@ const MCQ_BANK: BankQuestion[] = [
     unit: 1,
     topic: "Pointers",
     kind: "recall",
+    difficulty: "medium",
     question:
       "What does a pointer hold immediately after int *p; at block scope, before any assignment?",
     options: [
@@ -2500,6 +2510,7 @@ const MCQ_BANK: BankQuestion[] = [
     unit: 1,
     topic: "Memory",
     kind: "recall",
+    difficulty: "easy",
     question: "Which call returns a heap block obtained from malloc to the allocator?",
     options: ["free(p)", "delete p", "dispose(p)", "p = NULL"],
     correct: 0,
@@ -2518,6 +2529,7 @@ const MCQ_BANK: BankQuestion[] = [
     unit: 1,
     topic: "Memory",
     kind: "recall",
+    difficulty: "easy",
     question: "Where does a non-static local int declared inside a function live?",
     options: [
       "In the data segment, for the whole run of the program",
@@ -2541,6 +2553,7 @@ const MCQ_BANK: BankQuestion[] = [
     unit: 1,
     topic: "Memory",
     kind: "situation",
+    difficulty: "hard",
     question:
       "A long-running program calls malloc in a loop and never calls free. Its memory use climbs all day. What is the defect called?",
     options: [
@@ -2565,6 +2578,7 @@ const MCQ_BANK: BankQuestion[] = [
     unit: 1,
     topic: "Memory",
     kind: "situation",
+    difficulty: "max",
     question:
       "You call free(p) and then read *p a few lines later. It sometimes prints the old value and sometimes garbage. What is p now?",
     options: [
@@ -2589,6 +2603,7 @@ const MCQ_BANK: BankQuestion[] = [
     unit: 1,
     topic: "Arrays",
     kind: "recall",
+    difficulty: "easy",
     question: "For int a[5]; what is the index of the last element?",
     options: ["5", "4", "1", "-1"],
     correct: 1,
@@ -2607,6 +2622,7 @@ const MCQ_BANK: BankQuestion[] = [
     unit: 1,
     topic: "Arrays",
     kind: "recall",
+    difficulty: "medium",
     question: "What does an array's name decay to when it is passed to a function?",
     options: [
       "A pointer to its first element",
@@ -2630,6 +2646,7 @@ const MCQ_BANK: BankQuestion[] = [
     unit: 1,
     topic: "Arrays",
     kind: "situation",
+    difficulty: "hard",
     question:
       "Inside void f(int arr[]) you print sizeof(arr) and get 8 whatever array the caller passed. Why?",
     options: [
@@ -2654,6 +2671,7 @@ const MCQ_BANK: BankQuestion[] = [
     unit: 1,
     topic: "Arrays",
     kind: "situation",
+    difficulty: "max",
     question:
       "A loop runs for (i = 0; i <= n; i++) over int a[n] and the program crashes only sometimes. What is happening?",
     options: [
@@ -2670,6 +2688,98 @@ const MCQ_BANK: BankQuestion[] = [
       "An out-of-bounds write is never harmless — it corrupts whatever is next in memory.",
       "Re-evaluating n costs nothing and does not stop the loop from terminating.",
       "Variable indices are entirely normal; the bug is the bound, not the indexing.",
+    ],
+  },
+
+  /* Unit 2 — easy, easy, medium, hard. No `max` question, deliberately: a
+   * tier that holds nothing for the current unit selection must show as
+   * disabled rather than vanish, and this is how that is exercised. */
+  {
+    key: "CSE111-U2-001",
+    subject_code: "CSE111",
+    unit: 2,
+    topic: "Strings",
+    kind: "recall",
+    difficulty: "easy",
+    question: "What marks the end of a string in C?",
+    options: [
+      "A newline character",
+      "A null character, '\\0'",
+      "The EOF constant",
+      "A space",
+    ],
+    correct: 1,
+    explain:
+      "A C string is an array of characters ending in the null character '\\0'. Every library function — strlen, strcpy, printf's %s — walks forward until it finds that byte, which is why a string with no terminator reads off the end of its array.",
+    why_wrong: [
+      "A newline is ordinary text inside a string; it terminates a line, not the string.",
+      "",
+      "EOF is a return value from file input, not a byte stored inside a string.",
+      "A space is an ordinary character; strings hold spaces all the time.",
+    ],
+  },
+  {
+    key: "CSE111-U2-002",
+    subject_code: "CSE111",
+    unit: 2,
+    topic: "Structures",
+    kind: "recall",
+    difficulty: "easy",
+    question: "Which operator reads a member through a pointer to a struct?",
+    options: ["->", ".", "::", "&"],
+    correct: 0,
+    explain:
+      "p->x is the member access through a pointer, and is exactly (*p).x written shorter. The dot operator takes a struct value on its left, not a pointer to one.",
+    why_wrong: [
+      "",
+      "The dot needs a struct itself on the left; through a pointer it is a compile error.",
+      "C has no :: operator at all — that is C++ scope resolution.",
+      "& takes an address; it does not reach inside a struct.",
+    ],
+  },
+  {
+    key: "CSE111-U2-010",
+    subject_code: "CSE111",
+    unit: 2,
+    topic: "Files",
+    kind: "recall",
+    difficulty: "medium",
+    question:
+      "Which fopen mode opens a file for writing and throws away whatever was in it?",
+    options: ['"a"', '"r+"', '"w"', '"r"'],
+    correct: 2,
+    explain:
+      '"w" creates the file if it is missing and truncates it to zero length if it is not — the old contents are gone before you write a byte. "a" appends, "r+" updates in place without truncating, and "r" cannot write at all.',
+    why_wrong: [
+      '"a" keeps the file and adds to its end; nothing is lost.',
+      '"r+" opens for update and leaves the existing bytes where they are.',
+      "",
+      '"r" is read-only: the first write fails rather than truncating anything.',
+    ],
+  },
+  {
+    key: "CSE111-U2-020",
+    subject_code: "CSE111",
+    unit: 2,
+    topic: "Strings",
+    kind: "situation",
+    difficulty: "hard",
+    question:
+      'You have char name[8]; and call strcpy(name, "administrator"). It compiles and often appears to work. What actually happened?',
+    options: [
+      "strcpy stops at 8 characters, so the name is silently truncated",
+      "The compiler grows name to fit the literal",
+      "Thirteen characters plus a terminator were written past the end of name",
+      "Nothing — strcpy allocates a new buffer and returns it",
+    ],
+    correct: 2,
+    explain:
+      "strcpy copies until the source's '\\0' and never learns how big the destination is. Fourteen bytes go into an eight-byte array, so six of them land on whatever sits next in memory. It compiles, and it often appears to work, which is exactly what makes it dangerous.",
+    why_wrong: [
+      "strcpy has no length to stop at; strncpy is the one that takes a bound.",
+      "Array sizes are fixed at compile time; nothing grows them at a call site.",
+      "",
+      "strcpy writes into the buffer you hand it and allocates nothing.",
     ],
   },
 ];
@@ -2699,7 +2809,14 @@ const MCQ_UNITS: {
   },
 ];
 
-const MCQ_LENGTHS: McqLength[] = [30, 60, "full"];
+/** Presets the picker offers. Length itself is free: any whole number from
+ *  MCQ_MIN_LENGTH to MCQ_MAX_LENGTH, or "full". */
+const MCQ_LENGTHS: McqLength[] = [10, 20, 30, 60, "full"];
+const MCQ_MIN_LENGTH = 5;
+const MCQ_MAX_LENGTH = 200;
+
+/** The ladder, in order. */
+const MCQ_DIFFICULTIES: McqDifficulty[] = ["easy", "medium", "hard", "max"];
 
 interface MockMcqItem {
   position: number;
@@ -2715,6 +2832,8 @@ interface MockMcqAttempt {
   subject_code: string;
   units: number[];
   length: McqLength;
+  /** null is Mixed — drawn across the whole ladder. */
+  difficulty: McqDifficulty | null;
   startedMs: number;
   started_at: string;
   submitted_at: string | null;
@@ -2735,9 +2854,16 @@ function mcqShuffle<T>(items: T[], rand: () => number): T[] {
   return out;
 }
 
-function mcqPool(subjectCode: string, units: number[]): BankQuestion[] {
+function mcqPool(
+  subjectCode: string,
+  units: number[],
+  difficulty: McqDifficulty | null,
+): BankQuestion[] {
   return MCQ_BANK.filter(
-    (q) => q.subject_code === subjectCode && units.includes(q.unit),
+    (q) =>
+      q.subject_code === subjectCode &&
+      units.includes(q.unit) &&
+      (difficulty === null || q.difficulty === difficulty),
   );
 }
 
@@ -2776,6 +2902,7 @@ function toMcqAttempt(t: MockMcqAttempt): McqAttempt {
     subject_code: t.subject_code,
     units: [...t.units],
     length: t.length,
+    difficulty: t.difficulty,
     total: t.items.length,
     started_at: t.started_at,
     submitted_at: t.submitted_at,
@@ -2783,6 +2910,7 @@ function toMcqAttempt(t: MockMcqAttempt): McqAttempt {
       position: item.position,
       topic: item.q.topic,
       kind: item.q.kind,
+      difficulty: item.q.difficulty,
       question: item.q.question,
       options: mcqShownOptions(item),
       answer: mcqFeedback(t, item),
@@ -2790,18 +2918,24 @@ function toMcqAttempt(t: MockMcqAttempt): McqAttempt {
   };
 }
 
+/** A selection is subject + units + length + difficulty, and that tuple is
+ *  what a board is keyed by: Easy/30 and Hard/30 are different boards, and
+ *  Mixed is its own rather than the four merged. */
 function mcqSelectionKey(
   subjectCode: string,
   units: number[],
   length: McqLength,
+  difficulty: McqDifficulty | null,
 ): string {
-  return `${subjectCode}|${[...units].sort((a, b) => a - b).join(",")}|${length}`;
+  return `${subjectCode}|${[...units]
+    .sort((a, b) => a - b)
+    .join(",")}|${length}|${difficulty ?? "mixed"}`;
 }
 
 /**
- * Three classmates who have already sat the CSE111 unit-1 board. Every other
- * selection starts empty, so the "be first" state is reachable in the
- * fixture too.
+ * Three classmates who have already sat the CSE111 unit-1 **Mixed** board.
+ * Every other selection — every single-tier board included — starts empty, so
+ * the "be first" state is reachable in the fixture too.
  */
 const MCQ_BOARD: McqLeaderboardRow[] = [
   {
@@ -2837,17 +2971,23 @@ function mcqBoardFor(
   subjectCode: string,
   units: number[],
   length: McqLength,
+  difficulty: McqDifficulty | null,
 ): McqLeaderboardRow[] {
   const seeded =
-    subjectCode === "CSE111" && units.includes(1) ? MCQ_BOARD : [];
+    subjectCode === "CSE111" && units.includes(1) && difficulty === null
+      ? MCQ_BOARD
+      : [];
 
   // The user's own best submitted attempt for exactly this selection, which
   // is what the server ranks: one row per user, not one per attempt.
-  const key = mcqSelectionKey(subjectCode, units, length);
+  const key = mcqSelectionKey(subjectCode, units, length, difficulty);
   let mine: McqLeaderboardRow | null = null;
   for (const t of mcqAttempts.values()) {
     if (!t.result || t.submitted_at === null) continue;
-    if (mcqSelectionKey(t.subject_code, t.units, t.length) !== key) continue;
+    if (
+      mcqSelectionKey(t.subject_code, t.units, t.length, t.difficulty) !== key
+    )
+      continue;
     const row: McqLeaderboardRow = {
       user_id: MOCK_USER.id,
       name: MOCK_USER.name,
@@ -2876,13 +3016,22 @@ export async function getMcqSubjects(): Promise<McqSubject[]> {
   return MCQ_UNITS.map((s) => ({
     subject_code: s.subject_code,
     label: s.label,
-    units: s.units.map((u) => ({
-      unit: u.unit,
-      label: u.label,
-      count: MCQ_BANK.filter(
+    units: s.units.map((u) => {
+      const inUnit = MCQ_BANK.filter(
         (q) => q.subject_code === s.subject_code && q.unit === u.unit,
-      ).length,
-    })),
+      );
+      return {
+        unit: u.unit,
+        label: u.label,
+        count: inUnit.length,
+        difficulties: Object.fromEntries(
+          MCQ_DIFFICULTIES.map((d) => [
+            d,
+            inUnit.filter((q) => q.difficulty === d).length,
+          ]),
+        ) as Record<McqDifficulty, number>,
+      };
+    }),
     lengths: [...MCQ_LENGTHS],
   }));
 }
@@ -2891,6 +3040,7 @@ export async function createMcqAttempt(
   subjectCode: string,
   units: number[],
   length: McqLength,
+  difficulty: McqDifficulty | null = null,
 ): Promise<McqAttempt> {
   await delay(280);
   const path = "/api/mcq/attempts";
@@ -2907,16 +3057,32 @@ export async function createMcqAttempt(
       throw new ApiError(422, path, `${subjectCode} has no unit ${u}`);
     }
   }
-  if (!MCQ_LENGTHS.includes(length)) {
-    throw new ApiError(422, path, `bad length '${length}'`);
+  // Free choice, within bounds: any whole number 5–200, or "full". Asking
+  // for more than the selection holds is a shorter attempt, not an error.
+  if (
+    length !== "full" &&
+    (!Number.isInteger(length) ||
+      length < MCQ_MIN_LENGTH ||
+      length > MCQ_MAX_LENGTH)
+  ) {
+    throw new ApiError(
+      422,
+      path,
+      `length must be "full" or a whole number ${MCQ_MIN_LENGTH}–${MCQ_MAX_LENGTH}, got '${length}'`,
+    );
+  }
+  if (difficulty !== null && !MCQ_DIFFICULTIES.includes(difficulty)) {
+    throw new ApiError(422, path, `no such difficulty '${difficulty}'`);
   }
 
-  const pool = mcqPool(subjectCode, units);
+  const pool = mcqPool(subjectCode, units, difficulty);
   if (pool.length === 0) {
     throw new ApiError(
       422,
       path,
-      "those units have no questions yet — they are waiting for material",
+      difficulty === null
+        ? "those units have no questions yet — they are waiting for material"
+        : `those units have no ${difficulty} questions yet`,
     );
   }
 
@@ -2933,6 +3099,7 @@ export async function createMcqAttempt(
     subject_code: subjectCode,
     units: [...units].sort((a, b) => a - b),
     length,
+    difficulty,
     startedMs: now,
     started_at: new Date(now).toISOString(),
     submitted_at: null,
@@ -3008,6 +3175,16 @@ export async function submitMcqAttempt(id: number): Promise<McqResult> {
     topics.set(item.q.topic, row);
   }
 
+  // Ladder order, and only the tiers this attempt actually drew.
+  const by_difficulty: McqDifficultyScore[] = MCQ_DIFFICULTIES.map((d) => {
+    const drawn = t.items.filter((i) => i.q.difficulty === d);
+    return {
+      difficulty: d,
+      correct: drawn.filter(mcqIsCorrect).length,
+      total: drawn.length,
+    };
+  }).filter((row) => row.total > 0);
+
   const missed: McqMissed[] = t.items
     .filter((i) => !mcqIsCorrect(i))
     .map((item) => ({
@@ -3031,13 +3208,14 @@ export async function submitMcqAttempt(id: number): Promise<McqResult> {
     percent: total > 0 ? Math.round((100 * score) / total) : 0,
     duration_s,
     by_topic: [...topics.values()],
+    by_difficulty,
     missed,
     rank: null,
   };
   t.result = result;
 
   if (answered > 0) {
-    const board = mcqBoardFor(t.subject_code, t.units, t.length);
+    const board = mcqBoardFor(t.subject_code, t.units, t.length, t.difficulty);
     const at = board.findIndex(
       (r) => r.user_id === MOCK_USER.id && r.duration_s === duration_s,
     );
@@ -3067,6 +3245,7 @@ export async function getMcqAttempts(): Promise<McqAttemptSummary[]> {
       subject_code: t.subject_code,
       units: [...t.units],
       length: t.length,
+      difficulty: t.difficulty,
       total: t.items.length,
       answered: t.items.filter((i) => i.chosen !== null).length,
       score: t.result ? t.result.score : null,
@@ -3081,7 +3260,8 @@ export async function getMcqLeaderboard(
   subjectCode: string,
   units: number[],
   length: McqLength,
+  difficulty: McqDifficulty | null = null,
 ): Promise<McqLeaderboardRow[]> {
   await delay();
-  return mcqBoardFor(subjectCode, units, length);
+  return mcqBoardFor(subjectCode, units, length, difficulty);
 }

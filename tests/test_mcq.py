@@ -3,6 +3,14 @@
 The bank under test is tests/fixtures/mcq — twelve questions over three topics
 in unit 1, four in unit 2 — never src/recall/mcq/bank, so these tests describe
 a bank they control and do not break when a real question is written.
+
+The fixture's tiers are deliberate and the tests lean on them:
+
+    unit 1 (12)  easy 4  medium 3  hard 3  max 2
+    unit 2 (4)   easy 2  medium 1  hard 1  max 0
+
+Unit 2 carrying no `max` is what lets a test ask for a tier that has nothing
+and get a 422 rather than an empty sitting.
 """
 
 import json
@@ -73,11 +81,20 @@ def client(db_path):
     return client_as(db_path, OWNER)
 
 
-def start(client: TestClient, units=(1,), length="full") -> dict:
-    r = client.post("/api/mcq/attempts", json={
-        "subject_code": "CSE111", "units": list(units), "length": length})
+def start(client: TestClient, units=(1,), length="full",
+          difficulty=None) -> dict:
+    body = {"subject_code": "CSE111", "units": list(units), "length": length}
+    if difficulty is not None:
+        body["difficulty"] = difficulty
+    r = client.post("/api/mcq/attempts", json=body)
     assert r.status_code == 200, r.text
     return r.json()
+
+
+#: What each fixture unit holds per tier. Written out rather than counted from
+#: the files so a test fails when the fixture changes under it.
+TIERS = {1: {"easy": 4, "medium": 3, "hard": 3, "max": 2},
+         2: {"easy": 2, "medium": 1, "hard": 1, "max": 0}}
 
 
 def correct_shown(question: dict) -> int:
@@ -93,7 +110,7 @@ def wrong_shown(question: dict) -> int:
 def a_question(**overrides) -> dict:
     """A valid question dict, before whatever the caller breaks about it."""
     question = {
-        "key": "X-1", "topic": "Linux", "kind": "recall",
+        "key": "X-1", "topic": "Linux", "kind": "recall", "difficulty": "easy",
         "q": "Which command prints the working directory?",
         "options": ["pwd", "ls", "cd", "mkdir"],
         "correct": 0,
@@ -119,6 +136,9 @@ def test_a_valid_question_passes():
     ({"correct": 1}, "correct option"),                # why_wrong[1] is not ""
     ({"why_wrong": ["", "b", "   ", "d"]}, "why_wrong[2] is blank"),
     ({"kind": "trivia"}, "kind must be one of"),
+    ({"difficulty": "brutal"}, "difficulty must be one of"),
+    ({"difficulty": None}, "difficulty must be one of"),
+    ({"difficulty": "Easy"}, "difficulty must be one of"),
     ({"q": "  "}, "q must be a non-empty string"),
     ({"explain": ""}, "explain must be a non-empty string"),
     ({"topic": ""}, "topic must be a non-empty string"),
@@ -129,6 +149,23 @@ def test_validation_names_the_key_and_the_reason(overrides, reason):
     message = str(exc.value)
     assert "X-1" in message, message
     assert reason in message, message
+
+
+def test_a_question_with_no_difficulty_is_refused_by_key():
+    """The field is required and the loader invents nothing. The column's
+    DEFAULT is for migrating a live database, not for a file someone forgot to
+    label — an unlabelled question would quietly join the 'medium' tier."""
+    question = a_question()
+    del question["difficulty"]
+    with pytest.raises(ValueError) as exc:
+        validate_question(question)
+    assert "X-1" in str(exc.value)
+    assert "difficulty must be one of easy, medium, hard, max" in str(exc.value)
+
+
+def test_the_ladder_is_the_registrys():
+    assert registry.DIFFICULTIES == ("easy", "medium", "hard", "max")
+    assert bank.DIFFICULTIES == registry.DIFFICULTIES
 
 
 def test_a_question_with_no_key_is_refused_by_position():
@@ -304,8 +341,20 @@ def test_subjects_lists_every_unit_with_its_live_count(client):
     subject = body[0]
     assert subject["label"] == "Orientation to Computing"
     assert subject["lengths"] == [30, 60, "full"]
+    assert subject["difficulties"] == ["easy", "medium", "hard", "max"]
+    assert (subject["length_min"], subject["length_max"]) == (5, 200)
     assert [(u["unit"], u["count"]) for u in subject["units"]] == [(1, 12), (2, 4)]
     assert subject["units"][0]["label"].startswith("Computational Thinking")
+
+
+def test_subjects_breaks_every_unit_down_by_tier(client):
+    """The picker greys out a tier with nothing in it, so the counts have to be
+    real and every tier has to be present even at zero."""
+    units = client.get("/api/mcq/subjects").json()[0]["units"]
+    assert {u["unit"]: u["difficulties"] for u in units} == TIERS
+    for unit in units:
+        assert sum(unit["difficulties"].values()) == unit["count"]
+        assert list(unit["difficulties"]) == ["easy", "medium", "hard", "max"]
 
 
 def test_a_unit_with_no_questions_still_appears_with_a_count_of_zero(tmp_path):
@@ -316,6 +365,8 @@ def test_a_unit_with_no_questions_still_appears_with_a_count_of_zero(tmp_path):
     make_db(path, bank_dir)
     units = client_as(path, OWNER).get("/api/mcq/subjects").json()[0]["units"]
     assert [(u["unit"], u["count"]) for u in units] == [(1, 12), (2, 0)]
+    assert units[1]["difficulties"] == {"easy": 0, "medium": 0, "hard": 0,
+                                        "max": 0}
 
 
 # --- creating an attempt ---------------------------------------------------
@@ -335,8 +386,8 @@ def test_a_fresh_attempt_never_carries_the_answer(client):
     assert "why_wrong" not in r.text
     assert "correct_index" not in r.text
     for question in r.json()["questions"]:
-        assert set(question) == {"position", "topic", "kind", "question",
-                                 "options", "answer"}
+        assert set(question) == {"position", "topic", "kind", "difficulty",
+                                 "question", "options", "answer"}
         assert question["answer"] is None
 
 
@@ -391,8 +442,14 @@ def test_units_are_a_set_not_a_sequence(client):
     {"subject_code": "NOPE", "units": [1], "length": 30},
     {"subject_code": "CSE111", "units": [9], "length": 30},
     {"subject_code": "CSE111", "units": [], "length": 30},
-    {"subject_code": "CSE111", "units": [1], "length": 45},
+    {"subject_code": "CSE111", "units": [1], "length": 4},
+    {"subject_code": "CSE111", "units": [1], "length": 201},
+    {"subject_code": "CSE111", "units": [1], "length": 0},
+    {"subject_code": "CSE111", "units": [1], "length": -1},
     {"subject_code": "CSE111", "units": [1], "length": "half"},
+    {"subject_code": "CSE111", "units": [1], "length": 30,
+     "difficulty": "brutal"},
+    {"subject_code": "CSE111", "units": [1], "length": 30, "difficulty": "Easy"},
 ])
 def test_an_impossible_selection_is_422(client, body):
     r = client.post("/api/mcq/attempts", json=body)
@@ -574,6 +631,34 @@ def test_submitting_halfway_is_an_honest_score(client):
     assert result["score"] == 5
     assert result["percent"] == round(100 * 5 / 12)
     assert result["duration_s"] >= 0
+
+
+def test_by_difficulty_covers_every_tier_drawn_and_no_other(client):
+    """Ladder order, tiers the attempt drew only, and it sums to the score —
+    the same honesty rule by_topic follows, read down the ladder instead."""
+    attempt = start(client, units=[1], length="full")
+    result = sit(client, attempt, right=5, wrong=2)
+    assert [t["difficulty"] for t in result["by_difficulty"]] == \
+        ["easy", "medium", "hard", "max"]
+    assert {t["difficulty"]: t["total"] for t in result["by_difficulty"]} == \
+        TIERS[1]
+    assert sum(t["total"] for t in result["by_difficulty"]) == result["total"]
+    assert sum(t["correct"] for t in result["by_difficulty"]) == result["score"]
+
+
+def test_by_difficulty_omits_a_tier_the_attempt_never_drew(client):
+    attempt = start(client, units=[2], length="full")
+    result = sit(client, attempt, right=2, wrong=1)
+    assert [t["difficulty"] for t in result["by_difficulty"]] == \
+        ["easy", "medium", "hard"], "no 0/0 max for a tier nobody sat"
+    assert sum(t["correct"] for t in result["by_difficulty"]) == result["score"]
+
+
+def test_a_single_tier_sitting_reports_only_that_tier(client):
+    result = sit(client, start(client, units=[1], difficulty="hard"),
+                 right=2, wrong=1)
+    assert result["by_difficulty"] == [{"difficulty": "hard", "correct": 2,
+                                        "total": 3}]
 
 
 def test_by_topic_covers_every_question_drawn(client):
@@ -758,9 +843,12 @@ def test_history_shows_only_your_own_attempts(db_path):
 
 # --- the leaderboard -------------------------------------------------------
 
-def board(client: TestClient, units="1", length="full") -> list[dict]:
-    r = client.get("/api/mcq/leaderboard", params={
-        "subject_code": "CSE111", "units": units, "length": length})
+def board(client: TestClient, units="1", length="full",
+          difficulty=None) -> list[dict]:
+    params = {"subject_code": "CSE111", "units": units, "length": length}
+    if difficulty is not None:
+        params["difficulty"] = difficulty
+    r = client.get("/api/mcq/leaderboard", params=params)
     assert r.status_code == 200, r.text
     return r.json()
 
@@ -846,8 +934,11 @@ def test_the_submit_result_says_where_you_landed(db_path):
     {"subject_code": "NOPE", "units": "1", "length": "full"},
     {"subject_code": "CSE111", "units": "9", "length": "full"},
     {"subject_code": "CSE111", "units": "one", "length": "full"},
-    {"subject_code": "CSE111", "units": "1", "length": "45"},
+    {"subject_code": "CSE111", "units": "1", "length": "4"},
+    {"subject_code": "CSE111", "units": "1", "length": "201"},
     {"subject_code": "CSE111", "units": "1", "length": "half"},
+    {"subject_code": "CSE111", "units": "1", "length": "full",
+     "difficulty": "brutal"},
 ])
 def test_a_nonsense_board_request_is_422(client, params):
     r = client.get("/api/mcq/leaderboard", params=params)
@@ -1182,3 +1273,378 @@ def test_a_wired_up_bank_reaches_everything_it_seeds(tmp_path):
     counts = seed_mcq_bank(conn, FIXTURES)
     conn.close()
     assert counts["unreachable"] == 0
+
+
+# --- difficulty ------------------------------------------------------------
+
+def tiers_of(attempt: dict) -> list[str]:
+    return [q["difficulty"] for q in attempt["questions"]]
+
+
+@pytest.mark.parametrize("tier", ["easy", "medium", "hard", "max"])
+def test_a_tier_draws_only_that_tier(client, tier):
+    attempt = start(client, units=[1], length="full", difficulty=tier)
+    assert attempt["difficulty"] == tier
+    assert attempt["total"] == TIERS[1][tier]
+    assert set(tiers_of(attempt)) == {tier}
+
+
+def test_mixed_draws_across_the_whole_ladder(client):
+    """Mixed is the absence of a filter, not a fifth tier on the questions."""
+    attempt = start(client, units=[1], length="full")
+    assert attempt["difficulty"] is None
+    assert attempt["total"] == 12
+    from collections import Counter
+    assert Counter(tiers_of(attempt)) == Counter(
+        {t: n for t, n in TIERS[1].items() if n})
+
+
+def test_a_tier_with_nothing_in_it_is_422_naming_the_tier(client):
+    """Unit 2 has no max question. "unit 2 has no questions yet" would be a
+    lie — it has four — so the message names the tier that is empty."""
+    r = client.post("/api/mcq/attempts", json={
+        "subject_code": "CSE111", "units": [2], "length": 30,
+        "difficulty": "max"})
+    assert r.status_code == 422, r.text
+    assert "no max questions yet" in r.json()["detail"]
+
+
+def test_a_tier_pools_across_the_units_asked_for(client):
+    """Unit 2 alone has no max; units 1 and 2 together have unit 1's two."""
+    attempt = start(client, units=[1, 2], length="full", difficulty="max")
+    assert attempt["total"] == 2
+    assert set(tiers_of(attempt)) == {"max"}
+
+
+def test_an_unknown_tier_never_reaches_the_pool(client):
+    r = client.post("/api/mcq/attempts", json={
+        "subject_code": "CSE111", "units": [1], "length": 30,
+        "difficulty": "impossible"})
+    assert r.status_code == 422
+    assert "difficulty must be one of easy, medium, hard, max" in \
+        r.json()["detail"]
+
+
+def test_a_null_difficulty_on_the_wire_is_mixed(client):
+    r = client.post("/api/mcq/attempts", json={
+        "subject_code": "CSE111", "units": [1], "length": 30,
+        "difficulty": None})
+    assert r.status_code == 200, r.text
+    assert r.json()["difficulty"] is None
+
+
+def test_the_attempt_stores_its_tier_and_history_shows_it(client):
+    hard = start(client, units=[1], length=5, difficulty="hard")
+    mixed = start(client, units=[1], length=5)
+    rows = {r["id"]: r for r in client.get("/api/mcq/attempts").json()}
+    assert rows[hard["attempt_id"]]["difficulty"] == "hard"
+    assert rows[mixed["attempt_id"]]["difficulty"] is None
+    assert rows[hard["attempt_id"]]["length"] == 5
+
+
+def test_a_resumed_attempt_still_knows_its_tier(client):
+    attempt = start(client, units=[1], length="full", difficulty="easy")
+    resumed = client.get(f"/api/mcq/attempts/{attempt['attempt_id']}").json()
+    assert resumed["difficulty"] == "easy"
+    assert resumed["total"] == 4
+
+
+# --- free-choice length ----------------------------------------------------
+
+@pytest.mark.parametrize("length,drawn", [(5, 5), (7, 7), (12, 12), (200, 12),
+                                          ("full", 12)])
+def test_a_length_in_range_draws_min_of_what_was_asked_and_what_exists(
+        client, length, drawn):
+    attempt = start(client, units=[1], length=length)
+    assert attempt["length"] == length
+    assert attempt["total"] == drawn == len(attempt["questions"])
+
+
+@pytest.mark.parametrize("length", [4, 0, -1, 201, 1000])
+def test_a_length_outside_the_range_is_422_naming_the_range(client, length):
+    r = client.post("/api/mcq/attempts", json={
+        "subject_code": "CSE111", "units": [1], "length": length})
+    assert r.status_code == 422, r.text
+    assert "5-200" in r.json()["detail"], r.text
+
+
+def test_a_length_above_what_the_tier_holds_shrinks_the_draw(client):
+    """Asking for 200 max questions out of two is a two-question sitting, not
+    an error: the student asked for as many as there are."""
+    attempt = start(client, units=[1], length=200, difficulty="max")
+    assert attempt["total"] == 2
+    assert attempt["length"] == 200, "what was ASKED for is what is stored"
+
+
+def test_a_length_that_is_not_a_whole_number_is_422(client):
+    for length in ("half", 12.5, True):
+        r = client.post("/api/mcq/attempts", json={
+            "subject_code": "CSE111", "units": [1], "length": length})
+        assert r.status_code == 422, (length, r.text)
+
+
+def test_the_service_refuses_a_bool_length_outright(db_path):
+    """`True` is an int in Python and min(True, n) is a one-question sitting."""
+    conn = connect(db_path)
+    with pytest.raises(ValueError, match="5-200"):
+        service.create_attempt(conn, OWNER, "CSE111", [1], True)
+    conn.close()
+
+
+# --- one board per (subject, units, length, difficulty) --------------------
+
+def test_two_tiers_at_the_same_length_are_two_boards(db_path):
+    """26/30 on Easy and 26/30 on Max are not the same achievement."""
+    owner = client_as(db_path, OWNER)
+    sit(owner, start(owner, units=[1], length=5, difficulty="easy"),
+        right=4, wrong=0)
+    sit(owner, start(owner, units=[1], length=5, difficulty="hard"),
+        right=1, wrong=0)
+
+    easy = board(owner, units="1", length="5", difficulty="easy")
+    hard = board(owner, units="1", length="5", difficulty="hard")
+    assert [r["score"] for r in easy] == [4]
+    assert [r["score"] for r in hard] == [1]
+    assert board(owner, units="1", length="5", difficulty="medium") == []
+
+
+def test_mixed_is_its_own_board_and_not_a_merge(db_path):
+    """NULL = NULL is never true in SQLite, so the Mixed board has to be
+    matched with IS — otherwise it is empty for ever and looks unsat."""
+    owner = client_as(db_path, OWNER)
+    sit(owner, start(owner, units=[1], length=5), right=3, wrong=0)
+    sit(owner, start(owner, units=[1], length=5, difficulty="easy"),
+        right=4, wrong=0)
+
+    mixed = board(owner, units="1", length="5")
+    assert [r["score"] for r in mixed] == [3], "mixed sees only mixed sittings"
+    assert [r["score"] for r in board(owner, units="1", length="5",
+                                      difficulty="easy")] == [4]
+
+
+def test_the_rank_a_submit_reports_is_the_rank_of_its_own_board(db_path):
+    owner, intruder = client_as(db_path, OWNER), client_as(db_path, INTRUDER)
+    mine = sit(owner, start(owner, units=[1], length=5, difficulty="hard"),
+               right=3, wrong=0)
+    assert mine["rank"] == {"position": 1, "of": 1}
+    # A better sitting on a DIFFERENT board does not touch that board.
+    theirs = sit(intruder, start(intruder, units=[1], length=5,
+                                 difficulty="easy"), right=4, wrong=0)
+    assert theirs["rank"] == {"position": 1, "of": 1}
+    assert len(board(owner, units="1", length="5", difficulty="hard")) == 1
+
+
+def test_a_stored_attempt_still_ranks_after_the_ladder_changes(db_path,
+                                                               monkeypatch):
+    """The rule that saved attempts when a UNIT left the registry covers the
+    ladder too: ranking a stored attempt reads its own stored selection and
+    re-validates nothing."""
+    owner = client_as(db_path, OWNER)
+    attempt = start(owner, units=[1], length=5, difficulty="max")
+    aid = attempt["attempt_id"]
+    owner.post(f"/api/mcq/attempts/{aid}/answer", json={
+        "position": 1, "chosen": correct_shown(attempt["questions"][0])})
+
+    monkeypatch.setattr(registry, "DIFFICULTIES", ("easy", "medium", "hard"))
+    monkeypatch.setattr(service, "DIFFICULTIES", ("easy", "medium", "hard"))
+
+    r = owner.post(f"/api/mcq/attempts/{aid}/submit")
+    assert r.status_code == 200, r.text
+    assert r.json()["rank"] == {"position": 1, "of": 1}
+    assert owner.get(f"/api/mcq/attempts/{aid}").status_code == 200
+
+
+# --- migrating a live database ---------------------------------------------
+
+_OLD_QUESTIONS_DDL = """CREATE TABLE mcq_questions (
+  id INTEGER PRIMARY KEY, key TEXT NOT NULL UNIQUE, subject_code TEXT NOT NULL,
+  unit INTEGER NOT NULL, topic TEXT NOT NULL, kind TEXT NOT NULL,
+  question TEXT NOT NULL, options_json TEXT NOT NULL, correct INTEGER NOT NULL,
+  explain TEXT NOT NULL, why_wrong_json TEXT NOT NULL,
+  active INTEGER NOT NULL DEFAULT 1, updated_at TEXT)"""
+
+_OLD_ATTEMPTS_DDL = """CREATE TABLE mcq_attempts (
+  id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL, subject_code TEXT NOT NULL,
+  units_json TEXT NOT NULL, length TEXT NOT NULL,
+  question_ids_json TEXT NOT NULL, option_orders_json TEXT NOT NULL,
+  total INTEGER NOT NULL, started_at TEXT NOT NULL, submitted_at TEXT,
+  duration_s INTEGER, score INTEGER)"""
+
+
+def test_a_live_database_gains_the_columns_without_losing_a_row(tmp_path):
+    """The live site has real attempts in it. schema.sql is CREATE IF NOT
+    EXISTS and never alters a table that already exists, so the columns arrive
+    through _migrate's ALTERs — and every existing row survives them."""
+    path = str(tmp_path / "old.db")
+    conn = connect(path)
+    conn.execute(_OLD_QUESTIONS_DDL)
+    conn.execute(_OLD_ATTEMPTS_DDL)
+    conn.execute(
+        "INSERT INTO mcq_questions (key, subject_code, unit, topic, kind,"
+        " question, options_json, correct, explain, why_wrong_json)"
+        " VALUES ('OLD-1','CSE111',1,'Linux','recall','q?',"
+        " '[\"a\",\"b\",\"c\",\"d\"]',0,'because','[\"\",\"x\",\"y\",\"z\"]')")
+    conn.execute(
+        "INSERT INTO mcq_attempts (user_id, subject_code, units_json, length,"
+        " question_ids_json, option_orders_json, total, started_at, score,"
+        " submitted_at, duration_s)"
+        " VALUES (1,'CSE111','[1]','30','[1]','[[0,1,2,3]]',1,"
+        " '2026-09-01T00:00:00+00:00',1,'2026-09-01T00:05:00+00:00',300)")
+    conn.commit()
+
+    init_db(conn)                      # the migration under test
+
+    qcols = {r["name"] for r in
+             conn.execute("PRAGMA table_info(mcq_questions)")}
+    acols = {r["name"] for r in
+             conn.execute("PRAGMA table_info(mcq_attempts)")}
+    assert "difficulty" in qcols and "difficulty" in acols
+    indexes = {r["name"] for r in
+               conn.execute("PRAGMA index_list(mcq_questions)")}
+    assert "idx_mcq_questions_difficulty" in indexes
+
+    question = conn.execute(
+        "SELECT * FROM mcq_questions WHERE key = 'OLD-1'").fetchone()
+    assert question["difficulty"] == "medium", "backfilled, not nulled"
+    attempt = conn.execute("SELECT * FROM mcq_attempts").fetchone()
+    assert attempt["difficulty"] is None, "an old sitting was Mixed"
+    assert attempt["score"] == 1 and attempt["total"] == 1
+
+    init_db(conn)                      # idempotent
+    assert conn.execute(
+        "SELECT COUNT(*) AS n FROM mcq_attempts").fetchone()["n"] == 1
+    conn.close()
+
+
+def test_an_old_attempt_still_submits_and_ranks_after_the_migration(tmp_path):
+    """A sitting that was open when the ladder landed must finish normally,
+    on the Mixed board, with no difficulty of its own."""
+    path = str(tmp_path / "live.db")
+    make_db(path)
+    conn = connect(path)
+    attempt = service.create_attempt(conn, OWNER, "CSE111", [1], 30,
+                                     rng=random.Random(4))
+    aid = attempt["attempt_id"]
+    # Exactly what a pre-ladder row looks like: NULL difficulty.
+    conn.execute("UPDATE mcq_attempts SET difficulty = NULL WHERE id = ?", (aid,))
+    conn.commit()
+    service.answer_attempt(conn, OWNER, aid, 1,
+                           correct_shown(attempt["questions"][0]))
+    result = service.submit_attempt(conn, OWNER, aid)
+    assert result["rank"] == {"position": 1, "of": 1}
+    assert service.list_attempts(conn, OWNER)[0]["difficulty"] is None
+    assert service.leaderboard(conn, "CSE111", [1], 30) != []
+    assert service.leaderboard(conn, "CSE111", [1], 30, "easy") == []
+    conn.close()
+
+
+def test_a_migrated_database_still_grades_the_answers_it_already_held(tmp_path):
+    """The stronger form of the migration test: the pre-ladder rows here are
+    not just an attempt but an attempt WITH RECORDED ANSWERS, and the assertion
+    is not that the columns appeared — it is that the sitting still grades.
+
+    A migration that kept the rows but made them ungradable would pass the
+    column check and still have destroyed the live site's history.
+    """
+    path = str(tmp_path / "old.db")
+    conn = connect(path)
+    conn.execute(_OLD_QUESTIONS_DDL)
+    conn.execute(_OLD_ATTEMPTS_DDL)
+    conn.execute("""CREATE TABLE mcq_answers (
+      id INTEGER PRIMARY KEY, attempt_id INTEGER NOT NULL,
+      position INTEGER NOT NULL, question_id INTEGER NOT NULL,
+      chosen INTEGER NOT NULL, is_correct INTEGER NOT NULL,
+      answered_at TEXT NOT NULL, UNIQUE(attempt_id, position))""")
+    conn.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)")
+    conn.execute("INSERT INTO users (id, name) VALUES (1, 'owner')")
+    # Four real fixture questions, inserted the OLD way: no difficulty column.
+    source = [q for q in load_questions(FIXTURES) if q["unit"] == 1][:4]
+    for q in source:
+        conn.execute(
+            "INSERT INTO mcq_questions (key, subject_code, unit, topic, kind,"
+            " question, options_json, correct, explain, why_wrong_json)"
+            " VALUES (?,?,?,?,?,?,?,?,?,?)",
+            (q["key"], q["subject_code"], q["unit"], q["topic"], q["kind"],
+             q["question"], json.dumps(q["options"]), q["correct"],
+             q["explain"], json.dumps(q["why_wrong"])))
+    ids = [r["id"] for r in conn.execute("SELECT id FROM mcq_questions ORDER BY id")]
+    orders = [[0, 1, 2, 3]] * len(ids)   # identity, so `correct` is the shown index
+    cur = conn.execute(
+        "INSERT INTO mcq_attempts (user_id, subject_code, units_json, length,"
+        " question_ids_json, option_orders_json, total, started_at)"
+        " VALUES (1,'CSE111','[1]','30',?,?,?, '2026-09-01T00:00:00+00:00')",
+        (json.dumps(ids), json.dumps(orders), len(ids)))
+    aid = int(cur.lastrowid)
+    # Two of the four answered before the migration: one right, one wrong.
+    for position in (1, 2):
+        q = source[position - 1]
+        chosen = q["correct"] if position == 1 else (q["correct"] + 1) % 4
+        conn.execute(
+            "INSERT INTO mcq_answers (attempt_id, position, question_id,"
+            " chosen, is_correct, answered_at) VALUES (?,?,?,?,?,?)",
+            (aid, position, ids[position - 1], chosen,
+             1 if position == 1 else 0, "2026-09-01T00:01:00+00:00"))
+    conn.commit()
+
+    init_db(conn)                       # the migration
+    seed_mcq_bank(conn, FIXTURES)       # and the boot seed that follows it
+
+    assert conn.execute(
+        "SELECT COUNT(*) AS n FROM mcq_answers").fetchone()["n"] == 2
+
+    # Reading it back: the recorded reveals survived, and re-seeding stamped
+    # each question with the tier its JSON declares rather than leaving the
+    # migration's 'medium' backfill behind.
+    resumed = service.get_attempt(conn, 1, aid)
+    assert resumed["difficulty"] is None, "a pre-ladder sitting was Mixed"
+    assert [q["difficulty"] for q in resumed["questions"]] == \
+        [q["difficulty"] for q in source]
+    assert resumed["questions"][0]["answer"]["is_correct"] is True
+    assert resumed["questions"][1]["answer"]["is_correct"] is False
+
+    # And grading it: the two unanswered still count against the full draw.
+    result = service.submit_attempt(conn, 1, aid)
+    assert (result["score"], result["total"], result["answered"]) == (1, 4, 2)
+    assert len(result["missed"]) == 3, "the unanswered are missed too"
+    assert sum(t["total"] for t in result["by_difficulty"]) == result["total"]
+    assert sum(t["correct"] for t in result["by_difficulty"]) == result["score"]
+    assert [t["difficulty"] for t in result["by_difficulty"]] == \
+        [d for d in registry.DIFFICULTIES
+         if d in {q["difficulty"] for q in source}]
+    # It lands on the Mixed board for its stored length, and on no tier board.
+    assert len(service.leaderboard(conn, "CSE111", [1], 30)) == 1
+    for tier in registry.DIFFICULTIES:
+        assert service.leaderboard(conn, "CSE111", [1], 30, tier) == []
+    conn.close()
+
+
+def test_an_empty_difficulty_in_the_query_string_is_the_mixed_board(db_path):
+    """`?...&length=5&difficulty=` must be the Mixed board, not a 422.
+
+    A query string cannot express null, so an empty value there is how "no
+    tier chosen" is spelt — the client's own qs() already drops `""` exactly as
+    it drops `undefined`, and a hand-typed or bookmarked URL keeps the bare
+    `difficulty=`. Answering that with "difficulty must be one of..." tells a
+    student their Mixed board does not exist.
+    """
+    owner = client_as(db_path, OWNER)
+    sit(owner, start(owner, units=[1], length=5), right=3, wrong=0)
+    sit(owner, start(owner, units=[1], length=5, difficulty="easy"),
+        right=4, wrong=0)
+
+    r = owner.get("/api/mcq/leaderboard", params={
+        "subject_code": "CSE111", "units": "1", "length": "5",
+        "difficulty": ""})
+    assert r.status_code == 200, r.text
+    assert [row["score"] for row in r.json()] == [3], \
+        "empty means Mixed, and Mixed does not swallow the easy sitting"
+    assert r.json() == board(owner, units="1", length="5")
+
+
+def test_an_empty_difficulty_in_a_json_body_is_still_422(client):
+    """The query string has no way to say null; a JSON body does. So `""`
+    there is a client bug and stays loud rather than being guessed at."""
+    r = client.post("/api/mcq/attempts", json={
+        "subject_code": "CSE111", "units": [1], "length": 5, "difficulty": ""})
+    assert r.status_code == 422, r.text
+    assert "difficulty must be one of" in r.json()["detail"]

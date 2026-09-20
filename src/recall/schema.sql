@@ -287,6 +287,12 @@ CREATE TABLE IF NOT EXISTS mcq_questions (
   unit           INTEGER NOT NULL,  -- as printed on the deck, 1-based
   topic          TEXT NOT NULL,     -- short group label, e.g. 'Linux'
   kind           TEXT NOT NULL,     -- 'recall' | 'situation'
+  -- 'easy' | 'medium' | 'hard' | 'max', the ladder in registry.DIFFICULTIES.
+  -- The DEFAULT is a MIGRATION tool and nothing else: it is what the live
+  -- database's existing rows get when db.py's _migrate adds this column, so
+  -- nothing has to be rewritten. The loader requires the field in every bank
+  -- file and invents nothing — see recall.mcq.bank.validate_question.
+  difficulty     TEXT NOT NULL DEFAULT 'medium',
   question       TEXT NOT NULL,
   options_json   TEXT NOT NULL,     -- JSON array of exactly 4 strings
   correct        INTEGER NOT NULL,  -- 0-3, in the STORED order
@@ -297,6 +303,10 @@ CREATE TABLE IF NOT EXISTS mcq_questions (
 );
 CREATE INDEX IF NOT EXISTS idx_mcq_questions_unit
   ON mcq_questions(subject_code, unit);
+-- The (subject, unit, difficulty) index that the tier filter draws through
+-- lives in db.py's _migrate(), not here: this script runs BEFORE the ALTER
+-- that adds the column to a pre-existing database, so creating it here would
+-- fail on every live box and nowhere else.
 
 -- One sitting of the curated bank.
 --
@@ -311,7 +321,12 @@ CREATE TABLE IF NOT EXISTS mcq_attempts (
   user_id           INTEGER NOT NULL REFERENCES users(id),
   subject_code      TEXT NOT NULL,
   units_json        TEXT NOT NULL,  -- JSON array of unit numbers, sorted
-  length            TEXT NOT NULL,  -- '30' | '60' | 'full', as asked for
+  length            TEXT NOT NULL,  -- '5'..'200' or 'full', as asked for
+  -- The tier this sitting was drawn from, or NULL for Mixed. Part of the
+  -- selection, so part of the leaderboard key: Easy/30 and Hard/30 are
+  -- different boards, and Mixed is its own — never a merge of the four.
+  -- NULL compares with IS, never with =, everywhere this column is matched.
+  difficulty        TEXT,
   question_ids_json TEXT NOT NULL,
   option_orders_json TEXT NOT NULL,
   total             INTEGER NOT NULL,  -- questions actually drawn

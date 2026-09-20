@@ -24,9 +24,15 @@ class AttemptIn(BaseModel):
     #: the service canonicalises them, so [2,1] and [1,2] are one selection
     #: and therefore one leaderboard.
     units: list[int]
-    #: 30, 60 or "full". Validated in the service rather than by a Literal so
-    #: the 422 body says what the legal lengths are instead of listing a union.
+    #: Any whole number 5-200, or "full". Validated in the service rather than
+    #: by a constrained type so the 422 body names the range instead of
+    #: printing a union, and so the range lives in one place — the registry.
     length: int | Literal["full"]
+    #: "easy" | "medium" | "hard" | "max", or absent/null for Mixed. Not a
+    #: Literal for the same reason as `length`, and optional because Mixed is
+    #: the default sitting — the one a student who has not thought about tiers
+    #: gets, and the one every attempt drawn before the ladder existed was.
+    difficulty: str | None = None
 
 
 class AnswerIn(BaseModel):
@@ -48,6 +54,12 @@ def _units_param(units: str) -> list[int]:
 
 
 def _length_param(length: str):
+    """`length=45` or `length=full` from the query string.
+
+    Only the SHAPE is decided here — "is this a number at all". Whether the
+    number is in range is the service's call, so the query string and the JSON
+    body cannot drift into two different answers about what 4 means.
+    """
     return length if length == "full" else _int_or_422(length)
 
 
@@ -57,8 +69,20 @@ def _int_or_422(length: str) -> int:
     except ValueError as exc:
         raise HTTPException(
             status_code=422,
-            detail=f"length must be 30, 60 or 'full', got {length!r}",
+            detail=f"length must be a whole number or 'full', got {length!r}",
         ) from exc
+
+
+def _difficulty_param(difficulty: str | None) -> str | None:
+    """`difficulty=hard`, or absent/empty for the Mixed board.
+
+    An EMPTY value is the same as an absent one. A query string is built by
+    string concatenation on the way out — the client's own `qs()` drops `""`
+    exactly as it drops `undefined`, and a hand-typed or bookmarked
+    `...&length=30&difficulty=` is the ordinary shape of "no tier chosen". 422
+    there would tell a student their Mixed board does not exist.
+    """
+    return difficulty or None
 
 
 @router.get("/api/mcq/subjects")
@@ -72,7 +96,8 @@ def create_attempt(body: AttemptIn, user_id: int = Depends(get_current_user),
                    conn=Depends(get_conn)):
     try:
         return service.create_attempt(conn, user_id, body.subject_code,
-                                      body.units, body.length)
+                                      body.units, body.length,
+                                      body.difficulty)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 
@@ -86,12 +111,18 @@ def list_attempts(user_id: int = Depends(get_current_user),
 @router.get("/api/mcq/leaderboard")
 def leaderboard(subject_code: str,
                 units: str = Query(..., description="comma-separated, e.g. 1,2"),
-                length: str = Query(..., description="30, 60 or full"),
+                length: str = Query(..., description="5-200 or full"),
+                difficulty: str | None = Query(
+                    None, description="easy|medium|hard|max; omit for Mixed"),
                 user_id: int = Depends(get_current_user),
                 conn=Depends(get_conn)):
+    """One board per (subject, units, length, difficulty). Omitting difficulty
+    asks for the MIXED board, not for all of them at once — there is no board
+    that merges the tiers, because nobody ever sat it."""
     try:
         return service.leaderboard(conn, subject_code, _units_param(units),
-                                   _length_param(length))
+                                   _length_param(length),
+                                   _difficulty_param(difficulty))
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 

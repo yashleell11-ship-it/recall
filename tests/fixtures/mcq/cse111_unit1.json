@@ -1,5 +1,5 @@
 {
-  "_note": "FIXTURE, not the real bank. tests/test_mcq.py loads this directory instead of src/recall/mcq/bank/ so the tests describe a bank they control. Twelve questions over three topics; keys are stable because the tests assert on retirement.",
+  "_note": "FIXTURE, not the real bank. tests/test_mcq.py loads this directory instead of src/recall/mcq/bank/ so the tests describe a bank they control. Twelve questions over three topics; keys are stable because the tests assert on retirement. Tiers are spread across the ladder on purpose: unit 1 carries all four, unit 2 carries no 'max', so a test can ask for a tier that has nothing.",
   "subject_code": "CSE111",
   "unit": 1,
   "unit_label": "Computational Thinking & Computing Environment",
@@ -8,8 +8,14 @@
       "key": "CSE111-U1-001",
       "topic": "Computational Thinking",
       "kind": "recall",
+      "difficulty": "easy",
       "q": "Which of the four pillars of computational thinking means breaking a problem into smaller sub-problems?",
-      "options": ["Decomposition", "Abstraction", "Pattern recognition", "Algorithm design"],
+      "options": [
+        "Decomposition",
+        "Abstraction",
+        "Pattern recognition",
+        "Algorithm design"
+      ],
       "correct": 0,
       "explain": "Decomposition is splitting one hard problem into parts small enough to reason about on their own. The other three pillars act on those parts: you look for repeated structure across them, drop the detail that does not matter, and then write the steps.",
       "why_wrong": [
@@ -23,6 +29,7 @@
       "key": "CSE111-U1-002",
       "topic": "Computational Thinking",
       "kind": "recall",
+      "difficulty": "medium",
       "q": "An algorithm must be finite. What does that mean?",
       "options": [
         "It must fit on a single page",
@@ -43,8 +50,14 @@
       "key": "CSE111-U1-003",
       "topic": "Computational Thinking",
       "kind": "situation",
+      "difficulty": "hard",
       "q": "You are writing pseudocode for a marks-to-grade converter and need to show one of three branches being taken. Which flowchart symbol do you use?",
-      "options": ["Parallelogram", "Diamond", "Rectangle", "Oval"],
+      "options": [
+        "Parallelogram",
+        "Diamond",
+        "Rectangle",
+        "Oval"
+      ],
       "correct": 1,
       "explain": "A diamond is the decision symbol: one entry, and one exit per outcome of a condition. Chaining diamonds is how a flowchart expresses an if/else-if ladder like a grade table.",
       "why_wrong": [
@@ -58,6 +71,7 @@
       "key": "CSE111-U1-004",
       "topic": "Computational Thinking",
       "kind": "situation",
+      "difficulty": "max",
       "q": "Two students solve the same problem; one writes 40 lines of pseudocode and the other writes 12. Both are correct. What does this tell you?",
       "options": [
         "The shorter one is always more efficient",
@@ -78,6 +92,7 @@
       "key": "CSE111-U1-005",
       "topic": "Operating Systems",
       "kind": "recall",
+      "difficulty": "easy",
       "q": "What is the primary job of an operating system?",
       "options": [
         "To compile source code into machine code",
@@ -98,8 +113,14 @@
       "key": "CSE111-U1-006",
       "topic": "Operating Systems",
       "kind": "recall",
+      "difficulty": "medium",
       "q": "Which of these is system software rather than application software?",
-      "options": ["A spreadsheet program", "A device driver", "A web browser", "A photo editor"],
+      "options": [
+        "A spreadsheet program",
+        "A device driver",
+        "A web browser",
+        "A photo editor"
+      ],
       "correct": 1,
       "explain": "System software exists to run and support the machine itself — the operating system, drivers, utilities. A device driver is the code that lets the OS speak a particular piece of hardware's language, so nothing above it has to.",
       "why_wrong": [
@@ -113,6 +134,7 @@
       "key": "CSE111-U1-007",
       "topic": "Operating Systems",
       "kind": "situation",
+      "difficulty": "hard",
       "q": "A program appears to keep running while you also play music and download a file on a single-core machine. What is the operating system doing?",
       "options": [
         "Running all three on separate cores",
@@ -133,6 +155,7 @@
       "key": "CSE111-U1-008",
       "topic": "Operating Systems",
       "kind": "situation",
+      "difficulty": "max",
       "q": "An application tries to write directly to a disk sector and the operating system refuses. Why?",
       "options": [
         "Disks are read-only to applications",
@@ -153,8 +176,14 @@
       "key": "CSE111-U1-009",
       "topic": "Linux",
       "kind": "recall",
+      "difficulty": "easy",
       "q": "Which Linux command prints the full path of the directory you are currently in?",
-      "options": ["ls", "cd", "pwd", "mkdir"],
+      "options": [
+        "ls",
+        "cd",
+        "pwd",
+        "mkdir"
+      ],
       "correct": 2,
       "explain": "pwd stands for 'print working directory' and writes the absolute path of your current location. It is the command to reach for whenever a relative path is behaving unexpectedly.",
       "why_wrong": [
@@ -168,6 +197,7 @@
       "key": "CSE111-U1-010",
       "topic": "Linux",
       "kind": "recall",
+      "difficulty": "easy",
       "q": "In Linux file permissions, what does the digit 7 grant in a mode such as 755?",
       "options": [
         "Read and write only",
@@ -188,8 +218,14 @@
       "key": "CSE111-U1-011",
       "topic": "Linux",
       "kind": "situation",
+      "difficulty": "medium",
       "q": "You need to see the last twenty lines of a long server log. Which command is the right one?",
-      "options": ["tail -n 20 server.log", "head -n 20 server.log", "cat server.log", "wc -l server.log"],
+      "options": [
+        "tail -n 20 server.log",
+        "head -n 20 server.log",
+        "cat server.log",
+        "wc -l server.log"
+      ],
       "correct": 0,
       "explain": "tail prints the end of a file and -n 20 asks for twenty lines, which is where the newest entries in a log are. It also reads only the end, so it stays fast on a file too large to open.",
       "why_wrong": [
@@ -203,6 +239,7 @@
       "key": "CSE111-U1-012",
       "topic": "Linux",
       "kind": "situation",
+      "difficulty": "hard",
       "q": "A shell script you just wrote gives 'Permission denied' when you run ./setup.sh. What is the most likely fix?",
       "options": [
         "Rename the file to setup",

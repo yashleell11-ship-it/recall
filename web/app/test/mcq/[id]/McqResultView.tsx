@@ -8,9 +8,12 @@ import { AnimatedNumber, ProgressRing } from "@/components/rich";
 import { KindTag, TopicCode } from "@/components/ui";
 import { createMcqAttempt, errorMessage } from "@/lib/api";
 import { formatDuration, plural } from "@/lib/format";
-import type { McqAttempt, McqResult } from "@/lib/types";
+import type { McqAttempt, McqDifficulty, McqResult } from "@/lib/types";
 
 const LETTERS = ["A", "B", "C", "D"];
+
+/** The ladder, in order — how a difficulty breakdown is always printed. */
+const DIFFICULTY_ORDER: McqDifficulty[] = ["easy", "medium", "hard", "max"];
 
 /** One line, and it has to be worth reading: what to do next, not praise. */
 function verdict(percent: number): string {
@@ -45,13 +48,33 @@ export function McqResultView({
     if (retaking) return;
     setRetaking(true);
     setRetakeError(null);
-    createMcqAttempt(attempt.subject_code, attempt.units, attempt.length)
+    createMcqAttempt(
+      attempt.subject_code,
+      attempt.units,
+      attempt.length,
+      attempt.difficulty,
+    )
       .then((a) => router.push(`/test/mcq/${a.attempt_id}`))
       .catch((err: unknown) => {
         setRetakeError(errorMessage(err));
         setRetaking(false);
       });
   }, [attempt, retaking, router]);
+
+  /**
+   * Ladder order, and only the tiers this attempt drew. A single-tier attempt
+   * gets no breakdown at all: one full-width row would restate the score it
+   * is sitting under.
+   */
+  const byDifficulty = [...(result.by_difficulty ?? [])]
+    .filter((d) => d.total > 0)
+    .sort(
+      (a, b) =>
+        DIFFICULTY_ORDER.indexOf(a.difficulty) -
+        DIFFICULTY_ORDER.indexOf(b.difficulty),
+    );
+  const showDifficulty = byDifficulty.length > 1;
+  const twoColumn = showDifficulty && result.by_topic.length > 0;
 
   return (
     <main className="mx-auto max-w-[46rem] px-4 sm:px-6 py-6 pb-16">
@@ -70,6 +93,8 @@ export function McqResultView({
             <TopicCode code={attempt.subject_code} />
             <span className="mx-1.5">·</span>
             {plural(attempt.units.length, "unit")} {attempt.units.join(", ")}
+            <span className="mx-1.5">·</span>
+            {attempt.difficulty ?? "mixed"}
             <span className="mx-1.5">·</span>
             {formatDuration(result.duration_s * 1000)}
           </p>
@@ -101,27 +126,69 @@ export function McqResultView({
         </p>
       )}
 
-      {/* --- by topic ------------------------------------------------------ */}
+      {/* --- by topic, and down the ladder --------------------------------- */}
 
-      {result.by_topic.length > 0 && (
-        <section className="mt-6">
-          <h2 className="label mb-2">By topic</h2>
-          <div className="panel overflow-hidden">
-            {[...result.by_topic]
-              .sort(
-                (a, b) =>
-                  a.correct / Math.max(1, a.total) -
-                  b.correct / Math.max(1, b.total),
-              )
-              .map((t) => {
-                const ratio = t.total > 0 ? t.correct / t.total : 0;
+      <div
+        className={`mt-6 ${
+          twoColumn ? "grid gap-4 md:grid-cols-2 items-start" : ""
+        }`}
+      >
+        {result.by_topic.length > 0 && (
+          <section>
+            <h2 className="label mb-2">By topic</h2>
+            <div className="panel overflow-hidden">
+              {[...result.by_topic]
+                .sort(
+                  (a, b) =>
+                    a.correct / Math.max(1, a.total) -
+                    b.correct / Math.max(1, b.total),
+                )
+                .map((t) => {
+                  const ratio = t.total > 0 ? t.correct / t.total : 0;
+                  return (
+                    <div
+                      key={t.topic}
+                      className="flex items-center gap-3 px-3 py-2 border-b border-line last:border-b-0"
+                    >
+                      <span className="text-[13px] font-medium truncate w-[34%] shrink-0">
+                        {t.topic}
+                      </span>
+                      <span className="block h-1.5 flex-1 bg-line rounded-xs overflow-hidden">
+                        <motion.span
+                          className="block h-full"
+                          style={{ background: toneFor(ratio) }}
+                          initial={reduced ? false : { width: 0 }}
+                          animate={{ width: `${Math.round(ratio * 100)}%` }}
+                          transition={
+                            reduced
+                              ? { duration: 0 }
+                              : { type: "spring", duration: 0.7, bounce: 0 }
+                          }
+                        />
+                      </span>
+                      <span className="telemetry text-[11.5px] text-fg-2 tnum shrink-0 w-12 text-right">
+                        {t.correct}/{t.total}
+                      </span>
+                    </div>
+                  );
+                })}
+            </div>
+          </section>
+        )}
+
+        {showDifficulty && (
+          <section>
+            <h2 className="label mb-2">By difficulty</h2>
+            <div className="panel overflow-hidden">
+              {byDifficulty.map((d) => {
+                const ratio = d.total > 0 ? d.correct / d.total : 0;
                 return (
                   <div
-                    key={t.topic}
+                    key={d.difficulty}
                     className="flex items-center gap-3 px-3 py-2 border-b border-line last:border-b-0"
                   >
                     <span className="text-[13px] font-medium truncate w-[34%] shrink-0">
-                      {t.topic}
+                      {d.difficulty}
                     </span>
                     <span className="block h-1.5 flex-1 bg-line rounded-xs overflow-hidden">
                       <motion.span
@@ -137,14 +204,15 @@ export function McqResultView({
                       />
                     </span>
                     <span className="telemetry text-[11.5px] text-fg-2 tnum shrink-0 w-12 text-right">
-                      {t.correct}/{t.total}
+                      {d.correct}/{d.total}
                     </span>
                   </div>
                 );
               })}
-          </div>
-        </section>
-      )}
+            </div>
+          </section>
+        )}
+      </div>
 
       {/* --- the review sheet ---------------------------------------------- */}
 

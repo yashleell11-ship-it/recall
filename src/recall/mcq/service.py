@@ -30,13 +30,14 @@ import sqlite3
 from datetime import datetime, timezone
 
 from recall.api.scheduling import iso, utc_now
-from recall.mcq.registry import LENGTHS, MCQ_UNITS
+from recall.mcq.registry import (DIFFICULTIES, LENGTH_MAX, LENGTH_MIN, LENGTHS,
+                                 MCQ_UNITS)
 
 N_OPTIONS = 4
 
 #: Columns of one bank question, in the order the shaping helpers expect.
-_Q_COLUMNS = ("id, topic, kind, question, options_json, correct, explain,"
-              " why_wrong_json")
+_Q_COLUMNS = ("id, topic, kind, difficulty, question, options_json, correct,"
+              " explain, why_wrong_json")
 
 
 class McqConflict(Exception):
@@ -64,23 +65,59 @@ def canonical_units(units) -> list[int]:
 
 
 def _length_key(length) -> str:
-    """The `length` column: '30', '60' or 'full'."""
+    """The `length` column: '5'..'200' or 'full'."""
     return "full" if length == "full" else str(int(length))
 
 
 def _length_out(stored: str):
-    """The stored length back on the wire as 30 | 60 | "full"."""
+    """The stored length back on the wire as an int or "full"."""
     return stored if stored == "full" else int(stored)
 
 
-def _validate_selection(subject_code: str, units, length) -> tuple[list[int], str]:
+def _validate_length(length):
+    """"full", or a whole number in 5..200. Anything else is a ValueError.
+
+    Free choice rather than three presets: a student revising one unit the
+    night before wants twelve questions, and being told to sit thirty is how a
+    revision tool stops being opened. The range is a range and not a list, so
+    the message names the bounds — "length must be 5-200 or 'full'" tells you
+    what to type; a rejected list of legal values does not.
+
+    `bool` is refused explicitly because `True` is an `int` in Python and
+    `min(True, available)` is a one-question attempt nobody asked for.
+    """
+    if length == "full":
+        return "full"
+    if isinstance(length, bool) or not isinstance(length, int):
+        raise ValueError(f"length must be a whole number {LENGTH_MIN}-"
+                         f"{LENGTH_MAX} or 'full', got {length!r}")
+    if not LENGTH_MIN <= length <= LENGTH_MAX:
+        raise ValueError(f"length must be {LENGTH_MIN}-{LENGTH_MAX} or 'full',"
+                         f" got {length!r}")
+    return length
+
+
+def _validate_difficulty(difficulty):
+    """One of the four tiers, or None for Mixed.
+
+    None is not "unset": it is the Mixed selection, drawn across the whole
+    ladder, and it is its own leaderboard rather than a merge of the four.
+    """
+    if difficulty is None or difficulty in DIFFICULTIES:
+        return difficulty
+    printable = ", ".join(DIFFICULTIES)
+    raise ValueError(f"difficulty must be one of {printable}, or omitted for"
+                     f" Mixed, got {difficulty!r}")
+
+
+def _validate_selection(subject_code: str, units, length,
+                        difficulty=None) -> tuple[list[int], str, str | None]:
     info = MCQ_UNITS.get(subject_code)
     if info is None:
         known = ", ".join(sorted(MCQ_UNITS)) or "none"
         raise ValueError(f"no subject {subject_code!r}; the bank covers {known}")
-    if length not in LENGTHS:
-        printable = ", ".join(repr(x) for x in LENGTHS)
-        raise ValueError(f"length must be one of {printable}, got {length!r}")
+    length = _validate_length(length)
+    difficulty = _validate_difficulty(difficulty)
     cleaned = canonical_units(units)
     if not cleaned:
         raise ValueError("choose at least one unit")
@@ -90,7 +127,7 @@ def _validate_selection(subject_code: str, units, length) -> tuple[list[int], st
         raise ValueError(
             f"{subject_code} has units {have}; got "
             f"{', '.join(str(u) for u in bad)}")
-    return cleaned, _length_key(length)
+    return cleaned, _length_key(length), difficulty
 
 
 def list_subjects(conn) -> list[dict]:
@@ -103,18 +140,38 @@ def list_subjects(conn) -> list[dict]:
     """
     out = []
     for code, info in MCQ_UNITS.items():
-        counts = {
-            row["unit"]: row["n"]
-            for row in conn.execute(
-                "SELECT unit, COUNT(*) AS n FROM mcq_questions"
-                " WHERE subject_code = ? AND active = 1 GROUP BY unit", (code,))
-        }
+        counts: dict[int, int] = {}
+        tiers: dict[int, dict[str, int]] = {}
+        for row in conn.execute(
+                "SELECT unit, difficulty, COUNT(*) AS n FROM mcq_questions"
+                " WHERE subject_code = ? AND active = 1"
+                " GROUP BY unit, difficulty", (code,)):
+            unit = row["unit"]
+            counts[unit] = counts.get(unit, 0) + row["n"]
+            bucket = tiers.setdefault(unit, {d: 0 for d in DIFFICULTIES})
+            # A row carrying a tier the registry no longer lists is counted in
+            # the unit total and in no tier: the picker must not offer a button
+            # for a tier that does not exist, and hiding the question from the
+            # total would make the numbers on the screen disagree with the draw.
+            if row["difficulty"] in bucket:
+                bucket[row["difficulty"]] = row["n"]
         out.append({
             "subject_code": code,
             "label": info["label"],
-            "units": [{"unit": unit, "label": label, "count": counts.get(unit, 0)}
+            "units": [{"unit": unit, "label": label,
+                       "count": counts.get(unit, 0),
+                       # Per tier, so the picker can grey out "max" on a unit
+                       # nobody has written one for and print real numbers next
+                       # to the tiers it does offer. Always all four keys —
+                       # a missing key and a zero would read the same to a
+                       # client and only one of them is true.
+                       "difficulties": tiers.get(
+                           unit, {d: 0 for d in DIFFICULTIES})}
                       for unit, label in sorted(info["units"].items())],
             "lengths": list(LENGTHS),
+            "difficulties": list(DIFFICULTIES),
+            "length_min": LENGTH_MIN,
+            "length_max": LENGTH_MAX,
         })
     return out
 
@@ -226,6 +283,7 @@ def _attempt_shape(conn, row) -> dict:
             "position": position,
             "topic": question["topic"],
             "kind": question["kind"],
+            "difficulty": question["difficulty"],
             "question": question["question"],
             "options": _shown_options(question, order),
             "answer": feedback.get(position),
@@ -235,6 +293,7 @@ def _attempt_shape(conn, row) -> dict:
         "subject_code": row["subject_code"],
         "units": json.loads(row["units_json"]),
         "length": _length_out(row["length"]),
+        "difficulty": row["difficulty"],
         "total": row["total"],
         "started_at": row["started_at"],
         "submitted_at": row["submitted_at"],
@@ -243,8 +302,14 @@ def _attempt_shape(conn, row) -> dict:
 
 
 def create_attempt(conn, user_id: int, subject_code: str, units, length,
-                   rng: random.Random | None = None) -> dict:
+                   difficulty=None, rng: random.Random | None = None) -> dict:
     """Draw a fresh sitting: `min(length, available)` questions, all shuffled.
+
+    `difficulty` filters the pool to one tier; None is Mixed and draws across
+    all of them. Either way the draw is `min(count, available)` without
+    replacement, so asking for 200 easy questions out of 40 is a 40-question
+    sitting and not an error — the student asked for "as many as you have", and
+    refusing that would be refusing to teach.
 
     `rng` exists so a test can pass `random.Random(seed)` and get a draw it can
     reason about. Nothing else passes it: two sittings looking different is the
@@ -252,18 +317,24 @@ def create_attempt(conn, user_id: int, subject_code: str, units, length,
     leaderboard a lie.
     """
     rng = rng or random.Random()
-    cleaned, length_key = _validate_selection(subject_code, units, length)
+    cleaned, length_key, difficulty = _validate_selection(
+        subject_code, units, length, difficulty)
 
     holes = ",".join("?" for _ in cleaned)
+    tier_clause = " AND difficulty = ?" if difficulty is not None else ""
+    tier_params = (difficulty,) if difficulty is not None else ()
     rows = conn.execute(
         f"SELECT id FROM mcq_questions WHERE subject_code = ? AND active = 1"
-        f" AND unit IN ({holes}) ORDER BY id",
-        (subject_code, *cleaned)).fetchall()
+        f" AND unit IN ({holes}){tier_clause} ORDER BY id",
+        (subject_code, *cleaned, *tier_params)).fetchall()
     if not rows:
         units_text = ", ".join(str(u) for u in cleaned)
+        # Names the tier as well as the units: "unit 2 has no questions yet" is
+        # wrong and demoralising when unit 2 has forty of them and none is a max.
+        tier_text = f" {difficulty}" if difficulty is not None else ""
         raise ValueError(
             f"{subject_code} unit{'s' if len(cleaned) > 1 else ''} {units_text}"
-            " have no questions yet")
+            f" have no{tier_text} questions yet")
 
     available = [row["id"] for row in rows]
     want = len(available) if length == "full" else min(int(length), len(available))
@@ -276,9 +347,9 @@ def create_attempt(conn, user_id: int, subject_code: str, units, length,
 
     cur = conn.execute(
         "INSERT INTO mcq_attempts (user_id, subject_code, units_json, length,"
-        " question_ids_json, option_orders_json, total, started_at)"
-        " VALUES (?,?,?,?,?,?,?,?)",
-        (user_id, subject_code, json.dumps(cleaned), length_key,
+        " difficulty, question_ids_json, option_orders_json, total, started_at)"
+        " VALUES (?,?,?,?,?,?,?,?,?)",
+        (user_id, subject_code, json.dumps(cleaned), length_key, difficulty,
          json.dumps(drawn), json.dumps(orders), len(drawn), iso(utc_now())))
     conn.commit()
     return get_attempt(conn, user_id, int(cur.lastrowid))
@@ -392,6 +463,11 @@ def submit_attempt(conn, user_id: int, attempt_id: int) -> dict:
     # topic you skipped entirely scored 0 out of its real count, and reporting
     # it as 0/0 (or omitting it) would hide exactly the gap worth seeing.
     by_topic: dict[str, dict] = {}
+    # Same rule as by_topic and for the same reason: every question DRAWN,
+    # answered or not. In ladder order, not alphabetically, and tiers the
+    # attempt never drew are left out entirely — a Mixed sitting that happened
+    # to draw no max question must not report 0/0 max as if it had been sat.
+    by_difficulty: dict[str, dict] = {}
     missed: list[dict] = []
     for position, (qid, order) in enumerate(zip(ids, orders), start=1):
         question = questions.get(qid)
@@ -401,9 +477,14 @@ def submit_attempt(conn, user_id: int, attempt_id: int) -> dict:
             question["topic"], {"topic": question["topic"], "correct": 0,
                                 "total": 0})
         bucket["total"] += 1
+        tier = by_difficulty.setdefault(
+            question["difficulty"], {"difficulty": question["difficulty"],
+                                     "correct": 0, "total": 0})
+        tier["total"] += 1
         answer = answers.get(position)
         if answer is not None and answer["is_correct"]:
             bucket["correct"] += 1
+            tier["correct"] += 1
             continue
         chosen = answer["chosen"] if answer is not None else None
         missed.append({
@@ -428,11 +509,14 @@ def submit_attempt(conn, user_id: int, attempt_id: int) -> dict:
         "percent": round(100 * score / total) if total else 0,
         "duration_s": duration_s,
         "by_topic": [by_topic[t] for t in sorted(by_topic)],
+        "by_difficulty": [by_difficulty[d] for d in DIFFICULTIES
+                          if d in by_difficulty],
         "missed": missed,
         # A sitting nobody answered is not a leaderboard entry, so it is not
         # given a position on one.
         "rank": (_rank_of(conn, user_id, row["subject_code"],
-                          json.loads(row["units_json"]), row["length"])
+                          json.loads(row["units_json"]), row["length"],
+                          row["difficulty"])
                  if answered else None),
     }
 
@@ -457,7 +541,8 @@ def abandon_attempt(conn, user_id: int, attempt_id: int) -> None:
 def list_attempts(conn, user_id: int) -> list[dict]:
     """This user's sittings, newest first. `score` is null while one is open."""
     rows = conn.execute(
-        "SELECT a.id, a.subject_code, a.units_json, a.length, a.total, a.score,"
+        "SELECT a.id, a.subject_code, a.units_json, a.length, a.difficulty,"
+        " a.total, a.score,"
         " a.started_at, a.submitted_at, a.duration_s,"
         " (SELECT COUNT(*) FROM mcq_answers ans WHERE ans.attempt_id = a.id)"
         "   AS answered"
@@ -468,6 +553,7 @@ def list_attempts(conn, user_id: int) -> list[dict]:
         "subject_code": r["subject_code"],
         "units": json.loads(r["units_json"]),
         "length": _length_out(r["length"]),
+        "difficulty": r["difficulty"],
         "total": r["total"],
         "answered": r["answered"],
         "score": r["score"],
@@ -477,15 +563,21 @@ def list_attempts(conn, user_id: int) -> list[dict]:
     } for r in rows]
 
 
-def leaderboard(conn, subject_code: str, units, length,
+def leaderboard(conn, subject_code: str, units, length, difficulty=None,
                 limit: int = 25) -> list[dict]:
     """Each user's best submitted attempt for EXACTLY this selection.
 
-    Exactly: same subject, same canonical units, same length. Units [1] and
-    [1, 2] are different boards on purpose — they are different papers, and
-    mixing them would rank a twelve-question sitting against a twenty-four
-    question one. `canonical_units` is what makes [2, 1] and [1, 2] the same
-    board rather than two.
+    Exactly: same subject, same canonical units, same length, same difficulty.
+    Units [1] and [1, 2] are different boards on purpose — they are different
+    papers, and mixing them would rank a twelve-question sitting against a
+    twenty-four question one. `canonical_units` is what makes [2, 1] and
+    [1, 2] the same board rather than two.
+
+    Difficulty joined the key for the same reason: 26/30 on Easy and 26/30 on
+    Max are not the same achievement, and one board holding both would rank the
+    student who picked the gentler paper above the one who did not. Mixed is a
+    fifth board, never a merge of the four — a merge would be a board nobody
+    actually sat.
 
     This is the front door: a user naming a selection, so the selection is
     validated against the registry before it is looked up. Ranking an attempt
@@ -495,11 +587,14 @@ def leaderboard(conn, subject_code: str, units, length,
     This is the one cross-user read in the feature, and it is the feature: a
     leaderboard that showed you only yourself would be a history page.
     """
-    cleaned, length_key = _validate_selection(subject_code, units, length)
-    return _board_rows(conn, subject_code, cleaned, length_key, limit)
+    cleaned, length_key, difficulty = _validate_selection(
+        subject_code, units, length, difficulty)
+    return _board_rows(conn, subject_code, cleaned, length_key, difficulty,
+                       limit)
 
 
 def _board_rows(conn, subject_code: str, units: list[int], length_key: str,
+                difficulty: str | None = None,
                 limit: int | None = 25) -> list[dict]:
     """The board for a selection that is already canonical and already legal.
 
@@ -516,12 +611,16 @@ def _board_rows(conn, subject_code: str, units: list[int], length_key: str,
     row shown is by definition the one that would have ranked highest anyway —
     one rule, not two that can disagree.
     """
+    # `a.difficulty IS ?` and never `= ?`: Mixed is stored as NULL, and
+    # `NULL = NULL` is not true in SQLite, so the equality form would give the
+    # Mixed board zero rows for ever while every tier board worked — a bug that
+    # looks like "nobody has sat Mixed yet" rather than like a bug.
     rows = conn.execute(
         "SELECT a.user_id, u.name, a.score, a.total, a.duration_s,"
         " a.submitted_at FROM mcq_attempts a JOIN users u ON u.id = a.user_id"
         " WHERE a.subject_code = ? AND a.units_json = ? AND a.length = ?"
-        " AND a.submitted_at IS NOT NULL",
-        (subject_code, json.dumps(units), length_key)).fetchall()
+        " AND a.difficulty IS ? AND a.submitted_at IS NOT NULL",
+        (subject_code, json.dumps(units), length_key, difficulty)).fetchall()
 
     entries = []
     for r in rows:
@@ -549,12 +648,16 @@ def _board_rows(conn, subject_code: str, units: list[int], length_key: str,
     return best[:limit] if limit is not None else best
 
 
-def _rank_of(conn, user_id: int, subject_code: str, units, length_key: str):
+def _rank_of(conn, user_id: int, subject_code: str, units, length_key: str,
+             difficulty: str | None = None):
     """Where this user's row sits on the board for this selection.
 
-    Takes the attempt's own stored `units_json` and `length` — a selection
-    that exists, therefore one that was legal when it was drawn — and goes
-    straight to `_board_rows`. It must not re-validate: see the note there.
+    Takes the attempt's own stored `units_json`, `length` and `difficulty` — a
+    selection that exists, therefore one that was legal when it was drawn — and
+    goes straight to `_board_rows`. It must not re-validate: see the note
+    there. That rule covers difficulty too. A tier dropped from
+    `registry.DIFFICULTIES` would otherwise strand every attempt drawn from it
+    in exactly the way a dropped unit once stranded attempts covering it.
 
     The board is best-per-user, so this is the position of the user's best
     submitted attempt — which is the attempt just submitted whenever it was
@@ -562,7 +665,7 @@ def _rank_of(conn, user_id: int, subject_code: str, units, length_key: str):
     people are on the board, not how many attempts exist.
     """
     rows = _board_rows(conn, subject_code, canonical_units(units), length_key,
-                       limit=None)
+                       difficulty, limit=None)
     for position, row in enumerate(rows, start=1):
         if row["user_id"] == user_id:
             return {"position": position, "of": len(rows)}

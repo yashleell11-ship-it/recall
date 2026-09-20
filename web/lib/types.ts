@@ -515,11 +515,27 @@ export interface AuthUser {
 
 /* --- Yash Made Test (curated MCQ bank) ----------------------------------- */
 
-/** How many questions an attempt draws; `"full"` is every active question in
- *  the chosen units. The server draws `min(length, available)`. */
-export type McqLength = 30 | 60 | "full";
+/** How many questions an attempt draws: any whole number from 5 to 200, or
+ *  `"full"` for every active question in the selection. The server draws
+ *  `min(length, available)`, so asking for more than exists is a shorter
+ *  attempt, never an error. */
+export type McqLength = number | "full";
 
 export type McqKind = "recall" | "situation";
+
+/**
+ * How hard a bank question is. The ladder, in order:
+ *
+ * - `easy`   — direct single-fact recall.
+ * - `medium` — distinguishing neighbours: which-is-NOT, ordering.
+ * - `hard`   — applying the idea to a short realistic scenario.
+ * - `max`    — the hardest fair tier: trap-adjacent scenarios, two concepts
+ *              joined, or a precise exception.
+ *
+ * `null` wherever a difficulty is optional means **Mixed** — drawn across all
+ * four tiers — which is its own selection, not a merge of the four.
+ */
+export type McqDifficulty = "easy" | "medium" | "hard" | "max";
 
 export interface McqUnit {
   /** The unit number printed on the lecture deck, 1-based. */
@@ -528,6 +544,17 @@ export interface McqUnit {
   /** Active questions available. 0 means the picker shows the unit as
    *  "waiting for material" and refuses to start it. */
   count: number;
+  /**
+   * How this unit's `count` splits across the ladder, so the picker can print
+   * what each tier holds for the units currently chosen and disable a tier
+   * that holds nothing. The server always sends all four keys — a missing key
+   * and a zero would read the same, and only one of them is true — but the
+   * field stays optional here so a server older than the ladder leaves every
+   * tier offered rather than every tier disabled.
+   *
+   * The name is the wire name: `difficulties`, per CONTRACT.md's McqSubject.
+   */
+  difficulties?: Record<McqDifficulty, number>;
 }
 
 /** GET /api/mcq/subjects */
@@ -535,6 +562,8 @@ export interface McqSubject {
   subject_code: string;
   label: string;
   units: McqUnit[];
+  /** Suggested presets for the length control. The client may ask for any
+   *  whole number from 5 to 200 regardless of what is listed here. */
   lengths: McqLength[];
 }
 
@@ -560,6 +589,9 @@ export interface McqQuestion {
   position: number;
   topic: string;
   kind: McqKind;
+  /** Which rung of the ladder this question sits on. Required on the bank,
+   *  so every drawn question carries one even in a Mixed attempt. */
+  difficulty: McqDifficulty;
   question: string;
   /** Exactly four, already shuffled for this attempt. */
   options: string[];
@@ -573,6 +605,10 @@ export interface McqAttempt {
   subject_code: string;
   units: number[];
   length: McqLength;
+  /** The tier this attempt was drawn from; `null` is Mixed. Part of the
+   *  selection, so it is what a retake repeats and what the board is keyed
+   *  by. */
+  difficulty: McqDifficulty | null;
   total: number;
   started_at: string;
   submitted_at: string | null;
@@ -581,6 +617,12 @@ export interface McqAttempt {
 
 export interface McqTopicScore {
   topic: string;
+  correct: number;
+  total: number;
+}
+
+export interface McqDifficultyScore {
+  difficulty: McqDifficulty;
   correct: number;
   total: number;
 }
@@ -607,6 +649,13 @@ export interface McqResult {
   percent: number;
   duration_s: number;
   by_topic: McqTopicScore[];
+  /**
+   * OPTIONAL / ADDITIVE. The same split down the difficulty ladder, over the
+   * tiers this attempt actually drew. A Mixed attempt has up to four rows; a
+   * single-tier attempt has one, and the client does not print a breakdown
+   * that restates the score it is sitting under.
+   */
+  by_difficulty?: McqDifficultyScore[];
   missed: McqMissed[];
   /** Where this attempt lands on the leaderboard for its selection, or null
    *  when nothing was answered. */
@@ -619,6 +668,8 @@ export interface McqAttemptSummary {
   subject_code: string;
   units: number[];
   length: McqLength;
+  /** The tier it was drawn from; `null` is Mixed. */
+  difficulty: McqDifficulty | null;
   total: number;
   answered: number;
   /** null while the attempt is still open. */
@@ -629,7 +680,8 @@ export interface McqAttemptSummary {
 }
 
 /** GET /api/mcq/leaderboard — one row per user, their best submitted attempt
- *  for exactly this subject + units + length. */
+ *  for exactly this selection: subject + units + length + difficulty. Easy/30
+ *  and Hard/30 are different boards, and Mixed is its own. */
 export interface McqLeaderboardRow {
   user_id: number;
   name: string;

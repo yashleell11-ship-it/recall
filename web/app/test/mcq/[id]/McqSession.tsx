@@ -308,6 +308,7 @@ export function McqSession({ id }: { id: number }) {
 
       <div className="flex items-center gap-2 mt-5">
         <TopicCode code={question.topic} />
+        {question.difficulty ? <KindTag kind={question.difficulty} /> : null}
         {question.kind === "situation" ? <KindTag kind="scenario" /> : null}
       </div>
 

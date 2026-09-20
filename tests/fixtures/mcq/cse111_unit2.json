@@ -1,5 +1,5 @@
 {
-  "_note": "FIXTURE, not the real bank. Four questions, one topic, so tests can tell a unit-1-only draw from a units-[1,2] draw by counting.",
+  "_note": "FIXTURE, not the real bank. Four questions, one topic, so tests can tell a unit-1-only draw from a units-[1,2] draw by counting. Tiers are spread across the ladder on purpose: unit 1 carries all four, unit 2 carries no 'max', so a test can ask for a tier that has nothing.",
   "subject_code": "CSE111",
   "unit": 2,
   "unit_label": "Unit 2",
@@ -8,8 +8,14 @@
       "key": "CSE111-U2-001",
       "topic": "Number Systems",
       "kind": "recall",
+      "difficulty": "easy",
       "q": "What is the decimal value of the binary number 1011?",
-      "options": ["9", "11", "13", "15"],
+      "options": [
+        "9",
+        "11",
+        "13",
+        "15"
+      ],
       "correct": 1,
       "explain": "Read the bits by place value from the right: 1x8 + 0x4 + 1x2 + 1x1 = 11. Each position left is worth twice the one before it, which is the whole rule for converting binary to decimal.",
       "why_wrong": [
@@ -23,8 +29,14 @@
       "key": "CSE111-U2-002",
       "topic": "Number Systems",
       "kind": "recall",
+      "difficulty": "easy",
       "q": "How many bits are in one byte?",
-      "options": ["4", "8", "16", "32"],
+      "options": [
+        "4",
+        "8",
+        "16",
+        "32"
+      ],
       "correct": 1,
       "explain": "A byte is eight bits, which is why one byte holds 2^8 = 256 distinct values and why a single ASCII character fits in one. Word sizes vary between machines; the byte does not.",
       "why_wrong": [
@@ -38,6 +50,7 @@
       "key": "CSE111-U2-003",
       "topic": "Number Systems",
       "kind": "situation",
+      "difficulty": "medium",
       "q": "A colour is written as #FF00AA. Which number system is that, and what is FF in decimal?",
       "options": [
         "Octal, and FF is 63",
@@ -58,8 +71,14 @@
       "key": "CSE111-U2-004",
       "topic": "Number Systems",
       "kind": "situation",
+      "difficulty": "hard",
       "q": "You need to store a counter whose largest value is 200. What is the smallest number of bits that will hold it?",
-      "options": ["6", "7", "8", "16"],
+      "options": [
+        "6",
+        "7",
+        "8",
+        "16"
+      ],
       "correct": 2,
       "explain": "n bits hold values 0 to 2^n - 1. Seven bits reach only 127, so they overflow at 200; eight bits reach 255, which is enough. This is the same reason an unsigned byte tops out at 255.",
       "why_wrong": [

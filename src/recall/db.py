@@ -119,6 +119,34 @@ def _migrate(conn: sqlite3.Connection) -> None:
     if user_cols:
         conn.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON users(email)")
 
+    # mcq_questions.difficulty / mcq_attempts.difficulty (2026-09-21, the
+    # Yash Made Test difficulty ladder). The live database has real attempts in
+    # it, so this is ADD COLUMN and not a rebuild: neither column carries a
+    # CHECK — the four tiers are validated in recall.mcq.bank — so plain ALTERs
+    # are legal SQL here and nothing has to be copied.
+    #
+    # The DEFAULT on the questions column backfills every existing row as
+    # 'medium', which is the honest reading of a bank written before the ladder
+    # existed; re-seeding then overwrites each row with the tier its JSON now
+    # declares. The attempts column is deliberately NULLable with no default:
+    # NULL means Mixed, and every attempt that predates the ladder genuinely
+    # drew across all of it.
+    mcqq_cols = {r["name"] for r in
+                 conn.execute("PRAGMA table_info(mcq_questions)").fetchall()}
+    if mcqq_cols and "difficulty" not in mcqq_cols:
+        conn.execute("ALTER TABLE mcq_questions ADD COLUMN difficulty TEXT"
+                     " NOT NULL DEFAULT 'medium'")
+    # Unconditional and idempotent, and it cannot live in schema.sql: that
+    # script runs before the ALTER above, so on any pre-existing database the
+    # column does not exist yet when it executes.
+    if mcqq_cols:
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_mcq_questions_difficulty"
+                     " ON mcq_questions(subject_code, unit, difficulty)")
+    mcqa_cols = {r["name"] for r in
+                 conn.execute("PRAGMA table_info(mcq_attempts)").fetchall()}
+    if mcqa_cols and "difficulty" not in mcqa_cols:
+        conn.execute("ALTER TABLE mcq_attempts ADD COLUMN difficulty TEXT")
+
     # tests.kind CHECK gained 'mte40'. SQLite cannot alter a CHECK, so rebuild —
     # and the ORDER MATTERS: renaming the OLD table away rewrites every foreign
     # key that pointed at it (test_questions ended up referencing "tests_old"),

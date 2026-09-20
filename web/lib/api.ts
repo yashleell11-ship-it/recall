@@ -18,6 +18,7 @@ import type {
   LessonPage,
   McqAttempt,
   McqAttemptSummary,
+  McqDifficulty,
   McqFeedback,
   McqLeaderboardRow,
   McqLength,
@@ -326,12 +327,23 @@ export function createMcqAttempt(
   subjectCode: string,
   /** Unit numbers as printed on the deck, 1-based. */
   units: number[],
+  /** Any whole number 5–200, or "full". The server draws min(length,
+   *  available), so an over-large number is a shorter attempt, not a 422. */
   length: McqLength,
+  /** One rung of the ladder, or null for Mixed — a draw across all four,
+   *  which is its own selection and its own board. */
+  difficulty: McqDifficulty | null = null,
 ): Promise<McqAttempt> {
-  if (MOCK) return mock.createMcqAttempt(subjectCode, units, length);
+  if (MOCK)
+    return mock.createMcqAttempt(subjectCode, units, length, difficulty);
   return request<McqAttempt>("/api/mcq/attempts", {
     method: "POST",
-    body: JSON.stringify({ subject_code: subjectCode, units, length }),
+    body: JSON.stringify({
+      subject_code: subjectCode,
+      units,
+      length,
+      difficulty,
+    }),
   });
 }
 
@@ -383,18 +395,23 @@ export function getMcqAttempts(): Promise<McqAttemptSummary[]> {
 }
 
 /** GET /api/mcq/leaderboard — one row per user, their best submitted attempt
- *  for exactly this subject + units + length. */
+ *  for exactly this subject + units + length + difficulty. `difficulty` is
+ *  sent only when a tier is chosen; its absence IS the Mixed board, which is
+ *  a board of its own rather than the four tiers merged. */
 export function getMcqLeaderboard(
   subjectCode: string,
   units: number[],
   length: McqLength,
+  difficulty: McqDifficulty | null = null,
 ): Promise<McqLeaderboardRow[]> {
-  if (MOCK) return mock.getMcqLeaderboard(subjectCode, units, length);
+  if (MOCK)
+    return mock.getMcqLeaderboard(subjectCode, units, length, difficulty);
   return request<McqLeaderboardRow[]>(
     `/api/mcq/leaderboard${qs({
       subject_code: subjectCode,
       units: units.join(","),
       length: String(length),
+      difficulty: difficulty ?? undefined,
     })}`,
   );
 }

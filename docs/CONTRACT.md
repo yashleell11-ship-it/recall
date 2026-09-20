@@ -297,6 +297,10 @@ Every attempt draws a fresh sample and shuffles both the questions and each
 question's options, so two sittings never look the same; the answer is
 revealed one question at a time, in green or red, with a teaching note.
 
+A sitting is chosen along three axes — which units, **which difficulty**, and
+**how many questions** — and all three together are what a leaderboard is keyed
+by.
+
 ### The bank is shared — the one deliberate exception to the user_id rule
 
 `mcq_questions` has **no `user_id`**. It is course content, like the LPU
@@ -316,10 +320,34 @@ the JSON is **retired** (`active = 0`), never deleted, for the same reason.
 
 A question is: `key`, `subject_code`, `unit` (the number printed on the deck,
 1-based), `topic` (a short group label such as `Linux`), `kind`
-(`recall` | `situation`), `question`, `options` (exactly 4), `correct` (0–3 in
-the stored order), `explain` (2–4 sentences teaching the point), `why_wrong`
-(exactly 4 strings aligned with `options`; the correct one's entry is `""`).
+(`recall` | `situation`), `difficulty` (the ladder below), `question`,
+`options` (exactly 4), `correct` (0–3 in the stored order), `explain` (2–4
+sentences teaching the point), `why_wrong` (exactly 4 strings aligned with
+`options`; the correct one's entry is `""`).
 No CHECK constraints on any of these tables — validate in Python.
+
+### The difficulty ladder
+
+`difficulty` is **required on every question** and is one of exactly:
+
+| tier | what it asks of you |
+|---|---|
+| `easy` | one fact, recalled directly — it is in the material as stated |
+| `medium` | telling neighbours apart: which-is-NOT, ordering, the near miss |
+| `hard` | applying the idea to a short realistic scenario |
+| `max` | the hardest **fair** tier: trap-adjacent, two concepts joined, or a precise exception |
+
+`max` is hard, never unfair — no trickery, nothing off-syllabus, no question
+whose only difficulty is that it is badly worded. A student who knows the unit
+cold can get every `max` question right.
+
+The field has no default in the loader: a bank where some questions carry a
+tier and some do not cannot be filtered honestly, because "Easy, 30 questions"
+would quietly mean "easy, plus everything nobody labelled". `mcq_questions`
+*does* carry `DEFAULT 'medium'`, and that is a **migration tool only** — it is
+what the live database's existing rows became when the column was added, so
+nothing had to be rewritten while real attempts were in flight. Re-seeding then
+stamps each row with the tier its JSON declares.
 
 Unit labels and which units exist per subject live in
 `recall.mcq.registry.MCQ_UNITS`, so a unit that has no questions yet still
@@ -328,13 +356,59 @@ rather than vanishing.
 
 ### Sitting an attempt
 
-`length` is `30`, `60` or `"full"`. The attempt draws `min(length, available)`
-active questions across the chosen units, **without replacement**, shuffled;
+`length` is **any whole number from 5 to 200**, or `"full"` (every active
+question in the selection). The picker offers 30 / 60 / full as one-tap
+presets, but the number is free: a student revising one unit the night before
+wants twelve questions, and being told to sit thirty is how a revision tool
+stops being opened. Five is the floor because a shorter sitting is a coin toss
+the leaderboard would rank as a result; 200 is the ceiling because it is the
+size of the bank. Outside that range is **422 naming the range**, not a
+silently clamped attempt.
+
+`difficulty` is one of the four tiers, or **absent for Mixed**, which draws
+across all of them. A tier that has no questions for the chosen units is 422
+naming the tier — "unit 2 has no questions yet" would be a lie when unit 2 has
+forty of them and none is a `max`.
+
+The attempt draws `min(count, available)` active questions from the chosen
+units **and tier**, **without replacement**, shuffled;
 each question's four options are independently shuffled and the permutation is
 stored on the attempt, so the client only ever sees the shown order and
 `chosen` / `correct_index` are always positions in that shown order. The
 stored `question_ids_json` + `option_orders_json` are what make an attempt
 resumable and gradable later without recomputing anything.
+
+Asking for more than exists is a **shorter attempt, never an error**: 200 `max`
+questions out of two is a two-question sitting. What was *asked for* is what is
+stored in `length`, because that is what the leaderboard is keyed by — two
+students who both asked for 30 out of a bank of 12 sat the same paper.
+
+### A selection is four things
+
+`(subject_code, units, length, difficulty)`. That tuple is the leaderboard key.
+Easy/30 and Hard/30 are different boards, exactly as units `[1]` and `[1,2]`
+already were: 26/30 on Easy and 26/30 on Max are not the same achievement, and
+one board holding both would rank the student who picked the gentler paper
+above the one who did not.
+
+**Mixed is its own board, not a merge of the four.** A merged board would rank
+sittings nobody sat against each other. Mixed is stored as `NULL`, so every
+query that matches it uses `difficulty IS ?` and never `= ?` — `NULL = NULL` is
+not true in SQLite, and the equality form would leave the Mixed board empty for
+ever while every tier board worked, which looks like "nobody has sat Mixed yet"
+rather than like a bug.
+
+Ranking a **stored** attempt reads that attempt's own stored selection and
+re-validates nothing against the registry — the rule that kept attempts alive
+when a unit left `MCQ_UNITS` covers `difficulty` too.
+
+Mixed is spelt differently in the two places it can be asked for, because the
+two can express different things. In a **JSON body**, Mixed is `null` or the
+key left out; an empty string there is a client bug and stays a loud 422. In
+the **query string**, which has no way to write null at all, an empty
+`difficulty=` *is* how "no tier chosen" is written, and it means Mixed — a
+bookmarked board URL must not 422 because a `<select>` serialised its blank
+option.
 
 Answering is one call per question, idempotent by refusal: a second answer to
 the same position is **409**, never overwritten — the first click is the
@@ -353,31 +427,42 @@ Nothing here feeds the scheduler: these are not cards.
 
 | Method | Path | Request | Response |
 |---|---|---|---|
-| GET | `/api/mcq/subjects` | — | `[McqSubject]` — every subject in `MCQ_UNITS`, each unit with its `count` of active questions |
-| POST | `/api/mcq/attempts` | `{subject_code, units: [1], length}` | `McqAttempt`. **422** for an unknown subject, a unit not in the registry, a bad length, or a selection with zero questions |
+| GET | `/api/mcq/subjects` | — | `[McqSubject]` — every subject in `MCQ_UNITS`, each unit with its `count` of active questions and a per-tier breakdown |
+| POST | `/api/mcq/attempts` | `{subject_code, units: [1], length, difficulty?}` | `McqAttempt`. **422** for an unknown subject, a unit not in the registry, a length outside 5–200, an unknown difficulty, or a selection with zero questions |
 | GET | `/api/mcq/attempts/{id}` | — | `McqAttempt` with recorded answers, for resuming. **404** if not yours |
 | POST | `/api/mcq/attempts/{id}/answer` | `{position, chosen}` | `McqFeedback`. **409** if that position is already answered or the attempt is submitted; **422** if position or chosen is out of range |
 | POST | `/api/mcq/attempts/{id}/submit` | — | `McqResult` |
 | DELETE | `/api/mcq/attempts/{id}` | — | `{ok: true}`. **409** once submitted, **404** if not yours |
 | GET | `/api/mcq/attempts` | — | `[McqAttemptSummary]`, newest first, mine only |
-| GET | `/api/mcq/leaderboard?subject_code=&units=1,2&length=30` | — | `[McqLeaderboardRow]` — each user's **best submitted** attempt for exactly that selection, ranked by percent then shorter duration, top 25 |
+| GET | `/api/mcq/leaderboard?subject_code=&units=1,2&length=30&difficulty=hard` | — | `[McqLeaderboardRow]` — each user's **best submitted** attempt for exactly that selection, ranked by percent then shorter duration, top 25. Omitting `difficulty` — or sending it **empty** — asks for the **Mixed** board, not for all of them |
 
 ```
-McqLength         = 30 | 60 | "full"
-McqSubject        = {subject_code, label, units: [{unit, label, count}], lengths: [30, 60, "full"]}
-McqQuestion       = {position, topic, kind, question, options: [string ×4],   // shown order
+McqLength         = number (5-200) | "full"
+McqDifficulty     = "easy" | "medium" | "hard" | "max"
+McqTierCounts     = {easy, medium, hard, max}       // always all four keys
+McqSubject        = {subject_code, label,
+                     units: [{unit, label, count, difficulties: McqTierCounts}],
+                     lengths: [30, 60, "full"],     // presets, not the limit
+                     difficulties: ["easy","medium","hard","max"],
+                     length_min: 5, length_max: 200}
+McqQuestion       = {position, topic, kind, difficulty, question,
+                     options: [string ×4],                        // shown order
                      answer: McqFeedback | null}
-McqAttempt        = {attempt_id, subject_code, units, length, total,
-                     started_at, submitted_at, questions: [McqQuestion]}
+McqAttempt        = {attempt_id, subject_code, units, length,
+                     difficulty: McqDifficulty | null,   // null = Mixed
+                     total, started_at, submitted_at, questions: [McqQuestion]}
 McqFeedback       = {position, chosen, correct_index, is_correct,
                      explain, why_wrong,            // why_wrong is "" when correct
                      answered, correct_so_far}
 McqResult         = {attempt_id, score, total, answered, percent, duration_s,
                      by_topic: [{topic, correct, total}],
+                     by_difficulty: [{difficulty, correct, total}],  // ladder order
                      missed: [{position, topic, question, options, chosen | null,
                                correct_index, explain, why_wrong}],
                      rank: {position, of} | null}    // on the leaderboard for this selection
-McqAttemptSummary = {id, subject_code, units, length, total, answered, score,
+McqAttemptSummary = {id, subject_code, units, length,
+                     difficulty: McqDifficulty | null,
+                     total, answered, score,
                      started_at, submitted_at, duration_s}
 McqLeaderboardRow = {user_id, name, score, total, percent, duration_s, submitted_at}
 ```
@@ -386,6 +471,19 @@ McqLeaderboardRow = {user_id, name, score, total, percent, duration_s, submitted
 prints from `score` and `total`. `missed` lists every question that was
 answered wrongly **or not answered at all** (`chosen: null`), in attempt order,
 so the result screen doubles as the review sheet.
+
+`by_difficulty` follows `by_topic`'s honesty rule — every question **drawn**,
+answered or not, so a tier you skipped reads as 0 out of its real count — and
+is returned in ladder order (`easy`, `medium`, `hard`, `max`) so a student
+reads the sitting as a climb. Tiers the attempt never drew are **omitted
+entirely**: a single-tier sitting reports one row, and a Mixed sitting that
+happened to draw no `max` question does not report `0/0 max` as though it had
+been sat. It sums to `score` over `total`, like `by_topic`.
+
+`McqSubject.difficulties` per unit is what lets the picker grey out a tier
+nobody has written yet and print real numbers beside the ones it offers. All
+four keys are always present: a missing key and a zero would read the same to a
+client, and only one of them is true.
 
 ## Teaching: explain what you got wrong
 

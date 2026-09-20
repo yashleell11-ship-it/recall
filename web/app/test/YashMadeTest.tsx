@@ -15,17 +15,38 @@ import {
   getMcqSubjects,
 } from "@/lib/api";
 import { formatDuration, mediumDate, plural } from "@/lib/format";
-import type { McqAttemptSummary, McqLength, McqSubject } from "@/lib/types";
+import type {
+  McqAttemptSummary,
+  McqDifficulty,
+  McqLength,
+  McqSubject,
+} from "@/lib/types";
 import { useResource } from "@/lib/useResource";
 
-const LENGTH_LABEL: Record<string, string> = {
-  "30": "30",
-  "60": "60",
-  full: "Full",
+/** Length is free choice now: any whole number in this range, or "full". */
+const MIN_COUNT = 5;
+const MAX_COUNT = 200;
+
+/** The quick presets. The number box below them reaches everything else. */
+const LENGTH_PRESETS: McqLength[] = [10, 20, 30, 60, "full"];
+
+/** The ladder, in order. `null` is Mixed — a draw across all four, which is
+ *  its own selection and its own board, not a merge of them. */
+const DIFFICULTIES: McqDifficulty[] = ["easy", "medium", "hard", "max"];
+
+const DIFFICULTY_LABEL: Record<McqDifficulty, string> = {
+  easy: "Easy",
+  medium: "Medium",
+  hard: "Hard",
+  max: "Max",
 };
 
 function lengthLabel(length: McqLength): string {
-  return LENGTH_LABEL[String(length)] ?? String(length);
+  return length === "full" ? "Full" : String(length);
+}
+
+function difficultyLabel(difficulty: McqDifficulty | null): string {
+  return difficulty === null ? "Mixed" : DIFFICULTY_LABEL[difficulty];
 }
 
 function unitList(units: number[]): string {
@@ -126,6 +147,7 @@ function AttemptRow({
       <TopicCode code={attempt.subject_code} />
       <span className="text-fg-2 tnum">{unitList(attempt.units)}</span>
       <span className="text-fg-3">{lengthLabel(attempt.length)}</span>
+      <span className="text-fg-3">{difficultyLabel(attempt.difficulty)}</span>
       <span className="text-fg-3">{mediumDate(attempt.started_at)}</span>
 
       <span className="ml-auto flex items-baseline gap-3 shrink-0">
@@ -204,6 +226,21 @@ export function YashMadeTest() {
     units: number[];
   } | null>(null);
   const [length, setLength] = useState<McqLength>(30);
+  /** What the number box currently reads. The clamp happens on blur, so
+   *  half-typed numbers are allowed to exist while they are being typed. */
+  const [countDraft, setCountDraft] = useState("30");
+  /** True once the box has actually been TYPED IN since the last commit.
+   *  Blur alone must not commit: with "Full" chosen the box still reads the
+   *  last number, and tabbing through the picker would otherwise silently
+   *  turn a Full sitting into a 30-question one — a different paper and a
+   *  different leaderboard, chosen by a focus event. */
+  const [countEdited, setCountEdited] = useState(false);
+  /** The tier the student picked. What is actually drawn is derived below —
+   *  a tier that holds nothing for the units now chosen falls back to Mixed
+   *  rather than starting an attempt that cannot exist. */
+  const [pickedDifficulty, setPickedDifficulty] = useState<McqDifficulty | null>(
+    null,
+  );
   const [starting, setStarting] = useState(false);
   const [startError, setStartError] = useState<string | null>(null);
 
@@ -243,9 +280,87 @@ export function YashMadeTest() {
     [subject, units],
   );
 
-  const lengths: McqLength[] = subject?.lengths?.length
-    ? subject.lengths
-    : [30, 60, "full"];
+  /**
+   * How the current unit selection splits down the ladder. `null` when the
+   * server sends no breakdown at all — an older server — in which case every
+   * tier stays offered and the draw is simply whatever it holds.
+   */
+  const tierCounts = useMemo(() => {
+    const out: Record<McqDifficulty, number> = {
+      easy: 0,
+      medium: 0,
+      hard: 0,
+      max: 0,
+    };
+    let known = false;
+    for (const u of subject?.units ?? []) {
+      if (!units.includes(u.unit) || !u.difficulties) continue;
+      known = true;
+      for (const d of DIFFICULTIES) out[d] += u.difficulties[d] ?? 0;
+    }
+    return known ? out : null;
+  }, [subject, units]);
+
+  const countOf = useCallback(
+    (d: McqDifficulty | null): number => {
+      if (d === null) return available;
+      return tierCounts ? tierCounts[d] : available;
+    },
+    [available, tierCounts],
+  );
+
+  /** The tier actually in force: the pick, unless it has emptied under a
+   *  change of units, in which case Mixed. Derived, not written by an
+   *  effect — the same rule the unit default follows. */
+  const difficulty = useMemo(() => {
+    if (pickedDifficulty === null) return null;
+    return countOf(pickedDifficulty) > 0 ? pickedDifficulty : null;
+  }, [pickedDifficulty, countOf]);
+
+  /** Questions the selection holds — units AND tier. */
+  const selectable = countOf(difficulty);
+
+  /** Presets, plus anything else this subject suggests, "Full" last. */
+  const lengths: McqLength[] = useMemo(() => {
+    const seen = new Set<string>();
+    const out: McqLength[] = [];
+    for (const l of [...LENGTH_PRESETS, ...(subject?.lengths ?? [])]) {
+      const k = String(l);
+      if (seen.has(k)) continue;
+      seen.add(k);
+      out.push(l);
+    }
+    return out.sort((a, b) => {
+      if (a === "full") return 1;
+      if (b === "full") return -1;
+      return a - b;
+    });
+  }, [subject]);
+
+  /** True when the number box holds something the presets do not offer. */
+  const customCount =
+    typeof length === "number" && !lengths.some((l) => l === length);
+
+  const pickLength = useCallback((l: McqLength) => {
+    setLength(l);
+    setCountEdited(false);
+    if (l !== "full") setCountDraft(String(l));
+  }, []);
+
+  /** Clamp on blur: 5–200, and a number nobody typed is put back. A blur
+   *  that follows no typing commits nothing — see `countEdited`. */
+  const commitCount = useCallback(() => {
+    if (!countEdited) return;
+    setCountEdited(false);
+    const n = Number.parseInt(countDraft, 10);
+    if (!Number.isFinite(n)) {
+      setCountDraft(length === "full" ? "" : String(length));
+      return;
+    }
+    const clamped = Math.min(MAX_COUNT, Math.max(MIN_COUNT, n));
+    setCountDraft(String(clamped));
+    setLength(clamped);
+  }, [countDraft, countEdited, length]);
 
   const setUnits = useCallback(
     (next: number[]) => {
@@ -267,33 +382,38 @@ export function YashMadeTest() {
     [units, setUnits],
   );
 
+  // A selection is subject + units + length + difficulty, and that whole
+  // tuple keys the board: Easy/30 and Hard/30 are different boards, and
+  // Mixed is its own.
   const boardKey = subject
-    ? `mcq-board:${subject.subject_code}:${units.join(",")}:${length}`
+    ? `mcq-board:${subject.subject_code}:${units.join(",")}:${length}:${
+        difficulty ?? "mixed"
+      }`
     : "mcq-board:none";
 
   const fetchBoard = useCallback(() => {
     if (!subject || units.length === 0) return Promise.resolve([]);
-    return getMcqLeaderboard(subject.subject_code, units, length);
+    return getMcqLeaderboard(subject.subject_code, units, length, difficulty);
     // The key carries the selection, so the fetcher is allowed to close over
     // it: useResource refetches whenever the key changes.
-  }, [subject, units, length]);
+  }, [subject, units, length, difficulty]);
 
   const boardRes = useResource(boardKey, fetchBoard);
 
   const start = useCallback(() => {
-    if (!subject || starting || available === 0) return;
+    if (!subject || starting || selectable === 0) return;
     setStarting(true);
     setStartError(null);
-    createMcqAttempt(subject.subject_code, units, length)
+    createMcqAttempt(subject.subject_code, units, length, difficulty)
       .then((a) => router.push(`/test/mcq/${a.attempt_id}`))
       .catch((err: unknown) => {
         setStartError(errorMessage(err));
         setStarting(false);
       });
-  }, [subject, units, length, available, starting, router]);
+  }, [subject, units, length, difficulty, selectable, starting, router]);
 
   const attempts = attemptsRes.data ?? [];
-  const drawn = length === "full" ? available : Math.min(length, available);
+  const drawn = length === "full" ? selectable : Math.min(length, selectable);
 
   if (subjectsRes.loading && !subjectsRes.data) {
     return (
@@ -360,7 +480,7 @@ export function YashMadeTest() {
           </span>
         )}
         <span className="telemetry text-[11px] text-fg-3">
-          {available} {plural(available, "question")} in this selection
+          {available} {plural(available, "question")} in these units
         </span>
       </div>
 
@@ -395,24 +515,100 @@ export function YashMadeTest() {
         )}
       </div>
 
-      {/* --- length ------------------------------------------------------- */}
+      {/* --- difficulty --------------------------------------------------- */}
 
-      <h2 className="label mt-4 mb-2">Length</h2>
+      <h2 className="label mt-4 mb-2">Difficulty</h2>
       <div className="flex flex-wrap gap-2">
+        <Chip
+          active={difficulty === null}
+          onClick={() => setPickedDifficulty(null)}
+          title="Mixed"
+          note={`${available} ${plural(available, "question")}`}
+        />
+        {DIFFICULTIES.map((d) => {
+          const n = countOf(d);
+          return (
+            <Chip
+              key={d}
+              active={difficulty === d}
+              disabled={n === 0}
+              onClick={() => setPickedDifficulty(d)}
+              title={DIFFICULTY_LABEL[d]}
+              note={
+                n === 0
+                  ? "none at this tier yet"
+                  : `${n} ${plural(n, "question")}`
+              }
+            />
+          );
+        })}
+      </div>
+      <p className="text-[12px] text-fg-3 mt-2 max-w-prose">
+        Easy: straight definitions. Medium: telling similar things apart. Hard:
+        work out which idea applies. Max: the tricky ones.
+      </p>
+
+      {/* --- how many ----------------------------------------------------- */}
+
+      <h2 className="label mt-4 mb-2">How many</h2>
+      <div className="flex flex-wrap items-center gap-2">
         {lengths.map((l) => (
           <Chip
             key={String(l)}
             active={l === length}
-            onClick={() => setLength(l)}
+            onClick={() => pickLength(l)}
             title={lengthLabel(l)}
             note={
-              l === "full" || available < Number(l)
-                ? `${available} available`
+              l === "full" || selectable < Number(l)
+                ? `${selectable} available`
                 : "questions"
             }
           />
         ))}
+        <label
+          className={`flex items-center gap-2 px-3 rounded-sm border text-[13px] min-h-[44px]
+            transition-[border-color,background-color] duration-[90ms]
+            ${
+              customCount
+                ? "bg-surface-raised border-accent text-fg"
+                : "bg-surface border-line text-fg-2"
+            }`}
+        >
+          <span className="text-[12px] text-fg-3">any</span>
+          <input
+            type="number"
+            inputMode="numeric"
+            min={MIN_COUNT}
+            max={MAX_COUNT}
+            step={1}
+            value={countDraft}
+            onChange={(e) => {
+              setCountDraft(e.target.value);
+              setCountEdited(true);
+            }}
+            onBlur={commitCount}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                e.currentTarget.blur();
+              }
+            }}
+            aria-label={`How many questions, ${MIN_COUNT} to ${MAX_COUNT}`}
+            className="w-[4.25rem] h-8 px-2 rounded-sm border border-line bg-surface
+              text-[13px] text-fg tnum hover:border-line-strong
+              focus:border-accent focus:outline-none transition-colors duration-[90ms]"
+          />
+        </label>
       </div>
+      <p className="telemetry text-[11px] text-fg-3 mt-2">
+        {selectable === 0
+          ? "nothing in this selection yet"
+          : length === "full"
+            ? `full — all ${selectable} of them`
+            : length > selectable
+              ? `only ${selectable} available — you will get ${selectable}`
+              : `${drawn} of ${selectable} available · any number ${MIN_COUNT}–${MAX_COUNT}`}
+      </p>
 
       {startError && (
         <div
@@ -429,18 +625,25 @@ export function YashMadeTest() {
       <div className="flex flex-wrap items-center gap-3 mt-5">
         <motion.button
           onClick={start}
-          disabled={starting || available === 0}
+          disabled={starting || selectable === 0}
           whileTap={reduced ? undefined : { scale: 0.98 }}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
           className="glow-behind accent-grad glow-accent-hover inline-flex items-center gap-2.5
             h-9 px-4 rounded-sm text-[13px] font-semibold border border-accent
             disabled:opacity-40 disabled:pointer-events-none"
         >
-          {starting ? "Shuffling…" : "Start"}
+          {starting
+            ? "Shuffling…"
+            : `Start ${drawn}${difficulty ? ` ${difficulty}` : ""} ${plural(
+                drawn,
+                "question",
+              )}`}
         </motion.button>
         <p className="text-[12px] text-fg-3">
-          {available === 0
-            ? "Pick a unit that has questions."
+          {selectable === 0
+            ? difficulty === null
+              ? "Pick a unit that has questions."
+              : `No ${difficulty} questions in these units yet — pick another tier.`
             : `${drawn} ${plural(drawn, "question")}, shuffled — and so are the
                options, so two sittings never look the same.`}
         </p>
@@ -487,7 +690,9 @@ export function YashMadeTest() {
         <Reveal index={1}>
           <Panel
             title="Leaderboard"
-            aside={`${subject.subject_code} · ${unitList(units)} · ${lengthLabel(length)}`}
+            aside={`${subject.subject_code} · ${unitList(units)} · ${lengthLabel(
+              length,
+            )} · ${difficultyLabel(difficulty)}`}
           >
             {boardRes.error && !boardRes.data ? (
               <ErrorState message={boardRes.error} onRetry={boardRes.reload} />
