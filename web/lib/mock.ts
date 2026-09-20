@@ -23,6 +23,16 @@ import type {
   LessonIndexEntry,
   LessonPage,
   LessonStatus,
+  McqAttempt,
+  McqAttemptSummary,
+  McqFeedback,
+  McqKind,
+  McqLeaderboardRow,
+  McqLength,
+  McqMissed,
+  McqResult,
+  McqSubject,
+  McqTopicScore,
   PendingCard,
   PendingResponse,
   QueueCard,
@@ -2367,4 +2377,711 @@ export async function getLesson(
     unit_name: units[unit - 1],
     lesson: stored ? toLesson(stored) : null,
   };
+}
+
+/* --- Yash Made Test (curated MCQ bank) ------------------------------------
+ *
+ * The bank is shared course content, so it is a module constant rather than
+ * part of the per-tab `store()`: every user reads these same twelve
+ * questions. What IS mutable is everything a user does with them — the
+ * attempts below hold their own draw, their own option permutation and their
+ * own answers, so a second attempt genuinely looks different from the first.
+ */
+
+interface BankQuestion {
+  key: string;
+  subject_code: string;
+  unit: number;
+  topic: string;
+  kind: McqKind;
+  question: string;
+  /** Exactly four, in the stored order. */
+  options: string[];
+  /** Index into `options` as stored, 0–3. */
+  correct: number;
+  explain: string;
+  /** Aligned with `options`; the correct one's entry is "". */
+  why_wrong: string[];
+}
+
+const MCQ_BANK: BankQuestion[] = [
+  {
+    key: "CSE111-U1-001",
+    subject_code: "CSE111",
+    unit: 1,
+    topic: "Pointers",
+    kind: "recall",
+    question: "What does the unary & operator give you when applied to a variable?",
+    options: [
+      "The number of bytes the variable occupies",
+      "The address of the variable in memory",
+      "A copy of the variable's value",
+      "The value stored at the variable's address",
+    ],
+    correct: 1,
+    explain:
+      "& is the address-of operator: it yields the location of its operand, typed as a pointer to that operand's type. For int x, &x has type int *. It is the only way to obtain a pointer to an object you already have a name for.",
+    why_wrong: [
+      "That is sizeof, which reports storage in bytes rather than a location.",
+      "",
+      "Plain assignment copies a value; & never copies anything, it reports where the original lives.",
+      "That is the dereference operator *, which goes the other way — from an address to the value at it.",
+    ],
+  },
+  {
+    key: "CSE111-U1-002",
+    subject_code: "CSE111",
+    unit: 1,
+    topic: "Pointers",
+    kind: "recall",
+    question: "Given int *p; what is the type of the expression *p?",
+    options: ["int *", "void", "int", "char"],
+    correct: 2,
+    explain:
+      "Read a declaration as an assertion about the expression: int *p says the expression *p has type int. Dereferencing strips one level of indirection, so a pointer-to-int dereferences to an int.",
+    why_wrong: [
+      "int * is the type of p itself, before any dereference.",
+      "void appears in void * — a pointer with no target type — which is not what this declaration says.",
+      "",
+      "Nothing here mentions char; the target type comes from the declaration, not from the size of the value.",
+    ],
+  },
+  {
+    key: "CSE111-U1-003",
+    subject_code: "CSE111",
+    unit: 1,
+    topic: "Pointers",
+    kind: "situation",
+    question:
+      "You write void swap(int a, int b) to exchange two values, call it, and the caller's variables are unchanged. Why?",
+    options: [
+      "C passes arguments by value, so the function swapped its own copies",
+      "The function needs to be declared before main to take effect",
+      "int is too small to swap; the values must be long",
+      "The compiler optimised the swap away because it looked pointless",
+    ],
+    correct: 0,
+    explain:
+      "Every C argument is passed by value: the function receives copies, and assigning to a parameter changes only the copy. To reach the caller's objects the function must be given their addresses — void swap(int *a, int *b) — and work through *a and *b.",
+    why_wrong: [
+      "",
+      "A missing declaration is a compile-time complaint, not a silent no-op at run time.",
+      "Width has nothing to do with it; a long swap by value fails in exactly the same way.",
+      "The swap is not dead code inside the function — it really does exchange the copies before they are discarded.",
+    ],
+  },
+  {
+    key: "CSE111-U1-004",
+    subject_code: "CSE111",
+    unit: 1,
+    topic: "Pointers",
+    kind: "recall",
+    question:
+      "What does a pointer hold immediately after int *p; at block scope, before any assignment?",
+    options: [
+      "NULL, because C zero-initialises pointers",
+      "The address of the next free byte on the stack",
+      "Zero, which is safe to test but not to dereference",
+      "An indeterminate value — dereferencing it is undefined behaviour",
+    ],
+    correct: 3,
+    explain:
+      "Objects with automatic storage duration are not initialised; the pointer holds whatever bit pattern was already on the stack. It is not NULL and cannot be usefully compared against anything. Initialise pointers at their declaration — int *p = NULL; — so a mistake is a predictable crash instead of a silent corruption.",
+    why_wrong: [
+      "Only objects with static storage duration are zero-initialised; a local pointer is not.",
+      "The runtime tracks free stack space itself and never publishes it into your variables.",
+      "It is not zero, and a test against NULL on an indeterminate pointer proves nothing.",
+      "",
+    ],
+  },
+  {
+    key: "CSE111-U1-010",
+    subject_code: "CSE111",
+    unit: 1,
+    topic: "Memory",
+    kind: "recall",
+    question: "Which call returns a heap block obtained from malloc to the allocator?",
+    options: ["free(p)", "delete p", "dispose(p)", "p = NULL"],
+    correct: 0,
+    explain:
+      "free() is the counterpart of malloc/calloc/realloc, and takes the same pointer those returned. Every allocation needs exactly one free: none leaks, two is a double free and corrupts the allocator's bookkeeping.",
+    why_wrong: [
+      "",
+      "delete is C++; in C it is not even an operator.",
+      "dispose belongs to Pascal, not to the C standard library.",
+      "Assigning NULL loses the only handle to the block — that is precisely how a leak is created.",
+    ],
+  },
+  {
+    key: "CSE111-U1-011",
+    subject_code: "CSE111",
+    unit: 1,
+    topic: "Memory",
+    kind: "recall",
+    question: "Where does a non-static local int declared inside a function live?",
+    options: [
+      "In the data segment, for the whole run of the program",
+      "On the heap, until something frees it",
+      "On the stack, for the duration of that call",
+      "In a CPU register, always",
+    ],
+    correct: 2,
+    explain:
+      "A non-static local has automatic storage duration: it is created on the stack frame when the call begins and ceases to exist when the call returns. That is why returning the address of a local is a bug — the storage it names is gone before the caller can read it.",
+    why_wrong: [
+      "That is static storage — what you get by writing static or declaring the variable at file scope.",
+      "Heap storage only comes from an explicit allocation call.",
+      "",
+      "The compiler may keep it in a register, but that is an optimisation, not the storage class the language defines.",
+    ],
+  },
+  {
+    key: "CSE111-U1-012",
+    subject_code: "CSE111",
+    unit: 1,
+    topic: "Memory",
+    kind: "situation",
+    question:
+      "A long-running program calls malloc in a loop and never calls free. Its memory use climbs all day. What is the defect called?",
+    options: [
+      "A buffer overflow",
+      "A memory leak",
+      "A dangling pointer",
+      "A stack overflow",
+    ],
+    correct: 1,
+    explain:
+      "A leak is allocated memory the program can no longer reach and will never release; the allocator still considers it in use, so the process footprint only grows. It is not a crash — which is what makes it easy to ship and painful to find later.",
+    why_wrong: [
+      "An overflow writes past the end of a block; nothing here writes out of bounds.",
+      "",
+      "A dangling pointer is the opposite mistake: the memory is freed and still used.",
+      "The stack is untouched here; the growth is entirely on the heap.",
+    ],
+  },
+  {
+    key: "CSE111-U1-013",
+    subject_code: "CSE111",
+    unit: 1,
+    topic: "Memory",
+    kind: "situation",
+    question:
+      "You call free(p) and then read *p a few lines later. It sometimes prints the old value and sometimes garbage. What is p now?",
+    options: [
+      "A null pointer",
+      "A void pointer",
+      "A dangling pointer",
+      "A const pointer",
+    ],
+    correct: 2,
+    explain:
+      "free() does not change p; it only tells the allocator the block may be reused. p still points at that address, so reading through it is undefined behaviour that often appears to work until the allocator hands the block to someone else. Set p = NULL right after freeing so the mistake fails loudly.",
+    why_wrong: [
+      "free() does not set the pointer to NULL — that is exactly why this bug is possible.",
+      "void * describes a pointer with no target type, which has nothing to do with lifetime.",
+      "",
+      "const constrains what you may write through the pointer, not whether its target still exists.",
+    ],
+  },
+  {
+    key: "CSE111-U1-020",
+    subject_code: "CSE111",
+    unit: 1,
+    topic: "Arrays",
+    kind: "recall",
+    question: "For int a[5]; what is the index of the last element?",
+    options: ["5", "4", "1", "-1"],
+    correct: 1,
+    explain:
+      "C indexes from zero, so int a[5] holds a[0] through a[4]. The count and the last index differ by one, and mixing them up is the classic off-by-one that writes one element past the end.",
+    why_wrong: [
+      "a[5] is one past the last element; writing to it is undefined behaviour.",
+      "",
+      "a[1] is the second element, not the last.",
+      "Negative indices are not wrap-around in C; a[-1] reads memory before the array.",
+    ],
+  },
+  {
+    key: "CSE111-U1-021",
+    subject_code: "CSE111",
+    unit: 1,
+    topic: "Arrays",
+    kind: "recall",
+    question: "What does an array's name decay to when it is passed to a function?",
+    options: [
+      "A pointer to its first element",
+      "A copy of every element",
+      "A reference to the array object",
+      "The number of elements it holds",
+    ],
+    correct: 0,
+    explain:
+      "In almost every expression an array name converts to a pointer to element zero, and a parameter written int a[] is really int *a. Nothing is copied, which is why a function can modify the caller's array — and why it cannot learn the length on its own.",
+    why_wrong: [
+      "",
+      "C never copies an array on a call; only the pointer is passed.",
+      "References are a C++ feature; C has no such type.",
+      "The length is not carried anywhere — the caller has to pass it separately.",
+    ],
+  },
+  {
+    key: "CSE111-U1-022",
+    subject_code: "CSE111",
+    unit: 1,
+    topic: "Arrays",
+    kind: "situation",
+    question:
+      "Inside void f(int arr[]) you print sizeof(arr) and get 8 whatever array the caller passed. Why?",
+    options: [
+      "sizeof always reports 8 for arrays on a 64-bit machine",
+      "The array was truncated to its first two ints when it was passed",
+      "The parameter is a pointer, so sizeof measures the pointer, not the array",
+      "sizeof cannot be used on a parameter and returns a default",
+    ],
+    correct: 2,
+    explain:
+      "int arr[] as a parameter means int *arr, and sizeof on a pointer gives the pointer's own width — 8 bytes on a typical 64-bit build. The length has to travel as a separate argument; sizeof only measures a real array where its declaration is visible.",
+    why_wrong: [
+      "sizeof on an actual array in scope gives its full size, e.g. 20 for int a[5].",
+      "Nothing is truncated; the whole array is still there, the function just cannot measure it.",
+      "",
+      "sizeof works fine on parameters — it is simply measuring a pointer here.",
+    ],
+  },
+  {
+    key: "CSE111-U1-023",
+    subject_code: "CSE111",
+    unit: 1,
+    topic: "Arrays",
+    kind: "situation",
+    question:
+      "A loop runs for (i = 0; i <= n; i++) over int a[n] and the program crashes only sometimes. What is happening?",
+    options: [
+      "The loop writes a[n], one past the end, which is undefined behaviour",
+      "The comparison should be < but the extra pass is harmless",
+      "n is evaluated every iteration, so the loop never ends",
+      "Arrays cannot be indexed by a variable in C",
+    ],
+    correct: 0,
+    explain:
+      "The last iteration touches a[n], which is outside the array. Out-of-bounds access is undefined behaviour, not a checked error: whether it crashes depends on what happens to sit in that memory, so the same bug can pass every test and fail in the demo. The condition must be i < n.",
+    why_wrong: [
+      "",
+      "An out-of-bounds write is never harmless — it corrupts whatever is next in memory.",
+      "Re-evaluating n costs nothing and does not stop the loop from terminating.",
+      "Variable indices are entirely normal; the bug is the bound, not the indexing.",
+    ],
+  },
+];
+
+/** The registry the picker reads: which subjects and units exist at all, so a
+ *  unit with no questions yet still appears with a count of 0. */
+const MCQ_UNITS: {
+  subject_code: string;
+  label: string;
+  units: { unit: number; label: string }[];
+}[] = [
+  {
+    subject_code: "CSE111",
+    label: "Programming in C",
+    units: [
+      { unit: 1, label: "Pointers, memory and arrays" },
+      { unit: 2, label: "Structures, strings and files" },
+    ],
+  },
+  {
+    subject_code: "INT335",
+    label: "Linux and shell scripting",
+    units: [
+      { unit: 1, label: "The shell and the filesystem" },
+      { unit: 2, label: "Permissions, processes and scripting" },
+    ],
+  },
+];
+
+const MCQ_LENGTHS: McqLength[] = [30, 60, "full"];
+
+interface MockMcqItem {
+  position: number;
+  q: BankQuestion;
+  /** Shown index → stored index. The client only ever sees the shown order. */
+  order: number[];
+  /** Shown index, or null while unanswered. */
+  chosen: number | null;
+}
+
+interface MockMcqAttempt {
+  id: number;
+  subject_code: string;
+  units: number[];
+  length: McqLength;
+  startedMs: number;
+  started_at: string;
+  submitted_at: string | null;
+  items: MockMcqItem[];
+  /** Stored at submit, so a second submit is the same result, not a re-score. */
+  result: McqResult | null;
+}
+
+const mcqAttempts = new Map<number, MockMcqAttempt>();
+let nextMcqAttemptId = 501;
+
+function mcqShuffle<T>(items: T[], rand: () => number): T[] {
+  const out = [...items];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+function mcqPool(subjectCode: string, units: number[]): BankQuestion[] {
+  return MCQ_BANK.filter(
+    (q) => q.subject_code === subjectCode && units.includes(q.unit),
+  );
+}
+
+function mcqShownOptions(item: MockMcqItem): string[] {
+  return item.order.map((stored) => item.q.options[stored]);
+}
+
+/** Where the right answer sits in the shown order. */
+function mcqCorrectShown(item: MockMcqItem): number {
+  return item.order.indexOf(item.q.correct);
+}
+
+function mcqIsCorrect(item: MockMcqItem): boolean {
+  return item.chosen !== null && item.chosen === mcqCorrectShown(item);
+}
+
+function mcqFeedback(t: MockMcqAttempt, item: MockMcqItem): McqFeedback | null {
+  if (item.chosen === null) return null;
+  const correct_index = mcqCorrectShown(item);
+  const is_correct = item.chosen === correct_index;
+  return {
+    position: item.position,
+    chosen: item.chosen,
+    correct_index,
+    is_correct,
+    explain: item.q.explain,
+    why_wrong: is_correct ? "" : item.q.why_wrong[item.order[item.chosen]],
+    answered: t.items.filter((i) => i.chosen !== null).length,
+    correct_so_far: t.items.filter(mcqIsCorrect).length,
+  };
+}
+
+function toMcqAttempt(t: MockMcqAttempt): McqAttempt {
+  return {
+    attempt_id: t.id,
+    subject_code: t.subject_code,
+    units: [...t.units],
+    length: t.length,
+    total: t.items.length,
+    started_at: t.started_at,
+    submitted_at: t.submitted_at,
+    questions: t.items.map((item) => ({
+      position: item.position,
+      topic: item.q.topic,
+      kind: item.q.kind,
+      question: item.q.question,
+      options: mcqShownOptions(item),
+      answer: mcqFeedback(t, item),
+    })),
+  };
+}
+
+function mcqSelectionKey(
+  subjectCode: string,
+  units: number[],
+  length: McqLength,
+): string {
+  return `${subjectCode}|${[...units].sort((a, b) => a - b).join(",")}|${length}`;
+}
+
+/**
+ * Three classmates who have already sat the CSE111 unit-1 board. Every other
+ * selection starts empty, so the "be first" state is reachable in the
+ * fixture too.
+ */
+const MCQ_BOARD: McqLeaderboardRow[] = [
+  {
+    user_id: 4,
+    name: "raghav",
+    score: 12,
+    total: 12,
+    percent: 100,
+    duration_s: 486,
+    submitted_at: `${isoDay(-4)}T19:40:00+05:30`,
+  },
+  {
+    user_id: 7,
+    name: "satyam",
+    score: 11,
+    total: 12,
+    percent: 92,
+    duration_s: 402,
+    submitted_at: `${isoDay(-6)}T21:12:00+05:30`,
+  },
+  {
+    user_id: 9,
+    name: "ishita",
+    score: 10,
+    total: 12,
+    percent: 83,
+    duration_s: 655,
+    submitted_at: `${isoDay(-2)}T08:05:00+05:30`,
+  },
+];
+
+function mcqBoardFor(
+  subjectCode: string,
+  units: number[],
+  length: McqLength,
+): McqLeaderboardRow[] {
+  const seeded =
+    subjectCode === "CSE111" && units.includes(1) ? MCQ_BOARD : [];
+
+  // The user's own best submitted attempt for exactly this selection, which
+  // is what the server ranks: one row per user, not one per attempt.
+  const key = mcqSelectionKey(subjectCode, units, length);
+  let mine: McqLeaderboardRow | null = null;
+  for (const t of mcqAttempts.values()) {
+    if (!t.result || t.submitted_at === null) continue;
+    if (mcqSelectionKey(t.subject_code, t.units, t.length) !== key) continue;
+    const row: McqLeaderboardRow = {
+      user_id: MOCK_USER.id,
+      name: MOCK_USER.name,
+      score: t.result.score,
+      total: t.result.total,
+      percent: t.result.percent,
+      duration_s: t.result.duration_s,
+      submitted_at: t.submitted_at,
+    };
+    if (
+      !mine ||
+      row.percent > mine.percent ||
+      (row.percent === mine.percent && row.duration_s < mine.duration_s)
+    ) {
+      mine = row;
+    }
+  }
+
+  return [...seeded, ...(mine ? [mine] : [])]
+    .sort((a, b) => b.percent - a.percent || a.duration_s - b.duration_s)
+    .slice(0, 25);
+}
+
+export async function getMcqSubjects(): Promise<McqSubject[]> {
+  await delay();
+  return MCQ_UNITS.map((s) => ({
+    subject_code: s.subject_code,
+    label: s.label,
+    units: s.units.map((u) => ({
+      unit: u.unit,
+      label: u.label,
+      count: MCQ_BANK.filter(
+        (q) => q.subject_code === s.subject_code && q.unit === u.unit,
+      ).length,
+    })),
+    lengths: [...MCQ_LENGTHS],
+  }));
+}
+
+export async function createMcqAttempt(
+  subjectCode: string,
+  units: number[],
+  length: McqLength,
+): Promise<McqAttempt> {
+  await delay(280);
+  const path = "/api/mcq/attempts";
+
+  const subject = MCQ_UNITS.find((s) => s.subject_code === subjectCode);
+  if (!subject) {
+    throw new ApiError(422, path, `no subject '${subjectCode}' in the bank`);
+  }
+  if (units.length === 0) {
+    throw new ApiError(422, path, "pick at least one unit");
+  }
+  for (const u of units) {
+    if (!subject.units.some((x) => x.unit === u)) {
+      throw new ApiError(422, path, `${subjectCode} has no unit ${u}`);
+    }
+  }
+  if (!MCQ_LENGTHS.includes(length)) {
+    throw new ApiError(422, path, `bad length '${length}'`);
+  }
+
+  const pool = mcqPool(subjectCode, units);
+  if (pool.length === 0) {
+    throw new ApiError(
+      422,
+      path,
+      "those units have no questions yet — they are waiting for material",
+    );
+  }
+
+  const id = nextMcqAttemptId++;
+  const now = Date.now();
+  // Seeded per attempt, so two sittings of the same selection genuinely
+  // differ — the point of the feature, and the thing a fixture usually fakes.
+  const rand = lcg(id * 2654435761 + (now & 0xffff));
+  const take = length === "full" ? pool.length : Math.min(length, pool.length);
+  const drawn = mcqShuffle(pool, rand).slice(0, take);
+
+  mcqAttempts.set(id, {
+    id,
+    subject_code: subjectCode,
+    units: [...units].sort((a, b) => a - b),
+    length,
+    startedMs: now,
+    started_at: new Date(now).toISOString(),
+    submitted_at: null,
+    items: drawn.map((q, i) => ({
+      position: i + 1,
+      q,
+      order: mcqShuffle([0, 1, 2, 3], rand),
+      chosen: null,
+    })),
+    result: null,
+  });
+
+  return toMcqAttempt(mcqAttempts.get(id)!);
+}
+
+export async function getMcqAttempt(id: number): Promise<McqAttempt> {
+  await delay();
+  const t = mcqAttempts.get(id);
+  if (!t) throw new ApiError(404, `/api/mcq/attempts/${id}`, "no such attempt");
+  return toMcqAttempt(t);
+}
+
+export async function postMcqAnswer(
+  id: number,
+  position: number,
+  chosen: number,
+): Promise<McqFeedback> {
+  await delay(70);
+  const path = `/api/mcq/attempts/${id}/answer`;
+  const t = mcqAttempts.get(id);
+  if (!t) throw new ApiError(404, path, "no such attempt");
+  if (t.submitted_at !== null) {
+    throw new ApiError(409, path, "this attempt has already been submitted");
+  }
+  const item = t.items.find((i) => i.position === position);
+  if (!item) {
+    throw new ApiError(422, path, `this attempt has no question ${position}`);
+  }
+  if (!Number.isInteger(chosen) || chosen < 0 || chosen > 3) {
+    throw new ApiError(422, path, `chosen must be 0–3, got ${chosen}`);
+  }
+  // The first click is the answer: refusal, never an overwrite.
+  if (item.chosen !== null) {
+    throw new ApiError(409, path, `question ${position} is already answered`);
+  }
+
+  item.chosen = chosen;
+  return mcqFeedback(t, item)!;
+}
+
+export async function submitMcqAttempt(id: number): Promise<McqResult> {
+  await delay(300);
+  const t = mcqAttempts.get(id);
+  if (!t) throw new ApiError(404, `/api/mcq/attempts/${id}/submit`, "no such attempt");
+  // Idempotent, like the guarded UPDATE on the server: the loser of the race
+  // re-reads the stored result rather than scoring the attempt twice.
+  if (t.result) return t.result;
+
+  const total = t.items.length;
+  const score = t.items.filter(mcqIsCorrect).length;
+  const answered = t.items.filter((i) => i.chosen !== null).length;
+  const duration_s = Math.max(1, Math.round((Date.now() - t.startedMs) / 1000));
+
+  const topics = new Map<string, McqTopicScore>();
+  for (const item of t.items) {
+    const row = topics.get(item.q.topic) ?? {
+      topic: item.q.topic,
+      correct: 0,
+      total: 0,
+    };
+    row.total += 1;
+    if (mcqIsCorrect(item)) row.correct += 1;
+    topics.set(item.q.topic, row);
+  }
+
+  const missed: McqMissed[] = t.items
+    .filter((i) => !mcqIsCorrect(i))
+    .map((item) => ({
+      position: item.position,
+      topic: item.q.topic,
+      question: item.q.question,
+      options: mcqShownOptions(item),
+      chosen: item.chosen,
+      correct_index: mcqCorrectShown(item),
+      explain: item.q.explain,
+      why_wrong:
+        item.chosen === null ? "" : item.q.why_wrong[item.order[item.chosen]],
+    }));
+
+  t.submitted_at = new Date().toISOString();
+  const result: McqResult = {
+    attempt_id: t.id,
+    score,
+    total,
+    answered,
+    percent: total > 0 ? Math.round((100 * score) / total) : 0,
+    duration_s,
+    by_topic: [...topics.values()],
+    missed,
+    rank: null,
+  };
+  t.result = result;
+
+  if (answered > 0) {
+    const board = mcqBoardFor(t.subject_code, t.units, t.length);
+    const at = board.findIndex(
+      (r) => r.user_id === MOCK_USER.id && r.duration_s === duration_s,
+    );
+    if (at >= 0) result.rank = { position: at + 1, of: board.length };
+  }
+
+  return result;
+}
+
+export async function abandonMcqAttempt(id: number): Promise<{ ok: true }> {
+  await delay();
+  const path = `/api/mcq/attempts/${id}`;
+  const t = mcqAttempts.get(id);
+  if (!t) throw new ApiError(404, path, "no such attempt");
+  if (t.submitted_at !== null) {
+    throw new ApiError(409, path, "cannot drop an attempt that is already submitted");
+  }
+  mcqAttempts.delete(id);
+  return { ok: true };
+}
+
+export async function getMcqAttempts(): Promise<McqAttemptSummary[]> {
+  await delay();
+  return [...mcqAttempts.values()]
+    .map((t) => ({
+      id: t.id,
+      subject_code: t.subject_code,
+      units: [...t.units],
+      length: t.length,
+      total: t.items.length,
+      answered: t.items.filter((i) => i.chosen !== null).length,
+      score: t.result ? t.result.score : null,
+      started_at: t.started_at,
+      submitted_at: t.submitted_at,
+      duration_s: t.result ? t.result.duration_s : null,
+    }))
+    .sort((a, b) => Date.parse(b.started_at) - Date.parse(a.started_at));
+}
+
+export async function getMcqLeaderboard(
+  subjectCode: string,
+  units: number[],
+  length: McqLength,
+): Promise<McqLeaderboardRow[]> {
+  await delay();
+  return mcqBoardFor(subjectCode, units, length);
 }

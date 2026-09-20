@@ -9,10 +9,11 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from recall.api import auth_routes, knowledge_routes, learn_routes, scheduling
-from recall.api import teach_routes, tests_routes, upload_routes
+from recall.api import mcq_routes, teach_routes, tests_routes, upload_routes
 from recall.api.deps import get_conn, get_current_user
 from recall.db import connect, init_db
 from recall.llm.client import LlmUnavailable
+from recall.mcq.seed import seed_mcq_bank
 from recall.study import plan
 
 
@@ -40,10 +41,19 @@ async def _lifespan(app: FastAPI):
     a newer release introduced and never touches existing data. Without it, a
     database created before a feature landed 500s on that feature's first request
     — which is exactly what happened when test mode and explanations shipped.
+
+    The curated MCQ bank is seeded here too, inside the same guard. The
+    container entrypoint already seeds it next to `seed_topics`, so this exists
+    for the case the entrypoint does not cover: a local dev database, started
+    with `uvicorn` by hand, which would otherwise show an empty bank and no
+    reason why. It is an upsert over a handful of JSON files — no network, no
+    paid call — and a failure here must not stop the server booting, which is
+    what the surrounding try is for.
     """
     try:
         conn = connect(os.environ.get("RECALL_DB", "recall.db"))
         init_db(conn)
+        seed_mcq_bank(conn)
         conn.close()
     except Exception as exc:  # noqa: BLE001 - never let this stop the server booting
         print(f"warning: could not ensure schema on startup: {exc}")
@@ -217,6 +227,7 @@ def create_app() -> FastAPI:
     app.include_router(teach_routes.router)
     app.include_router(learn_routes.router)
     app.include_router(upload_routes.router)
+    app.include_router(mcq_routes.router)
 
     return app
 

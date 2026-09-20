@@ -1,0 +1,223 @@
+{
+  "_note": "FIXTURE, not the real bank. tests/test_mcq.py loads this directory instead of src/recall/mcq/bank/ so the tests describe a bank they control. Twelve questions over three topics; keys are stable because the tests assert on retirement.",
+  "subject_code": "CSE111",
+  "unit": 1,
+  "unit_label": "Computational Thinking & Computing Environment",
+  "questions": [
+    {
+      "key": "CSE111-U1-001",
+      "topic": "Computational Thinking",
+      "kind": "recall",
+      "q": "Which of the four pillars of computational thinking means breaking a problem into smaller sub-problems?",
+      "options": ["Decomposition", "Abstraction", "Pattern recognition", "Algorithm design"],
+      "correct": 0,
+      "explain": "Decomposition is splitting one hard problem into parts small enough to reason about on their own. The other three pillars act on those parts: you look for repeated structure across them, drop the detail that does not matter, and then write the steps.",
+      "why_wrong": [
+        "",
+        "Abstraction drops irrelevant detail from a problem; it does not split it into parts.",
+        "Pattern recognition spots repetition between problems or parts, which is a step after they exist.",
+        "Algorithm design writes the ordered steps; it comes last, once the parts are known."
+      ]
+    },
+    {
+      "key": "CSE111-U1-002",
+      "topic": "Computational Thinking",
+      "kind": "recall",
+      "q": "An algorithm must be finite. What does that mean?",
+      "options": [
+        "It must fit on a single page",
+        "It must terminate after a limited number of steps",
+        "It must use a limited amount of memory",
+        "It must have at most one loop"
+      ],
+      "correct": 1,
+      "explain": "Finiteness is about termination: for every valid input the algorithm stops after some bounded number of steps. A procedure that can run forever on a legal input is not an algorithm, however short its text is.",
+      "why_wrong": [
+        "Length on a page is a property of the writing, not of the computation.",
+        "",
+        "Bounded memory is a separate desirable property; an algorithm can be finite and still be greedy with memory.",
+        "Loop count says nothing about termination — one loop can run forever."
+      ]
+    },
+    {
+      "key": "CSE111-U1-003",
+      "topic": "Computational Thinking",
+      "kind": "situation",
+      "q": "You are writing pseudocode for a marks-to-grade converter and need to show one of three branches being taken. Which flowchart symbol do you use?",
+      "options": ["Parallelogram", "Diamond", "Rectangle", "Oval"],
+      "correct": 1,
+      "explain": "A diamond is the decision symbol: one entry, and one exit per outcome of a condition. Chaining diamonds is how a flowchart expresses an if/else-if ladder like a grade table.",
+      "why_wrong": [
+        "A parallelogram is input or output — reading the marks in, printing the grade out.",
+        "",
+        "A rectangle is a process step, such as computing a total; it has exactly one exit.",
+        "An oval is the terminator that starts or ends the flowchart."
+      ]
+    },
+    {
+      "key": "CSE111-U1-004",
+      "topic": "Computational Thinking",
+      "kind": "situation",
+      "q": "Two students solve the same problem; one writes 40 lines of pseudocode and the other writes 12. Both are correct. What does this tell you?",
+      "options": [
+        "The shorter one is always more efficient",
+        "The longer one is wrong somewhere",
+        "A problem can have more than one correct algorithm",
+        "Pseudocode length determines running time"
+      ],
+      "correct": 2,
+      "explain": "Correctness is a property of what an algorithm computes, not of how it is written. Several different algorithms can be correct for one problem, and choosing between them means comparing cost, not line count.",
+      "why_wrong": [
+        "Shorter text can hide an expensive step; length is not a cost measure.",
+        "Both were stated to be correct, so length alone is not evidence of a fault.",
+        "",
+        "Running time comes from how many operations execute, not from how many lines were typed."
+      ]
+    },
+    {
+      "key": "CSE111-U1-005",
+      "topic": "Operating Systems",
+      "kind": "recall",
+      "q": "What is the primary job of an operating system?",
+      "options": [
+        "To compile source code into machine code",
+        "To manage hardware resources and provide services to programs",
+        "To connect the computer to the internet",
+        "To store files permanently"
+      ],
+      "correct": 1,
+      "explain": "An operating system sits between programs and hardware: it schedules the CPU, hands out memory, arbitrates devices, and exposes all of that through system calls so applications do not talk to hardware directly.",
+      "why_wrong": [
+        "Compiling is the compiler's job; an OS only runs the compiler as another program.",
+        "",
+        "Networking is one of the services an OS offers, not its defining purpose.",
+        "Persistent storage is provided by the file system, one subsystem among several."
+      ]
+    },
+    {
+      "key": "CSE111-U1-006",
+      "topic": "Operating Systems",
+      "kind": "recall",
+      "q": "Which of these is system software rather than application software?",
+      "options": ["A spreadsheet program", "A device driver", "A web browser", "A photo editor"],
+      "correct": 1,
+      "explain": "System software exists to run and support the machine itself — the operating system, drivers, utilities. A device driver is the code that lets the OS speak a particular piece of hardware's language, so nothing above it has to.",
+      "why_wrong": [
+        "A spreadsheet is an application: it does a user's work, not the machine's.",
+        "",
+        "A browser is an application, however central it feels to daily use.",
+        "A photo editor is an application that happens to use system services heavily."
+      ]
+    },
+    {
+      "key": "CSE111-U1-007",
+      "topic": "Operating Systems",
+      "kind": "situation",
+      "q": "A program appears to keep running while you also play music and download a file on a single-core machine. What is the operating system doing?",
+      "options": [
+        "Running all three on separate cores",
+        "Switching rapidly between them so each makes progress",
+        "Pausing two of them until the third finishes",
+        "Merging them into one process"
+      ],
+      "correct": 1,
+      "explain": "This is time-sharing: the scheduler gives each process the CPU for a short slice and switches, fast enough that all of them look continuous. Concurrency like this needs no second core — parallelism does.",
+      "why_wrong": [
+        "There is only one core, so there is nothing to spread them across.",
+        "",
+        "Pausing two until the third ends is batch processing, and you would hear the music stop.",
+        "Processes are isolated by design; the OS does not merge them."
+      ]
+    },
+    {
+      "key": "CSE111-U1-008",
+      "topic": "Operating Systems",
+      "kind": "situation",
+      "q": "An application tries to write directly to a disk sector and the operating system refuses. Why?",
+      "options": [
+        "Disks are read-only to applications",
+        "The application is not running in kernel mode",
+        "The disk is full",
+        "Writing to disk always needs a network connection"
+      ],
+      "correct": 1,
+      "explain": "Privileged instructions and direct device access are restricted to kernel mode. An application runs in user mode and must ask through a system call, which is what stops one buggy program from corrupting every file on the machine.",
+      "why_wrong": [
+        "Applications write to disk constantly — through the file system, not the raw device.",
+        "",
+        "A full disk produces a different, specific error and has nothing to do with privilege.",
+        "Disk writes are local; nothing about them requires a network."
+      ]
+    },
+    {
+      "key": "CSE111-U1-009",
+      "topic": "Linux",
+      "kind": "recall",
+      "q": "Which Linux command prints the full path of the directory you are currently in?",
+      "options": ["ls", "cd", "pwd", "mkdir"],
+      "correct": 2,
+      "explain": "pwd stands for 'print working directory' and writes the absolute path of your current location. It is the command to reach for whenever a relative path is behaving unexpectedly.",
+      "why_wrong": [
+        "ls lists what is inside a directory, not which directory you are in.",
+        "cd changes the working directory; on its own it prints nothing.",
+        "",
+        "mkdir creates a new directory and reports nothing about your location."
+      ]
+    },
+    {
+      "key": "CSE111-U1-010",
+      "topic": "Linux",
+      "kind": "recall",
+      "q": "In Linux file permissions, what does the digit 7 grant in a mode such as 755?",
+      "options": [
+        "Read and write only",
+        "Read, write and execute",
+        "Execute only",
+        "No permissions at all"
+      ],
+      "correct": 1,
+      "explain": "Each digit is the sum of read (4), write (2) and execute (1), so 7 is all three. In 755 the owner gets all three and group and others get read and execute, which is the usual mode for a program or a directory.",
+      "why_wrong": [
+        "Read and write together is 6, not 7 — the execute bit is the missing 1.",
+        "",
+        "Execute alone is 1; 7 has three bits set, not one.",
+        "No permissions is 0, the absence of all three bits."
+      ]
+    },
+    {
+      "key": "CSE111-U1-011",
+      "topic": "Linux",
+      "kind": "situation",
+      "q": "You need to see the last twenty lines of a long server log. Which command is the right one?",
+      "options": ["tail -n 20 server.log", "head -n 20 server.log", "cat server.log", "wc -l server.log"],
+      "correct": 0,
+      "explain": "tail prints the end of a file and -n 20 asks for twenty lines, which is where the newest entries in a log are. It also reads only the end, so it stays fast on a file too large to open.",
+      "why_wrong": [
+        "",
+        "head prints the beginning, which in a log is the oldest entries.",
+        "cat prints the whole file and floods the terminal with everything before the part you wanted.",
+        "wc -l counts the lines and shows none of them."
+      ]
+    },
+    {
+      "key": "CSE111-U1-012",
+      "topic": "Linux",
+      "kind": "situation",
+      "q": "A shell script you just wrote gives 'Permission denied' when you run ./setup.sh. What is the most likely fix?",
+      "options": [
+        "Rename the file to setup",
+        "Add the execute bit with chmod +x setup.sh",
+        "Move the file to /tmp",
+        "Convert the file to uppercase"
+      ],
+      "correct": 1,
+      "explain": "A freshly created file is not executable; the shell refuses to run it until the execute bit is set. chmod +x adds that bit, after which ./setup.sh runs under the interpreter named on its first line.",
+      "why_wrong": [
+        "The extension is irrelevant to the shell; permissions are stored on the file, not in its name.",
+        "",
+        "Moving the file carries its permissions with it, so the same refusal follows it to /tmp.",
+        "Case of the filename has no bearing on whether a file may be executed."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2007 @@
+{
+ "subject_code": "CSE111",
+ "unit": 1,
+ "unit_label": "Computational Thinking & Computing Environment",
+ "questions": [
+  {
+   "topic": "Computational Thinking",
+   "kind": "recall",
+   "q": "Which statement best captures what computational thinking is?",
+   "options": [
+    "A coding skill that only programmers need once they start writing software",
+    "A way of solving problems the way a computer scientist would: breaking them down, spotting patterns, simplifying, and writing clear ordered steps",
+    "The study of how a computer's hardware executes instructions",
+    "A specific programming language used to express algorithms"
+   ],
+   "correct": 1,
+   "explain": "Computational thinking is a way of thinking, not a coding skill. It means approaching a problem like a computer scientist: decompose it, look for patterns, abstract away the noise, and write ordered steps that a human or a machine can follow. Scientists, engineers, designers and everyday problem-solvers all use it, which is why it is the foundation of every language, algorithm and system in this course.",
+   "why_wrong": [
+    "Computational thinking is explicitly a way of thinking, not a coding skill, and it is used by non-programmers such as scientists, designers and business people.",
+    "",
+    "How hardware executes instructions is computer architecture; computational thinking is about formulating problems and expressing their solutions, not about circuitry.",
+    "Computational thinking is independent of any language; the same thinking can be expressed in plain English, a flowchart, pseudocode or code."
+   ],
+   "key": "CSE111-U1-001"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "recall",
+   "q": "The definition used in this course — the thought processes involved in formulating a problem and expressing its solution so that a human or a machine can effectively carry it out — is adapted from whom?",
+   "options": [
+    "Dr John Snow",
+    "Alan Turing",
+    "Ada Lovelace",
+    "Jeannette M. Wing"
+   ],
+   "correct": 3,
+   "explain": "The course definition is adapted from Jeannette M. Wing's 2006 work that popularised the term computational thinking. Her framing stresses two things: formulating the problem, and expressing the solution so that either a person or a machine can carry it out. That is why the four building blocks end with algorithms, the expressible and executable form of a solution.",
+   "why_wrong": [
+    "Dr John Snow is the 1854 cholera-map example of pattern recognition, not the source of the definition.",
+    "Alan Turing is a foundational figure in computing, but the definition quoted in this course is Wing's 2006 formulation, not his.",
+    "Ada Lovelace is remembered for early programming ideas; she is not the source of the computational thinking definition used here.",
+    ""
+   ],
+   "key": "CSE111-U1-002"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "recall",
+   "q": "In what order are the four building blocks of computational thinking normally applied to a problem?",
+   "options": [
+    "Abstraction → Decomposition → Pattern Recognition → Algorithms",
+    "Pattern Recognition → Decomposition → Abstraction → Algorithms",
+    "Decomposition → Pattern Recognition → Abstraction → Algorithms",
+    "Algorithms → Decomposition → Abstraction → Pattern Recognition"
+   ],
+   "correct": 2,
+   "explain": "Decomposition is always the first move because real problems are too big or tangled to solve in one go. Once the parts exist you can spot patterns among them, then abstract away the details that do not matter, and finally write the algorithm — the concrete, ordered steps. The algorithm comes last because it is the plan you can only write once the problem is properly understood.",
+   "why_wrong": [
+    "Abstraction cannot come first: you only know which details matter after the problem has been broken into parts and patterns have been spotted.",
+    "Pattern recognition comes right after decomposition, not before it — you spot patterns among the parts, so the parts must exist first.",
+    "",
+    "The algorithm is the final step that turns the analysed problem into action; starting with it means writing steps for a problem you have not yet understood."
+   ],
+   "key": "CSE111-U1-003"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "recall",
+   "q": "Which of the following is NOT listed as a benefit of decomposition?",
+   "options": [
+    "Manageable — small parts feel less overwhelming",
+    "Reuses Solutions — a known answer can be applied again",
+    "Parallel Work — different people tackle different parts at the same time",
+    "Easier Debugging — mistakes are isolated to one part"
+   ],
+   "correct": 1,
+   "explain": "Decomposition's three benefits are Manageable, Parallel Work and Easier Debugging — all consequences of splitting one big problem into smaller pieces. Reusing solutions is a benefit of pattern recognition: once you notice that a part resembles something you have solved before, you can apply the earlier solution. Keep the benefit lists separate, because exams like to swap them between blocks.",
+   "why_wrong": [
+    "Manageable is a genuine decomposition benefit: small parts feel less overwhelming than one huge problem.",
+    "",
+    "Parallel Work is a genuine decomposition benefit: separate parts let different people work at the same time.",
+    "Easier Debugging is a genuine decomposition benefit: a mistake is confined to the part in which it occurred."
+   ],
+   "key": "CSE111-U1-004"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "situation",
+   "q": "At a 24-hour hackathon, a four-member team is building a hostel complaint app. Instead of all coding together, they split it into login, complaint form, admin dashboard and notifications; each member builds one part, and they combine the parts at the end. Which building block is the team using?",
+   "options": [
+    "Abstraction",
+    "Algorithms",
+    "Decomposition",
+    "Pattern Recognition"
+   ],
+   "correct": 2,
+   "explain": "Breaking one large project into smaller, independent parts that can be built and tested separately and then combined is decomposition. It mirrors the Food Delivery App example, where separate teams own login, listings, payment and tracking and the pieces are joined at the end. The giveaway is the parallel work — different people on different parts at the same time.",
+   "why_wrong": [
+    "Abstraction would be hiding internal details behind a simple interface; here nothing is hidden, the problem is being split up.",
+    "Algorithms are the exact ordered steps for a solution; splitting a project into modules is the step that comes before any algorithm is written.",
+    "",
+    "Pattern recognition would mean noticing that two parts are similar and reusing one solution; the team is dividing work, not spotting repeats."
+   ],
+   "key": "CSE111-U1-005"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "situation",
+   "q": "While organising the college tech fest, Neha notices that inviting speakers, inviting judges and approaching sponsors all follow the same routine: send an email, make a follow-up call, get written confirmation. She writes the routine once and reuses it for all three. Which building block is she applying?",
+   "options": [
+    "Pattern Recognition",
+    "Decomposition",
+    "Abstraction",
+    "Algorithms"
+   ],
+   "correct": 0,
+   "explain": "Spotting that several tasks share the same structure and reusing one solution for all of them is pattern recognition. It naturally follows decomposition: once the fest has been split into tasks, the similarities between those tasks become visible, and reusing a known routine saves time and simplifies the work. Reuse of a known solution is the hallmark to look for.",
+   "why_wrong": [
+    "",
+    "Decomposition was the earlier step that produced the separate tasks; Neha is now noticing a similarity across tasks, not splitting them.",
+    "Abstraction is about hiding details that do not matter; Neha is reusing a shared routine, not hiding how it works.",
+    "Writing out the email-call-confirm routine as steps would be an algorithm, but the question asks about the act of noticing the repeat, which is pattern recognition."
+   ],
+   "key": "CSE111-U1-006"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "recall",
+   "q": "A sequence begins 1, 1, 2, 3, 5, 8, 13, 21, 34. What is the next term, and what rule produces it?",
+   "options": [
+    "55 — each term is the sum of the previous two",
+    "68 — each term is double the previous one",
+    "47 — add 13 each time",
+    "48 — the difference grows by 1 each time"
+   ],
+   "correct": 0,
+   "explain": "Check the rule against the given terms: 1+1=2, 2+3=5, 8+13=21, 13+21=34. Each term is the sum of the previous two, so the next term is 21+34=55. Finding a rule that reproduces every given term and then using it to predict the next one is exactly what pattern recognition lets you do.",
+   "why_wrong": [
+    "",
+    "Doubling fails at the very start: 1 doubled is 2, not 1, and 3 doubled is 6, not 5.",
+    "Adding 13 each time would give 34+13=47, but it does not fit the earlier terms — 5 to 8 is +3, not +13.",
+    "The differences between the given terms are 0, 1, 1, 2, 3, 5, 8, 13; they are not growing by 1, so this rule does not fit the sequence."
+   ],
+   "key": "CSE111-U1-007"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "recall",
+   "q": "Which list gives the three benefits of pattern recognition?",
+   "options": [
+    "Manageable, Parallel Work, Easier Debugging",
+    "Saves Time, Reuses Solutions, Simplifies Complexity",
+    "Reduces Complexity, Easier to Share, Enables Reuse",
+    "Avoids Confusion, Guarantees an Answer, Actually Works"
+   ],
+   "correct": 1,
+   "explain": "Pattern recognition pays off in three ways: it Saves Time, because a solution you have already found can be applied again instead of being reinvented; it Reuses Solutions, because once a repeat is spotted one answer covers every instance; and it Simplifies Complexity, because a messy problem becomes a familiar one. Each building block has its own list of three benefits and they are easy to mix up, so tie each list to the action it describes: pattern recognition is about noticing similarities and repeats.",
+   "why_wrong": [
+    "Manageable, Parallel Work and Easier Debugging are the benefits of decomposition, which splits a problem into parts.",
+    "",
+    "Reduces Complexity, Easier to Share and Enables Reuse are the benefits of abstraction, which hides details that do not matter.",
+    "Avoids Confusion, Guarantees an Answer and Actually Works are the payoffs of a good algorithm being precise, finite and doable, not benefits of pattern recognition."
+   ],
+   "key": "CSE111-U1-008"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "situation",
+   "q": "The hostel replaces its old washing machine with a newer model whose motor, water-level sensors and cycle-control electronics are completely different inside. Students still load clothes and detergent, select a program and press Start exactly as they did before, and nobody has to learn anything new. Which benefit of abstraction does this illustrate?",
+   "options": [
+    "Reduces Complexity",
+    "Easier to Share",
+    "Enables Reuse",
+    "Saves Time"
+   ],
+   "correct": 2,
+   "explain": "Abstraction's Enables Reuse benefit means a well-abstracted tool keeps working even when its hidden details change. The students only ever interact with the visible interface — load, select a program, press Start — so swapping the motor, sensors and control electronics underneath changes nothing for them. The same idea lets a bank upgrade an ATM's internals without changing how customers withdraw cash.",
+   "why_wrong": [
+    "Reduces Complexity is about interacting with a simple model instead of every detail; the scenario is specifically about the hidden details changing while the interface stays usable.",
+    "Easier to Share is about other people using a solution without understanding it fully; the point here is that the machine changed underneath, not that it was handed to someone new.",
+    "",
+    "Saves Time is a benefit of pattern recognition, not one of the three benefits of abstraction."
+   ],
+   "key": "CSE111-U1-009"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "recall",
+   "q": "In 1854 Dr John Snow plotted cholera cases on a map of London and saw that they clustered around one water pump. Which building block of computational thinking does this classic example illustrate?",
+   "options": [
+    "Decomposition",
+    "Abstraction",
+    "Algorithms",
+    "Pattern Recognition"
+   ],
+   "correct": 3,
+   "explain": "Snow's map revealed a trend in the data — cases concentrated around a single pump — and that trend pointed to the cause. Spotting a similarity, trend or cluster among many items is pattern recognition. It is the same idea as Netflix noticing what you tend to watch, just applied to disease.",
+   "why_wrong": [
+    "Decomposition would be splitting the epidemic problem into smaller parts; Snow's insight came from seeing a cluster, not from dividing the problem.",
+    "Abstraction would be hiding irrelevant details; the point of the map was to reveal a trend, not to simplify information away.",
+    "An algorithm is a step-by-step procedure; the map showed a pattern, it did not lay out steps.",
+    ""
+   ],
+   "key": "CSE111-U1-010"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "situation",
+   "q": "Arjun withdraws cash: he inserts his card, enters his PIN, taps Withdraw and collects the notes and receipt. He never sees the PIN verification, the ATM talking to the bank server, the cash counting or the balance update. Which building block explains why the ATM can be used this way?",
+   "options": [
+    "Decomposition, because the ATM's job is split into parts",
+    "Pattern Recognition, because every withdrawal follows the same steps",
+    "Algorithms, because the ATM follows a fixed sequence",
+    "Abstraction, because only the details Arjun needs are exposed and the rest is hidden"
+   ],
+   "correct": 3,
+   "explain": "Abstraction means showing only the details that matter to the user and hiding everything else. The ATM exposes the card slot, PIN pad and a menu, while verification, server communication and cash counting stay hidden. This is why the machine is easy to use, and why the bank can change the hidden internals without changing anything Arjun does.",
+   "why_wrong": [
+    "The ATM's internals may well be decomposed, but the question is about why Arjun does not need to know those internals — that is hiding, which is abstraction.",
+    "Withdrawals do repeat, but repetition is not what lets Arjun ignore the internals; hiding them behind a simple interface is.",
+    "The ATM does run an algorithm internally, but the user-facing simplicity comes from that algorithm being hidden, which is abstraction.",
+    ""
+   ],
+   "key": "CSE111-U1-011"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "situation",
+   "q": "Sana is writing a short How to withdraw cash card to stick beside the hostel ATM. Her draft has four lines: (1) insert your card and enter your PIN; (2) choose Withdraw, Deposit or Balance; (3) verify your PIN and account with the bank server; (4) collect your cash, receipt and card. Which line should she remove, and why?",
+   "options": [
+    "Line 1, because entering a PIN is a security check and security checks belong to the hidden side of the ATM",
+    "Line 3, because verifying the PIN and account with the bank server happens inside the machine; the user never performs it",
+    "Line 2, because the type of transaction is decided by the bank, not chosen by the user",
+    "Line 4, because collecting the cash is the machine's output rather than something the user does"
+   ],
+   "correct": 1,
+   "explain": "Abstraction splits the ATM into what the user does and what the machine hides. The user's side is inserting the card and PIN, choosing Withdraw, Deposit or Balance, and collecting cash, receipt and card; everything else, including PIN and account verification, the ATM talking to the bank server, cash counting, the balance update and security checks, is hidden. A user card should describe only the visible side, so line 3 belongs to the machine, not to the customer.",
+   "why_wrong": [
+    "Entering the PIN is something the user visibly does at the keypad; the hidden part is the verification of that PIN, not the act of typing it.",
+    "",
+    "Choosing Withdraw, Deposit or Balance is the user's own action on the menu; it is part of the visible interface, not a hidden decision by the bank.",
+    "Collecting the cash, receipt and card is the final thing the user does at the machine, so it belongs on the card."
+   ],
+   "key": "CSE111-U1-012"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "recall",
+   "q": "When you drive a car, which of the following is HIDDEN from you by abstraction rather than shown?",
+   "options": [
+    "The steering wheel",
+    "The gear lever",
+    "The transmission gear ratios",
+    "The dashboard"
+   ],
+   "correct": 2,
+   "explain": "Driving exposes a small interface: steering wheel, accelerator and brake, gear lever, dashboard. Everything that makes those controls work — engine combustion, fuel injection, transmission gear ratios, braking electronics, the onboard computer — is hidden. Abstraction is exactly this split between what you interact with and what you never need to see.",
+   "why_wrong": [
+    "The steering wheel is part of the visible interface you interact with, not a hidden detail.",
+    "The gear lever is a visible control; the gear ratios it selects are what stay hidden.",
+    "",
+    "The dashboard is one of the four things the driver sees, alongside the steering wheel, pedals and gear lever; it is part of the visible interface, not a hidden detail."
+   ],
+   "key": "CSE111-U1-013"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "recall",
+   "q": "Which benefit of abstraction is described by: other people can use your solution without understanding it fully?",
+   "options": [
+    "Reduces Complexity",
+    "Easier to Share",
+    "Enables Reuse",
+    "Simplifies Complexity"
+   ],
+   "correct": 1,
+   "explain": "Abstraction has three benefits: Reduces Complexity (you interact with a simple model), Easier to Share (others can use your solution without understanding it fully), and Enables Reuse (a well-abstracted tool keeps working even when hidden details change). The phrase without understanding it fully is the Easier to Share benefit — the same reason you can tap an app icon without reading its code.",
+   "why_wrong": [
+    "Reduces Complexity is about you interacting with a simple model instead of every detail, not about other people using your work.",
+    "",
+    "Enables Reuse is about a well-abstracted tool still working when its hidden details change, not about others using it without understanding it.",
+    "Simplifies Complexity is a benefit of pattern recognition (a messy problem becomes a familiar one), not of abstraction."
+   ],
+   "key": "CSE111-U1-014"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "situation",
+   "q": "Ravi is building a library-management app. He splits it into modules for members, books and fines, notices that issuing a book and returning a book follow the same procedure, and then writes numbered steps that record every member's height, favourite colour and shoe size alongside the book ID and due date. Which building block did he skip?",
+   "options": [
+    "Decomposition",
+    "Pattern Recognition",
+    "Abstraction",
+    "Algorithms"
+   ],
+   "correct": 2,
+   "explain": "Abstraction means focusing on what matters and ignoring the rest. A library app needs the member, the book and the due date; height, favourite colour and shoe size are noise that only add work and confusion. Ravi decomposed, spotted a pattern and wrote an algorithm, but he never asked which details actually matter, so his steps carry irrelevant data that a proper abstraction would have dropped.",
+   "why_wrong": [
+    "Ravi did decompose: splitting the app into members, books and fines modules is exactly that step.",
+    "Ravi did recognise a pattern when he noticed that issuing and returning a book share the same procedure.",
+    "",
+    "Ravi did write an algorithm: the numbered steps are the algorithm stage, and the problem is what they include, not that they are missing."
+   ],
+   "key": "CSE111-U1-015"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "recall",
+   "q": "Which option correctly defines an algorithm?",
+   "options": [
+    "A finite, ordered sequence of clear steps that takes an input and produces an output to solve a specific problem",
+    "Any collection of ideas about how a problem could be solved",
+    "A program written in a specific programming language",
+    "A diagram that shows how a problem has been split into parts"
+   ],
+   "correct": 0,
+   "explain": "An algorithm is a finite, ordered sequence of clear steps that turns an input into an output for a specific problem. Three words carry the weight: finite (it ends), ordered (the sequence matters) and clear (no ambiguity). Without a precise set of steps a solution is still just an idea.",
+   "why_wrong": [
+    "",
+    "A loose collection of ideas is exactly what an algorithm is NOT — without precise ordered steps a solution stays an idea.",
+    "Program code is just one way to express an algorithm; the same algorithm can be written in plain English, a flowchart or pseudocode.",
+    "A diagram of the parts of a problem shows decomposition; an algorithm is the ordered steps that solve it."
+   ],
+   "key": "CSE111-U1-016"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "situation",
+   "q": "A student writes the tea-making algorithm as a flowchart while her friend writes the same steps as pseudocode. Which statement is correct?",
+   "options": [
+    "Only the pseudocode version is a real algorithm because it is closer to code",
+    "They are two different algorithms because the forms differ",
+    "They are the same algorithm expressed in different forms; plain English or program code would also be valid",
+    "Neither is a real algorithm until it is written in a programming language"
+   ],
+   "correct": 2,
+   "explain": "An algorithm is the set of steps, not the notation. The same steps can be expressed in plain English, as a flowchart, as pseudocode or as program code — same algorithm, different form. This is also why algorithms are repeatable and shareable: anyone or any machine following the same steps gets the same result, regardless of how the steps were written down.",
+   "why_wrong": [
+    "Pseudocode is not more real than a flowchart; both are valid ways of expressing the same steps.",
+    "Changing the notation does not change the steps, so it does not create a different algorithm.",
+    "",
+    "An algorithm does not need to be code; plain English steps for making tea are already an algorithm if they are precise, ordered and finite."
+   ],
+   "key": "CSE111-U1-017"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "recall",
+   "q": "Put these tea-making steps in the correct order: (P) Add milk and sugar, (Q) Boil water, (R) Steep 3 minutes, (S) Add tea leaves, (T) Serve.",
+   "options": [
+    "Q → S → R → P → T",
+    "Q → R → S → P → T",
+    "S → Q → P → R → T",
+    "Q → S → P → R → T"
+   ],
+   "correct": 0,
+   "explain": "Order matters in an algorithm: boil water, add the tea leaves, steep for 3 minutes, add milk and sugar, then serve. Each step depends on the one before it — you cannot steep leaves that have not been added, and milk goes in after the tea has brewed. A definite order plus a clear stopping point (serve and stop) is what makes this a proper algorithm rather than a vague recipe.",
+   "why_wrong": [
+    "",
+    "Steeping before the tea leaves are added makes no sense; the leaves must go in before the 3-minute steep.",
+    "Adding tea leaves before the water is boiled reverses the first two steps, and milk is added before steeping, which is also wrong.",
+    "Milk and sugar are added after the tea has steeped, not before; this order brews the tea after the milk is already in."
+   ],
+   "key": "CSE111-U1-018"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "recall",
+   "q": "Apply the largest-number algorithm to the list 7, 2, 9, 4, 6: assume the first number is the largest so far, look at the next number, replace the largest if the new one is bigger, and repeat until every number is checked. After the third number has been checked, what is the largest so far?",
+   "options": [
+    "7",
+    "2",
+    "9",
+    "6"
+   ],
+   "correct": 2,
+   "explain": "Trace it step by step: start with largest so far = 7. Next is 2, which is not bigger, so 7 stays. Next is 9, which is bigger, so 9 becomes the new largest — after three numbers the value held is 9, and since 4 and 6 are both smaller it is also the final answer. Tracing an algorithm by hand like this is how you check that its steps are definite and actually work.",
+   "why_wrong": [
+    "7 is only the largest so far after the first number; it is replaced when 9 is checked.",
+    "2 is never the largest so far because it is smaller than 7, so the value is not replaced when it is checked.",
+    "",
+    "6 is the last number in the list; it never becomes the largest because 9 was found earlier and 6 is not bigger."
+   ],
+   "key": "CSE111-U1-019"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "recall",
+   "q": "Which of the following is NOT one of the five traits of a good algorithm?",
+   "options": [
+    "Definiteness",
+    "Finiteness",
+    "Effectiveness",
+    "Reusability"
+   ],
+   "correct": 3,
+   "explain": "The five traits are Input, Output, Definiteness, Finiteness and Effectiveness. Together they guarantee that an algorithm has something to work on, produces something useful, is unambiguous, stops, and can actually be carried out. Reusability sounds right because algorithms are repeatable and shareable, but it is not one of the five named traits — reuse is a benefit of abstraction and pattern recognition.",
+   "why_wrong": [
+    "Definiteness is a genuine trait: every step must be clear and unambiguous.",
+    "Finiteness is a genuine trait: the algorithm must terminate after a finite number of steps.",
+    "Effectiveness is a genuine trait: each step must be simple and practically executable.",
+    ""
+   ],
+   "key": "CSE111-U1-020"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "situation",
+   "q": "A classmate shares a chai recipe for the hostel: heat some water for a while, add tea and wait until it feels ready, then add milk and sugar. Each step is doable and the recipe does end, but two friends following it get completely different results. Which trait of a good algorithm is missing?",
+   "options": [
+    "Finiteness",
+    "Effectiveness",
+    "Definiteness",
+    "Output"
+   ],
+   "correct": 2,
+   "explain": "Steps like some water, for a while and until it feels ready can be interpreted differently by different people, so the recipe lacks definiteness — every step must be clear and unambiguous. That is exactly why two friends end up with different chai. The good version fixes it with 200 ml of water, 1 tea bag and 3 minutes of steeping, leaving nothing to interpretation.",
+   "why_wrong": [
+    "The recipe does end (milk and sugar is the last step), so finiteness is present; the problem is vagueness, not looping forever.",
+    "Every step is realistic to perform — heating water, adding tea — so effectiveness is not what is missing.",
+    "",
+    "The recipe does produce an output (a cup of chai); the issue is that the output differs because the steps are ambiguous."
+   ],
+   "key": "CSE111-U1-021"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "situation",
+   "q": "For a lab exercise, Kabir writes: keep comparing numbers and updating the largest one — don't worry about when to stop. Each comparison is clear and doable. Which trait of a good algorithm does his description lack?",
+   "options": [
+    "Definiteness",
+    "Finiteness",
+    "Input",
+    "Effectiveness"
+   ],
+   "correct": 1,
+   "explain": "Finiteness means the algorithm must terminate after a finite number of steps. Kabir never says when the process ends, so it could continue forever and never deliver a result. A good algorithm guarantees an answer by stopping — for the largest-number problem that means repeat until every number has been checked, which gives a clear stopping point.",
+   "why_wrong": [
+    "The comparison step itself is clear (compare, update if bigger), so definiteness is present; what is missing is the stopping rule.",
+    "",
+    "The numbers being compared are the input, so the Input trait is satisfied.",
+    "Comparing two numbers is simple and practically executable, so effectiveness is fine; the flaw is that the process never ends."
+   ],
+   "key": "CSE111-U1-022"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "situation",
+   "q": "Sameer's chai recipe has three steps: (1) heat some water for a while; (2) wait until it feels ready; (3) keep adjusting the milk and sugar forever. Which step breaks a DIFFERENT trait of a good algorithm from the other two?",
+   "options": [
+    "Step 1, which breaks effectiveness because heating water is not practically doable, while steps 2 and 3 break definiteness",
+    "Step 3, which breaks finiteness because it never stops, while steps 1 and 2 break definiteness by being vague",
+    "Step 2, which breaks output because nothing is produced, while steps 1 and 3 break finiteness",
+    "None of them: all three break only definiteness, since each is vague"
+   ],
+   "correct": 1,
+   "explain": "Steps 1 and 2 are vague: some water, for a while and until it feels ready can each be read differently, so they break definiteness, the trait that demands clear, unambiguous steps. Step 3 has a different flaw: adjusting the milk and sugar forever has no stopping point, so it breaks finiteness, the trait that says an algorithm must terminate after a finite number of steps. The good version fixes both: boil 200 ml of water, steep one tea bag for 3 minutes, add milk and sugar to taste, stir and serve.",
+   "why_wrong": [
+    "Heating water is perfectly doable, so effectiveness is not in question; step 1's problem is that some and a while are vague.",
+    "",
+    "Step 2 is vague rather than outputless, and step 1 does not loop forever; both traits are mislabelled in this option.",
+    "Steps 1 and 2 are indeed vague, but step 3's defining flaw is not vagueness: it is the absence of any stopping point, which is a finiteness problem."
+   ],
+   "key": "CSE111-U1-023"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "situation",
+   "q": "In a mess-management project, one step of Aditi's algorithm reads: count every grain of rice in the store room by hand before lunch is served. The step is stated precisely, the algorithm does stop, and it produces a report. Which trait of a good algorithm does this step violate?",
+   "options": [
+    "Effectiveness",
+    "Definiteness",
+    "Finiteness",
+    "Output"
+   ],
+   "correct": 0,
+   "explain": "Effectiveness requires that every step be simple and practically executable — realistic to perform. Counting every grain by hand before lunch is perfectly clear and would eventually end, but nobody can actually do it, so the algorithm cannot work in practice. A step that cannot really be carried out turns the whole algorithm back into just an idea.",
+   "why_wrong": [
+    "",
+    "The step is stated precisely (every grain, by hand, before lunch), so definiteness is not the problem.",
+    "The algorithm does terminate — the question says it stops — so finiteness is present.",
+    "The algorithm produces a report, so the Output trait is satisfied."
+   ],
+   "key": "CSE111-U1-024"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "situation",
+   "q": "Priya has split her attendance-tracker project into parts, noticed that marking attendance and marking leave follow the same procedure, and decided her program only needs each student's roll number and status, nothing else. She now writes the exact numbered steps the program will follow, from reading the register to printing the summary. Which building block is she working on now?",
+   "options": [
+    "Decomposition",
+    "Pattern Recognition",
+    "Abstraction",
+    "Algorithms"
+   ],
+   "correct": 3,
+   "explain": "Writing the exact, ordered steps that take an input and produce an output is the algorithm stage. It is the concrete plan that comes after decomposing, spotting patterns and abstracting — the point where the idea turns into something a person or machine can actually execute. Priya has already done the first three blocks; the numbered steps are the fourth.",
+   "why_wrong": [
+    "Decomposition was the first thing she did — splitting the project into parts; she has moved past that.",
+    "Pattern recognition was noticing that attendance and leave share a procedure; that step is finished.",
+    "Abstraction was deciding to keep only roll number and status and ignore the rest; that is also done.",
+    ""
+   ],
+   "key": "CSE111-U1-025"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "situation",
+   "q": "Aman's algorithm for a marks calculator reads five marks, adds them, divides by five, and then stops. It never displays, returns or stores the result anywhere. Which trait of a good algorithm is missing?",
+   "options": [
+    "Input",
+    "Finiteness",
+    "Output",
+    "Definiteness"
+   ],
+   "correct": 2,
+   "explain": "A good algorithm must produce at least one defined, useful output. Aman's steps compute the average but never deliver it — nobody can see or use the result, so the work is wasted. Each trait has a job: Input gives the algorithm something to work on, and Output is how it hands back the answer.",
+   "why_wrong": [
+    "The five marks are the input, so the Input trait is satisfied.",
+    "The algorithm stops after dividing, so finiteness is present.",
+    "",
+    "Each step (read, add, divide) is clear and unambiguous, so definiteness is not the issue."
+   ],
+   "key": "CSE111-U1-026"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "situation",
+   "q": "Riya writes an algorithm that prints the numbers 1 to 10 and stops; it takes no input at all. Her friend Dev insists it cannot be a valid algorithm because every algorithm needs an input. Who is right?",
+   "options": [
+    "Dev — an algorithm must have at least one input, just as it must have at least one output",
+    "Riya — the Input trait allows zero or more inputs, so an algorithm with none is fine as long as the other traits hold",
+    "Dev — with no input the algorithm cannot be finite",
+    "Riya — algorithms need neither input nor output"
+   ],
+   "correct": 1,
+   "explain": "The Input trait says an algorithm has zero or more well-defined inputs, so an algorithm with no input is perfectly valid. Output is different: there must be at least one defined, useful output, which Riya's printed numbers provide. Her algorithm is also definite, finite and effective, so it satisfies all five traits.",
+   "why_wrong": [
+    "Input and output are not symmetric: output needs at least one, but input can be zero or more.",
+    "",
+    "Finiteness is about whether the steps terminate, which they do after printing 10; it has nothing to do with the number of inputs.",
+    "Riya is right about input, but this reason is wrong — an algorithm must produce at least one output."
+   ],
+   "key": "CSE111-U1-027"
+  },
+  {
+   "topic": "Computational Thinking",
+   "kind": "situation",
+   "q": "A food delivery app was built as four separate modules by four teams: login and profiles, restaurant listings, cart and payment, order tracking. When customers report being charged twice, the developers find and fix the mistake entirely inside the cart and payment module without touching the others. Which benefit of decomposition does this show?",
+   "options": [
+    "Parallel Work",
+    "Reduces Complexity",
+    "Manageable",
+    "Easier Debugging"
+   ],
+   "correct": 3,
+   "explain": "Because the app was decomposed into independent modules, the double-charge bug was confined to one part — cart and payment — and could be found and fixed there. That isolation is the Easier Debugging benefit of decomposition. Compare it with a single tangled program, where the fault could be anywhere and fixing it could break something else.",
+   "why_wrong": [
+    "Parallel Work is the benefit that let four teams build the modules at the same time; the scenario is about locating a bug afterwards.",
+    "Reduces Complexity is a benefit of abstraction (interacting with a simple model), not one of the three decomposition benefits.",
+    "Manageable refers to small parts feeling less overwhelming to build; the scenario is specifically about a mistake being isolated to one part.",
+    ""
+   ],
+   "key": "CSE111-U1-028"
+  },
+  {
+   "topic": "Operating Systems",
+   "kind": "recall",
+   "q": "Which statement best describes what an operating system is?",
+   "options": [
+    "Software that manages all of a computer's hardware and software resources and acts as the bridge between the user and the machine",
+    "The graphical layer of windows and icons that lets a user click on programs",
+    "A driver program that lets one device, such as a keyboard, communicate with the CPU",
+    "The collection of applications, such as a browser and an editor, that a user installs"
+   ],
+   "correct": 0,
+   "explain": "An operating system is the layer of software that sits between you and the hardware and manages every resource the computer has: CPU time, memory, storage, devices and the programs that want them. Think of an air-traffic controller: the CPU, memory, storage, keyboard and each app are planes wanting the runway at once, and the OS decides who goes when so nothing collides. Everything else it does, from drawing windows to enforcing logins, is part of that one resource-management job.",
+   "why_wrong": [
+    "",
+    "The GUI is only the User Interface function of the OS; the OS also manages processes, memory, files, devices and security underneath it.",
+    "A driver is one small piece the OS uses inside Device Management; it handles a single device, not the whole machine.",
+    "Applications are the programs that run on top of the OS; without the OS underneath them they would each have to talk to the hardware directly."
+   ],
+   "key": "CSE111-U1-029"
+  },
+  {
+   "topic": "Operating Systems",
+   "kind": "recall",
+   "q": "Which of the following is NOT one of the six functions of an operating system?",
+   "options": [
+    "Device Management, talking to printers and disks through drivers",
+    "Application Programming, writing the source code of the apps a user runs",
+    "Memory Management, allocating and freeing RAM",
+    "Security & Access, enforcing logins and permissions"
+   ],
+   "correct": 1,
+   "explain": "The OS has six jobs, and all of them are about managing resources: Process Management, Memory Management, File Management, Device Management, Security & Access, and the User Interface. Writing the applications themselves is the job of developers, not the OS; the OS only loads, schedules and protects those applications once they exist. A good check is to ask whether the activity is about sharing or protecting the machine's resources; if not, it is not an OS function.",
+   "why_wrong": [
+    "Device Management is a real OS function; it uses drivers to communicate with printers, disks and keyboards.",
+    "",
+    "Memory Management is a real OS function; it hands out RAM to processes and takes it back so they do not collide.",
+    "Security & Access is a real OS function; it enforces logins and permissions and keeps users isolated from each other."
+   ],
+   "key": "CSE111-U1-030"
+  },
+  {
+   "topic": "Operating Systems",
+   "kind": "recall",
+   "q": "If a computer had no operating system at all, which of the following would be true?",
+   "options": [
+    "Programs would run faster because there is no extra software layer between them and the hardware",
+    "Every application would have to talk directly to the hardware, with no shared screen, no multitasking and no file system",
+    "The CPU would schedule programs by itself, so only memory management would be lost",
+    "Files and folders would still exist, but there would be no login or permission checks"
+   ],
+   "correct": 1,
+   "explain": "Every convenience you take for granted, such as several apps sharing one screen, running at the same time, and saving data as files, exists because the OS provides it. Take the OS away and each program is on its own: it must drive the hardware directly and cannot share anything with other programs. The OS is what turns a pile of hardware into a machine that many programs can use together.",
+   "why_wrong": [
+    "Removing the OS does not give you speed for free; it removes the multitasking, shared screen and file system that let programs coexist at all.",
+    "",
+    "Deciding which program gets the CPU and for how long is Process Management, an OS job; the CPU does not schedule programs on its own.",
+    "The file system is created and organised by the OS's File Management function, so without an OS there are no files and folders to begin with."
+   ],
+   "key": "CSE111-U1-031"
+  },
+  {
+   "topic": "Operating Systems",
+   "kind": "situation",
+   "q": "A developer is writing the control software for a robot arm on a car factory line. When a sensor detects a hand in the danger zone, the arm must stop within a fixed number of milliseconds, every single time, or someone could be hurt. Which type of OS should the developer build on?",
+   "options": [
+    "Time-Sharing OS",
+    "Real-Time OS (RTOS)",
+    "Batch OS",
+    "Distributed OS"
+   ],
+   "correct": 1,
+   "explain": "A Real-Time OS guarantees a response within a strict time limit, which is exactly what a safety stop needs: being fast on average is not enough, the response must arrive before the deadline every time. Industrial robots, car airbags and pacemakers are the classic RTOS uses, and systems like FreeRTOS, VxWorks and QNX exist for this. Other OS types aim for fairness or throughput, not guaranteed deadlines.",
+   "why_wrong": [
+    "A Time-Sharing OS switches the CPU rapidly between many users' tasks for fairness, but it does not promise any task a response within a fixed deadline.",
+    "",
+    "A Batch OS collects jobs and runs them in groups with no direct interaction, which is the opposite of reacting instantly to a sensor.",
+    "A Distributed OS makes multiple computers look like one system; it is about scale across machines, not about guaranteed response times."
+   ],
+   "key": "CSE111-U1-032"
+  },
+  {
+   "topic": "Operating Systems",
+   "kind": "recall",
+   "q": "UNIX, Multics and Linux are all examples of the same type of operating system. Which type is it, and what defines it?",
+   "options": [
+    "Batch OS: jobs are collected and run in groups with no interaction",
+    "Time-Sharing OS: the CPU rapidly switches between multiple users' tasks",
+    "Distributed OS: multiple computers appear as a single system",
+    "Mobile OS: built for touch, battery life and app ecosystems"
+   ],
+   "correct": 1,
+   "explain": "UNIX, Multics and Linux are the examples of a Time-Sharing OS, whose defining trick is switching the CPU between many users' tasks so quickly that each user feels they have the machine to themselves. This is what makes multi-user servers possible, such as a university server that many students log into at once. Time-sharing is about fairness among interactive users, not about deadlines or bulk jobs.",
+   "why_wrong": [
+    "Batch OS examples are IBM z/OS, OS/360 and Unisys MCP; batch systems have no direct user interaction, unlike a multi-user UNIX or Linux server.",
+    "",
+    "Distributed OS examples are Plan 9, Google Fuchsia and Amoeba, which make many machines appear as a single system; UNIX, Multics and Linux belong to the multi-user time-sharing type instead.",
+    "Mobile OS examples are Android, iOS, HarmonyOS and KaiOS, built for phones and tablets, not for multi-user servers."
+   ],
+   "key": "CSE111-U1-033"
+  },
+  {
+   "topic": "Operating Systems",
+   "kind": "situation",
+   "q": "A student buys a new printer for the hostel room and plugs it into the laptop. The laptop installs a small piece of software, and after that any app can print without knowing anything about the printer's brand. Which OS function is doing this work?",
+   "options": [
+    "File Management",
+    "Process Management",
+    "Device Management",
+    "User Interface"
+   ],
+   "correct": 2,
+   "explain": "Device Management is the OS function that talks to hardware such as printers, disks and keyboards through drivers. The small piece of software that got installed is the printer's driver, and the OS uses it to turn a generic print request from any app into commands that specific printer understands. That is why apps never need to know the printer's brand; they hand the job to the OS.",
+   "why_wrong": [
+    "File Management organises data into files and folders and controls access to them; it does not communicate with hardware like a printer.",
+    "Process Management decides which program gets the CPU and for how long; it has nothing to do with talking to a device.",
+    "",
+    "The User Interface is the GUI or command line you interact with; a print dialog may be drawn by it, but the actual communication with the printer is Device Management."
+   ],
+   "key": "CSE111-U1-034"
+  },
+  {
+   "topic": "Operating Systems",
+   "kind": "situation",
+   "q": "A payments company scans thousands of cheques during the day, then runs them all together as one job after midnight. No operator sits at a terminal while it runs; the results are simply ready in the morning. Which OS type does this workflow match?",
+   "options": [
+    "Batch OS",
+    "Mobile OS",
+    "Time-Sharing OS",
+    "Real-Time OS (RTOS)"
+   ],
+   "correct": 0,
+   "explain": "A Batch OS collects jobs and runs them in groups with no direct user interaction, which is exactly this overnight cheque run. Early bank cheque processing is the textbook example, and systems such as IBM z/OS, OS/360 and Unisys MCP were built for it. The key sign is that nobody interacts with the job while it executes; the work is queued, run together, and collected later.",
+   "why_wrong": [
+    "",
+    "A Mobile OS is built for touch, battery life and app ecosystems on phones and tablets; it is not designed for unattended bulk processing.",
+    "A Time-Sharing OS is for many users interacting with the machine at once; here there is no interaction at all during the run.",
+    "An RTOS guarantees a response within a strict time limit for things like airbags; a job that can wait until morning has no such deadline."
+   ],
+   "key": "CSE111-U1-035"
+  },
+  {
+   "topic": "Operating Systems",
+   "kind": "recall",
+   "q": "A Mobile OS such as Android or iOS is designed primarily around which set of concerns?",
+   "options": [
+    "Guaranteeing a response within a strict time limit",
+    "Touch input, battery life and an app ecosystem",
+    "Rapidly switching the CPU between many users' tasks",
+    "Making several computers appear as one system"
+   ],
+   "correct": 1,
+   "explain": "A Mobile OS is built for the realities of a phone or tablet: fingers instead of a mouse, a battery that must last the day, and an app ecosystem that users live in. Android, iOS, HarmonyOS and KaiOS are all shaped by these three concerns. Each OS type is defined by the problem it is optimised for, and for mobile that problem is a handheld, battery-powered, touch-driven device.",
+   "why_wrong": [
+    "Strict response deadlines are the defining goal of a Real-Time OS like FreeRTOS or QNX, not of a mobile OS.",
+    "",
+    "Rapid switching between many users' tasks defines a Time-Sharing OS such as UNIX or Linux on a multi-user server.",
+    "Making many computers look like one system is the job of a Distributed OS such as Plan 9 or Amoeba."
+   ],
+   "key": "CSE111-U1-036"
+  },
+  {
+   "topic": "Operating Systems",
+   "kind": "situation",
+   "q": "Two students share one laptop for a semester, each with their own login. When one of them tries to open the other's project folder, the laptop refuses. Which OS function is responsible for this behaviour?",
+   "options": [
+    "Security & Access",
+    "Memory Management",
+    "Device Management",
+    "Process Management"
+   ],
+   "correct": 0,
+   "explain": "Security & Access is the OS function that enforces logins, permissions and user isolation. Because each student signs in as a different user, the OS knows who is asking and checks whether that user is allowed to open that folder before letting the request through. Keeping one user's data out of another user's reach is exactly what user isolation means.",
+   "why_wrong": [
+    "",
+    "Memory Management keeps running processes from colliding in RAM; it does not decide which user may open which folder.",
+    "Device Management talks to hardware such as disks and printers through drivers; it is not concerned with who is logged in.",
+    "Process Management schedules programs on the CPU; it does not check a user's permissions on files."
+   ],
+   "key": "CSE111-U1-037"
+  },
+  {
+   "topic": "Operating Systems",
+   "kind": "situation",
+   "q": "A company's search engine runs across thousands of machines in a data centre, yet its developers write and run code as if it were a single giant computer; they never pick which machine a task lands on. Which OS type is providing this illusion?",
+   "options": [
+    "Time-Sharing OS",
+    "Batch OS",
+    "Distributed OS",
+    "Real-Time OS (RTOS)"
+   ],
+   "correct": 2,
+   "explain": "A Distributed OS makes multiple computers appear as a single system, hiding the fact that the work is spread across many machines. That is what lets developers treat a data centre as one computer; Google's data-centre systems are the classic example, alongside systems like Plan 9, Amoeba and Google Fuchsia. The defining feature is many machines, one system view.",
+   "why_wrong": [
+    "A Time-Sharing OS shares one machine's CPU among many users; here it is the opposite, one system built from many machines.",
+    "A Batch OS is about running collected jobs in groups without interaction; it says nothing about spreading a system across machines.",
+    "",
+    "An RTOS is about guaranteeing responses within a strict deadline, as in pacemakers and airbags, not about combining many computers into one."
+   ],
+   "key": "CSE111-U1-038"
+  },
+  {
+   "topic": "Operating Systems",
+   "kind": "recall",
+   "q": "Most of the internet runs on which operating system family, the one used on servers, cloud infrastructure and supercomputers?",
+   "options": [
+    "Windows",
+    "macOS",
+    "Linux",
+    "Android"
+   ],
+   "correct": 2,
+   "explain": "Linux is the OS family behind servers, cloud infrastructure and supercomputers, and most of the internet's services run on it. Each family has a home ground: Windows on personal and office computers, macOS on Apple desktops and laptops for creative work, and Android and iOS on phones and tablets. When you think servers and the cloud, think Linux.",
+   "why_wrong": [
+    "Windows is the family found on personal and office computers, not the one that powers most servers and supercomputers.",
+    "macOS runs on Apple desktops and laptops and is popular for creative work; it is not what data centres and supercomputers run.",
+    "",
+    "Android is a mobile OS for smartphones and tablets, not the OS of servers and cloud infrastructure."
+   ],
+   "key": "CSE111-U1-039"
+  },
+  {
+   "topic": "Operating Systems",
+   "kind": "recall",
+   "q": "You double-click an app's icon. Once the OS has located the program file on disk, which step happens immediately next?",
+   "options": [
+    "The process manager schedules the program on the CPU",
+    "The OS checks whether you have permission to run it",
+    "The memory manager allocates RAM for the program",
+    "The user interface draws the program's window"
+   ],
+   "correct": 2,
+   "explain": "Opening an app follows a fixed order: locate the program file on disk, allocate RAM through the memory manager, schedule it on the CPU through the process manager, check permissions, and finally draw the window. The program has to be loaded into memory before the CPU can be given anything to execute, which is why memory allocation comes right after finding the file. Notice how one simple double-click passes through almost every OS function in turn.",
+   "why_wrong": [
+    "CPU scheduling comes after the program has been placed in RAM; the process manager needs something in memory to run.",
+    "In the sequence, the permission check comes after CPU scheduling, not directly after the file is found.",
+    "",
+    "Drawing the window is the last step; it happens only after memory, CPU and permissions are all handled."
+   ],
+   "key": "CSE111-U1-040"
+  },
+  {
+   "topic": "Linux",
+   "kind": "recall",
+   "q": "In the Linux file system hierarchy, which directory holds system-wide configuration files?",
+   "options": [
+    "/bin",
+    "/etc",
+    "/var",
+    "/usr"
+   ],
+   "correct": 1,
+   "explain": "/etc is where Linux keeps system-wide configuration files — the settings that control how the system and its services behave. Every directory hangs off the single root tree written /, and each top-level folder has one fixed job; knowing those jobs lets you find things quickly on any Linux machine.",
+   "why_wrong": [
+    "/bin holds essential user command binaries — the programs you run, not their configuration.",
+    "",
+    "/var holds logs, caches and other variable data that changes while the system runs.",
+    "/usr holds installed programs and libraries, not configuration files."
+   ],
+   "key": "CSE111-U1-041"
+  },
+  {
+   "topic": "Linux",
+   "kind": "recall",
+   "q": "Which of the following is NOT one of the five navigation commands (the ones you type most)?",
+   "options": [
+    "pwd",
+    "rmdir",
+    "rm",
+    "cd"
+   ],
+   "correct": 2,
+   "explain": "The five navigation commands are pwd, ls, cd, mkdir and rmdir — they are all about where you are and which folders exist. rm belongs to the file management group: it deletes a file. Do not confuse rm (delete a file) with rmdir (remove an empty directory).",
+   "why_wrong": [
+    "pwd (Print Working Directory) is a navigation command — it shows the folder you are currently in.",
+    "rmdir (Remove Directory) is a navigation command — it deletes an empty folder.",
+    "",
+    "cd (Change Directory) is a navigation command — it moves you into another folder."
+   ],
+   "key": "CSE111-U1-042"
+  },
+  {
+   "topic": "Linux",
+   "kind": "recall",
+   "q": "Which command can both move a file to a different folder AND rename it?",
+   "options": [
+    "touch",
+    "chmod",
+    "cp",
+    "mv"
+   ],
+   "correct": 3,
+   "explain": "mv stands for move, but in Linux renaming is just moving a file to a new name, so the same command does both jobs. mv old.txt new.txt renames; mv old.txt labs/ moves. Either way the original disappears from its old name or place.",
+   "why_wrong": [
+    "touch creates an empty file; it cannot move or rename anything.",
+    "chmod changes a file's permissions, not its name or location.",
+    "cp makes a copy — the original stays where it is, so nothing is moved or renamed.",
+    ""
+   ],
+   "key": "CSE111-U1-043"
+  },
+  {
+   "topic": "Linux",
+   "kind": "recall",
+   "q": "Which command-and-purpose pairing is correct?",
+   "options": [
+    "cat → change file permissions",
+    "touch → create an empty file",
+    "chmod → display a file's contents",
+    "ls → change directory"
+   ],
+   "correct": 1,
+   "explain": "touch creates a new, empty file — in the worked session touch app.py notes.txt made two files at once. The other pairings swap purposes around: cat shows contents, chmod sets permissions, and ls lists what is in the current folder. Matching each short command to its one job is the core of using the terminal.",
+   "why_wrong": [
+    "cat displays a file's contents; changing permissions is chmod's job.",
+    "",
+    "chmod changes file permissions; displaying contents is cat's job.",
+    "ls lists the files and folders in the current directory; cd is the command that changes directory."
+   ],
+   "key": "CSE111-U1-044"
+  },
+  {
+   "topic": "Linux",
+   "kind": "recall",
+   "q": "The administrator (root user) has a personal home folder on a Linux system. Where is it?",
+   "options": [
+    "/home",
+    "/bin",
+    "/usr",
+    "/root"
+   ],
+   "correct": 3,
+   "explain": "The root user is the administrator, and its home folder is /root — separate from /home, which holds the personal folders of ordinary users. The two are easy to mix up because of the names: /home is for each regular user's own folder, while /root is the administrator's own folder.",
+   "why_wrong": [
+    "/home contains the personal folders of ordinary users, not the administrator's own folder.",
+    "/bin holds essential user command binaries, not anyone's home folder.",
+    "/usr holds installed programs and libraries, not user home folders.",
+    ""
+   ],
+   "key": "CSE111-U1-045"
+  },
+  {
+   "topic": "Linux",
+   "kind": "recall",
+   "q": "In the worked terminal session the student runs chmod +x app.py. What does this command change?",
+   "options": [
+    "The name of app.py",
+    "The folder app.py is stored in",
+    "The contents of app.py",
+    "The permissions of app.py"
+   ],
+   "correct": 3,
+   "explain": "chmod's one job is to change file permissions. The +x part adds the execute permission, so app.py can be run as a program instead of only being read or edited. The file's content, name and location are untouched.",
+   "why_wrong": [
+    "Renaming is mv's job; chmod leaves the filename alone.",
+    "Moving a file into another folder is also done with mv; chmod does not relocate files.",
+    "chmod does not change what is written inside a file — it changes only the file's permissions, and cat is the command that shows contents.",
+    ""
+   ],
+   "key": "CSE111-U1-046"
+  },
+  {
+   "topic": "Linux",
+   "kind": "situation",
+   "q": "A student's web app on a Linux server keeps crashing at night. Her senior tells her to read the server's log files to find out why. Which directory should she look in first?",
+   "options": [
+    "/etc",
+    "/home",
+    "/var",
+    "/usr"
+   ],
+   "correct": 2,
+   "explain": "Logs are variable data that grows as the system runs, and /var is the directory set aside for logs, caches and other changing data. Configuration lives elsewhere; when you are hunting for what happened over time, /var is the place to start.",
+   "why_wrong": [
+    "/etc stores system-wide configuration files, which tell you how things are set up, not what happened overnight.",
+    "/home holds each user's personal folders, not system logs.",
+    "",
+    "/usr holds installed programs and libraries, which do not change as the app runs."
+   ],
+   "key": "CSE111-U1-047"
+  },
+  {
+   "topic": "Linux",
+   "kind": "situation",
+   "q": "You open a terminal and pwd prints /home/student. You then type mkdir project and press Enter, then cd project and press Enter. What will pwd print now?",
+   "options": [
+    "/home/student",
+    "/project",
+    "/home/student/project",
+    "/home/project"
+   ],
+   "correct": 2,
+   "explain": "mkdir project creates a new folder called project inside the folder you are in, which is /home/student. cd project then moves you into it, so your working directory becomes /home/student/project, and pwd prints exactly that. Paths grow from the root / through every folder you have entered.",
+   "why_wrong": [
+    "/home/student was the folder before cd project — cd changed your location, so pwd no longer prints it.",
+    "/project would sit directly under the root /, but mkdir created project inside /home/student, not at the root.",
+    "",
+    "/home/project skips the student folder — the new folder was created inside /home/student, not inside /home."
+   ],
+   "key": "CSE111-U1-048"
+  },
+  {
+   "topic": "Linux",
+   "kind": "situation",
+   "q": "In a terminal, pwd prints /home/student/project and ls prints nothing because the folder is empty. The student types touch app.py notes.txt and presses Enter, then types ls. What does ls print?",
+   "options": [
+    "app.py notes.txt",
+    "Nothing, because the two files are empty",
+    "/home/student/project",
+    "project"
+   ],
+   "correct": 0,
+   "explain": "touch creates an empty file for each name you give it, so one command makes both app.py and notes.txt inside the current folder. ls lists every file and folder in the current directory regardless of size, so the two new names appear even though both files contain nothing. Creating files and then listing them is the quickest way to check that a command did what you expected.",
+   "why_wrong": [
+    "",
+    "ls lists files by name, not by content, so an empty file still shows up in the listing.",
+    "/home/student/project is what pwd prints; ls shows the contents of the folder, not its path.",
+    "project is the name of the folder you are inside; ls lists what is in it, not the folder itself."
+   ],
+   "key": "CSE111-U1-049"
+  },
+  {
+   "topic": "Linux",
+   "kind": "situation",
+   "q": "A student is in /home/student and wants to create a folder called labs so she can keep her lab files together. Which command should she type?",
+   "options": [
+    "touch labs",
+    "mkdir labs",
+    "cd labs",
+    "ls labs"
+   ],
+   "correct": 1,
+   "explain": "mkdir (Make Directory) creates a new folder with the name you give it, so mkdir labs adds an empty folder called labs inside /home/student. Folders and files are made by different commands: mkdir for a directory, touch for an empty file. Once the folder exists she can move into it with cd labs or copy files into it with cp report.txt labs/.",
+   "why_wrong": [
+    "touch labs creates an empty file named labs, not a folder, so she could not put her lab files inside it.",
+    "",
+    "cd labs only moves into a folder that already exists; it cannot create one.",
+    "ls labs lists what is inside a folder called labs; it does not create the folder."
+   ],
+   "key": "CSE111-U1-050"
+  },
+  {
+   "topic": "Linux",
+   "kind": "situation",
+   "q": "A student made a folder called labs and copied report.txt into it. Later he decides he does not need the folder and types rmdir labs. What happens?",
+   "options": [
+    "The folder and report.txt are both deleted",
+    "The command fails because labs is not empty",
+    "Only report.txt is deleted and labs stays",
+    "labs is moved to /var as a backup"
+   ],
+   "correct": 1,
+   "explain": "rmdir only removes a directory that is EMPTY. Because labs still contains report.txt, rmdir refuses and the folder stays exactly as it was. To get rid of it you would first delete the file inside (rm labs/report.txt) and then run rmdir labs.",
+   "why_wrong": [
+    "rmdir never deletes files inside a folder — it only removes an empty directory.",
+    "",
+    "rmdir does not touch individual files; rm is the command that deletes a file.",
+    "Nothing in Linux moves folders to /var on deletion — /var is where the system keeps logs and caches, and rmdir only removes an empty folder."
+   ],
+   "key": "CSE111-U1-051"
+  },
+  {
+   "topic": "Linux",
+   "kind": "situation",
+   "q": "Before editing her essay, a student wants a second identical file named backup.txt so that essay.txt stays untouched if she makes a mistake. Which command does what she needs?",
+   "options": [
+    "cp essay.txt backup.txt",
+    "mv essay.txt backup.txt",
+    "touch backup.txt",
+    "cat essay.txt backup.txt"
+   ],
+   "correct": 0,
+   "explain": "cp copies a file or folder, leaving the original in place — so after cp essay.txt backup.txt she has two files with the same content. That is exactly what a backup needs: the original stays, and a duplicate appears under the new name.",
+   "why_wrong": [
+    "",
+    "mv would rename essay.txt to backup.txt — she would end up with one file, not two.",
+    "touch creates an empty file called backup.txt; none of the essay's text is in it.",
+    "cat displays a file's contents on the screen; it does not create a copy on disk."
+   ],
+   "key": "CSE111-U1-052"
+  },
+  {
+   "topic": "Linux",
+   "kind": "situation",
+   "q": "A student has a file notes.txt in his project folder and wants to see the text written inside it, right there in the terminal, without changing anything. Which command does that?",
+   "options": [
+    "ls notes.txt",
+    "touch notes.txt",
+    "cat notes.txt",
+    "chmod +x notes.txt"
+   ],
+   "correct": 2,
+   "explain": "cat displays a file's contents on the screen, so cat notes.txt prints the text inside it; in the worked session it showed the line This is my first Linux project!. It only reads the file and leaves it untouched, which makes it the safe way to peek at what a file says. Listing a file's name and showing what is written in it are different jobs handled by different commands.",
+   "why_wrong": [
+    "ls lists file and folder names; ls notes.txt would only confirm the file exists, not show what it says.",
+    "touch creates an empty file; it never displays contents.",
+    "",
+    "chmod changes the file's permissions; it prints nothing from the file."
+   ],
+   "key": "CSE111-U1-053"
+  },
+  {
+   "topic": "Linux",
+   "kind": "situation",
+   "q": "A classmate says learning Linux is a waste of time because almost no real-world systems run it. Which fact best shows he is wrong?",
+   "options": [
+    "Over 96% of the world's top 1 million web servers and nearly all public cloud infrastructure run Linux",
+    "Linux is the only operating system whose file system is arranged as a single tree starting at the root /",
+    "Linux commands such as pwd, ls and cd are shorter to type than the equivalent commands on other systems",
+    "Linux comes pre-installed on most student laptops, so everyone already has it without knowing"
+   ],
+   "correct": 0,
+   "explain": "Linux runs the Internet: most web servers, cloud platforms and supercomputers use it, including over 96% of the world's top 1 million web servers and nearly all public cloud infrastructure. That is also why command-line skills transfer directly to real engineering jobs; the machines you deploy to are almost certainly Linux. Being free and open source is a further advantage, since you can inspect, modify and learn from the actual OS code.",
+   "why_wrong": [
+    "",
+    "The single tree starting at / describes how Linux organises its files; it says nothing about how widely Linux is used.",
+    "Short command names are a convenience, not evidence that real-world systems run Linux.",
+    "Personal laptops are not where Linux dominates; its real-world reach is on web servers, cloud platforms and supercomputers."
+   ],
+   "key": "CSE111-U1-054"
+  },
+  {
+   "topic": "Networks & Devices",
+   "kind": "recall",
+   "q": "Which of the following best describes a computer network?",
+   "options": [
+    "Two or more computers linked together to share data, files and resources such as printers and internet access",
+    "A single smart device that directs traffic between your home and the Internet by finding the best path",
+    "The hardware inside a single device that lets it connect to other devices",
+    "A device that converts signals between an ISP's line and the equipment in a home"
+   ],
+   "correct": 0,
+   "explain": "A network is simply two or more computers linked so they can share things. The three payoffs are sharing resources (one printer or one internet line for everyone), sharing data (files and databases reachable from any connected device) and communicating (email, messaging, video calls). The devices in the other options are parts that can live on a network, but none of them is the network itself.",
+   "why_wrong": [
+    "",
+    "That is a router, the device that directs traffic between different networks; it is one device on a network, not the network itself.",
+    "That is the NIC (Network Interface Card), the component inside one device that connects it to a network.",
+    "That is a modem, one device in the home chain, not a network."
+   ],
+   "key": "CSE111-U1-055"
+  },
+  {
+   "topic": "Networks & Devices",
+   "kind": "recall",
+   "q": "Which option lists the network sizes correctly from smallest to largest?",
+   "options": [
+    "LAN → PAN → MAN → WAN",
+    "PAN → MAN → LAN → WAN",
+    "PAN → LAN → MAN → WAN",
+    "WAN → MAN → LAN → PAN"
+   ],
+   "correct": 2,
+   "explain": "Think about the reach of each network. A PAN covers a few metres around one person, a LAN covers one building or campus, a MAN covers a city, and a WAN covers countries or continents. Putting those reaches in increasing order gives PAN → LAN → MAN → WAN.",
+   "why_wrong": [
+    "A LAN (one building or campus) is bigger than a PAN (a few metres), so LAN cannot come first.",
+    "A MAN spans a city, which is larger than a LAN's single building or campus, so MAN cannot sit before LAN.",
+    "",
+    "This is the right sequence but reversed: it runs from the largest (WAN) down to the smallest (PAN)."
+   ],
+   "key": "CSE111-U1-056"
+  },
+  {
+   "topic": "Networks & Devices",
+   "kind": "recall",
+   "q": "A city's cable-TV distribution system or its traffic-camera network is the classic example of which type of network?",
+   "options": [
+    "LAN",
+    "MAN",
+    "WAN",
+    "PAN"
+   ],
+   "correct": 1,
+   "explain": "A MAN, Metropolitan Area Network, is defined by its reach: it spans a city. Cable-TV and traffic-camera systems are spread across an entire city but do not go beyond it, which is exactly the MAN scale. Matching an example to a size category is always a question of how far the network stretches.",
+   "why_wrong": [
+    "A LAN covers one building or campus, like a college computer lab, far smaller than a whole city.",
+    "",
+    "A WAN spans countries or continents, like the Internet itself; a single city is smaller than that.",
+    "A PAN is a few metres around one person, such as earbuds paired to a phone."
+   ],
+   "key": "CSE111-U1-057"
+  },
+  {
+   "topic": "Networks & Devices",
+   "kind": "recall",
+   "q": "In which topology does each device connect to exactly two neighbours?",
+   "options": [
+    "STAR",
+    "BUS",
+    "RING",
+    "MESH"
+   ],
+   "correct": 2,
+   "explain": "A topology is the physical or logical layout of a network. In a RING, every device has exactly two neighbours, one on each side, so the devices form a closed loop. Remembering the picture of each layout makes these definitions easy to recognise.",
+   "why_wrong": [
+    "In a STAR, every device connects to one central hub or switch, not to two neighbours.",
+    "In a BUS, all devices share a single central cable rather than linking neighbour to neighbour.",
+    "",
+    "In a MESH, devices connect to many or all of the others directly, far more than two."
+   ],
+   "key": "CSE111-U1-058"
+  },
+  {
+   "topic": "Networks & Devices",
+   "kind": "recall",
+   "q": "Which pairing of a topology and its description is correct?",
+   "options": [
+    "STAR — each device connects to exactly two neighbours",
+    "RING — all devices connect to one central hub or switch",
+    "MESH — all devices share a single central cable",
+    "BUS — all devices share a single central cable"
+   ],
+   "correct": 3,
+   "explain": "In a BUS topology, every device taps into one shared central cable that runs past all of them. The other three descriptions belong to different layouts: a central hub or switch is STAR, exactly two neighbours is RING, and direct links to many or all other devices is MESH. Matching each name to its picture is the whole skill here.",
+   "why_wrong": [
+    "Exactly two neighbours describes a RING; a STAR connects every device to one central hub or switch.",
+    "One central hub or switch describes a STAR; a RING links each device to two neighbours in a loop.",
+    "A single shared central cable describes a BUS; a MESH connects devices to many or all others directly.",
+    ""
+   ],
+   "key": "CSE111-U1-059"
+  },
+  {
+   "topic": "Networks & Devices",
+   "kind": "recall",
+   "q": "You type a website's URL into your browser and press Enter. What is the very next thing that happens?",
+   "options": [
+    "Your router sends the request out toward the Internet",
+    "The website's server receives the request",
+    "The page data returns to your screen",
+    "DNS translates the URL into an IP address"
+   ],
+   "correct": 3,
+   "explain": "The journey to a web page has a fixed order: URL typed → DNS translates it to an IP address → your router sends the request out → it crosses the WAN (Internet) → the website's server receives it → the page data comes back to your screen. DNS comes first because the request cannot be sent anywhere until the human-readable name has been turned into a numeric address. The whole round trip crosses PAN, LAN and WAN boundaries in well under a second.",
+   "why_wrong": [
+    "The router sends the request out only after DNS has supplied the IP address to send it to.",
+    "The server receiving the request is a later step, after the request has crossed the Internet.",
+    "The page data returning to your screen is the final step of the sequence.",
+    ""
+   ],
+   "key": "CSE111-U1-060"
+  },
+  {
+   "topic": "Networks & Devices",
+   "kind": "recall",
+   "q": "Which component is the hardware inside a laptop or phone that actually connects that device to a network?",
+   "options": [
+    "Access Point",
+    "Modem",
+    "NIC",
+    "Switch"
+   ],
+   "correct": 2,
+   "explain": "The NIC, Network Interface Card, is the piece of hardware built into a device that gives it a network connection. Any device that joins a network needs one. The other devices listed sit outside the computer and connect networks or other devices together.",
+   "why_wrong": [
+    "An access point is a separate device that lets wireless devices join a wired network; it is not inside the laptop.",
+    "A modem converts signals between your ISP and your network; it sits between the home and the ISP, not inside the device.",
+    "",
+    "A switch is a separate box that connects devices within one network, such as office computers."
+   ],
+   "key": "CSE111-U1-061"
+  },
+  {
+   "topic": "Networks & Devices",
+   "kind": "recall",
+   "q": "Which statement correctly captures the difference between a router and a switch?",
+   "options": [
+    "A router connects devices within one network; a switch directs traffic between different networks",
+    "A router directs traffic between different networks; a switch connects devices within one network",
+    "A router broadcasts data to every device; a switch finds the best path between networks",
+    "A router converts signals from the ISP; a switch lets wireless devices join a wired network"
+   ],
+   "correct": 1,
+   "explain": "The key word for a router is BETWEEN: it directs traffic between different networks, such as your home network and the Internet, and it is smart enough to find the best path. The key word for a switch is WITHIN: it connects devices inside one network, such as the computers in an office, and sends data only where it is needed. Keep 'between' and 'within' straight and you will never mix them up.",
+   "why_wrong": [
+    "This swaps the two roles: it is the switch that works within one network and the router that works between networks.",
+    "",
+    "Broadcasting to every device is what a dumb hub does, and finding the best path is the router's job, so both halves are misattributed.",
+    "Converting ISP signals is the modem's job and admitting wireless devices is the access point's job; neither describes a router or a switch."
+   ],
+   "key": "CSE111-U1-062"
+  },
+  {
+   "topic": "Networks & Devices",
+   "kind": "recall",
+   "q": "Which order correctly shows how a typical home is connected to the Internet?",
+   "options": [
+    "Internet (ISP) → Router / Wi-Fi → Modem → your devices",
+    "Internet (ISP) → Modem → Router / Wi-Fi → your devices",
+    "Modem → Internet (ISP) → Router / Wi-Fi → your devices",
+    "Internet (ISP) → Switch → Modem → your devices"
+   ],
+   "correct": 1,
+   "explain": "The home chain is Internet (ISP) → Modem → Router / Wi-Fi → your devices. The modem sits nearest the ISP because it converts the ISP's signals into something your network can use, and the router sits after it because its job is to share that single connection wirelessly with every device you own. The order follows the direction the signal travels into the home.",
+   "why_wrong": [
+    "This puts the router before the modem, but the modem must come first to convert the ISP's signals before the router can share the connection.",
+    "",
+    "The modem cannot sit before the Internet; it is the device that connects your home to the ISP, so the ISP comes first.",
+    "A switch connects devices within one network and is not part of the basic home chain; the modem is what links to the ISP."
+   ],
+   "key": "CSE111-U1-063"
+  },
+  {
+   "topic": "Networks & Devices",
+   "kind": "situation",
+   "q": "Before her morning run, Priya pairs her Bluetooth earbuds and her smartwatch to the phone in her pocket. All three devices stay within about a metre of each other the whole time. What kind of network has she formed?",
+   "options": [
+    "LAN, because all the devices belong to one person in one place",
+    "MAN, because she will run through several parts of the city",
+    "WAN, because the phone can also reach the Internet",
+    "PAN, because it is a few metres of range linking one person's own devices"
+   ],
+   "correct": 3,
+   "explain": "A Personal Area Network is the smallest size category: a few metres of range connecting you and your own devices. Bluetooth earbuds or a smartwatch paired to a phone is the textbook case. The category depends on the reach of the links between the devices, not on where the person walks or on what else the phone can connect to.",
+   "why_wrong": [
+    "A LAN covers a building or campus, such as a college lab; a metre of Bluetooth range between personal gadgets is much smaller than that.",
+    "A MAN is a city-wide network such as cable-TV or traffic cameras; moving through the city does not change the tiny range of the earbuds-to-phone link.",
+    "A WAN spans countries or continents; the phone's separate Internet access does not make the earbud and watch links a WAN.",
+    ""
+   ],
+   "key": "CSE111-U1-064"
+  },
+  {
+   "topic": "Networks & Devices",
+   "kind": "situation",
+   "q": "Rahul's laptop connects to the hostel Wi-Fi that serves his whole hostel block, and he then starts a video call with his cousin in Canada. Ignoring the call for a moment, the hostel Wi-Fi network itself is best classified as which type?",
+   "options": [
+    "LAN, since it covers one building",
+    "WAN, since the call reaches another continent",
+    "MAN, since the hostel sits inside a city",
+    "PAN, since only his own laptop is connected"
+   ],
+   "correct": 0,
+   "explain": "A Local Area Network covers one building or campus, and a hostel block's Wi-Fi is exactly that, much like a college computer lab. The video call to Canada does travel across a WAN, but that is a different network further along the path. When classifying, look at the reach of the specific network you are asked about.",
+   "why_wrong": [
+    "",
+    "The intercontinental video call crosses a WAN, but the question asks about the hostel Wi-Fi, which only spans one building.",
+    "A MAN spans a whole city; a single hostel block is far smaller than that, even if the campus is in a city.",
+    "A PAN is a few metres linking one person's own devices; a hostel Wi-Fi serves many students across a building."
+   ],
+   "key": "CSE111-U1-065"
+  },
+  {
+   "topic": "Networks & Devices",
+   "kind": "situation",
+   "q": "A ten-person startup sets up its office so that every desktop has its own cable running to a single switch in the corner of the room. No desktop is cabled directly to any other desktop. Which topology have they built?",
+   "options": [
+    "BUS",
+    "STAR",
+    "RING",
+    "MESH"
+   ],
+   "correct": 1,
+   "explain": "When every device connects to one central hub or switch and nowhere else, the layout is a STAR: the switch is the centre and each desktop is a point on the star. The clue is the single central device with one cable per machine. A switch fits naturally at that centre because its job is to connect devices within one network, such as office computers.",
+   "why_wrong": [
+    "A BUS would have all the desktops sharing one central cable, not a separate cable each to a central switch.",
+    "",
+    "A RING would cable each desktop to exactly two neighbouring desktops, but here no desktop connects to another directly.",
+    "A MESH would connect desktops to many or all of the others directly, the opposite of routing everything through one switch."
+   ],
+   "key": "CSE111-U1-066"
+  },
+  {
+   "topic": "Networks & Devices",
+   "kind": "situation",
+   "q": "Kabir types a news site's URL and presses Enter. DNS has already translated the name into an IP address, and his home router has sent the request out across the Internet. What are the remaining two steps, in order, before he sees the article?",
+   "options": [
+    "The website's server receives the request, then the page data returns to his screen",
+    "The page data returns to his screen, then the website's server receives the request",
+    "His router sends the request out a second time, then DNS translates the URL again",
+    "The request crosses back through his LAN, then DNS translates the IP address into a URL"
+   ],
+   "correct": 0,
+   "explain": "The journey to a web page runs in a fixed order: URL typed, DNS translates it to an IP address, the router sends the request out, it travels across the WAN, the website's server receives it, and finally the page data returns to your screen. Once the request is already on the Internet, the only things left are the server receiving it and the data coming back. The whole round trip crosses PAN, LAN and WAN boundaries in well under a second.",
+   "why_wrong": [
+    "",
+    "The page data cannot come back before the server has received the request; receiving comes first and returning comes last.",
+    "The router already sent the request out, and DNS already did its translation at the very start; neither step repeats.",
+    "DNS translates a URL into an IP address at the start of the journey, not an IP address into a URL at the end; what returns is the page data itself."
+   ],
+   "key": "CSE111-U1-067"
+  },
+  {
+   "topic": "Networks & Devices",
+   "kind": "situation",
+   "q": "A coaching centre's 20 computers all hang off one old hub. Whenever a single student starts a large download, every other computer in the room slows to a crawl. Which upgrade directly fixes the cause of the slowdown?",
+   "options": [
+    "Add a second modem so the centre has two ISP connections",
+    "Replace the hub with a router, because routers find the best path",
+    "Add an access point so the computers connect wirelessly instead",
+    "Replace the hub with a switch, because a switch sends data only to the intended device"
+   ],
+   "correct": 3,
+   "explain": "A hub is dumb: it broadcasts every piece of data to every connected device, so 20 computers end up fighting over the same traffic and collisions pile up. A switch is smart: it sends each piece of data only to the device it is meant for, which cuts the traffic and the collisions. Swapping the hub for a switch attacks the exact cause of the problem.",
+   "why_wrong": [
+    "The bottleneck is the hub broadcasting inside the room, not the ISP link, so a second modem changes nothing about the collisions.",
+    "A router directs traffic between different networks; the problem here is inside one network, and a router is not the device for connecting computers within it.",
+    "An access point only lets wireless devices join a wired network; it does nothing about the hub that is still broadcasting every download to all 20 computers.",
+    ""
+   ],
+   "key": "CSE111-U1-068"
+  },
+  {
+   "topic": "Networks & Devices",
+   "kind": "situation",
+   "q": "At home, Neha's laptop and phone can still see each other over the Wi-Fi and share files, but no website loads on any device. She notices that the box the ISP's cable plugs into has gone completely dead. Which device has failed?",
+   "options": [
+    "The modem, which converts signals between the ISP and her home network",
+    "The router, which shares the connection with every device in the home",
+    "The NIC inside her laptop",
+    "The access point, which lets wireless devices join the network"
+   ],
+   "correct": 0,
+   "explain": "The home chain runs Internet (ISP) → Modem → Router / Wi-Fi → your devices. The modem is the piece that connects the home to the ISP by converting signals between the two, so when it dies the outside world disappears while the inside of the home keeps working. Local sharing still working is the clue that the router and the devices are fine.",
+   "why_wrong": [
+    "",
+    "If the router had failed, the laptop and phone could not see each other over Wi-Fi at all; local sharing working shows the router is alive.",
+    "A dead NIC would take only the laptop offline, but here every device has lost the Internet while the laptop still shares files locally.",
+    "The wireless devices are clearly still joined to the network since they can share files, so the access point role is working."
+   ],
+   "key": "CSE111-U1-069"
+  },
+  {
+   "topic": "Networks & Devices",
+   "kind": "situation",
+   "q": "A small business has a wired office network: every desktop is cabled to a switch. New staff arrive with laptops and phones that have no Ethernet port and want to join the same network without cables. Which device should the business add?",
+   "options": [
+    "A modem",
+    "A hub",
+    "An access point",
+    "Another switch"
+   ],
+   "correct": 2,
+   "explain": "An access point does exactly one job: it lets wireless devices join a wired network. Plugging one into the existing switch gives the laptops and phones a way onto the same office network the desktops already use. The other devices either work only with cables or do a completely different job.",
+   "why_wrong": [
+    "A modem converts signals between the ISP and the network; it does not give wireless devices a way onto the office LAN.",
+    "A hub is an old-style device that connects cabled devices and broadcasts to all of them; it does not add wireless access.",
+    "",
+    "A second switch just adds more wired ports; the laptops and phones have no port to plug into."
+   ],
+   "key": "CSE111-U1-070"
+  },
+  {
+   "topic": "Virtualization",
+   "kind": "recall",
+   "q": "Which of these correctly describes a hypervisor?",
+   "options": [
+    "A software-based machine with its own virtual CPU, memory, disk and operating system",
+    "An operating-system install file (ISO) that is attached so a new machine can boot and install",
+    "Software that lets one physical computer run several separate, independent virtual computers at the same time",
+    "A saved record of a machine's exact state that can be returned to later"
+   ],
+   "correct": 2,
+   "explain": "A hypervisor is the layer of software that sits on a physical computer and carves it into several independent virtual computers that all run at once. It is what makes one machine able to host Windows, Linux and more side by side, keeps a crash in one from touching the others, and lets a server's full capacity be used. The VMs are what the hypervisor builds; the hypervisor itself is the builder.",
+   "why_wrong": [
+    "That is a virtual machine, the 'computer inside a computer' that a hypervisor builds, not the hypervisor itself.",
+    "That is an ISO, the OS install file you attach to a new VM so it can boot and install its operating system.",
+    "",
+    "That is a snapshot, one of the VM management actions; it saves a VM's state but does not run anything."
+   ],
+   "key": "CSE111-U1-071"
+  },
+  {
+   "topic": "Virtualization",
+   "kind": "recall",
+   "q": "What is the fundamental difference between a Type 1 and a Type 2 hypervisor?",
+   "options": [
+    "Type 1 runs directly on the hardware with no host OS; Type 2 runs as an application on top of an existing OS",
+    "Type 1 runs as an application on top of an existing OS; Type 2 runs directly on the hardware with no host OS",
+    "Type 1 can run only one guest OS at a time; Type 2 can run several guests side by side",
+    "Type 1 is used only for personal virtualisation; Type 2 is used only in data centres"
+   ],
+   "correct": 0,
+   "explain": "A Type 1, or bare-metal, hypervisor is installed straight onto the physical machine and needs no operating system underneath it, which is why it is faster and is what data centres use. A Type 2, or hosted, hypervisor is just another program you install on the OS you already have, which makes it simpler to set up and ideal for personal use. The question to ask is always: what sits directly beneath the hypervisor, the hardware or an operating system?",
+   "why_wrong": [
+    "",
+    "This swaps the two: bare-metal on the hardware is Type 1, and the hosted application on top of an OS is Type 2.",
+    "Both types let one physical computer run several separate guest OSes at the same time; running many VMs is the whole point of any hypervisor, not what separates the types.",
+    "This reverses where they are used, and usage is a consequence rather than the definition: bare-metal Type 1 is the data-centre choice and hosted Type 2 is the personal-use choice."
+   ],
+   "key": "CSE111-U1-072"
+  },
+  {
+   "topic": "Virtualization",
+   "kind": "recall",
+   "q": "Which type of hypervisor is faster, and what is the reason?",
+   "options": [
+    "Type 2, because the host OS underneath it handles the hardware more efficiently",
+    "Type 1, because it runs directly on the hardware with no host OS in between",
+    "Type 2, because it is simpler to set up",
+    "They are equally fast, because both create virtual CPUs, memory and disks for their guests"
+   ],
+   "correct": 1,
+   "explain": "A Type 1 hypervisor sits directly on the physical hardware, so a guest VM's work reaches the CPU, memory and disk without passing through a separate host operating system first. That missing layer is what makes bare-metal hypervisors faster, and it is why data centres, where performance matters most, run on Type 1. A Type 2 hypervisor pays the price of being just an application on top of another OS.",
+   "why_wrong": [
+    "The host OS under a Type 2 hypervisor is an extra layer that work must pass through, not a shortcut; it is the reason Type 2 is the slower type.",
+    "",
+    "Type 2 is indeed simpler to set up, but ease of installation is a convenience benefit, not a speed benefit; it is still the slower of the two.",
+    "Both types do build VMs with virtual CPU, memory and disk, but the bare-metal type is faster because nothing sits between it and the hardware."
+   ],
+   "key": "CSE111-U1-073"
+  },
+  {
+   "topic": "Virtualization",
+   "kind": "recall",
+   "q": "Which of these lists contains ONLY Type 1 (bare-metal) hypervisors?",
+   "options": [
+    "VMware ESXi, Microsoft Hyper-V, KVM",
+    "Oracle VirtualBox, VMware Workstation, Parallels Desktop",
+    "Microsoft Hyper-V, KVM, VMware Workstation",
+    "Citrix Hypervisor (XenServer), VMware ESXi, VMware Fusion"
+   ],
+   "correct": 0,
+   "explain": "The four bare-metal hypervisors are VMware ESXi, Microsoft Hyper-V, Citrix Hypervisor (XenServer) and KVM; all of them install directly onto server hardware and are the ones found in data centres. The hosted products, Oracle VirtualBox, VMware Workstation, VMware Fusion and Parallels Desktop, are applications you install on top of an existing OS for personal use. Any list that mixes in one of those hosted products is not a pure Type 1 list.",
+   "why_wrong": [
+    "",
+    "All three of these are Type 2 hosted hypervisors that run as applications on top of an existing OS.",
+    "Microsoft Hyper-V and KVM are Type 1, but VMware Workstation is a hosted Type 2 product, so the list is mixed.",
+    "Citrix Hypervisor (XenServer) and VMware ESXi are Type 1, but VMware Fusion is the hosted Type 2 product for the Mac, so the list is mixed."
+   ],
+   "key": "CSE111-U1-074"
+  },
+  {
+   "topic": "Virtualization",
+   "kind": "recall",
+   "q": "'It uses a physical server's full capacity instead of wasting it.' Which of the three benefits of a hypervisor is being described?",
+   "options": [
+    "Safe Isolation",
+    "Better Utilisation",
+    "One Machine, Many OSes",
+    "Server Consolidation"
+   ],
+   "correct": 1,
+   "explain": "Better Utilisation is the benefit that a hypervisor lets a physical server be kept busy by several VMs instead of running one lightly loaded job. Hardware that used to sit idle now does useful work across many guests. It is the reason virtualisation saves money on hardware and energy.",
+   "why_wrong": [
+    "Safe Isolation is about a crash in one VM not affecting the others; it does not describe how much of the hardware is used.",
+    "",
+    "One Machine, Many OSes is the benefit of running Windows, Linux and more on the same hardware; the quote is about capacity, not about which OSes can run.",
+    "Server Consolidation is a company use-case (10 physical servers become 1 running 10 VMs) that builds on this benefit; it is not the name of the benefit itself."
+   ],
+   "key": "CSE111-U1-075"
+  },
+  {
+   "topic": "Virtualization",
+   "kind": "recall",
+   "q": "These are the steps for creating a VM, but shuffled: (1) attach an OS install file (ISO); (2) allocate RAM and CPU cores; (3) click New Virtual Machine in the hypervisor; (4) create a virtual hard disk; (5) boot up and install the OS. Which is the correct order?",
+   "options": [
+    "3 → 1 → 2 → 4 → 5",
+    "2 → 3 → 4 → 1 → 5",
+    "3 → 4 → 2 → 5 → 1",
+    "3 → 2 → 4 → 1 → 5"
+   ],
+   "correct": 3,
+   "explain": "You first tell the hypervisor you want a new VM, then give it the resources it needs: processor and memory first, then a virtual disk to install onto. Only once the empty machine exists do you attach the ISO, which is the install media, and boot from it to run the OS installer. Think of it as build the hardware, insert the disc, switch on.",
+   "why_wrong": [
+    "This attaches the ISO before the VM has any RAM, CPU or disk assigned; the install media is attached after the empty machine has been given its resources.",
+    "You cannot allocate RAM and CPU cores before clicking New Virtual Machine, because there is no VM yet to allocate them to.",
+    "This boots and installs the OS before the ISO is attached, but the ISO is the install file the VM boots from, so it must come first; it also creates the disk before assigning RAM and cores.",
+    ""
+   ],
+   "key": "CSE111-U1-076"
+  },
+  {
+   "topic": "Virtualization",
+   "kind": "recall",
+   "q": "Which of the following is NOT one of the three reasons given for why companies use hypervisors?",
+   "options": [
+    "Server Consolidation",
+    "Safe Testing",
+    "Learning Linux safely by practising terminal commands in a VM",
+    "Fast Disaster Recovery"
+   ],
+   "correct": 2,
+   "explain": "The three company reasons are Server Consolidation (10 servers become 1), Safe Testing (try risky updates on a VM, not the real system) and Fast Disaster Recovery (restore a crashed VM from a snapshot in minutes). Learning Linux safely is a real use of VMs, but it belongs to the list of what students and developers use VMs for, alongside testing code across OSes and running isolated experiments. Keep the two lists separate: business reasons versus student and developer uses.",
+   "why_wrong": [
+    "Server Consolidation is one of the three company reasons: 10 physical servers become 1 powerful server running 10 VMs.",
+    "Safe Testing is one of the three company reasons: risky updates or new software are tried on a VM without touching the real system.",
+    "",
+    "Fast Disaster Recovery is one of the three company reasons: a crashed VM is restored from a snapshot in minutes, not days."
+   ],
+   "key": "CSE111-U1-077"
+  },
+  {
+   "topic": "Virtualization",
+   "kind": "situation",
+   "q": "Rohan runs three VMs on his laptop under one hypervisor: Ubuntu for coding, Windows for a college app, and a scratch VM for experiments. During an update the Windows VM freezes and crashes completely, yet the Ubuntu and scratch VMs keep running with no effect. Which hypervisor benefit does this show?",
+   "options": [
+    "Better Utilisation",
+    "Safe Isolation",
+    "Fast Disaster Recovery",
+    "One Machine, Many OSes"
+   ],
+   "correct": 1,
+   "explain": "Safe Isolation means each VM is walled off from the others, so a crash inside one VM stays inside that VM. The hypervisor keeps every guest separate and independent, which is exactly why the Ubuntu and scratch machines never noticed the Windows failure. This is one of the three headline benefits of running a hypervisor.",
+   "why_wrong": [
+    "Better Utilisation is about using a server's full capacity instead of wasting it; it says nothing about what happens when a VM crashes.",
+    "",
+    "Fast Disaster Recovery is the company use-case of restoring a crashed VM from a snapshot in minutes; the scenario is about the other VMs surviving, not about restoring the crashed one.",
+    "One Machine, Many OSes is the benefit that Windows and Ubuntu can share one laptop at all; the point here is that the crash did not spread, which is isolation."
+   ],
+   "key": "CSE111-U1-078"
+  },
+  {
+   "topic": "Virtualization",
+   "kind": "situation",
+   "q": "Priya installs VirtualBox on her laptop, downloads an Ubuntu Server ISO and installs it inside a new VM. In virtualisation terms, what are the laptop and the Ubuntu Server running inside the VM called, respectively?",
+   "options": [
+    "Host and guest",
+    "Guest and host",
+    "Hypervisor and host",
+    "Host and hypervisor"
+   ],
+   "correct": 0,
+   "explain": "The physical machine that provides the real CPU, RAM and disk is the host. Each operating system running inside a VM on top of the hypervisor is a guest. The stack is always physical host, then hypervisor, then guest OSes, so the laptop is the host and Ubuntu Server is a guest.",
+   "why_wrong": [
+    "",
+    "This reverses the roles: the guest is the OS living inside the VM, not the physical laptop that provides the hardware.",
+    "The hypervisor is VirtualBox itself, the software layer between host and guests; neither the laptop nor Ubuntu Server is the hypervisor.",
+    "The laptop is indeed the host, but Ubuntu Server is a guest OS running inside a VM, not the hypervisor that runs it."
+   ],
+   "key": "CSE111-U1-079"
+  },
+  {
+   "topic": "Virtualization",
+   "kind": "situation",
+   "q": "Sana has a Windows laptop and wants to try Linux for her programming course, but she cannot afford to lose Windows or any of her files. Which kind of hypervisor should she use, and why?",
+   "options": [
+    "A Type 1 bare-metal hypervisor such as VMware ESXi, because it is faster",
+    "A Type 2 hosted hypervisor such as Oracle VirtualBox or VMware Workstation, because it runs on top of Windows and lets Linux run as a VM without deleting or replacing Windows",
+    "A Type 1 hypervisor such as KVM, because a Linux hypervisor is needed to run Linux guests",
+    "No hypervisor is needed; she must erase Windows and install Linux in its place"
+   ],
+   "correct": 1,
+   "explain": "A hosted (Type 2) hypervisor is installed on Windows like any other application, and Linux then runs inside a virtual machine on top of it. Windows stays exactly as it is, her files are untouched, and she can delete the Linux VM at any time with no risk to the real machine. This is precisely the personal-use case that VirtualBox and VMware Workstation are built for.",
+   "why_wrong": [
+    "A bare-metal hypervisor runs directly on the hardware with no host OS, so installing ESXi would mean replacing Windows rather than keeping it; speed is not the concern here.",
+    "",
+    "KVM is a Type 1 bare-metal hypervisor used in data centres, and a hypervisor of either type can run Linux guests; what Sana needs is one that runs on top of her existing Windows.",
+    "That is exactly what she wants to avoid; a hosted hypervisor gives her Linux as a VM while Windows stays intact."
+   ],
+   "key": "CSE111-U1-080"
+  },
+  {
+   "topic": "Virtualization",
+   "kind": "situation",
+   "q": "A cloud provider is building a new data centre and needs each server to run as many customer VMs as possible with the highest performance. The team is deciding which hypervisor to install on the bare servers. Which choice fits, and why?",
+   "options": [
+    "Oracle VirtualBox, because it is the simplest to set up",
+    "Parallels Desktop, because it supports many guest OSes side by side",
+    "A Type 1 bare-metal hypervisor such as VMware ESXi, Microsoft Hyper-V or KVM, because it runs directly on the hardware with no host OS and is faster",
+    "A Type 2 hosted hypervisor, because a host OS underneath makes each server more reliable"
+   ],
+   "correct": 2,
+   "explain": "Data centres run Type 1 hypervisors: they are installed straight onto the server hardware, need no operating system underneath, and are therefore faster than hosted products. That performance is what lets one powerful server carry many VMs efficiently, which is the model AWS, Azure and Google Cloud run at massive scale. VMware ESXi, Microsoft Hyper-V, Citrix Hypervisor (XenServer) and KVM are the bare-metal options.",
+   "why_wrong": [
+    "VirtualBox is a hosted Type 2 product meant for personal use; simple setup does not make up for needing a host OS underneath it on every server.",
+    "Parallels Desktop is a hosted Type 2 hypervisor for personal use; every hypervisor supports many guests, so that is not a reason to pick it for a data centre.",
+    "",
+    "A host OS underneath is an extra layer that slows a hosted hypervisor down; it is the reason Type 2 is used for personal virtualisation rather than in data centres."
+   ],
+   "key": "CSE111-U1-081"
+  },
+  {
+   "topic": "Virtualization",
+   "kind": "situation",
+   "q": "Aditya uses a MacBook for college and wants to run Windows for one course tool while keeping macOS as his everyday system. Of the hypervisors covered, which product fits, and what type is it?",
+   "options": [
+    "VMware ESXi, a Type 1 bare-metal hypervisor",
+    "VMware Fusion, a Type 2 hosted hypervisor",
+    "VMware Fusion, a Type 1 bare-metal hypervisor",
+    "KVM, a Type 2 hosted hypervisor"
+   ],
+   "correct": 1,
+   "explain": "VMware Fusion is the hosted hypervisor listed for the Mac: it installs as an application on macOS and runs Windows inside a VM alongside it, so macOS stays the everyday system. Because it runs on top of an existing OS it is Type 2, the type built for personal virtualisation. Its bare-metal sibling ESXi would take over the whole machine instead of living inside macOS.",
+   "why_wrong": [
+    "ESXi is a bare-metal hypervisor that runs directly on the hardware with no host OS, so it would replace macOS rather than run beside it; it belongs in a data centre.",
+    "",
+    "Fusion is the right product, but it is hosted on top of macOS, which makes it Type 2, not bare-metal Type 1.",
+    "KVM is a Type 1 bare-metal hypervisor used in data centres, not a hosted Mac application, and the type given here is wrong as well."
+   ],
+   "key": "CSE111-U1-082"
+  },
+  {
+   "topic": "Virtualization",
+   "kind": "situation",
+   "q": "In a lab session, Karan reads that VMware makes ESXi, Workstation and Fusion, and concludes that all three must be the same type of hypervisor. Which statement is correct?",
+   "options": [
+    "All three are Type 1, because VMware is a data-centre company",
+    "All three are Type 2, because they are all installed as software",
+    "ESXi is Type 1 (bare-metal); Workstation and Fusion are Type 2 (hosted)",
+    "ESXi and Workstation are Type 1; only Fusion is Type 2 because it runs on a Mac"
+   ],
+   "correct": 2,
+   "explain": "The type is decided by what the hypervisor runs on, not by who makes it. VMware ESXi installs directly on server hardware with no host OS, so it is bare-metal Type 1 and belongs in data centres. VMware Workstation and VMware Fusion (the Mac version) both run as applications on top of an existing OS, so both are hosted Type 2 products for personal use.",
+   "why_wrong": [
+    "ESXi is indeed a data-centre bare-metal product, but Workstation and Fusion are hosted applications that run on top of an existing OS, which makes them Type 2.",
+    "Every hypervisor is software; the distinction is whether it runs on bare hardware (ESXi) or as an app on an existing OS (Workstation, Fusion), so they are not all Type 2.",
+    "",
+    "Workstation runs on top of an existing OS just as Fusion does; running on a Mac is not what makes Fusion Type 2, being hosted on an OS is, and Workstation shares that."
+   ],
+   "key": "CSE111-U1-083"
+  },
+  {
+   "topic": "Virtualization",
+   "kind": "situation",
+   "q": "Arjun found a 'free video converter' on a random forum and wants to try it inside his Ubuntu VM. He is worried it might be malware, and he wants to be able to put the VM back exactly as it is right now in a moment if the app causes trouble. What should he do before running it?",
+   "options": [
+    "Stop the VM cleanly, then start it again before installing the app",
+    "Clone the VM so a second full copy exists on disk",
+    "Take a snapshot of the VM",
+    "Delete the VM and create a fresh one after the test"
+   ],
+   "correct": 2,
+   "explain": "A snapshot saves the VM's exact current state so you can return to it later. If the converter breaks something, installs malware or crashes the system, Arjun simply restores the snapshot and the VM is back to the working state it had before, with his real laptop never touched. Snapshot first, experiment second is the habit to build before trusting any unknown software.",
+   "why_wrong": [
+    "Stop and Start only shut the VM down and boot it again; they save no restore point, so there would be nothing to roll back to.",
+    "Clone makes an identical second copy of the whole VM; it does not give the original VM a saved state to return to, which is exactly what a snapshot does.",
+    "",
+    "Delete permanently removes the VM and frees its resources; doing it afterwards throws away his whole setup instead of returning it to the state it had before the test."
+   ],
+   "key": "CSE111-U1-084"
+  },
+  {
+   "topic": "Virtualization",
+   "kind": "situation",
+   "q": "Meera has spent a week setting up a Linux VM with every compiler, library and tool her group project needs. Her teammate Dev wants an exactly identical VM on his own laptop so they work in the same environment. Which VM management action gives Meera what she needs to hand over?",
+   "options": [
+    "Clone",
+    "Snapshot",
+    "Start",
+    "Stop"
+   ],
+   "correct": 0,
+   "explain": "Clone makes an identical copy of the whole VM, its virtual disk, settings and everything installed on it, as a separate machine. That copy can be given to Dev and run on his laptop while Meera keeps her original, so both have the same environment. Cloning is how you duplicate a VM; the other actions only change the state of the one VM you already have.",
+   "why_wrong": [
+    "",
+    "A snapshot saves the exact state of the same VM so Meera can return to it later; it is a restore point, not a separate copy she can give to someone else.",
+    "Start only boots the VM up from where it left off; it creates nothing new.",
+    "Stop shuts the VM down cleanly; it does not produce a second copy of anything."
+   ],
+   "key": "CSE111-U1-085"
+  },
+  {
+   "topic": "Virtualization",
+   "kind": "situation",
+   "q": "A logistics company owns 10 physical servers. Each runs a single application and sits mostly idle, yet each needs its own power, cooling and space. The IT lead proposes replacing all of them with one powerful server running 10 VMs. Which reason for using hypervisors is this, and what is the payoff?",
+   "options": [
+    "Safe Testing — risky updates can be tried without touching the real system",
+    "Server Consolidation — huge savings in cost and energy",
+    "Fast Disaster Recovery — a crashed VM is restored from a snapshot in minutes",
+    "Safe Isolation — if one VM crashes the others keep running"
+   ],
+   "correct": 1,
+   "explain": "Server Consolidation is exactly this move: many under-used physical servers become one powerful machine running the same workloads as VMs. Because the hypervisor lets that one server use its full capacity, the company pays for and powers one box instead of ten. That is where the large cost and energy savings come from.",
+   "why_wrong": [
+    "Safe Testing is about trying risky updates or new software in a VM without touching the real system; nothing here is being tested.",
+    "",
+    "Fast Disaster Recovery is about restoring a crashed VM from a snapshot in minutes; no server has crashed in this scenario, the problem is idle hardware.",
+    "Safe Isolation is a benefit that will come along with the move, but the reason for doing it is to replace 10 idle servers with 1, which is consolidation."
+   ],
+   "key": "CSE111-U1-086"
+  },
+  {
+   "topic": "Cloud Computing",
+   "kind": "recall",
+   "q": "Cloud computing is often compared to using electricity from the grid rather than running your own generator. What does this analogy say about how cloud computing works?",
+   "options": [
+    "You buy your own servers once, and the cloud provider then supplies only the electricity to keep them running.",
+    "The provider ships dedicated hardware to your building, which you own and operate yourself.",
+    "Instead of buying and maintaining your own servers, you rent computing power, storage and software over the Internet and pay for what you use.",
+    "You install and manage the hypervisor yourself, and the provider only hosts the storage for your virtual machines."
+   ],
+   "correct": 2,
+   "explain": "Nobody builds a power plant to run a fridge; you plug in and pay for the units you consume. Cloud computing works the same way: the provider owns and runs the servers, storage and software, and you rent them over the Internet and pay for what you actually use. That is what removes the cost and effort of buying and maintaining your own machines.",
+   "why_wrong": [
+    "Buying your own servers is the on-premises 'generator' model the analogy argues against; in the cloud you rent the computing capacity itself, not just the power to run hardware you own.",
+    "Dedicated hardware that you own and run in your own building is on-premises computing, the opposite of plugging into a shared utility.",
+    "",
+    "Cloud providers run millions of hypervisor-managed VMs in their own data centres; installing and managing the hypervisor is the provider's job, not yours."
+   ],
+   "key": "CSE111-U1-087"
+  },
+  {
+   "topic": "Cloud Computing",
+   "kind": "recall",
+   "q": "Which of the following is NOT one of the five NIST characteristics that make a service genuinely 'cloud'?",
+   "options": [
+    "Resource Pooling",
+    "Virtualisation",
+    "Measured Service",
+    "Broad Network Access"
+   ],
+   "correct": 1,
+   "explain": "The five NIST characteristics are On-Demand Self-Service, Broad Network Access, Resource Pooling, Rapid Elasticity and Measured Service. Virtualisation is the technology the cloud is built on, with providers running millions of hypervisor-managed VMs across giant data centres, but it is the foundation underneath the service, not one of the five traits used to judge whether a service is truly cloud.",
+   "why_wrong": [
+    "Resource Pooling is one of the five NIST characteristics.",
+    "",
+    "Measured Service is one of the five NIST characteristics; it is why a shopping site that scales up for a sale pays only for what it actually used.",
+    "Broad Network Access is one of the five NIST characteristics."
+   ],
+   "key": "CSE111-U1-088"
+  },
+  {
+   "topic": "Cloud Computing",
+   "kind": "recall",
+   "q": "In the 'Pizza as a Service' analogy, which service model corresponds to take-and-bake pizza?",
+   "options": [
+    "SaaS",
+    "PaaS",
+    "On-Premises",
+    "IaaS"
+   ],
+   "correct": 3,
+   "explain": "With take-and-bake pizza someone else prepares the base, but you still have to bake it and finish it yourself. That matches IaaS: the provider supplies the servers, storage, networking and virtualisation, and you install the operating system, runtime and applications on top. The more the provider does for you, the further you move along the analogy toward dining at a restaurant.",
+   "why_wrong": [
+    "SaaS is dining at a restaurant: the provider manages everything and you simply use the finished app.",
+    "PaaS is pizza delivery: the provider also manages the OS and runtime, and you only add your code.",
+    "On-Premises is making pizza at home: you buy the ingredients, own the oven and do everything yourself.",
+    ""
+   ],
+   "key": "CSE111-U1-089"
+  },
+  {
+   "topic": "Cloud Computing",
+   "kind": "recall",
+   "q": "Under the IaaS model, which of these layers is managed by the provider rather than by you?",
+   "options": [
+    "Runtime",
+    "Virtualisation",
+    "Middleware",
+    "Operating System"
+   ],
+   "correct": 1,
+   "explain": "In IaaS the provider takes care of the bottom four layers: virtualisation, servers, storage and networking. Everything above that, meaning the operating system, middleware, runtime, data and applications, is yours to install and maintain. Responsibility shifts further toward the provider only as you move up to PaaS and SaaS.",
+   "why_wrong": [
+    "Runtime is managed by you under IaaS; it becomes the provider's responsibility only from PaaS upward.",
+    "",
+    "Middleware is managed by you under IaaS; the provider takes it over only in PaaS and SaaS.",
+    "The operating system is managed by you under IaaS, which is why the take-and-bake analogy says you install the OS and apps yourself."
+   ],
+   "key": "CSE111-U1-090"
+  },
+  {
+   "topic": "Cloud Computing",
+   "kind": "recall",
+   "q": "A team migrates from IaaS to PaaS. Which one of these layers stops being their responsibility and becomes the provider's?",
+   "options": [
+    "Applications",
+    "Data",
+    "Storage & Networking",
+    "Runtime"
+   ],
+   "correct": 3,
+   "explain": "Moving from IaaS to PaaS hands three layers to the provider: the operating system, middleware and runtime. Applications and data stay with you in both models, and storage and networking were already the provider's under IaaS. That is why PaaS is 'pizza delivery': the base and the oven are handled, you only add your code.",
+   "why_wrong": [
+    "Applications are managed by you under both IaaS and PaaS; only SaaS hands them to the provider.",
+    "Data is managed by you under both IaaS and PaaS; only SaaS hands it to the provider.",
+    "Storage and networking were already the provider's responsibility under IaaS, so nothing changes for them in the move.",
+    ""
+   ],
+   "key": "CSE111-U1-091"
+  },
+  {
+   "topic": "Cloud Computing",
+   "kind": "recall",
+   "q": "Which statement about the cloud infrastructure market (Q1 2026, Synergy Research) is correct?",
+   "options": [
+    "Azure is the fastest-growing of the Big Three.",
+    "Google Cloud launched first and still leads the market.",
+    "AWS launched first, in 2006, and still leads the market.",
+    "The three largest providers together run less than half of the world's cloud infrastructure."
+   ],
+   "correct": 2,
+   "explain": "Amazon Web Services was the first of the big providers to launch, back in 2006, and it still holds the largest share. Just three companies run over 60% of the world's cloud infrastructure. Each of the three has its own profile: AWS leads, Azure's strength is its deep ties to enterprise Microsoft tools, and Google Cloud is the fastest-growing.",
+   "why_wrong": [
+    "Google Cloud, not Azure, is the fastest-growing of the Big Three; Azure's distinguishing strength is its deep ties to enterprise Microsoft tools.",
+    "AWS, not Google Cloud, launched first and still leads; Google Cloud is the fastest-growing, not the largest.",
+    "",
+    "Just three companies run over 60% of the world's cloud infrastructure, well over half."
+   ],
+   "key": "CSE111-U1-092"
+  },
+  {
+   "topic": "Cloud Computing",
+   "kind": "situation",
+   "q": "A university's exam-results portal gets almost no traffic all year, then millions of hits on results day. Hosted on a cloud provider, it automatically adds servers as the load spikes, drops them again by evening, and the month's bill reflects only the hours those extra servers actually ran. Which two NIST characteristics does this story show?",
+   "options": [
+    "Resource Pooling and Broad Network Access",
+    "On-Demand Self-Service and Resource Pooling",
+    "Rapid Elasticity and Broad Network Access",
+    "Rapid Elasticity and Measured Service"
+   ],
+   "correct": 3,
+   "explain": "Adding servers as demand rises and removing them when it falls is Rapid Elasticity: capacity stretches and shrinks with the load. Being billed only for the hours the extra servers actually ran is Measured Service: usage is metered and you pay for what you consume. A shopping site scaling up for a big sale and paying only for what it used is exactly the same pattern.",
+   "why_wrong": [
+    "Resource Pooling is about many customers sharing the provider's physical resources and Broad Network Access is about reaching the service from any device over the network; neither describes scaling with demand or paying per use.",
+    "On-Demand Self-Service is about provisioning resources yourself without waiting on the provider, and Resource Pooling is about shared infrastructure; the story is about automatic scaling and a usage-based bill.",
+    "Rapid Elasticity is half right, but Broad Network Access does not explain the pay-only-for-what-ran bill; that is Measured Service.",
+    ""
+   ],
+   "key": "CSE111-U1-093"
+  },
+  {
+   "topic": "Cloud Computing",
+   "kind": "situation",
+   "q": "At 2 a.m. before a demo, Sana logs into her cloud provider's web console, picks a VM size and clicks Create; the machine is running within a minute. She never raised a ticket, emailed anyone or waited for a person at the provider to approve the request. Which NIST characteristic does this most directly illustrate?",
+   "options": [
+    "Rapid Elasticity",
+    "On-Demand Self-Service",
+    "Resource Pooling",
+    "Measured Service"
+   ],
+   "correct": 1,
+   "explain": "On-Demand Self-Service means a customer can provision computing resources such as a server or storage by themselves, whenever they need them, without any human interaction with the provider. Sana got a running VM in the middle of the night purely through the console, which is exactly that. It is the trait that makes renting computing power feel like flipping a switch rather than placing an order with a supplier and waiting.",
+   "why_wrong": [
+    "Rapid Elasticity is about capacity growing and shrinking with demand; Sana created a single machine for a demo, and nothing in the story scales up or down with load.",
+    "",
+    "Resource Pooling is about the provider serving many customers from shared physical resources; the story is about how Sana obtained the VM, not about whose hardware it shares.",
+    "Measured Service is about metering usage and paying for what you consume; no bill or usage measurement appears anywhere in the story."
+   ],
+   "key": "CSE111-U1-094"
+  },
+  {
+   "topic": "Cloud Computing",
+   "kind": "situation",
+   "q": "A hospital keeps its patient records on servers inside its own building because of privacy rules, but runs its public website and appointment-booking app on AWS. The two environments are connected so the booking app can check free slots against the internal system. Which deployment model is this?",
+   "options": [
+    "Hybrid Cloud",
+    "Private Cloud",
+    "Public Cloud",
+    "Community Cloud"
+   ],
+   "correct": 0,
+   "explain": "A hybrid cloud is a connected mix of private and public: the sensitive part (patient records) stays on infrastructure dedicated to the hospital, while the public-facing apps run on a shared public cloud such as AWS. The link between the two is what makes it hybrid rather than two separate setups. This is the standard pattern for keeping sensitive data private while still using the public cloud for everything else.",
+   "why_wrong": [
+    "",
+    "A private cloud would mean everything, including the website and booking app, runs on infrastructure dedicated to the hospital alone; here the public-facing apps are on AWS.",
+    "A public cloud would put the patient records on shared AWS infrastructure too, which is exactly what the hospital is avoiding.",
+    "A community cloud is shared by several organisations with common needs, such as government agencies pooling infrastructure; the hospital is not sharing its systems with other organisations."
+   ],
+   "key": "CSE111-U1-095"
+  },
+  {
+   "topic": "Cloud Computing",
+   "kind": "situation",
+   "q": "Five state universities in the same region must all follow the same data-protection rules for student records. Instead of each building its own cloud, they set up one shared infrastructure that only these five universities use; no outside company can rent capacity on it. Which deployment model is this?",
+   "options": [
+    "Public Cloud",
+    "Hybrid Cloud",
+    "Community Cloud",
+    "Private Cloud"
+   ],
+   "correct": 2,
+   "explain": "A community cloud is infrastructure shared by a group of organisations that have common needs; government agencies sharing one platform is the classic example. It sits between private (one organisation only) and public (open to anyone): the member organisations share it, but nobody outside the group can use it. Several universities with identical compliance needs pooling one infrastructure fits this exactly.",
+   "why_wrong": [
+    "A public cloud is shared infrastructure open to anyone, like AWS, Azure or Google Cloud; here only the five universities can use it and outside companies are shut out.",
+    "A hybrid cloud is a connected mix of public and private infrastructure; nothing in this setup places any part on a public cloud.",
+    "",
+    "A private cloud is dedicated to a single organisation, such as a bank's internal cloud; here five separate universities share the same infrastructure."
+   ],
+   "key": "CSE111-U1-096"
+  },
+  {
+   "topic": "Cloud Computing",
+   "kind": "situation",
+   "q": "Meera works in IT at a bank. Management wants developers to be able to spin up virtual machines on demand, but insists the infrastructure be used by the bank alone and never shared with any other company. Which deployment model should Meera propose?",
+   "options": [
+    "Public Cloud",
+    "Private Cloud",
+    "Community Cloud",
+    "Hybrid Cloud"
+   ],
+   "correct": 1,
+   "explain": "A private cloud is dedicated to one organisation only; a bank's internal cloud is the classic example. It still delivers cloud-style conveniences such as self-service VMs, but on infrastructure nobody outside the bank uses. When the hard requirement is 'shared with no other company', private is the only model that fits.",
+   "why_wrong": [
+    "A public cloud is shared infrastructure open to anyone, which is exactly what management has ruled out.",
+    "",
+    "A community cloud is shared by several organisations with common needs; the bank does not want to share with anyone.",
+    "A hybrid cloud connects a private part to a public part; management wants nothing on shared public infrastructure, so there is no public half to connect."
+   ],
+   "key": "CSE111-U1-097"
+  },
+  {
+   "topic": "Cloud Computing",
+   "kind": "situation",
+   "q": "Arjun has finished a web app for a hackathon. He wants to push his code and have it run on the Internet without ever picking an operating system, installing a runtime or configuring a server. Which service model, and which example, fits what he wants?",
+   "options": [
+    "PaaS, for example Google App Engine",
+    "IaaS, for example a rented virtual machine on AWS",
+    "SaaS, for example Google Photos",
+    "On-Premises, running the app on his own laptop"
+   ],
+   "correct": 0,
+   "explain": "Under PaaS the provider manages the runtime, middleware, operating system and everything below; you manage only your application and its data. That is precisely 'push code and the platform just runs it', which is what Google App Engine (or Heroku, or Azure App Service) offers. In pizza terms it is delivery: you add nothing but your code.",
+   "why_wrong": [
+    "",
+    "On an IaaS virtual machine Arjun would still have to install the operating system and runtime himself, which is exactly what he wants to avoid.",
+    "SaaS is a finished application you simply use, like Google Photos; it does not run code that Arjun writes.",
+    "Running on his own laptop means he manages all eight layers himself, including the OS and the server, the opposite of what he asked for."
+   ],
+   "key": "CSE111-U1-098"
+  },
+  {
+   "topic": "Cloud Computing",
+   "kind": "situation",
+   "q": "Priya's college design club signs up for a web-based video-calling service to hold weekly meetings. Nobody in the club installs software on a server, patches an operating system or manages a runtime; they open the app in a browser and use it. In pizza terms, what has the club chosen?",
+   "options": [
+    "Take-and-bake pizza (IaaS)",
+    "Pizza delivery (PaaS)",
+    "Dining at a restaurant (SaaS)",
+    "Making pizza at home (On-Premises)"
+   ],
+   "correct": 2,
+   "explain": "Dining at a restaurant means the provider does everything and you just enjoy the finished dish. That is SaaS: the provider manages all eight layers, from networking and servers up to the application itself, and the club simply uses the finished app. Zoom handling video calls for millions of simultaneous meetings is exactly this kind of service.",
+   "why_wrong": [
+    "Take-and-bake (IaaS) would leave the club installing the OS and app on rented servers, which nobody in the club is doing.",
+    "Pizza delivery (PaaS) still requires you to bring your own code; the club is not writing or deploying any application.",
+    "",
+    "Making pizza at home (On-Premises) means owning and managing every layer yourself, the opposite of using a hosted app in a browser."
+   ],
+   "key": "CSE111-U1-099"
+  },
+  {
+   "topic": "Cloud Computing",
+   "kind": "situation",
+   "q": "Rahul's team rents virtual machines from a cloud provider, installs Ubuntu on them and deploys their app. Months later the site is breached through a known operating-system vulnerability that was never patched. Under the model they were using, who was responsible for keeping the OS patched?",
+   "options": [
+    "Rahul's team, because under IaaS the customer manages the operating system",
+    "The provider, because under IaaS the provider manages the operating system and everything below it",
+    "The provider, because the operating system is part of the virtualisation layer",
+    "Rahul's team is responsible only for applications and data; the OS was the provider's job"
+   ],
+   "correct": 0,
+   "explain": "Renting VMs and installing your own OS is IaaS. In that model the provider's responsibility stops at virtualisation, servers, storage and networking; the operating system, middleware, runtime, data and applications are the customer's. So patching Ubuntu was Rahul's team's job. Had they wanted the provider to own the OS, they would have needed PaaS or SaaS.",
+   "why_wrong": [
+    "",
+    "Under IaaS the provider's responsibility stops below the OS, at virtualisation, servers, storage and networking; the OS is the customer's.",
+    "The operating system is its own layer above virtualisation; the provider manages the hypervisor and the VMs, not the OS installed inside them.",
+    "Managing only applications and data is the PaaS split; Rahul's team chose IaaS by installing their own OS, so the OS was theirs."
+   ],
+   "key": "CSE111-U1-100"
+  }
+ ]
+}

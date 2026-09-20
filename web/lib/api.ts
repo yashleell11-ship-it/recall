@@ -16,6 +16,13 @@ import type {
   Grade,
   LessonIndexEntry,
   LessonPage,
+  McqAttempt,
+  McqAttemptSummary,
+  McqFeedback,
+  McqLeaderboardRow,
+  McqLength,
+  McqResult,
+  McqSubject,
   PendingResponse,
   QueueResponse,
   ReviewResponse,
@@ -291,6 +298,105 @@ export function getTests(): Promise<TestSummary[]> {
 export function abandonTest(id: number): Promise<{ ok: true }> {
   if (MOCK) return mock.abandonTest(id);
   return request<{ ok: true }>(`/api/tests/${id}`, { method: "DELETE" });
+}
+
+/* --- Yash Made Test ------------------------------------------------------ */
+/*
+ * A second test mode over a hand-curated MCQ bank. The bank itself is shared
+ * course content — every user reads the same questions — but everything a
+ * user does with it (attempts, answers, the leaderboard row it earns) is
+ * scoped to them by the server, exactly like the rest of the app.
+ */
+
+/** GET /api/mcq/subjects — every subject in the registry, with a per-unit
+ *  count of active questions. A unit with 0 still comes back: it is waiting
+ *  for material, not missing. */
+export function getMcqSubjects(): Promise<McqSubject[]> {
+  if (MOCK) return mock.getMcqSubjects();
+  return request<McqSubject[]>("/api/mcq/subjects");
+}
+
+/**
+ * POST /api/mcq/attempts — draw a fresh sample and shuffle it.
+ *
+ * 422 for an unknown subject, a unit the registry does not have, a bad
+ * length, or a selection that holds no questions at all.
+ */
+export function createMcqAttempt(
+  subjectCode: string,
+  /** Unit numbers as printed on the deck, 1-based. */
+  units: number[],
+  length: McqLength,
+): Promise<McqAttempt> {
+  if (MOCK) return mock.createMcqAttempt(subjectCode, units, length);
+  return request<McqAttempt>("/api/mcq/attempts", {
+    method: "POST",
+    body: JSON.stringify({ subject_code: subjectCode, units, length }),
+  });
+}
+
+/** GET /api/mcq/attempts/{id} — the same draw with its recorded answers, for
+ *  resuming. Someone else's attempt is a 404, identical to a missing one. */
+export function getMcqAttempt(id: number): Promise<McqAttempt> {
+  if (MOCK) return mock.getMcqAttempt(id);
+  return request<McqAttempt>(`/api/mcq/attempts/${id}`);
+}
+
+/**
+ * POST /api/mcq/attempts/{id}/answer — one call per question, and the first
+ * click is the answer: a second answer to the same position is a 409, never
+ * an overwrite. `chosen` is a position in the shown option order.
+ */
+export function postMcqAnswer(
+  id: number,
+  position: number,
+  chosen: number,
+): Promise<McqFeedback> {
+  if (MOCK) return mock.postMcqAnswer(id, position, chosen);
+  return request<McqFeedback>(`/api/mcq/attempts/${id}/answer`, {
+    method: "POST",
+    body: JSON.stringify({ position, chosen }),
+  });
+}
+
+/** POST /api/mcq/attempts/{id}/submit — closes the attempt and scores it.
+ *  Idempotent: a submitted attempt hands back the result it already stored,
+ *  which is what makes reopening a finished attempt safe. */
+export function submitMcqAttempt(id: number): Promise<McqResult> {
+  if (MOCK) return mock.submitMcqAttempt(id);
+  return request<McqResult>(`/api/mcq/attempts/${id}/submit`, {
+    method: "POST",
+  });
+}
+
+/** DELETE /api/mcq/attempts/{id} — drop an open attempt. 409 once it has
+ *  been submitted: that is a result, not clutter. */
+export function abandonMcqAttempt(id: number): Promise<{ ok: true }> {
+  if (MOCK) return mock.abandonMcqAttempt(id);
+  return request<{ ok: true }>(`/api/mcq/attempts/${id}`, { method: "DELETE" });
+}
+
+/** GET /api/mcq/attempts — mine only, newest first. */
+export function getMcqAttempts(): Promise<McqAttemptSummary[]> {
+  if (MOCK) return mock.getMcqAttempts();
+  return request<McqAttemptSummary[]>("/api/mcq/attempts");
+}
+
+/** GET /api/mcq/leaderboard — one row per user, their best submitted attempt
+ *  for exactly this subject + units + length. */
+export function getMcqLeaderboard(
+  subjectCode: string,
+  units: number[],
+  length: McqLength,
+): Promise<McqLeaderboardRow[]> {
+  if (MOCK) return mock.getMcqLeaderboard(subjectCode, units, length);
+  return request<McqLeaderboardRow[]>(
+    `/api/mcq/leaderboard${qs({
+      subject_code: subjectCode,
+      units: units.join(","),
+      length: String(length),
+    })}`,
+  );
 }
 
 /* --- teaching ------------------------------------------------------------ */

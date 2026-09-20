@@ -1,108 +1,114 @@
 # Recall — website overview for redesign
 
-Live at **study.yashnas.xyz**. A private exam-prep web app for LPU (Lovely Professional University) first-year B.Tech students — the owner (Yash) plus a few friends. Open signup, but not a public product: 2–10 real users, all on the same six Semester-1 courses.
+Live at **study.yashnas.xyz**. A private exam-prep web app for first-year B.Tech students at LPU (Lovely Professional University): the owner (Yash) plus a few friends, all on the same Semester-1 courses. Open signup but not a public product: 2–10 real users. A tool someone opens every morning for four years, not a landing page.
 
-## What the product does
+Companion handoff page with screenshots (private): https://claude.ai/artifact/Lire7QeS95fBZvyzqmvu6r
 
-1. **Ingest** course material — uploaded PDFs / phone photos of slides (OCR), or a unit written from the model's own knowledge of the LPU syllabus.
-2. **Generate flashcards** that are verified before they reach the student (grounded in the source, fact-checked).
-3. **Review** them daily with a spaced-repetition scheduler (FSRS-style, fitted to the user).
-4. **Sit practice papers** shaped like LPU's real exams (30-mark class test, 40-mark mid-term, 100-mark end term), self-marked, results fed back into the scheduler.
-5. **Read lessons** per unit, AI-written and grounded, when a topic is not understood.
-6. **NEW — "Yash Made Test"**: a hand-curated MCQ bank (100 questions per unit) any user can sit; shuffled every attempt, instant right/wrong feedback with a detailed explanation, per-topic breakdown, class leaderboard. Being built now, described fully below.
+## What it does
 
-## Who uses it and where
+1. **Ingest** course material: uploaded PDFs, typed notes, phone photos of slides (Tesseract OCR). With nothing uploaded, cards can be written from the model's own knowledge of a syllabus unit ("knowledge mode").
+2. **Generate flashcards** (Q&A + cloze) through a verification pipeline: grounded in a verbatim quote, checked answerable and atomic, de-duplicated. Every card is model-authored and says so.
+3. **Review** daily with FSRS 4.5: Again / Hard / Good / Easy, each button showing the interval it would set.
+4. **Sit papers** shaped like LPU's exams: 30-mark class test (45 min), 40-mark mid-term (90 min, units 1–3), 100-mark end term (3 h), untimed "full day". Self-marked correct / partial / wrong / skipped (partial only on 2+ mark questions); every answer feeds the scheduler.
+5. **Read lessons**: one per unit, AI-written offline via the CLI (no button, by design), with a coverage meter showing how much quotes the student's own material.
+6. **Being built now: "Yash Made Test"**: a curated MCQ bank any user can sit, reshuffled per attempt, instant green/red reveal with a teaching note, per-topic breakdown, personal history, class leaderboard. Spec below. Nothing in it feeds the scheduler.
 
-- Students, 17–19, studying at night in a hostel. Phone on Wi-Fi and laptop both matter; the camera-upload flow is phone-first.
-- Server is in Virginia, users are in Punjab — perceived speed matters. Screens use skeletons and a stale-while-revalidate cache so navigation feels instant.
-- Desktop users are keyboard-first: grading with 1–4, `g` + letter to jump between pages, Ctrl/Cmd+K command palette, full-focus review mode that hides the header.
+**Users:** 17–19, studying at night in a hostel; phone and laptop both matter. **Subjects** (`src/recall/lpu.py`; the picker must match these facts):
 
-## Stack (for what is realistic to change)
+| Code | Name | Cr | Format | Units | ATT/CA/MTE/ETE | Notes |
+|---|---|---|---|---|---|---|
+| MTH165 | Mathematics for Engineers | 4 | mixed | 6 | 5/25/20/50 | CT1 units 1–2 · CT2 unit 4 · CT3 cumulative |
+| CSE111 | Orientation to Computing | 3 | mcq | **7** | 30/70/0/0 | **no MTE, no ETE** — fully CA-driven; scheme unconfirmed (UI says so) |
+| INT108 | Python Programming | 4 | practical | 6 | 5/50/0/45 | **no MTE**; best 3 of 4 CA |
+| INT335 | Design Thinking | 2 | mcq | 6 | 5/25/20/50 | best 2 of 3 CA |
+| MEC103 | Engineering Graphics | 3 | subjective | 6 | 5/25/20/50 | weights **unconfirmed** placeholder (UI says so) |
+| CSE326 | Internet Programming | 2 | mixed | 6 | 5/45/0/50 | **no MTE**; best 2 of 3 CA |
 
-Next.js 16 (App Router) + Tailwind v4 + `motion` for springs. FastAPI + SQLite behind the same origin (`/api/*`). Everything is server-rendered shell + client components; theming is CSS custom properties on `<html data-skin data-theme>`.
+Only MTH165, INT335 and MEC103 have a mid-term. **Latency:** server in Virginia, users in Punjab; every screen has a skeleton, a stale-while-revalidate cache, prefetch on hover. **Money:** generation costs API money ($1/user/day cap, 429 when over); every paid press is a separate explicit step. **Honesty rules:** AI text is always marked; cards with no uploaded source carry a second "no source" mark; a wrong exam structure shown as fact is treated as worse than none.
 
 ## Information architecture
 
-Left sidebar (collapsible to an icon rail; a drawer on mobile) with seven entries, in this order:
+Left sidebar (`--nav-w: 13rem`; collapses to a 3.25 rem rail, remembered per browser; off-canvas drawer below 768 px behind a 32 px `≡` button). Header row h-11: wordmark RECALL (11 px bold, 0.16 em; "R" when collapsed) + ‹/› collapse. Nav rows 13 px, h-9; active = semibold + surface-hover bg + a 4×16 px accent bar. Footer: "mock data" chip (dev), skin switcher (10 px mono caps), theme toggle (Ember only), `?` keycap (hidden below 640 px), "SIGN OUT · name" (⏻ when collapsed). No top header bar; before the session is known the shell shows only "signing in…".
 
-| Route | Name | What is on it |
-|---|---|---|
-| `/` | Today | Cards due now, streak, today's load vs the daily cap, one mastery ring per subject ("constellation"), primary "Start review" action. |
-| `/review` | Review | One card at a time: question → reveal → grade **Again / Hard / Good / Easy** (keys 1–4), suspend, "explain this". Full-focus layout, header hidden. Cloze cards render inline blanks. |
-| `/learn` | Learn | Subject → unit → a multi-page lesson. Reader with page navigation; AI-written content is visually marked. |
-| `/test` | Test | **Picker:** subject rail (six subjects, each with chips for the exam types it really has — CA / MTE / ETE — and tick-boxes for units covered in class), then paper type (30-mark class test · 40-mark MTE · 100-mark end term · full day), open/unfinished papers, "Sit paper". **Session** (`/test/[id]`): clock, question palette, each question self-marked correct / partial / wrong / skipped, with the worked answer shown after marking. **Result:** marks, %, per-topic bars, lists of wrong and partial answers with "explain this". |
-| `/upload` | Upload | Drop a PDF or take a photo → OCR → text preview → generate cards (a separate, paid press). |
-| `/sources` | Sources | Every uploaded file with its generation run: cards kept / rejected, cost. |
-| `/settings` | Settings | New cards per day, daily review cap, desired retention; skin + theme toggles live in the sidebar footer. |
-| `/login`, `/signup` | — | The only public screens. |
+| Route | Nav | What is on it | Chrome |
+|---|---|---|---|
+| `/` | Today | Five-figure metric strip (Due · New with budget bar · Reviewed today with cap ring · Again today · Day streak), one cap sentence, "By topic" table (rows open a topic-scoped review), 14-day bars with cap line, "Constellation" (one ring per subject, practice × retention), reviewed-today list, collection totals. Primary: **Start review N ↵** (accent gradient + faint glow), or "All clear" + streak ring, or "Cap reached for today". | sidebar |
+| `/review` | Review | Focus mode. 2 px progress hairline, "1 / 50", Esc. One card on a "Flow Stack" (next two peek beneath). Provenance chips (topic · page, AI, no source, leech). Question → rule → answer → optional working. Footer: Show answer, then four grade buttons with keycap + interval. Cloze blanks flash on fill. End: session summary (held %, grade counts, per-topic, keep going / back). | none |
+| `/learn` | Learn | One panel per subject listing all syllabus units, written or not; chips grounded / unverified + date. Empty state prints the CLI command (no button, by design). | sidebar |
+| `/learn/[topic]/[unit]` | — | Reader: one measured column; chips, unit title, coverage meter + one-sentence warranty, "why" lede, numbered sections tagged *cited* (with verbatim quote block + file/page) or *model only*, two worked examples with all steps visible, "Check yourself" with hidden answers. Esc back, `r` review subject. | sidebar |
+| `/test` | Test | Picker. Unfinished-papers banner (resume / close). Subject rail: card per subject with LPU weight-split bar (ATT→ETE ink ramp), credits, exam format, CA policy, study-plan advice, units disclosure (tick to scope, quiet per-unit *generate* link), chips that ARE start buttons (CA always, MTE only where LPU sets one, ETE only where it has weight). Below: cross-subject radio cards (class / end term / full day), "what this paper will contain" table, scoring, past papers, Start. | sidebar |
+| `/test/[id]` | — | Exam session (focus): bar with Esc, paper name, answered count, saved dot, clock with draining ring (amber at 20 %, red at 5 %), Submit. Question with marks/topic/page/kind; reveal model answer; Wrong / Partial / Correct with marks; Skip, Mark, prev/next. Right rail: question palette (answered tinted, skipped struck, marked dotted, current ringed), legend, Submit paper, marks attempted, short-paper warning. Submit dialog: answered / skipped / never opened / marks. | none → sidebar |
+| `/test/[id]` (result) | — | Display numeral "3.5 / 30 · 12 %", duration + verdict line, per-topic table sorted weakest first with held-% bars, "What to fix" list (red rail wrong, amber partial) with **Explain this** → violet "synapse rail": explanation, verbatim quote, page ref, cached note. `j k` move, `e` explain. | sidebar |
+| `/upload` | Upload | "File it under" topic select (or new), drop zone with **Choose files** `f` / **Take a photo** `c` (back camera), per-file rows: progress bar, chunk/char counts, OCR warning, then Generate cards → "Spend it" confirm → running shimmer → done with counts + cost. Side panels: the three steps, OCR limits. | sidebar |
+| `/sources` | Sources | Sortable table: file, topic, added, accepted, rejected, kept-% bar, cost; totals row. | sidebar |
+| `/settings` | Settings | Three sliders + number inputs, save-as-you-move (Saving → Saved tick): new/day, daily cap, desired retention, each with a plain cost sentence. "Deep focus": Zen mode drone switch with six-bar visualizer. | sidebar |
+| `/login` `/signup` | — | Only public screens: wordmark, one line, small panel, one accent button, swap link. | none |
 
-Global chrome: sidebar footer holds the skin toggle and theme toggle; toasts bottom-right; command palette (Cmd/Ctrl+K) lists every page and action.
+Global overlays: command palette (Ctrl/⌘ K; 560 px `.glass` panel at 14 vh over a 4 px-blurred scrim — under Phosphor the panel adds the one 12 px glass blur; sections Navigate / Session / Theme with keycap hints at the right), shortcuts sheet (`?`, two-column groups), one toast at a time bottom-centre above the safe-area inset (h-10 pill, 6 px good/again dot, 3.5 s), submit dialog. Film grain over the viewport: 2.5 % (Phosphor, Ember light), 3.5 % (Ember dark), 0 (GitHub).
 
-## NEW: "Yash Made Test" — the area being added
+## Screen states (design each)
 
-Lives inside **Test** behind a segmented switch at the top of the page: **Recall | Yash Made Test**. The choice is remembered.
+1. Today: normal · nothing due (All clear + streak ring) · cap reached · loading · error · no topics
+2. Review: question · revealed · cloze · graded flash (pulse ring / headshake) · leech · unsaved retry · queue empty · summary
+3. Learn: index · nothing written · reader grounded / unverified · section cited / model only · worked "not confirmed" · check yourself
+4. Test picker: normal · unfinished paper · units ticked · generate writing/+12/failed · chip refused (422) · subject with no cards · weights not confirmed
+5. Exam session: unrevealed · revealed · verdict chosen · marked · clock warn/danger · palette sheet (small screens) · submit dialog · already submitted · no questions · short paper
+6. Result: normal · nothing missed · explanation loading / shown / no quote / error · time expired
+7. **Yash Made Test picker**: normal · unit waiting for material · attempts empty · leaderboard empty · resume open attempt
+8. **MCQ sitting**: unanswered · right · wrong with why-wrong · last question · finish early
+9. **MCQ result**: normal · finished early (unanswered in missed list) · nothing answered (rank null) · retake
+10. Upload: idle · no topic · drag over · uploading · done · rejected · OCR warning · generate confirm / running / done / error (503 no key)
+11. Sources: table · empty. 12. Settings: saving / saved / not saved / zen on. 13. Login/Signup: normal · error · busy
+14. Global: sidebar full / rail / drawer · palette · shortcuts · toasts · "signing in…" blank
 
-**Picker**
-- Subject (CSE111 "Orientation to Computing" first; more later).
-- Unit chips: **Unit 1** (100 questions) · **Unit 2** (100, coming — shows "waiting for material" until seeded) · **Units 1–2 combined** (200).
-- Length chips: **30** · **60** · **Full**.
-- Start button.
-- "Your attempts": recent sittings with score, length, date, and a resume link for an unfinished one.
-- **Class leaderboard**: best score per person for the chosen unit/length, name + % + when.
+## Design system today
 
-**Sitting** (`/test/mcq/[id]`)
-- One question at a time. Topic tag (e.g. "Linux & WSL"), "Question 12 of 30", question text, four options A–D (keys 1–4 / A–D). Some questions are short scenarios ("You are in /home/student and run …").
-- Click an option → it turns **green** if correct; if wrong it turns **red** and the correct one turns green. Below: a 2–4 sentence explanation of the right answer, plus one line on *why the option you picked* is wrong.
-- Progress bar with "correct so far", **Next question**, and **Finish & see score** available at any point.
+Tokens are CSS custom properties on `<html data-skin data-theme>`, exposed to Tailwind v4 (`text-fg`, `bg-surface`, `border-line`, `text-good` …). Three **skins** redefine the same semantic tokens; cycle order Phosphor → GitHub → Ember; **default is Phosphor** (`web/app/layout.tsx`).
 
-**Result**
-- Big score (e.g. 24/30) and %, one-line verdict, per-topic bars (green ≥80%, amber ≥50%, red below), list of missed questions with their explanations, leaderboard position, **Retake (reshuffled)**, **Back**.
+**The brief the current design was built to** (docs/CONTRACT.md): Anki's density, Linear's restraint, a terminal's calm. Near-monochrome; one accent only on the primary action, focus ring, active nav marker; grade buttons are the exception because colour is the meaning. One type family, hierarchy by size/weight. Radii 2–6 px, borders not shadows, flat. Almost no motion (card flip + queue advance, <150 ms). The review screen is the product and nearly empty. Keyboard first, keycaps on the buttons. Every card shows its source. Empty states: one plain sentence, no illustration. Forbidden: purple/indigo gradients, glassmorphism, blurred blobs, centred gradient heroes, emoji, rounded-2xl, shadows everywhere, untouched shadcn.
 
-## Current design system (what exists today)
+**Phosphor** (default, committed dark, "cyber-academic"): void `#060810`, layers `#0c101b` `#121828` `#171e31`; ink `#e9edf8` `#a5aec7` `#67718d`; lines steel at 11 % / 20 %. Ion cyan `#7de3f4` = the user's light (accent, easy); synapse violet `#a78bfa` = the AI's; bio `#6ee7a0` good, amber `#fbbf24` hard, flare `#fb7185` again. Newsreader serif for knowledge text, Inter for UI, JetBrains Mono for telemetry/labels/provenance (the Google Fonts link is loaded on every skin in `layout.tsx`; only this skin's `--font-sans/--font-mono/--k-face` use the faces). Labels become mono caps at 0.12 em. Laws: accent light ≤ 8 % of viewport, glow alpha ≤ .35, glass only on palette + transient overlays (12 px max, always with hairline), neon never body text. Light/dark toggle inert. Film grain 2.5 %.
 
-Two skins, switchable in the sidebar footer:
+**GitHub** (flat dark): `#0d1117` / `#161b22` / `#1c2128`, borders `#21262d` `#30363d`, ink `#e6edf3` `#7d8590` `#6e7681`, accent `#2f81f7` (hover `#58a6ff`), grades `#f85149` `#d29922` `#3fb950` `#58a6ff`, AI `#a371f7`. No grain, no serif, borders do the work.
 
-**Ember** (default): light "paper" / dark "graphite" pair.
-- Ground `#faf9f6` (paper) / `#16151a` (graphite, deliberately not black); surfaces one step lighter; hairline rules `#e3e1d9` / `#2d2c34`; ink `#1b1a17` / `#ebe8e2` with two muted steps.
-- **One accent — ember `#b04525`** (dark `#e07a52`) — spent only on the primary action, the focus ring, and the active nav marker. Nothing else is coloured.
-- Exception: the four grade colours (again red · hard amber · good green · easy blue, each with a quiet tinted background) — colour is the meaning there.
-- **AI voice** violet `#6b4fa3`: marks content the model produced (lessons, explanations). Never used for anything the user does.
-- Radii are tiny (2–5 px). Elevation is a system: bg → surface → raised → overlay, each with a slightly stronger ambient shadow and a luminous top hairline in dark. A faint film grain sits over the ground.
-- Typography: a single sans for UI; mono for subject codes and keyboard hints.
+**Ember** (light "paper" / dark "graphite"): bg `#faf9f6` / `#16151a`, surface `#fff` / `#1d1c22`, line `#e3e1d9` / `#2d2c34`, ink `#1b1a17` `#57554d` `#8a877c` / `#ebe8e2` `#a29fa8` `#726f7a`. Accent ember `#b04525` / `#e07a52`. Grades again `#a92f21`, hard `#86601a`, good `#2f6b3c`, easy `#2c5a86` (dark: `#ef8175` `#d6a556` `#74bf83` `#7fb0da`), each with a quiet tinted bg. AI violet `#6b4fa3` / `#9d8bcf`. System sans; system mono for keycaps, telemetry, provenance chips and the sidebar footer buttons. Film grain 2.5 % / 3.5 %. Elevation ladder bg → surface → raised → overlay with a luminous top hairline in dark. The only skin where `t` cycles system / light / dark.
 
-**Phosphor**: a committed-dark "cyber-academic" skin — void-scale surfaces, **ion cyan** as the user's light, **synapse violet** for AI-only content, verdict colours bio (right) / flare (wrong). Serif (Newsreader) for the knowledge text — questions, answers, explanations — Inter for UI, JetBrains Mono for code. Rules it lives by: a 90/8/2 emission budget (90% dark surface, 8% cool light, 2% hot accent), at most two layers of glass, motion only when physics justifies it.
+**Type scale (all skins):** body 14 px/1.5 · h1 18 px 600 · `.label` 10 px 600 0.09 em uppercase · `.k-question` clamp(21–26 px) 500 · `.k-answer` 17 px · `.k-display` clamp(34–44 px) tabular · `.k-ai` italic in ink (never violet) · `.telemetry` 12.5 px mono tabular · `.prov` 11 px mono pill (`.prov--ai` is the only violet) · `.kbd` 10 px mono with 2 px bottom border · metric numerals 22/26 px tabular, −0.02 em.
 
-Shared components: AnimatedNumber (springs to a value), ProgressRing (SVG arc), Reveal (fade-and-lift with 40 ms stagger), Skeleton, Toast, CommandPalette, Panel, Metric (label + big number), TopicCode, KindTag, Kbd, EmptyState / ErrorState / Loading.
+**Shape/depth/motion:** radii 2 / 3 / 5 px (Phosphor review card 20 px); `.elev-1/2/3`, `.glass`; `.glow-behind` bloom + `.accent-grad` on the primary action; `.anim-reveal` 110 ms; springs (`motion`) for numbers/rows/bars; card exit 240 ms; correct = 700 ms pulse ring, again = 4 px headshake; skeletons shimmer, nothing spins; all collapse under reduced motion. Errors: red left rail + "Try again". Toast: one at a time, bottom-centre.
 
-## Constraints a redesign must keep
+**Components (`web/components`, `web/components/rich`, per-route files):** Panel, Metric, MetricStrip, ActivityChart, Constellation, ProgressRing, AnimatedNumber, Reveal, Skeleton, Toast, CommandPalette, ShortcutsOverlay, Kbd (grade tone), TopicCode, KindTag, Provenance (AI / no source), StatusChip, Warranty (coverage meter), SubjectRail (scheme bar), QuestionPalette + PaletteLegend, HeightSpring, ZenVisualizer, Loading / ErrorState / EmptyState. No icon set anywhere.
 
-- Keyboard flows: 1–4 grading, 1–4 / A–D answering MCQs, `g`+letter navigation, Cmd/Ctrl+K palette, Esc to leave focus mode.
-- Single-accent discipline; grade/verdict colours carry meaning and must stay distinguishable (also for red-green colour-blindness — pair colour with position/icon).
-- AI-produced content must stay visibly distinct from the user's own material.
-- Works on a phone in portrait: review, MCQ sitting and camera upload are the phone flows.
-- Fast first paint; every screen has a skeleton state.
-- No emoji, no purple-to-blue gradient heroes, no glassmorphism stacks, no centred body text.
+## Keyboard map
 
-## Where the current design is weakest (honest notes)
+Anywhere: `?` sheet · Ctrl/⌘ K palette · `g` then `d r l t u o s` · `\` rail · `t` theme (Ember only). Today: ↵ start. Review: Space reveal then Good · 1–4 grades · Esc. Picker: 1–3 paper kind · ↵. Paper: Space · 1/2/3 wrong/partial/correct · `s` skip · `m` mark · `j k ← →` · Home/End · `p` palette · ↵ submit · Esc leave (all saved). Result: `j k e`. Lesson: Esc, `r`. Upload: `f`, `c`. Settings: Tab, ↑↓. Shortcuts ignored in text fields.
 
-- The Test picker carries a lot at once — subject rail, exam-type chips, unit ticks, open papers — and the new Recall | Yash Made Test switch adds a second mode on top. This screen most needs a clear hierarchy.
-- Two skins (Ember, Phosphor) each with their own rules is a lot to maintain; a redesign could pick one identity and do it fully.
-- The exam session and result screens are dense (palette + clock + marking + working); the MCQ sitting should feel lighter and faster than the self-marked paper, not identical to it.
-- Dashboard mastery rings read well on desktop but stack awkwardly on phones.
+## NEW: Yash Made Test (spec frozen in docs/CONTRACT.md + web/lib/types.ts; no code yet)
 
-## Screens to design (with states)
+Second test mode behind a segmented switch at the top of `/test` (**Recall | Yash Made Test**, remembered per browser). A shared, hand-curated bank (same for every user); every attempt draws `min(length, available)` questions without replacement and shuffles each question's four options; the client only ever sees shown order. Nothing feeds the scheduler.
 
-1. Today — normal · nothing due · loading · error
-2. Review — question · revealed · graded flash · queue empty · suspended toast
-3. Learn — subject/unit index · reader page · generating lesson · empty
-4. Test picker (Recall mode) — normal · unfinished paper present · subject with no cards
-5. Test session — answering · marked · time nearly up · submitted
-6. Test result — normal · perfect score · nothing answered
-7. **Yash Made Test picker** — normal · Unit 2 not yet available · leaderboard empty
-8. **MCQ sitting** — unanswered · answered right · answered wrong (with why-wrong note) · last question
-9. **MCQ result** — normal · partial (finished early) · retake
-10. Upload — idle · OCR running · text preview · generating · done
-11. Sources — list · empty
-12. Settings — normal · saved toast
-13. Login / Signup — normal · error
-14. Global — sidebar full / rail / mobile drawer · command palette · toasts
+- **Subjects/units** come from a registry (`recall.mcq.registry.MCQ_UNITS`) that is **not written yet** — no unit labels or counts exist anywhere; do not design around specific ones. The contract only fixes the shape: every registered unit appears on the picker with its `count` of active questions, and count 0 renders "waiting for material" and cannot start. CSE111 is the first subject planned. Counts come from the seeded bank; nothing is fixed at 100. Lengths **30 · 60 · full**. Questions have a short topic label (e.g. "Linux"), kind *recall* | *situation*, 4 options, `explain` (2–4 sentences), `why_wrong` per option.
+- **Picker:** subject → unit chips with counts (units may combine) → length → Start. "Your attempts" (score, length, date; resume open; close abandoned). **Class leaderboard** for exactly that subject+units+length: each user's best submitted attempt, name, score, %, duration, when; ranked by % then shorter time; top 25.
+- **Sitting:** "Question 12 of 30", topic, kind, question, options A–D (keys 1–4 / A–D). First click is the answer; second click on that position is refused (409). Immediate reveal: chosen red if wrong + correct green (green if right), explanation, and when wrong the why-wrong note for the option picked. Running "correct so far". Next; **Finish & see score** any time: unanswered score 0 out of the number drawn (12/30 after twelve is an honest 12/30).
+- **Result:** score/total, % (`round(100·score/total)`), duration, `by_topic`, **missed** = wrong OR unanswered (`chosen: null`) in attempt order with options/chosen/correct/explain/why_wrong, `rank {position, of}` on that selection's board (null if nothing answered), Retake (reshuffled), Back. The contract fixes no verdict line and no colour thresholds for topic bars; those are design decisions.
+- **Endpoints:** GET `/api/mcq/subjects` · POST `/api/mcq/attempts` {subject_code, units, length} (422 bad selection / zero questions) · GET `/api/mcq/attempts/{id}` (404 not yours) · POST `…/answer` {position, chosen} → McqFeedback (409 / 422) · POST `…/submit` → McqResult · DELETE `…` (409 once submitted) · GET `/api/mcq/attempts` (mine, newest first) · GET `/api/mcq/leaderboard?subject_code=&units=1,2&length=30`.
+- Wire shapes: `McqSubject {subject_code, label, units:[{unit,label,count}], lengths}`, `McqQuestion {position, topic, kind, question, options×4, answer: McqFeedback|null}`, `McqFeedback {position, chosen, correct_index, is_correct, explain, why_wrong ("" when right), answered, correct_so_far}`, `McqAttempt {attempt_id, subject_code, units, length, total, started_at, submitted_at, questions}`, `McqResult {attempt_id, score, total, answered, percent, duration_s, by_topic, missed, rank}`, `McqAttemptSummary`, `McqLeaderboardRow {user_id, name, score, total, percent, duration_s, submitted_at}`.
+- Sitting route not fixed by the contract; `/test/mcq/[id]` is the working proposal.
+
+## What a redesign must keep
+
+Keyboard model + keycaps on controls; Esc always leaves, everything already saved. Review and exam own the viewport; result brings nav back. Grade/verdict colours pair with position + keycap (red-green safe). AI text visibly marked; "no source" a separate uncoloured mark; grounded vs unverified never look alike. Provenance on every card. Money explicit; generate never looks primary. Phone portrait for review, MCQ sitting, camera upload, picker; ≥ 44 px thumb targets. Skeleton per screen, no reflow on load; reduced motion. Empty/error states = one sentence + next step. No emoji, gradient heroes, glass stacks, centred body text.
+
+## Where the current design is weakest
+
+- Three skins is two too many; pick one identity and finish it.
+- The Test picker carries too much (banner + 6 dense subject cards + paper cards + contents + scoring + past papers); the Recall | Yash Made Test switch makes hierarchy job one.
+- Exam session is dense; the MCQ sitting should feel lighter and faster, not identical.
+- Mobile collisions: 32 px ≡ button over page titles (under the product's own 44 px rule; the `?` keycap vanishes below 640 px); picker becomes a very long scroll; constellation and 14-day chart lose labels.
+- Stale bits: the palette still lists "Go to Approve", lacks "Go to Learn", its skin action only knows Ember/Phosphor (not GitHub), and its Theme actions stay listed (inert) under the committed-dark GitHub skin (`web/lib/palette.ts`, `web/components/AppShell.tsx`); Upload has two dead links to `/approve` and its "What happens" step 3 promises "Nothing enters your rotation until you say so" — the approval gate was removed (`web/app/upload/page.tsx`); the "AI" chip is on every card (every card is model-written), so it carries no information.
+- Lots of 10–11 px mono micro-copy on cards read at arm's length at night.
+- Today is a report ("how much"), not an instruction ("what first").
+
+## Stack / constraints
+
+Next.js 16 App Router, React 19, Tailwind v4 (tokens in `web/app/globals.css` via `@theme inline`), `motion` springs; all pages client components. FastAPI + SQLite same origin at `/api/*`; contract `docs/CONTRACT.md`, types `web/lib/types.ts`; mock backend `NEXT_PUBLIC_MOCK=1` renders every screen (used for the captures; `recall-web-mock` in `~/.claude/launch.json`, port 3111). Theming via `data-skin` / `data-theme` on `<html>`, applied before first paint. Fonts: one Google Fonts link (Newsreader, Inter, JetBrains Mono) loaded on every skin but used only by Phosphor; Ember and GitHub sit on system stacks; new faces need real fallbacks. Base body 14 px. Breakpoints: sm 640 / md 768 (sidebar) / lg 1024 (exam palette aside, two-column grids) / xl 1280 (3-column subject rail). Sidebar geometry is CSS-owned (`--nav-w: 13rem`, rail `3.25rem`, breakpoint 768 px).

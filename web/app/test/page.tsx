@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatedNumber, Reveal, Skeleton } from "@/components/rich";
 import { ErrorState, Kbd, Panel, TopicCode } from "@/components/ui";
 import {
@@ -21,10 +21,81 @@ import {
 import { hasModifier, isTypingTarget } from "@/lib/keys";
 import { MAX_MARKS, PAPER_LABEL } from "@/lib/marks";
 import { fetchPicker } from "@/lib/resources";
+import { useTestMode, type TestMode } from "@/lib/testMode";
 import type { TestKind, TestSummary } from "@/lib/types";
 import { useResource } from "@/lib/useResource";
 import { HeightSpring } from "./HeightSpring";
 import { SubjectRail, type SubjectTopic } from "./SubjectRail";
+import { YashMadeTest } from "./YashMadeTest";
+
+/**
+ * Two tests share this screen: Recall's own papers, generated from your deck,
+ * and the curated multiple-choice bank. The choice is remembered per browser,
+ * because it is a habit rather than a per-visit decision.
+ */
+const MODES: { value: TestMode; label: string }[] = [
+  { value: "recall", label: "Recall" },
+  { value: "yash", label: "Yash Made Test" },
+];
+
+function ModeSwitch({
+  mode,
+  setMode,
+}: {
+  mode: TestMode;
+  setMode: (next: TestMode) => void;
+}) {
+  const refs = useRef<(HTMLButtonElement | null)[]>([]);
+  const index = MODES.findIndex((m) => m.value === mode);
+
+  return (
+    <div
+      role="tablist"
+      aria-label="Which test"
+      className="inline-flex p-0.5 rounded-sm border border-line bg-sunken"
+      onKeyDown={(e) => {
+        let next = -1;
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+          next = (index + 1) % MODES.length;
+        } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+          next = (index - 1 + MODES.length) % MODES.length;
+        } else if (e.key === "Home") {
+          next = 0;
+        } else if (e.key === "End") {
+          next = MODES.length - 1;
+        }
+        if (next < 0) return;
+        e.preventDefault();
+        setMode(MODES[next].value);
+        refs.current[next]?.focus();
+      }}
+    >
+      {MODES.map((m, i) => {
+        const selected = m.value === mode;
+        return (
+          <button
+            key={m.value}
+            ref={(el) => {
+              refs.current[i] = el;
+            }}
+            role="tab"
+            aria-selected={selected}
+            tabIndex={selected ? 0 : -1}
+            onClick={() => setMode(m.value)}
+            className={`h-7 px-3 rounded-xs text-[12.5px] transition-colors duration-[90ms]
+              ${
+                selected
+                  ? "bg-surface text-fg font-semibold border border-line"
+                  : "text-fg-3 hover:text-fg-2 border border-transparent"
+              }`}
+          >
+            {m.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 /** PAPER_LABEL plus the LPU-only kind, for resume links and past papers. */
 const KIND_LABEL: Record<string, string> = { ...PAPER_LABEL, mte40: "Mid term" };
@@ -183,6 +254,7 @@ export default function TestPickerPage() {
   const router = useRouter();
   const reduced = useReducedMotion();
   const res = useResource("test-picker", fetchPicker);
+  const { mode, setMode } = useTestMode();
 
   const [kind, setKind] = useState<TestKind>("class30");
   const [topic, setTopic] = useState("");
@@ -278,6 +350,9 @@ export default function TestPickerPage() {
   );
 
   useEffect(() => {
+    // The paper shortcuts belong to the Recall picker. Under the MCQ bank
+    // they would start a paper nobody asked for.
+    if (mode !== "recall") return;
     function onKey(e: KeyboardEvent) {
       if (isTypingTarget(e) || hasModifier(e)) return;
       if (e.key >= "1" && e.key <= "3") {
@@ -292,23 +367,26 @@ export default function TestPickerPage() {
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [start]);
+  }, [start, mode]);
 
   const open = (res.data?.tests ?? []).filter(isOpen);
   const finished = (res.data?.tests ?? []).filter((t) => !isOpen(t));
 
-  return (
-    <main className="mx-auto max-w-[1120px] px-4 py-5 pb-10">
-      <div className="flex flex-wrap items-end justify-between gap-3 mb-4">
-        <div>
-          <h1 className="text-[18px] font-semibold leading-none">Test</h1>
-          <p className="text-[13px] text-fg-2 mt-1.5 max-w-prose">
-            Sit a paper, grade yourself honestly, and what you miss comes back
-            sooner. Everything you answer records a real review.
-          </p>
-        </div>
+  /** Shared by both modes, so switching does not move the title under you. */
+  const header = (
+    <div className="flex flex-wrap items-end justify-between gap-3 mb-4">
+      <div>
+        <h1 className="text-[18px] font-semibold leading-none">Test</h1>
+        <p className="text-[13px] text-fg-2 mt-1.5 max-w-prose">
+          {mode === "yash"
+            ? "A curated bank of multiple-choice questions, drawn fresh and shuffled every attempt. One click reveals the answer and why the others are wrong."
+            : "Sit a paper, grade yourself honestly, and what you miss comes back sooner. Everything you answer records a real review."}
+        </p>
+      </div>
 
-        {res.data && !lpu ? (
+      <div className="flex flex-wrap items-center gap-3">
+        <ModeSwitch mode={mode} setMode={setMode} />
+        {mode === "recall" && res.data && !lpu ? (
           // Unseeded database: no subject cards, so the old per-topic
           // restriction keeps its place on the papers themselves.
           <select
@@ -327,6 +405,21 @@ export default function TestPickerPage() {
           </select>
         ) : null}
       </div>
+    </div>
+  );
+
+  if (mode === "yash") {
+    return (
+      <main className="mx-auto max-w-[1120px] px-4 py-5 pb-10">
+        {header}
+        <YashMadeTest />
+      </main>
+    );
+  }
+
+  return (
+    <main className="mx-auto max-w-[1120px] px-4 py-5 pb-10">
+      {header}
 
       {res.error && !res.data ? (
         <ErrorState message={res.error} onRetry={res.reload} />

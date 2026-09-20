@@ -1,0 +1,2007 @@
+{
+ "subject_code": "CSE111",
+ "unit": 2,
+ "unit_label": "Version Control & Cyber Security Basics",
+ "questions": [
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "A version control system (VCS) is best described as a tool that:",
+   "options": [
+    "records the changes made to a set of files over time, so that any earlier version can be recovered",
+    "compresses a project folder into a single archive so that it takes up less disk space",
+    "checks a program for syntax errors before it is allowed to run",
+    "translates source code into an executable program"
+   ],
+   "correct": 0,
+   "explain": "Version control exists to keep a history. Every change is recorded along with who made it and when, so you can inspect, compare with, or return to any earlier state of the project. Compression, error checking and translation belong to entirely different kinds of tools.",
+   "why_wrong": [
+    "",
+    "That describes an archiving or zip tool; a VCS stores history, and saving disk space is not its purpose.",
+    "Checking code for syntax errors is the job of a compiler or an editor's checker, not of version control.",
+    "Turning source code into a runnable program is done by a compiler; a VCS never compiles anything."
+   ],
+   "key": "CSE111-U2-001"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "Which of the following is NOT something a version control system gives you?",
+   "options": [
+    "a record of who changed what, and when",
+    "the ability to return the project to an earlier working state",
+    "branches, so an idea can be tried without disturbing the working version",
+    "a guarantee that the code you commit contains no bugs"
+   ],
+   "correct": 3,
+   "explain": "Version control manages history, not quality. It will store a broken version just as faithfully as a working one; what it gives you is the ability to see exactly what changed and to go back if the change was a mistake. Finding bugs is the job of testing and review.",
+   "why_wrong": [
+    "This is one of the main reasons version control exists: every recorded change carries an author and a date.",
+    "Reverting to an earlier version is a genuine benefit; the history is kept precisely so you can go back.",
+    "Branching is a real feature of version control, letting you experiment apart from the main line of work.",
+    ""
+   ],
+   "key": "CSE111-U2-002"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "situation",
+   "q": "Priya's folder contains project.doc, project_final.doc, project_final2.doc and project_FINAL_really.doc, and she can no longer tell which one her teammate edited last. Which choice solves the problem at its root?",
+   "options": [
+    "Rename every copy with the date and time it was saved, so that the newest one is obvious",
+    "Put the project under version control, keeping one set of files with a recorded history of every change",
+    "Zip the whole folder at the end of each day and keep the zip files as backups",
+    "Email the newest copy to herself and her teammate after every editing session"
+   ],
+   "correct": 1,
+   "explain": "The pile of files called final is exactly the problem version control was invented to end. Under a VCS there is one current set of files, and every earlier state lives in the recorded history together with its author, date and message, so which is newest and who changed this stop being guesswork.",
+   "why_wrong": [
+    "Dated names are still manual copies: nothing records what changed or who changed it, and the folder only keeps growing.",
+    "",
+    "Daily zips are backups, not history: they cannot tell her what changed or who edited it, and the copies still multiply.",
+    "Emailing copies multiplies the versions further, and gives two people editing at the same time no way to combine their work."
+   ],
+   "key": "CSE111-U2-003"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "In a local version control system the versions of a project are kept in a database on a single computer. What is its main drawback?",
+   "options": [
+    "It can store only one earlier version of each file",
+    "Nobody else can collaborate on the project, and if that computer fails the whole history goes with it",
+    "A network connection is needed before any version can be saved",
+    "Every collaborator is forced to keep a complete copy of the history"
+   ],
+   "correct": 1,
+   "explain": "A local VCS keeps its database on one machine only. That machine is a single point of failure, and there is no shared copy for teammates to work from. Those two limits are exactly why centralized and then distributed systems were developed.",
+   "why_wrong": [
+    "A local VCS keeps many versions; storing a full history is its entire purpose.",
+    "",
+    "Needing to reach a server is a limitation of centralized systems; a local system works entirely offline.",
+    "Full copies of the history on every machine describe a distributed system such as Git, not a local one."
+   ],
+   "key": "CSE111-U2-004"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "Which pair are both examples of centralized version control systems?",
+   "options": [
+    "Git and Mercurial",
+    "Subversion (SVN) and CVS",
+    "GitHub and GitLab",
+    "RCS and Git"
+   ],
+   "correct": 1,
+   "explain": "A centralized system keeps one repository, holding all the history, on a server; developers check out a working copy from it. Subversion and CVS are the standard examples. Git and Mercurial are distributed, while GitHub and GitLab are websites that host Git repositories rather than version control systems in their own right.",
+   "why_wrong": [
+    "Both of these are distributed systems, in which each developer clones the full repository and its history.",
+    "",
+    "These are hosting platforms for Git repositories, not version control systems themselves.",
+    "RCS is a local system and Git is distributed, so neither one is centralized."
+   ],
+   "key": "CSE111-U2-005"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "situation",
+   "q": "A small company keeps all its code in one Subversion repository on a single office server, and no backups are taken. The server's disk fails completely. What is the most serious consequence?",
+   "options": [
+    "The entire project history is at risk, because it existed only on that server",
+    "Nothing is lost, because a centralized system automatically stores the history on every developer's machine",
+    "Only the changes each developer made since their last commit are lost",
+    "Only the newest version is lost, since older versions are always kept on the developers' computers"
+   ],
+   "correct": 0,
+   "explain": "In a centralized system the server holds the single repository and the complete history, while developers hold only a checked-out snapshot of the current files. Lose the server with no backup and the history goes with it. This single point of failure is one of the reasons distributed systems, where every clone is itself a full copy, became popular.",
+   "why_wrong": [
+    "",
+    "Holding the history on every machine is a property of distributed systems; in a centralized system it lives on the server only.",
+    "Losing only uncommitted work would be true if every developer held a full copy of the history, which is the distributed model.",
+    "Developers hold only a working copy of the current files, so the older versions are not sitting on their machines."
+   ],
+   "key": "CSE111-U2-006"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "situation",
+   "q": "Ananya edits three files, runs git add . and stops for the day. The next morning git log shows no new entry for that work. What is the explanation?",
+   "options": [
+    "git add only moved the changes into the staging area; nothing enters the repository's history until she runs git commit",
+    "git log lists only the commits made by other people, so her own work never appears in it",
+    "git add holds changes only while the terminal window stays open, so closing it discarded them",
+    "The work was committed, but git log needs an internet connection before it can display commits"
+   ],
+   "correct": 0,
+   "explain": "Git moves a change through three areas: the working directory where you edit, the staging area that git add marks as ready, and the repository where git commit stores it permanently. Ananya stopped after staging, so the history has nothing new to show. Running git commit with a message is what creates the entry that git log then reports.",
+   "why_wrong": [
+    "",
+    "git log shows every commit in the repository, the author's own included, listed newest first.",
+    "Staged changes are recorded inside the .git folder on disk, so they survive closing the terminal or restarting the machine.",
+    "git log reads the local repository, which is why it works perfectly offline, and in any case nothing had been committed yet."
+   ],
+   "key": "CSE111-U2-007"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "situation",
+   "q": "Arjun is on a long train journey with no internet, yet he still makes several commits and reads through the project's history on his laptop. Why does this work?",
+   "options": [
+    "Git is distributed, so his clone holds the full repository and history, and committing and reading the log are local operations",
+    "GitHub keeps a copy of the repository that his laptop can read without any connection",
+    "Git is centralized, so it only needs to contact the server about once a day",
+    "Git stores the commands and actually carries them out later, when the network returns"
+   ],
+   "correct": 0,
+   "explain": "When you clone with Git you receive the entire repository, history included, onto your own machine. Commits are written straight into that local repository, so no server is involved and the operations are fast. Only sharing with other people, by pushing and pulling, needs a network.",
+   "why_wrong": [
+    "",
+    "Anything stored on GitHub lives on a website, and reaching it needs a connection; what Arjun is using is the copy on his own disk.",
+    "Git is distributed rather than centralized, and a centralized system would refuse his commits outright while he was offline.",
+    "Git does not queue commits for later; they are written into the local repository immediately and permanently."
+   ],
+   "key": "CSE111-U2-008"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "Git was created by:",
+   "options": [
+    "Linus Torvalds, in 2005, for the development of the Linux kernel",
+    "the GitHub company, which later released it to the public",
+    "Dennis Ritchie, together with the C programming language",
+    "the Apache Software Foundation, as a successor to Subversion"
+   ],
+   "correct": 0,
+   "explain": "Git came out of the Linux kernel project: Linus Torvalds, who had started Linux, wrote Git in 2005 because the kernel team needed a fast distributed system of its own. It is free and open source, which is one reason it spread far beyond Linux.",
+   "why_wrong": [
+    "",
+    "GitHub is a hosting website built on top of Git and it came later; it did not create Git.",
+    "Dennis Ritchie is associated with C and Unix, decades before Git existed.",
+    "Apache is associated with Subversion, a centralized system that Git competes with rather than descends from."
+   ],
+   "key": "CSE111-U2-009"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "Which statement correctly describes the relationship between Git and GitHub?",
+   "options": [
+    "Git is the version control software installed on your computer; GitHub is a website that hosts Git repositories online",
+    "GitHub is the version control software, and Git is the website that stores the repositories",
+    "Git and GitHub are two names for exactly the same product",
+    "Git is the paid commercial edition of the free GitHub tool"
+   ],
+   "correct": 0,
+   "explain": "Git is a program that runs on your own machine and does the actual version control work. GitHub is one of several websites, along with GitLab and Bitbucket, that host Git repositories so they can be shared. You can use Git for years without ever creating a GitHub account.",
+   "why_wrong": [
+    "",
+    "This reverses the two: the software you install is Git, and the hosting website is GitHub.",
+    "They are different things altogether - one is a tool you install, the other is a service you visit.",
+    "Git is free and open source, and GitHub is a separate hosting service, not a paid edition of the same tool."
+   ],
+   "key": "CSE111-U2-010"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "situation",
+   "q": "Kavya spots a spelling mistake in a public project on GitHub, but she is not a collaborator and has no write access to it. What is the normal way for her to offer the correction?",
+   "options": [
+    "Fork the repository to her own account, commit the fix in her copy, then open a pull request asking the owner to merge it",
+    "Clone the repository to her laptop, commit the fix there, and push it straight to the original project",
+    "Open an issue describing the mistake, since an issue is the only way to change a repository you do not own",
+    "Star the repository, because starring gives a user write access to the project"
+   ],
+   "correct": 0,
+   "explain": "A fork is your own copy of somebody else's repository under your GitHub account, and in your own copy you do have write access. You commit the fix there and then open a pull request, which proposes the change so the original owner can review it and merge it. Cloning is different: it copies the repository to your computer and gives you no rights over the original.",
+   "why_wrong": [
+    "",
+    "Cloning gives her the files on her laptop, but the push would be rejected because she has no write access to the original repository.",
+    "Opening an issue is a fair way to report the mistake, but it only describes the problem instead of offering the corrected text, and it is certainly not the only route.",
+    "Starring merely bookmarks a project so she can find it again; it grants no permissions at all."
+   ],
+   "key": "CSE111-U2-011"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "Immediately after installing Git, which command is normally used to confirm that the installation worked?",
+   "options": [
+    "git --version",
+    "git install",
+    "git init",
+    "git status"
+   ],
+   "correct": 0,
+   "explain": "git --version simply asks Git to print the version it is running. If a version number appears, Git is installed and reachable from your terminal; if the shell replies that the command was not found, the installation or the system path is the problem. It is the usual first check, before you configure your name and email.",
+   "why_wrong": [
+    "",
+    "There is no git install command - installing is done by the installer you download from git-scm.com, not by Git itself.",
+    "git init starts a brand new repository in the current folder and leaves a .git directory behind, so it changes your folder instead of reporting on the installation.",
+    "git status reports on files inside an existing repository, so it has nothing useful to say straight after installation."
+   ],
+   "key": "CSE111-U2-012"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "situation",
+   "q": "Rohit makes his first few commits and notices that the history shows an unfamiliar default name as the author instead of his own. Which command sets this correctly for every repository on his user account?",
+   "options": [
+    "git config --global user.name \"Rohit Sharma\"",
+    "git config --local user.name \"Rohit Sharma\"",
+    "git config --list",
+    "git --version"
+   ],
+   "correct": 0,
+   "explain": "Every commit stores an author name, and Git takes that name from your configuration. Setting user.name with --global writes it once for your user account, so it applies in every repository you work in from then on. Commits already made keep the old name; the new setting affects commits made afterwards.",
+   "why_wrong": [
+    "",
+    "The --local form stores the name in one repository only, so he would have to repeat it in every project he starts.",
+    "This only displays the settings that already exist; it changes nothing.",
+    "This prints the installed version of Git and has nothing to do with the author recorded on a commit."
+   ],
+   "key": "CSE111-U2-013"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "Why does Git expect you to set user.name and user.email before you begin working?",
+   "options": [
+    "because every commit records who made it, so Git needs an identity to attach to each one",
+    "because Git uses those two values to create a GitHub account for you",
+    "because Git verifies the email address with a server before it will accept the first commit",
+    "because the email address acts as the password that unlocks the repository"
+   ],
+   "correct": 0,
+   "explain": "A commit is a snapshot plus its metadata: a message, a date and an author. The name and email you configure are what Git writes into that author field, which is how the history can later answer the question of who changed a given line. Git never checks the address and never sends mail to it; it simply records it.",
+   "why_wrong": [
+    "",
+    "Accounts are created by you on the GitHub website; Git's configuration has no connection to that.",
+    "Git contacts no server to check the address - it records whatever you type, which is why commits work offline.",
+    "There is no password involved: the email is a label written onto your commits, not a key to the repository."
+   ],
+   "key": "CSE111-U2-014"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "Which statement correctly distinguishes git fetch from git pull?",
+   "options": [
+    "git fetch downloads the remote's new commits without merging them, while git pull downloads them and merges them into your current branch",
+    "git fetch downloads the remote's new commits and merges them, while git pull only reports that new commits exist",
+    "Both download and merge the remote's commits; the difference is that git pull also uploads your own commits",
+    "git fetch copies a whole repository to your computer for the first time, while git pull creates a new branch from it"
+   ],
+   "correct": 0,
+   "explain": "git fetch brings the remote's new commits into your local repository but leaves your own branch untouched, so you can look at what has arrived before combining it with your work. git pull does that same download and then merges the new commits into the branch you are on. A short way to remember it is that pull equals fetch plus merge.",
+   "why_wrong": [
+    "",
+    "This reverses the two: merging is what git pull adds, and git fetch deliberately stops short of changing your branch.",
+    "Neither command uploads anything - sending your own commits to the remote is the job of git push.",
+    "Copying a repository for the first time is git clone, and neither fetch nor pull creates a branch for you."
+   ],
+   "key": "CSE111-U2-015"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "situation",
+   "q": "Sana commits her personal projects with her personal email address, but one college repository must carry her university address instead. What should she do?",
+   "options": [
+    "Inside that repository, run git config user.email with the university address, because a local setting overrides the global one there",
+    "Run git config --global user.email with the university address, since that is the only place an email can be set",
+    "Run git config --system user.email with the university address so that the machine handles it",
+    "Delete the global setting, so that Git asks her which address to use at each commit"
+   ],
+   "correct": 0,
+   "explain": "Git reads configuration at three levels - system, global and local - and the most specific level wins. Setting user.email inside a single repository sets it at the local level, which is the default when you leave the flag out inside a repo, so only that project's commits carry the university address while everything else keeps the global personal one.",
+   "why_wrong": [
+    "",
+    "A --global value applies to every repository belonging to her user account, so this would put the university address on her personal projects too.",
+    "The --system level applies to every user on the computer, which is broader still than global and again not per-repository.",
+    "Git never prompts for an address at commit time; with nothing configured it either stops with an error or guesses one from the system."
+   ],
+   "key": "CSE111-U2-016"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "You run one command inside an ordinary project folder, and Git creates a hidden .git directory that turns the folder into a repository. Which command did you run?",
+   "options": [
+    "git init",
+    "git clone <url>",
+    "git status",
+    "git add ."
+   ],
+   "correct": 0,
+   "explain": "git init is what turns a plain folder into a Git repository. It creates the hidden .git directory, which is where every commit and all the history will be stored from then on. Until that folder exists, no other Git command has anywhere to record anything.",
+   "why_wrong": [
+    "",
+    "git clone <url> downloads an existing repository together with its full history from a remote; it does not start a brand new empty repository from your own folder.",
+    "git status only reports what is untracked, modified or staged inside a repository that already exists.",
+    "git add . stages changes in a folder that is already a repository; it cannot create the .git directory."
+   ],
+   "key": "CSE111-U2-017"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "A change passes through Git's three areas before it is stored permanently. What is the correct order?",
+   "options": [
+    "Staging area -> Working directory -> Repository",
+    "Working directory -> Staging area -> Repository",
+    "Repository -> Working directory -> Staging area",
+    "Working directory -> Repository -> Staging area"
+   ],
+   "correct": 1,
+   "explain": "You edit files in the working directory, then mark the changes you want with git add, which puts them in the staging area (also called the index), and finally git commit stores that selected snapshot in the repository. The staging area exists so you can choose exactly what goes into a commit instead of committing everything you happen to have touched.",
+   "why_wrong": [
+    "Nothing can be staged before it has been edited, so the working directory must come first.",
+    "",
+    "The repository is the end of the journey, not the start; commits arrive there last.",
+    "Changes are staged before they are committed, so the repository comes last rather than in the middle."
+   ],
+   "key": "CSE111-U2-018"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "Which command marks a changed file as ready to be included in the next commit, placing it in the staging area (also called the index)?",
+   "options": [
+    "git status",
+    "git commit -m \"msg\"",
+    "git add notes.txt",
+    "git push"
+   ],
+   "correct": 2,
+   "explain": "git add moves a change from the working directory into the staging area, which is Git's waiting room for the next commit. git add notes.txt stages one file, while git add . stages everything that changed in the folder. Nothing is permanent yet at this point; staging only decides what the next commit will contain.",
+   "why_wrong": [
+    "git status reports the current state of your files but changes nothing, so it cannot move anything into the staging area.",
+    "git commit -m records what is ALREADY staged into the repository; it is the step after staging, not the staging step itself.",
+    "",
+    "git push uploads commits that already exist in your local repository to the remote."
+   ],
+   "key": "CSE111-U2-019"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "What exactly does git commit -m \"Fix login bug\" record?",
+   "options": [
+    "Every file currently in the working directory, whether or not it was staged",
+    "Only the changes that were staged, stored as a snapshot carrying that message",
+    "The changes, and it immediately uploads them to GitHub",
+    "A note on the project's GitHub Issues page describing the fix"
+   ],
+   "correct": 1,
+   "explain": "A commit is a permanent snapshot of what is in the staging area, saved with an author, a date, a message and a unique identifier (a SHA hash). Anything you changed but never staged with git add is simply left out of that snapshot. The message after -m is what lets you (and everyone else) understand later why the change was made.",
+   "why_wrong": [
+    "Changes that were never staged with git add are left out; Git commits what is in the staging area.",
+    "",
+    "Committing is entirely local; sending commits to GitHub is a separate step done with git push.",
+    "Issues are a GitHub web feature for tracking bugs and tasks; they have nothing to do with a commit's -m message."
+   ],
+   "key": "CSE111-U2-020"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "You want a compact list of the project's past commits, one line each. Which command gives you that?",
+   "options": [
+    "git log --oneline",
+    "git diff",
+    "git status",
+    "git branch"
+   ],
+   "correct": 0,
+   "explain": "git log prints the commit history with the newest commit first, showing each commit's identifier, author, date and message. Adding --oneline squeezes each commit onto a single line, which is far easier to scan when the project has many commits. It reads history only; it changes nothing in your files.",
+   "why_wrong": [
+    "",
+    "git diff shows the actual line-by-line changes you have made, not the list of past commits.",
+    "git status describes the state of your files right now and shows no history at all.",
+    "git branch lists the branches in the repository, not the commits on them."
+   ],
+   "key": "CSE111-U2-021"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "Run on its own with no extra arguments, what does git diff show?",
+   "options": [
+    "The differences between two branches only",
+    "The changes in your working directory that have not yet been staged",
+    "The list of all commits with their messages",
+    "The files that are being ignored because of .gitignore"
+   ],
+   "correct": 1,
+   "explain": "git diff answers the question \"what have I changed but not yet marked for commit?\" It prints the line-by-line difference between the files in your working directory and what is currently staged. It is the natural command to run just before git add, so you can see exactly what you are about to stage.",
+   "why_wrong": [
+    "Comparing branches is possible with extra arguments, but git diff on its own reports your own uncommitted, unstaged work.",
+    "",
+    "Listing commits with their messages is the job of git log.",
+    "Ignored files are listed in .gitignore; git diff does not report them."
+   ],
+   "key": "CSE111-U2-022"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "In the command git remote add origin https://github.com/user/project.git, what is \"origin\"?",
+   "options": [
+    "The name of the branch that will be created",
+    "The GitHub username of the repository owner",
+    "The conventional short name given to that remote repository's URL",
+    "The message attached to the first commit"
+   ],
+   "correct": 2,
+   "explain": "A remote is just a nickname for a URL that your local repository can push to and pull from, and origin is the name everyone conventionally uses for the main remote. Typing git push origin main is far easier than retyping the whole https:// URL each time. The name is only a convention, but sticking to it keeps commands readable for everyone.",
+   "why_wrong": [
+    "Branch names such as main or master are separate from remote names, and this command creates no branch.",
+    "The username does appear inside the URL, but origin is a label you attach to the remote itself.",
+    "",
+    "Commit messages are supplied with git commit -m and have nothing to do with adding a remote."
+   ],
+   "key": "CSE111-U2-023"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "Which file lists the files and folders Git should never track, such as build output, node_modules and files containing secrets?",
+   "options": [
+    "README.md",
+    ".gitignore",
+    ".git",
+    "index.html"
+   ],
+   "correct": 1,
+   "explain": "A .gitignore file sits in the repository and names patterns Git should skip, so those files never get staged or committed by accident. It keeps the history clean of things nobody needs to share, and it is the standard protection against committing passwords and API keys. Files listed there simply stop appearing as untracked in git status.",
+   "why_wrong": [
+    "README.md describes the project and is what visitors see on the repository's front page.",
+    "",
+    ".git is the hidden folder where Git stores the repository itself, including every commit; it is not a list of exclusions.",
+    "index.html is an ordinary project file with no special meaning to Git."
+   ],
+   "key": "CSE111-U2-024"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "You are currently on the main branch and you run git merge feature. What does Git do?",
+   "options": [
+    "Brings the commits from feature into main",
+    "Brings the commits from main into feature",
+    "Switches you over to the feature branch",
+    "Uploads the feature branch to GitHub"
+   ],
+   "correct": 0,
+   "explain": "git merge always pulls the named branch INTO the branch you are standing on. So on main, git merge feature adds the feature work to main and leaves feature itself untouched. Checking which branch you are on before merging is the habit that prevents merging in the wrong direction.",
+   "why_wrong": [
+    "",
+    "That is the opposite direction; to do that you would first switch to feature and then run git merge main.",
+    "Switching branches is done with git checkout <branch> or the newer git switch <branch>.",
+    "Uploading a branch to the remote is git push, not git merge."
+   ],
+   "key": "CSE111-U2-025"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "You have just installed Git, and before your first commit you want to set the author name Git will record in every repository you work on under your user account. Which command does that?",
+   "options": [
+    "git config --global user.name \"Your Name\"",
+    "git config --local user.name \"Your Name\"",
+    "git commit -m \"Your Name\"",
+    "git init \"Your Name\""
+   ],
+   "correct": 0,
+   "explain": "Every commit stores an author, so Git asks you to identify yourself once after installation with git config --global user.name and git config --global user.email. The --global flag stores the setting for your user account, so it applies to every repository on the machine instead of just one. You can check what is set with git config --list.",
+   "why_wrong": [
+    "",
+    "git config --local sets the value for the current repository only, so it would not apply to the other repositories you work on.",
+    "git commit -m supplies a message describing a change; it does not store your identity as a setting.",
+    "git init creates a new repository in the current folder and takes no name setting like this."
+   ],
+   "key": "CSE111-U2-026"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "Which GitHub feature is used to track bugs and tasks for a project?",
+   "options": [
+    "Stars",
+    "Issues",
+    "Forks",
+    "Pull requests"
+   ],
+   "correct": 1,
+   "explain": "Issues are GitHub's built-in tracker: each one is a numbered entry describing a bug to fix or a task to do, and people discuss it in the comments until it is closed. They live with the repository, so the plan and the code stay in one place. Many projects also link a pull request to the issue it fixes.",
+   "why_wrong": [
+    "Stars simply bookmark a project and signal that you like it.",
+    "",
+    "A fork is your own copy of somebody else's repository under your account.",
+    "A pull request proposes a set of changes so the owner can review and merge them."
+   ],
+   "key": "CSE111-U2-027"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "recall",
+   "q": "What is the main difference between a centralized version control system such as Subversion and a distributed one such as Git?",
+   "options": [
+    "In a centralized system the full history lives on one central server, while in a distributed system every developer's clone holds the full history",
+    "In a centralized system every developer holds the full history, while in a distributed system it exists only on a server",
+    "A centralized system can store only text files, while a distributed system can store files of any type",
+    "A centralized system keeps no commit history at all; only a distributed system records commits"
+   ],
+   "correct": 0,
+   "explain": "In a centralized VCS the single repository and all of its history sit on one server, so you need a network connection to commit and that server is a single point of failure. In a distributed VCS such as Git, cloning copies the entire repository including its complete history, so you can commit, branch and read the log offline. It also means every clone acts as a backup, and developers sync with each other by pushing and pulling.",
+   "why_wrong": [
+    "",
+    "That reverses the two; holding a complete copy of the history on each developer's machine is exactly what makes Git distributed.",
+    "Both kinds happily store any type of file; the difference is where the history is kept, not what may be stored.",
+    "Centralized systems such as Subversion record commits and keep full history too, but that history lives only on the central server."
+   ],
+   "key": "CSE111-U2-028"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "situation",
+   "q": "Priya has edited several files in her project and also created two new ones. Before committing, she wants one summary telling her which files are new, which are changed, and which are already staged. Which command gives her that?",
+   "options": [
+    "git log",
+    "git status",
+    "git commit -m \"check\"",
+    "git branch"
+   ],
+   "correct": 1,
+   "explain": "git status is the command you run constantly while working, because it reports exactly where every file stands right now: untracked, modified but unstaged, or staged for the next commit. It also usually hints at the command to run next. It is read-only, so running it can never break anything.",
+   "why_wrong": [
+    "git log lists commits that were already made and says nothing about the files she has just edited.",
+    "",
+    "Committing would record her work rather than describe it, and it would only capture what is already staged.",
+    "git branch lists branches, not file changes."
+   ],
+   "key": "CSE111-U2-029"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "situation",
+   "q": "Rahul cloned his team's repository, edited some files, and ran git add . and git commit -m \"Add contact page\" without errors. But when he refreshes the project page on GitHub, his change is nowhere to be seen. What does he still need to do?",
+   "options": [
+    "git push",
+    "git pull",
+    "Run git init in the folder again",
+    "Run git add . again"
+   ],
+   "correct": 0,
+   "explain": "Committing stores a snapshot in the repository on his own laptop; Git is distributed, so nothing leaves the machine until you say so. git push is the step that uploads his local commits to the remote, which is when GitHub finally shows them. This local-then-push split is why you can commit happily with no internet.",
+   "why_wrong": [
+    "",
+    "git pull brings other people's commits down from the remote; it does not send his up.",
+    "git init would try to start a new repository, but his repository already exists from the clone.",
+    "git add . stages changes, and his changes are already committed; staging again sends nothing to GitHub."
+   ],
+   "key": "CSE111-U2-030"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "situation",
+   "q": "Aman shares a GitHub repository with three classmates. Before he starts today's work, he wants the commits they pushed yesterday brought down and merged into his branch so he is not editing an out-of-date copy. What should he run first?",
+   "options": [
+    "git push",
+    "git pull",
+    "git log",
+    "git status"
+   ],
+   "correct": 1,
+   "explain": "git pull downloads the new commits from the remote and merges them into your current branch in one step, which is why it is the standard way to begin a session on a shared project. Starting from the latest code means fewer and smaller conflicts later. The habit is simple: pull before you start, push when you finish.",
+   "why_wrong": [
+    "git push sends his own commits up and brings nothing down.",
+    "",
+    "git log only shows the history he already has on his own machine.",
+    "git status describes his own files and never contacts the remote."
+   ],
+   "key": "CSE111-U2-031"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "situation",
+   "q": "Sana wants to see what her teammates have pushed to the remote, but she is halfway through a delicate change and does not want anything merged into her working files yet. Which command fits?",
+   "options": [
+    "git pull",
+    "git fetch",
+    "git checkout main",
+    "git diff"
+   ],
+   "correct": 1,
+   "explain": "git fetch downloads the remote's new commits into your repository but leaves your branch and your working files exactly as they are, so you can inspect what arrived before deciding anything. git pull is really fetch plus an automatic merge, which is the part she wants to postpone. When she is ready, she can merge the fetched work herself.",
+   "why_wrong": [
+    "git pull would download the new commits AND merge them into her branch, which is precisely what she wants to avoid right now.",
+    "",
+    "Switching branches only moves her around history she already has; it downloads nothing.",
+    "git diff compares her own local changes and never contacts the remote."
+   ],
+   "key": "CSE111-U2-032"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "situation",
+   "q": "Kiran wants to attempt a risky redesign of his site's homepage, but the current version must stay safe and working so he can go back to it at any time. What is the proper Git way to do this?",
+   "options": [
+    "Copy the whole folder to homepage_backup before editing anything",
+    "Create a new branch, switch to it, and do the experiment there",
+    "Edit the files and simply avoid committing until he is sure it works",
+    "Delete the .git folder and start a fresh repository for the experiment"
+   ],
+   "correct": 1,
+   "explain": "A branch is an independent line of development, so commits made on it do not touch main at all. He can experiment freely, and if it fails he just switches back to main, which is untouched; if it works, he merges the branch in. This is exactly what branching exists for, and it costs almost nothing to create one.",
+   "why_wrong": [
+    "Copying folders by hand is the habit version control was invented to replace; the copy carries no history and drifts out of date.",
+    "",
+    "Leaving everything uncommitted means there is no safe point to return to, and a single bad save can destroy the working version.",
+    "Deleting .git throws away the whole history of the project, which is the opposite of keeping the working version safe."
+   ],
+   "key": "CSE111-U2-033"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "situation",
+   "q": "Meera merges a teammate's branch into her own. Git stops partway and reports a conflict in one file, because both of them changed the same lines. What has happened, and what should she do?",
+   "options": [
+    "The repository is corrupted, so she should delete it and clone again",
+    "Git cannot decide automatically which version to keep, so she edits the file to resolve it and then commits the resolution",
+    "Git has thrown away both versions, so she must retype the file from memory",
+    "The remote is unreachable, so she should run git push to reconnect"
+   ],
+   "correct": 1,
+   "explain": "A merge conflict simply means two branches changed the same lines and Git refuses to guess which one is right. Git marks both versions inside the file and hands the decision to you; you edit the file into the version you actually want, stage it, and commit. Conflicts are a routine part of teamwork, not a sign that anything is broken.",
+   "why_wrong": [
+    "A conflict is normal and expected; the repository is perfectly healthy, and re-cloning would just throw away her work.",
+    "",
+    "Git keeps both versions and marks them inside the file so she can choose; nothing has been discarded.",
+    "Conflicts are decided locally between two sets of commits; the network is not involved."
+   ],
+   "key": "CSE111-U2-034"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "situation",
+   "q": "Dev has a finished folder of project files on his laptop that has never been under version control, and an empty repository waiting on GitHub. Which sequence gets his work onto it?",
+   "options": [
+    "git init -> git add . -> git commit -m \"first commit\" -> git remote add origin <url> -> git push -u origin main",
+    "git clone <url> -> git add . -> git commit -m \"first commit\" -> git push",
+    "git add . -> git init -> git push -> git commit -m \"first commit\"",
+    "git remote add origin <url> -> git push -> git init -> git commit -m \"first commit\""
+   ],
+   "correct": 0,
+   "explain": "For a brand-new project the order follows the three areas: create the repository, stage the files, commit them locally, then connect a remote and push. git init must come first because every later command needs the .git folder to exist, and the remote can only be added to a repository that already exists. The -u on the first push also remembers the remote and branch, so later you can just type git push.",
+   "why_wrong": [
+    "",
+    "git clone is for a repository that already has content, but his GitHub repository is empty and his files are already on his laptop.",
+    "Nothing can be staged before git init has created the repository, and pushing before committing would send nothing.",
+    "A remote cannot be added before git init has created the repository, and there is no commit yet to push."
+   ],
+   "key": "CSE111-U2-035"
+  },
+  {
+   "topic": "Version Control",
+   "kind": "situation",
+   "q": "Nisha spots a bug in a stranger's public project on GitHub and has written a fix. She has no write access to that repository. What is the normal way to offer her fix?",
+   "options": [
+    "Clone the repository, fix the bug, and push straight to the owner's repository",
+    "Fork the repository to her own account, commit the fix there, and open a pull request",
+    "Add herself as a collaborator on the owner's repository and then push the fix",
+    "Download the files as a ZIP, fix them, and attach the ZIP as a comment"
+   ],
+   "correct": 1,
+   "explain": "Forking gives her a copy of the project under her own GitHub account, where she has full write access to commit the fix. A pull request then proposes those commits back to the original repository so the owner can review the exact changes and merge them if they agree. This fork-then-pull-request flow is how open source contribution works for people who are not collaborators.",
+   "why_wrong": [
+    "Cloning only copies the project to her computer, and pushing back to someone else's repository requires write access she does not have, so the push is rejected.",
+    "",
+    "Only the repository's owner can grant collaborator access; you cannot add yourself.",
+    "Uploading a ZIP of edited files is not how changes are reviewed on GitHub, whereas a pull request shows the exact line-by-line changes."
+   ],
+   "key": "CSE111-U2-036"
+  },
+  {
+   "topic": "Malware",
+   "kind": "recall",
+   "q": "What does the term malware refer to?",
+   "options": [
+    "Any software written deliberately to damage, disrupt, steal from or gain unauthorised access to a computer or network",
+    "Any software that runs slowly and uses more memory than it should",
+    "Any software that is distributed free of charge over the internet",
+    "Any software that has not been updated to its latest version"
+   ],
+   "correct": 0,
+   "explain": "Malware is simply short for malicious software. What makes a program malware is the intention behind it - it is written to damage, disrupt, spy on or break into a system without permission. Price, size or age have nothing to do with it.",
+   "why_wrong": [
+    "",
+    "Poor performance is a symptom of many ordinary problems, including badly written but harmless software, so slowness by itself proves nothing about intent.",
+    "Being free is a matter of licensing and price; enormous amounts of free software are perfectly safe.",
+    "An out-of-date program may carry unpatched security weaknesses, but missing an update is not the same as being written to cause harm."
+   ],
+   "key": "CSE111-U2-037"
+  },
+  {
+   "topic": "Malware",
+   "kind": "recall",
+   "q": "Which characteristic best describes a computer virus?",
+   "options": [
+    "It attaches itself to a host program or file and spreads only when a user runs or opens that file",
+    "It travels across a network on its own with no human involvement at all",
+    "It encrypts the victim's documents and demands a payment for the key",
+    "It hides its own presence while giving an attacker administrator rights"
+   ],
+   "correct": 0,
+   "explain": "A virus cannot live on its own - it rides inside a legitimate program or file, and it stays dormant until a person runs or opens that host. Those two marks, needing a host and needing user action, are exactly what separate a virus from a worm in every exam question on this topic.",
+   "why_wrong": [
+    "",
+    "Spreading by itself with no human action is the defining behaviour of a worm, not a virus.",
+    "Encryption plus a payment demand is ransomware.",
+    "Hidden administrator-level control is the description of a rootkit."
+   ],
+   "key": "CSE111-U2-038"
+  },
+  {
+   "topic": "Malware",
+   "kind": "situation",
+   "q": "Rohit copies a game setup file from a friend's pen drive and nothing happens for several days. The moment he finally runs the setup, other programs on his laptop start failing and the same infection turns up in files he shares afterwards. Machines he never gave a copy to stay clean. Which type of malware is this?",
+   "options": [
+    "Worm",
+    "Virus",
+    "Botnet",
+    "Adware"
+   ],
+   "correct": 1,
+   "explain": "Two details settle it: the infection waited until Rohit ran the file, and it spread only to files and people that received a copy. That is a virus - it needs a host file and a human action, and it reproduces by infecting other files rather than by crossing the network on its own.",
+   "why_wrong": [
+    "A worm would not have waited for Rohit to run anything, and it would have reached other machines on the network by itself.",
+    "",
+    "A botnet is a large group of machines under one remote controller used for attacks; here nobody is controlling Rohit's laptop from outside.",
+    "Adware's signature is unwanted advertisements and browser changes, not infected files and programs that stop working."
+   ],
+   "key": "CSE111-U2-039"
+  },
+  {
+   "topic": "Malware",
+   "kind": "recall",
+   "q": "What makes a worm different from the other malware types in the way it spreads?",
+   "options": [
+    "It requires the user to open an infected attachment every single time it spreads",
+    "It is a standalone program that copies itself and spreads across networks with no host program and no user action",
+    "It must be installed by a user who believes it is a useful application",
+    "It can only travel through pen drives and other removable media"
+   ],
+   "correct": 1,
+   "explain": "A worm is self-contained and self-propelling: it does not attach to a host file and it does not wait for anyone to click. Because it multiplies unchecked it eats bandwidth, memory and disk space, which is why a worm outbreak shows up as a slow or crashing network.",
+   "why_wrong": [
+    "Needing the user to act each time is the virus's limitation; the worm's whole point is that it does not need it.",
+    "",
+    "Being installed voluntarily by a deceived user describes a trojan horse.",
+    "Worms typically exploit network weaknesses or mail themselves to contacts; removable media is not what defines them."
+   ],
+   "key": "CSE111-U2-040"
+  },
+  {
+   "topic": "Malware",
+   "kind": "situation",
+   "q": "An hour after one student opened an e-mail attachment, every machine in the computer lab has slowed to a crawl and the network is flooded with traffic. Nobody else opened anything, yet the same program is now running on all the machines. Which type of malware is this?",
+   "options": [
+    "Trojan horse",
+    "Rootkit",
+    "Worm",
+    "Spyware"
+   ],
+   "correct": 2,
+   "explain": "The infection reached machines whose users did nothing, and it saturated the network as it multiplied. Self-spreading across a network plus heavy consumption of bandwidth and memory is the classic worm picture.",
+   "why_wrong": [
+    "A trojan does not copy itself anywhere; it stays on the machine where the deceived user installed it.",
+    "A rootkit works to stay hidden and hold quiet administrator control, not to announce itself by flooding a network.",
+    "",
+    "Spyware depends on going unnoticed, so choking the network with traffic would defeat its own purpose."
+   ],
+   "key": "CSE111-U2-041"
+  },
+  {
+   "topic": "Malware",
+   "kind": "recall",
+   "q": "Which statement about a Trojan horse is correct?",
+   "options": [
+    "It disguises itself as something useful or desirable so the user installs it, and it does not replicate itself",
+    "It automatically copies itself to every drive and machine it can reach",
+    "It is a network of infected computers operated by a remote controller",
+    "Its main effect is to display advertisements in the user's browser"
+   ],
+   "correct": 0,
+   "explain": "A trojan gets in through deception rather than through any technical self-spreading ability - a free game, a cracked application, a fake updater. Once installed it may open a backdoor, steal data or pull down more malware, but the user has to be tricked into running it each time, because it never copies itself.",
+   "why_wrong": [
+    "",
+    "Automatic self-copying is what viruses and worms do; a trojan's spread depends entirely on fresh victims being deceived.",
+    "A network of remotely controlled infected machines is a botnet.",
+    "Unwanted advertising is the mark of adware."
+   ],
+   "key": "CSE111-U2-042"
+  },
+  {
+   "topic": "Malware",
+   "kind": "situation",
+   "q": "Neha installs a cracked copy of a paid video editor from a random website. The editor actually works, but a week later the IT team tells her someone has been connecting to her laptop remotely. The program never copied itself anywhere else. Which type of malware is this?",
+   "options": [
+    "Worm",
+    "Virus",
+    "Trojan horse",
+    "Ransomware"
+   ],
+   "correct": 2,
+   "explain": "Neha installed it herself because it looked like the software she wanted, and it then quietly opened a backdoor for remote access. Disguise plus consent obtained by deception, with no self-replication at all, is the definition of a trojan horse.",
+   "why_wrong": [
+    "A worm spreads itself to other machines over the network; this program stayed exactly where it was installed.",
+    "A virus reproduces by infecting other files and programs, and nothing here reproduced.",
+    "",
+    "Ransomware announces itself by locking or encrypting files and demanding money; Neha's files were never touched."
+   ],
+   "key": "CSE111-U2-043"
+  },
+  {
+   "topic": "Malware",
+   "kind": "recall",
+   "q": "A program that secretly records every key a user types in order to capture passwords is an example of which type of malware?",
+   "options": [
+    "Adware",
+    "Spyware",
+    "Worm",
+    "Rootkit"
+   ],
+   "correct": 1,
+   "explain": "A keylogger is a form of spyware: it installs quietly and monitors the user, sending what it captures to a third party without consent. Spyware is classified by what it does - secret surveillance and data theft - not by how it arrived on the machine.",
+   "why_wrong": [
+    "Adware exists to push advertisements at the user and is visible by design, not secret.",
+    "",
+    "A worm is defined by self-replication across networks, not by recording what a user types.",
+    "A rootkit is about concealment and administrator-level control, not about capturing keystrokes."
+   ],
+   "key": "CSE111-U2-044"
+  },
+  {
+   "topic": "Malware",
+   "kind": "situation",
+   "q": "Aman's laptop behaves completely normally, but over two weeks his e-mail, college portal and bank account are all accessed by someone else. His antivirus eventually finds a program that had been running quietly since he installed a free screen-recording tool, sending information about his activity to an unknown server. Which type of malware is this?",
+   "options": [
+    "Ransomware",
+    "Adware",
+    "Spyware",
+    "Worm"
+   ],
+   "correct": 2,
+   "explain": "Nothing was destroyed, nothing was demanded and nothing was displayed - the machine simply leaked Aman's information to somebody else for two weeks. Silent monitoring and theft of credentials is precisely what spyware does, and staying unnoticed is what makes it effective.",
+   "why_wrong": [
+    "Ransomware makes itself obvious at once by locking files and demanding payment; it has no reason to sit quietly for weeks.",
+    "Adware would have filled his screen with advertisements instead of leaving the laptop behaving normally.",
+    "",
+    "A worm's multiplication would have hit other machines and eaten bandwidth rather than silently harvesting his logins."
+   ],
+   "key": "CSE111-U2-045"
+  },
+  {
+   "topic": "Malware",
+   "kind": "recall",
+   "q": "What does ransomware do to its victim?",
+   "options": [
+    "Encrypts the victim's files or locks the whole system and demands a payment in exchange for the decryption key",
+    "Quietly forwards the victim's browsing history to advertising companies",
+    "Turns the machine into a remotely controlled zombie used for attacks on other targets",
+    "Attaches itself to other programs so that it spreads whenever they are run"
+   ],
+   "correct": 0,
+   "explain": "Ransomware combines two things: encryption and extortion. The files stay on the disk but become unreadable without a key the attacker holds, and a demand for payment, usually in cryptocurrency and often with a countdown, appears on screen. Paying does not guarantee recovery, which is why tested offline backups are the real defence.",
+   "why_wrong": [
+    "",
+    "Quietly harvesting browsing data describes spyware and tracking adware; ransomware wants to be seen.",
+    "Being remotely controlled as one machine among thousands describes a botnet.",
+    "Attaching to other programs to spread when they run describes a virus."
+   ],
+   "key": "CSE111-U2-046"
+  },
+  {
+   "topic": "Malware",
+   "kind": "situation",
+   "q": "Priya's project folder now contains files named report.docx.locked and presentation.pptx.locked, and a full-screen message demands payment in cryptocurrency within 48 hours in exchange for a key. Which type of malware has hit her machine?",
+   "options": [
+    "Ransomware",
+    "Spyware",
+    "Rootkit",
+    "Trojan horse"
+   ],
+   "correct": 0,
+   "explain": "Her files are still there but unreadable, and a payment is being demanded for the key - encryption plus extortion, which is ransomware exactly. Priya should not pay; the dependable way out is a clean offline backup, which is why backups matter before an attack, not after.",
+   "why_wrong": [
+    "",
+    "Spyware's entire method is to stay unnoticed while stealing information, so it would never put a payment demand on the screen.",
+    "A rootkit works to hide itself and keep quiet administrator control; a full-screen ransom note is the opposite of hiding.",
+    "A trojan horse describes a disguise used to get malware installed; the encryption-and-extortion behaviour on screen is what names this one."
+   ],
+   "key": "CSE111-U2-047"
+  },
+  {
+   "topic": "Malware",
+   "kind": "recall",
+   "q": "Which description fits adware best?",
+   "options": [
+    "Software that automatically displays or downloads unwanted advertisements, often arriving bundled with free software the user installed",
+    "Software that encrypts a user's documents until a fee is paid",
+    "Software that gives an attacker hidden administrator control of a machine",
+    "Software that copies itself across a network and consumes its bandwidth"
+   ],
+   "correct": 0,
+   "explain": "Adware is defined by the unwanted advertising it forces on the user - pop-ups, injected banners, redirects, a changed home page - and it usually rides in with free downloads. It often tracks browsing to target those ads, so it is mainly a nuisance and a privacy problem rather than a destroyer of data.",
+   "why_wrong": [
+    "",
+    "Encrypting documents until a fee is paid is ransomware.",
+    "Hidden administrator control is a rootkit.",
+    "Copying itself across a network and eating bandwidth is a worm."
+   ],
+   "key": "CSE111-U2-048"
+  },
+  {
+   "topic": "Malware",
+   "kind": "situation",
+   "q": "After installing a free PDF converter, Kiran finds that his browser home page has been changed, pop-up advertisements appear on pages that never had them, and some searches get redirected elsewhere. His files are all intact and nothing is being demanded of him. Which type of malware is this?",
+   "options": [
+    "Ransomware",
+    "Adware",
+    "Worm",
+    "Rootkit"
+   ],
+   "correct": 1,
+   "explain": "Bundled with a free download, and its whole visible effect is advertising and browser interference - that is adware. It is irritating and bad for privacy because it usually tracks browsing to target the ads, but it is not destroying his data.",
+   "why_wrong": [
+    "Ransomware would have encrypted or locked his files and demanded payment; his files are untouched.",
+    "",
+    "A worm would show up as infections on other machines and network congestion, not as advertisements in his browser.",
+    "A rootkit's aim is to remain invisible, and changing the home page while throwing up pop-ups is the loudest behaviour possible."
+   ],
+   "key": "CSE111-U2-049"
+  },
+  {
+   "topic": "Malware",
+   "kind": "recall",
+   "q": "Why are rootkits considered especially difficult to detect and remove?",
+   "options": [
+    "They give an attacker administrator-level control while actively hiding themselves and other malware from the user and from security software",
+    "They spread across networks faster than any other kind of malware",
+    "They are the only malware capable of encrypting files",
+    "They are automatically bundled with every free download from the internet"
+   ],
+   "correct": 0,
+   "explain": "A rootkit buries itself deep in the operating system, so it both holds root or administrator privileges and conceals its own presence, along with anything else the attacker has planted. Because the very tools you would use to look for it can be fooled, a full reinstall of the operating system is often the only trustworthy cure.",
+   "why_wrong": [
+    "",
+    "Speed of network spread is the worm's trait; a rootkit is about privilege and concealment, not racing across a network.",
+    "Ransomware is the type defined by encryption for extortion, and encryption is not what characterises a rootkit.",
+    "Arriving bundled with free software is typical of adware, and in any case no malware comes with every download."
+   ],
+   "key": "CSE111-U2-050"
+  },
+  {
+   "topic": "Malware",
+   "kind": "situation",
+   "q": "An attacker has administrator control of a college server. The security software reports the system as clean, some system tools list fewer running processes than the administrator knows are there, and the technicians conclude that reinstalling the operating system is the only reliable fix. Which type of malware best explains this?",
+   "options": [
+    "Adware",
+    "Rootkit",
+    "Ransomware",
+    "Virus"
+   ],
+   "correct": 1,
+   "explain": "Three clues point one way: administrator-level control, active concealment that makes the security tools report a clean system, and a reinstall being the only dependable cure. That combination of privilege plus stealth is what a rootkit is.",
+   "why_wrong": [
+    "Adware is a visible nuisance that shows advertisements; it neither grants administrator control nor hides from security software.",
+    "",
+    "Ransomware makes its presence unmistakable with a ransom demand, and nothing is being demanded here.",
+    "A virus infects host files and is normally found and cleaned by antivirus software rather than being invisible to it."
+   ],
+   "key": "CSE111-U2-051"
+  },
+  {
+   "topic": "Malware",
+   "kind": "recall",
+   "q": "In a botnet, what is the role of the infected computers?",
+   "options": [
+    "Each infected machine, called a bot or zombie, is controlled remotely by the attacker and used together with the others for attacks such as DDoS or mass spam",
+    "Each infected machine encrypts its own files and waits for its owner to pay",
+    "Each infected machine earns money for the attacker purely by showing advertisements to its owner",
+    "Each infected machine protects the attacker by deleting all of its own log files"
+   ],
+   "correct": 0,
+   "explain": "A botnet's power comes from numbers: thousands of ordinary machines, each quietly infected, all obeying one attacker through a command-and-control server. The owners usually have no idea, and the combined capacity gets used to flood a target with traffic in a DDoS attack, send spam, commit click fraud or mine cryptocurrency.",
+   "why_wrong": [
+    "",
+    "Encrypting files and waiting for payment is ransomware acting on one victim, not machines being pooled for attacks.",
+    "Showing advertisements is adware's business model, and it involves no remote controller directing the machine.",
+    "Log deletion may be part of an attacker's cover-up, but it is not what turns a machine into a bot."
+   ],
+   "key": "CSE111-U2-052"
+  },
+  {
+   "topic": "Malware",
+   "kind": "situation",
+   "q": "Sameer's laptop seems perfectly fine, but his internet provider writes to say the laptop has been sending huge volumes of traffic to one particular website every night, together with thousands of other machines, as part of an attack on that site. What has most likely happened to his laptop?",
+   "options": [
+    "It has been hit by ransomware",
+    "It has been infected with spyware",
+    "It has been recruited into a botnet",
+    "It has picked up adware"
+   ],
+   "correct": 2,
+   "explain": "Sameer's machine is not the target here - it is the weapon. Being one of thousands of remotely controlled machines aimed at flooding a single site with traffic is exactly a botnet carrying out a DDoS attack, and the giveaway is that the owner notices nothing.",
+   "why_wrong": [
+    "Ransomware would have locked or encrypted Sameer's own files and demanded money from him; his laptop works normally.",
+    "Spyware steals information from the victim, whereas here the laptop is being used to attack someone else's website.",
+    "",
+    "Adware's payoff is advertisements shown to Sameer, not traffic directed at a third party in the middle of the night."
+   ],
+   "key": "CSE111-U2-053"
+  },
+  {
+   "topic": "Malware",
+   "kind": "recall",
+   "q": "Which habit gives the best protection against picking up malware while installing new software?",
+   "options": [
+    "Downloading it only from the software maker's official website or an official app store",
+    "Downloading whichever copy appears first in the search results, since search engines rank the safest sites highest",
+    "Switching the antivirus off during the installation so that it does not interrupt",
+    "Preferring a cracked copy from a file-sharing site so that no account details have to be given"
+   ],
+   "correct": 0,
+   "explain": "Most malware reaches ordinary users through the download itself, so where the file comes from matters more than anything you do afterwards. An official site or store is the one place where the file you receive is the file the maker published; anywhere else the installer may have been repackaged with a trojan inside. Keeping the antivirus switched on with current definitions backs that habit up.",
+   "why_wrong": [
+    "",
+    "Search rankings are shaped by advertising and by deliberate manipulation, and attackers work hard to push convincing fake download pages to the top.",
+    "Turning the antivirus off removes the one check that might catch a malicious installer at the exact moment it runs.",
+    "Cracked software is one of the commonest trojan carriers, because the file has already been modified by someone you cannot identify."
+   ],
+   "key": "CSE111-U2-054"
+  },
+  {
+   "topic": "Malware",
+   "kind": "recall",
+   "q": "Which statement correctly distinguishes spyware from adware?",
+   "options": [
+    "Spyware secretly collects the user's information and sends it to a third party, while adware's main effect is unwanted advertising",
+    "Spyware fills the screen with pop-ups, while adware records every keystroke",
+    "Spyware spreads over networks by itself, while adware needs a host program to attach to",
+    "Spyware encrypts files for a ransom, while adware hides the attacker's presence"
+   ],
+   "correct": 0,
+   "explain": "Both often arrive bundled with free downloads, so students mix them up, but their purposes differ. Spyware is about secrecy and theft of information; adware is about pushing advertisements at you, even though it may track your browsing to choose which ones. One steals quietly, the other annoys openly.",
+   "why_wrong": [
+    "",
+    "This reverses the two: pop-ups are adware's behaviour and keylogging is a form of spyware.",
+    "Self-spreading over networks describes a worm and attaching to a host describes a virus; neither statement is about spyware or adware.",
+    "Encrypting for ransom is ransomware and hiding the attacker is a rootkit, so neither half of this statement is correct."
+   ],
+   "key": "CSE111-U2-055"
+  },
+  {
+   "topic": "Malware",
+   "kind": "recall",
+   "q": "Which of these is the most reliable protection against losing your data to ransomware?",
+   "options": [
+    "Paying the ransom quickly, before the countdown on screen runs out",
+    "Keeping regular offline backups and checking that they actually restore",
+    "Renaming important files so that the malware cannot recognise them",
+    "Doing all your daily work from an administrator account"
+   ],
+   "correct": 1,
+   "explain": "If a clean copy of your data exists somewhere the malware cannot reach, the attacker has nothing to sell you - you wipe the machine and restore. Backups only count if they are kept offline and have actually been tested, because an untested backup discovered to be broken during an emergency is no backup at all.",
+   "why_wrong": [
+    "Paying protects nothing: there is no guarantee a working key arrives, and it funds further attacks.",
+    "",
+    "Ransomware encrypts whatever it finds regardless of file names, so renaming achieves nothing.",
+    "Working as administrator makes matters worse, since malware inherits those privileges and can reach more of the system."
+   ],
+   "key": "CSE111-U2-056"
+  },
+  {
+   "topic": "Malware",
+   "kind": "recall",
+   "q": "Why is it recommended that everyday work be done from a standard (non-administrator) user account?",
+   "options": [
+    "Because malware that runs in that session inherits only the limited privileges of that account and can therefore do less damage",
+    "Because standard accounts cannot be infected by malware at all",
+    "Because antivirus software only functions on standard accounts",
+    "Because standard accounts encrypt every file on the disk automatically"
+   ],
+   "correct": 0,
+   "explain": "Malware runs with whatever rights the logged-in user has. From a standard account it cannot install system-wide software, alter protected settings or reach other users' data nearly as easily, so the blast radius of a mistake is much smaller. It does not make you immune - it limits the damage.",
+   "why_wrong": [
+    "",
+    "A standard account can certainly be infected; it simply limits what the infection can reach.",
+    "Antivirus software works on both kinds of account, and installing or updating it usually needs administrator rights.",
+    "Standard accounts do not encrypt anything by themselves; disk encryption is a separate feature you turn on."
+   ],
+   "key": "CSE111-U2-057"
+  },
+  {
+   "topic": "Malware",
+   "kind": "situation",
+   "q": "A worm swept through a company's network last month, spreading by itself through a weakness in a server program that had not been updated for two years. The IT team wants to make sure the same thing cannot happen again. Which measure deals with the cause most directly?",
+   "options": [
+    "Installing operating system and application updates promptly, so known weaknesses are closed before a worm can use them",
+    "Buying extra bandwidth so the network can absorb the traffic a future outbreak would create",
+    "Installing a second antivirus program on every machine so that two run at the same time",
+    "Making every employee change their password once a month"
+   ],
+   "correct": 0,
+   "explain": "Worms spread by exploiting security weaknesses, and a weakness the vendor has already patched is only dangerous on machines that never applied the patch. Prompt updating closes the exact opening this worm used. The other measures may sound sensible, but none of them removes the hole in the server program.",
+   "why_wrong": [
+    "",
+    "Extra bandwidth only softens a symptom, the congestion, while the worm still spreads and still infects every unpatched machine.",
+    "A second antivirus patches nothing, and two products scanning at once tend to conflict with each other rather than catch more.",
+    "The worm broke in through a flaw in the server software, not by guessing anyone's password, so new passwords would not have stopped it."
+   ],
+   "key": "CSE111-U2-058"
+  },
+  {
+   "topic": "Phishing & Social Engineering",
+   "kind": "recall",
+   "q": "Which statement best describes social engineering?",
+   "options": [
+    "Software that secretly records what you type and sends it to an attacker",
+    "Manipulating people into revealing confidential information or performing unsafe actions",
+    "Exploiting a flaw in a program's code to take control of a computer",
+    "Scrambling data so that an attacker who intercepts it cannot read it"
+   ],
+   "correct": 1,
+   "explain": "Social engineering targets the person, not the machine. The attacker's tool is persuasion - trust, fear, urgency, curiosity - so no firewall or antivirus can block a user who is talked into handing over their own password. That is exactly why people are described as the weakest link in security.",
+   "why_wrong": [
+    "That is spyware, a keylogging kind of malware; it attacks the machine rather than the person's judgement.",
+    "",
+    "That is a technical exploit of a software vulnerability, which is the opposite of attacking the human being.",
+    "That describes encryption, a protective measure, not an attack of any kind."
+   ],
+   "key": "CSE111-U2-059"
+  },
+  {
+   "topic": "Phishing & Social Engineering",
+   "kind": "recall",
+   "q": "Which social-engineering technique is defined as inventing a believable scenario together with a false identity in order to extract information?",
+   "options": [
+    "Baiting",
+    "Dumpster diving",
+    "Pretexting",
+    "Shoulder surfing"
+   ],
+   "correct": 2,
+   "explain": "Pretexting is built on a story: a false identity plus a plausible reason for needing the information, such as I am from the IT department and we must verify your account. The invented scenario is what makes the victim feel it is normal to answer. Anyone who contacts you claiming to need your details should be verified independently before you say anything.",
+   "why_wrong": [
+    "Baiting tempts the victim with something attractive, such as an infected USB drive or a free download, rather than telling a story.",
+    "Dumpster diving means recovering information from discarded papers or devices, with no conversation with the victim at all.",
+    "",
+    "Shoulder surfing is simply watching someone type a PIN or password, and needs no invented identity."
+   ],
+   "key": "CSE111-U2-060"
+  },
+  {
+   "topic": "Phishing & Social Engineering",
+   "kind": "recall",
+   "q": "Searching through an organisation's discarded papers, printouts and old devices for useful information is called:",
+   "options": [
+    "Tailgating",
+    "Quid pro quo",
+    "Baiting",
+    "Dumpster diving"
+   ],
+   "correct": 3,
+   "explain": "Sensitive information often leaves an organisation through the bin - printouts, old statements, discarded hard drives. Dumpster diving is the low-tech technique of recovering it, which is why shredding papers and wiping devices matter. It needs no contact with the victim whatsoever.",
+   "why_wrong": [
+    "Tailgating is following an authorised person through a secure door instead of using your own credentials.",
+    "Quid pro quo offers the victim something in return, such as fake free tech support, in exchange for access or credentials.",
+    "Baiting leaves something tempting, like a labelled USB drive, for the victim to pick up and use.",
+    ""
+   ],
+   "key": "CSE111-U2-061"
+  },
+  {
+   "topic": "Phishing & Social Engineering",
+   "kind": "recall",
+   "q": "Which of the following is NOT a social-engineering technique?",
+   "options": [
+    "Shoulder surfing",
+    "A worm that spreads by itself from machine to machine through a software flaw",
+    "Quid pro quo",
+    "Impersonation"
+   ],
+   "correct": 1,
+   "explain": "Social engineering always works through a human being who is persuaded, watched or followed. A worm needs no persuasion at all: it copies itself across the network by exploiting a software flaw, which makes it malware rather than social engineering. The other three all depend on a person being tricked or observed.",
+   "why_wrong": [
+    "Shoulder surfing is a social-engineering technique: watching a person as they type their PIN or password.",
+    "",
+    "Quid pro quo is social engineering: the attacker offers something, such as fake technical support, in exchange for credentials.",
+    "Impersonation is social engineering: posing as a colleague, technician, delivery agent or official to win trust."
+   ],
+   "key": "CSE111-U2-062"
+  },
+  {
+   "topic": "Phishing & Social Engineering",
+   "kind": "recall",
+   "q": "What mainly distinguishes spear phishing from ordinary phishing?",
+   "options": [
+    "It is aimed at one specific person or organisation and uses real details about them to be convincing",
+    "It is sent in bulk to as many addresses as possible",
+    "It is delivered only by SMS rather than by email",
+    "It is used only against chief executives and other senior figures"
+   ],
+   "correct": 0,
+   "explain": "Ordinary phishing is a net thrown wide - the same message to thousands of people, hoping a few bite. Spear phishing is a single tailored message that uses real details about you: your name, your course, your manager's name. Because those details are correct, the usual clue of a generic greeting disappears, which makes it much harder to spot.",
+   "why_wrong": [
+    "",
+    "Bulk sending to as many recipients as possible describes ordinary phishing, not the spear variant.",
+    "Phishing delivered by SMS is called smishing; spear phishing can arrive through email, SMS or any other channel.",
+    "Targeting only senior, high-value people is whaling, which is one particular kind of spear phishing."
+   ],
+   "key": "CSE111-U2-063"
+  },
+  {
+   "topic": "Phishing & Social Engineering",
+   "kind": "recall",
+   "q": "A carefully crafted phishing email aimed specifically at a company's CEO or a college's principal is known as:",
+   "options": [
+    "Vishing",
+    "Clone phishing",
+    "Whaling",
+    "Baiting"
+   ],
+   "correct": 2,
+   "explain": "Whaling is spear phishing pointed at the biggest fish - a director, a CEO, a principal - because that person's approval or account is worth far more to the attacker. Such messages are usually polished and business-like, often about payments, contracts or legal matters. The technique is the same as spear phishing; only the seniority of the target differs.",
+   "why_wrong": [
+    "Vishing is phishing carried out by voice call, which describes the channel used rather than who is targeted.",
+    "Clone phishing copies a genuine message you already received and swaps its link or attachment for a malicious one.",
+    "",
+    "Baiting relies on a tempting object such as an infected USB drive or a free download of paid software."
+   ],
+   "key": "CSE111-U2-064"
+  },
+  {
+   "topic": "Phishing & Social Engineering",
+   "kind": "recall",
+   "q": "Phishing that is carried out by voice call, such as a caller claiming your electricity connection will be cut tonight unless you confirm your details, is called:",
+   "options": [
+    "Smishing",
+    "Vishing",
+    "Whaling",
+    "Pretexting"
+   ],
+   "correct": 1,
+   "explain": "Vishing is voice phishing: the same fraud that would be smishing over SMS becomes vishing when it arrives as a phone call. A live human voice earns trust far more quickly than text, and the caller manufactures a deadline so that you act before you think. Treat anyone who rings you first as unverified and check through a channel you already trust.",
+   "why_wrong": [
+    "Smishing is phishing delivered by SMS or a messaging app, not by a voice call.",
+    "",
+    "Whaling describes who is being targeted, a senior figure, and says nothing about the use of a phone.",
+    "Pretexting is the general technique of inventing a false identity and story; it can be used in a call, an email or in person, so it is not the specific name for phone phishing."
+   ],
+   "key": "CSE111-U2-065"
+  },
+  {
+   "topic": "Phishing & Social Engineering",
+   "kind": "recall",
+   "q": "Which of the following is NOT a typical warning sign that an email is phishing?",
+   "options": [
+    "A greeting such as Dear Customer where the real organisation would use your name",
+    "A warning that your account will be blocked within 24 hours unless you act immediately",
+    "Hovering over the link shows exactly the address that is displayed, on the organisation's genuine domain",
+    "An unexpected .zip attachment that you never asked for"
+   ],
+   "correct": 2,
+   "explain": "The giveaways of phishing are pressure, sloppiness and mismatch: a generic greeting, a deadline, a look-alike sender or link, an attachment out of nowhere. A link whose hidden destination matches the text shown, on the organisation's real domain, is the opposite of a warning sign - that is what an honest message looks like. Always hover before you click so you can see where a link actually goes.",
+   "why_wrong": [
+    "A greeting such as Dear Customer is a classic sign, because an organisation that really holds your account would normally use your name.",
+    "Manufactured urgency of exactly this kind is one of the commonest phishing signs.",
+    "",
+    "An unexpected attachment, especially .zip or .exe, is a standard warning sign because it may install malware."
+   ],
+   "key": "CSE111-U2-066"
+  },
+  {
+   "topic": "Phishing & Social Engineering",
+   "kind": "situation",
+   "q": "Walking to class you find a USB drive lying in the corridor, neatly labelled Placement List 2026 - Final. You are tempted to plug it into a lab computer to see what is on it. Which technique is the attacker most likely using?",
+   "options": [
+    "Tailgating",
+    "Vishing",
+    "Dumpster diving",
+    "Baiting"
+   ],
+   "correct": 3,
+   "explain": "Leaving infected media where a curious person will find it is baiting: the attacker relies on your curiosity, because you plug the drive in yourself and no defence has to be defeated. A label like Placement List is chosen precisely because students cannot resist it. Hand a found drive to lab staff instead of connecting it to any machine.",
+   "why_wrong": [
+    "Tailgating is following an authorised person through a secure door rather than using your own credentials.",
+    "Vishing is a fraudulent voice call, and no call is involved here.",
+    "Dumpster diving is recovering information from things that have been thrown away, not planting a device for you to find.",
+    ""
+   ],
+   "key": "CSE111-U2-067"
+  },
+  {
+   "topic": "Phishing & Social Engineering",
+   "kind": "situation",
+   "q": "You swipe your ID card to enter the department lab. A person you do not recognise, carrying two large cartons and swiping no card of his own, is close behind you and asks you to hold the door. Letting him in would be an example of:",
+   "options": [
+    "Shoulder surfing",
+    "Tailgating",
+    "Baiting",
+    "Quid pro quo"
+   ],
+   "correct": 1,
+   "explain": "Tailgating, also called piggybacking, means getting through a controlled door on somebody else's authorisation. Carrying boxes is a standard trick, because ordinary politeness makes people hold the door open. The safe response is to let the door close and ask him to enter with his own card or through reception.",
+   "why_wrong": [
+    "Shoulder surfing is watching someone type a password or PIN, which is not what is happening at the door.",
+    "",
+    "Baiting depends on a tempting object, such as an abandoned USB drive, being picked up by the victim.",
+    "Quid pro quo means the attacker offers something in exchange, such as fake free technical help."
+   ],
+   "key": "CSE111-U2-068"
+  },
+  {
+   "topic": "Phishing & Social Engineering",
+   "kind": "situation",
+   "q": "Your phone rings during a lecture. The caller knows your name, says he is from your bank's fraud team, and explains that a suspicious transaction is in progress and he needs the OTP just sent to your phone in order to block it. What should you do?",
+   "options": [
+    "Read out the OTP, since the caller is trying to stop the fraud rather than commit it",
+    "Refuse to give the OTP, end the call, and ring the number printed on your bank card to check",
+    "Send him the OTP by SMS instead, so that nobody sitting nearby overhears it",
+    "Give him only the first three digits so that he can verify you without getting the whole code"
+   ],
+   "correct": 1,
+   "explain": "A one-time password is the last thing standing between an attacker and your account, and no genuine bank employee ever needs it, because the bank is the side that generated it. Knowing your name proves nothing, since that is easy to obtain. Hang up and call the number printed on your card or shown inside the bank's own app, never a number or a caller that reached you first.",
+   "why_wrong": [
+    "Anyone asking you to read out an OTP is trying to complete a transaction of their own; a real bank never needs the code it has just sent you.",
+    "",
+    "The danger is the attacker receiving the code at all, so changing the channel from speech to text removes nothing.",
+    "Partial codes still help an attacker narrow the possibilities, and the correct response is to share none of it."
+   ],
+   "key": "CSE111-U2-069"
+  },
+  {
+   "topic": "Phishing & Social Engineering",
+   "kind": "situation",
+   "q": "Last week your department genuinely emailed you a PDF of the exam timetable. Today a message that looks identical arrives from a very similar address, with the same subject and wording, except that the attachment has been replaced by a link to download the updated timetable. This is best described as:",
+   "options": [
+    "Clone phishing",
+    "Whaling",
+    "Quid pro quo",
+    "Baiting"
+   ],
+   "correct": 0,
+   "explain": "Clone phishing takes a real message you already trust, copies it almost exactly, and substitutes a malicious link or attachment. Because you genuinely received the original, the copy feels expected and your guard drops. The tells here are the slightly different sender address and the fact that an attachment has quietly become a link.",
+   "why_wrong": [
+    "",
+    "Whaling is phishing aimed at a senior, high-value target such as a principal or a CEO, not at an ordinary student.",
+    "Quid pro quo involves the attacker offering a service or favour in exchange for access or credentials.",
+    "Baiting relies on planting something tempting, typically a physical device or a free download, rather than copying a genuine message."
+   ],
+   "key": "CSE111-U2-070"
+  },
+  {
+   "topic": "Phishing & Social Engineering",
+   "kind": "situation",
+   "q": "A hostel friend clicked a link in a scholarship verification email, typed his college email address and password into the page that opened, and only then noticed the strange domain in the address bar. He uses that same password on three other accounts. What should he do first?",
+   "options": [
+    "Delete the email, clear the browser history and carry on as normal",
+    "Reply to the email asking the sender to delete the details he typed",
+    "Change that password everywhere he reused it and turn on multi-factor authentication",
+    "Wait a few days and act only if he notices something suspicious on his accounts"
+   ],
+   "correct": 2,
+   "explain": "Once a password has been typed into an attacker's page, treat it as known to them, and known on every account where it was reused, because attackers try the same pair on other sites within minutes. Changing it everywhere and switching on multi-factor authentication means a stolen password alone is no longer enough to get in. Reporting and deleting the message matters too, but speed on the password is what limits the damage.",
+   "why_wrong": [
+    "Deleting the mail tidies the inbox but leaves a stolen password working on four separate accounts.",
+    "Replying confirms that the address is live and reaches the attacker, who has no intention of deleting anything.",
+    "",
+    "Waiting hands the attacker free time; the password was compromised the moment it was typed in."
+   ],
+   "key": "CSE111-U2-071"
+  },
+  {
+   "topic": "Phishing & Social Engineering",
+   "kind": "situation",
+   "q": "An SMS arrives reading: Dear Customer, your KYC expires today. Update immediately at http://sbi-kyc-verify.link or your account will be frozen. You do hold an account with that bank. This attack is an example of:",
+   "options": [
+    "Whaling",
+    "Shoulder surfing",
+    "Smishing",
+    "Vishing"
+   ],
+   "correct": 2,
+   "explain": "Smishing is phishing delivered by SMS or a messaging app. Every typical marker is present here: the generic Dear Customer, a same-day deadline, a threat to freeze the account, and a look-alike address that is not the bank's real domain. Do not tap the link - open the bank's own app or type the address you already know.",
+   "why_wrong": [
+    "Whaling describes phishing aimed at a senior figure such as a CEO or principal, not a mass text sent to ordinary customers.",
+    "Shoulder surfing means physically watching someone as they type a password or PIN.",
+    "",
+    "Vishing is phishing carried out over a voice call, whereas this attack arrived as a text message."
+   ],
+   "key": "CSE111-U2-072"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "recall",
+   "q": "Which factor does the most to make a password hard to crack by a brute force attack?",
+   "options": [
+    "Its length, because each extra character multiplies the number of combinations to try",
+    "Replacing o with 0 and a with @ inside a common dictionary word",
+    "Adding one exclamation mark to the end of an ordinary word",
+    "Changing a short password to a different short password every week"
+   ],
+   "correct": 0,
+   "explain": "Brute force means trying every possible combination, and the number of combinations grows enormously with each extra character. That is why a long passphrase of several unrelated words beats a short password stuffed with symbols, and why length is the first thing to increase. Mixing character types still helps, but it cannot rescue something that is only six or eight characters long.",
+   "why_wrong": [
+    "",
+    "Substituting digits for letters is a pattern attackers already build into their cracking lists, so the word is still guessed quickly.",
+    "A single symbol appended to a dictionary word is one of the first variations a dictionary attack tries.",
+    "Rotating between short passwords keeps the search space small; every one of them is still cracked in the same short time."
+   ],
+   "key": "CSE111-U2-073"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "recall",
+   "q": "Which of these is a WEAK password habit?",
+   "options": [
+    "Using a passphrase made of several unrelated words",
+    "Using a different password for every account",
+    "Using your date of birth so that you never forget it",
+    "Changing a password at once when the service reports a breach"
+   ],
+   "correct": 2,
+   "explain": "Anything about you that other people can find out, such as a birth date, name, phone number or pet's name, is among the first things an attacker tries. Personal details are also easy to harvest from social media, so they make a password predictable rather than secret. A strong password must be unpredictable even to someone who knows you well.",
+   "why_wrong": [
+    "An unrelated-word passphrase is long and unpredictable, which is exactly what makes a password strong and still memorable.",
+    "A unique password per account is essential, because one leaked site then cannot unlock the rest of your accounts.",
+    "",
+    "Changing the password immediately after a breach announcement is the correct response, before the leaked value can be reused."
+   ],
+   "key": "CSE111-U2-074"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "situation",
+   "q": "Riya used the same password for a shopping site and for her email. Months after the shopping site announced a data leak, someone logs into her email, even though her email provider was never breached. What attack is this?",
+   "options": [
+    "Credential stuffing",
+    "Brute force attack",
+    "Shoulder surfing",
+    "A rootkit infection"
+   ],
+   "correct": 0,
+   "explain": "Credential stuffing takes username and password pairs leaked from one site and replays them automatically against many other services, betting that people reuse passwords. Riya's email password was never guessed; it was simply handed over by the shopping site's leak. This is the whole reason a password must be unique per account.",
+   "why_wrong": [
+    "",
+    "Brute force would mean trying every possible combination against her email, which is not what happened here since the password was already known from the leak.",
+    "Shoulder surfing means physically watching someone type a password, which does not explain an attack traced back to a site breach.",
+    "A rootkit hides an attacker's presence on an infected machine; nothing here suggests her device was infected."
+   ],
+   "key": "CSE111-U2-075"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "recall",
+   "q": "An attacker runs a program that tries a long list of common words and previously leaked passwords against one account. This is best described as:",
+   "options": [
+    "A dictionary attack",
+    "A brute force attack",
+    "Phishing",
+    "Social engineering"
+   ],
+   "correct": 0,
+   "explain": "A dictionary attack works from a prepared word list rather than from every possible combination, which makes it far faster than brute force and very effective against ordinary words. Brute force tries every combination character by character and is defeated mainly by length. Both are automated guessing attacks, but the dictionary version targets the predictability of human choices.",
+   "why_wrong": [
+    "",
+    "Brute force tries every possible character combination rather than a prepared list, and takes far longer.",
+    "Phishing tricks the user into typing the password into a fake page; no guessing program is involved.",
+    "Social engineering manipulates a person into revealing the password, which is a human attack rather than an automated one."
+   ],
+   "key": "CSE111-U2-076"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "situation",
+   "q": "Arjun has about forty online accounts and admits he reuses one password because he cannot remember more. He wants unique passwords everywhere without forgetting them. What should he do?",
+   "options": [
+    "Keep one very strong password and use it on every account",
+    "Use a password manager that generates and stores long unique passwords behind one master password",
+    "Save all his passwords in a file named passwords.txt on his desktop",
+    "Use one base password and add each site's name to the end of it"
+   ],
+   "correct": 1,
+   "explain": "A password manager solves exactly this problem: it generates long random passwords, stores them encrypted, and you only have to remember the one master password. That makes uniqueness practical instead of a memory exercise. He should protect the master password well and turn on multi-factor authentication for the manager itself.",
+   "why_wrong": [
+    "However strong it is, one reused password means a single site's leak exposes all forty accounts.",
+    "",
+    "A plain text file on the desktop can be read by anyone sitting at the machine and by any malware running as his account.",
+    "The pattern is obvious once one password leaks, so an attacker can work out the others immediately."
+   ],
+   "key": "CSE111-U2-077"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "recall",
+   "q": "Which of the following is an example of the authentication factor \"something you have\"?",
+   "options": [
+    "A one-time code sent to your registered phone",
+    "A security question about your first school",
+    "Your fingerprint scanned at login",
+    "A six-digit PIN you have memorised"
+   ],
+   "correct": 0,
+   "explain": "The three factor categories are something you know, something you have and something you are. A phone receiving an OTP, an authenticator app, a smart card or a hardware key are all physical items in your possession, so they fall under something you have. Recognising which category each item belongs to is the key to spotting genuine multi-factor authentication.",
+   "why_wrong": [
+    "",
+    "A security answer is information stored in your memory, so it is something you know.",
+    "A fingerprint is a biometric, which is something you are.",
+    "A memorised PIN is a secret in your head, so it is something you know."
+   ],
+   "key": "CSE111-U2-078"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "situation",
+   "q": "A website asks Meera for her password and then, on the next screen, for a four-digit PIN she chose at signup. She tells her friend the site uses two-factor authentication. Is she right?",
+   "options": [
+    "Yes, because access needs two separate screens",
+    "No, because both the password and the PIN are things she knows",
+    "No, because multi-factor authentication must use all three categories",
+    "Yes, because a PIN counts as something she has"
+   ],
+   "correct": 1,
+   "explain": "Multi-factor authentication requires evidence from two or more different categories, not simply two steps. A password and a PIN are both secrets stored in her memory, so anyone who learns both, through phishing or a leak, still gets straight in. Pairing the password with a phone code or a fingerprint would make it genuinely multi-factor.",
+   "why_wrong": [
+    "Two prompts on two screens still means two secrets of the same type; the number of screens is not what counts.",
+    "",
+    "Two different categories are enough; using all three is stronger but is not the definition.",
+    "A PIN is memorised information, so it is something she knows, not something she has."
+   ],
+   "key": "CSE111-U2-079"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "recall",
+   "q": "Withdrawing cash from an ATM using your card and then typing your PIN is an example of:",
+   "options": [
+    "Multi-factor authentication combining something you have with something you know",
+    "Single-factor authentication, because both are used at the same machine",
+    "Multi-factor authentication combining something you are with something you know",
+    "Authorisation rather than authentication"
+   ],
+   "correct": 0,
+   "explain": "The card is a physical object in your possession and the PIN is a secret in your memory, so the ATM is combining two different categories. That is exactly why a stolen card alone, or an overseen PIN alone, is not enough to take your money. It is the textbook everyday example of two-factor authentication.",
+   "why_wrong": [
+    "",
+    "Being used at one machine does not merge the two into one factor; the card and the PIN come from different categories.",
+    "Nothing biometric is checked at an ordinary ATM; the card is something you have, not something you are.",
+    "Authentication is proving who you are, which is precisely what the card and PIN do before any transaction is allowed."
+   ],
+   "key": "CSE111-U2-080"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "situation",
+   "q": "Neha's password is captured by a convincing phishing page. The attacker tries to log in but is stopped because the service also asks for a code from Neha's authenticator app. What does this illustrate?",
+   "options": [
+    "That a stolen password alone is no longer enough, because the attacker would also need her second factor",
+    "That multi-factor authentication encrypts the password so a phishing page cannot read it",
+    "That once multi-factor authentication is on, the password no longer needs to be strong",
+    "That multi-factor authentication stopped the phishing email from reaching her"
+   ],
+   "correct": 0,
+   "explain": "The value of multi-factor authentication is precisely this case: the password is compromised, and the account survives because the attacker cannot produce the second factor. Neha should still change the stolen password immediately, since the second factor is a safety net and not a replacement for password hygiene. An authenticator app also resists SIM swapping better than an SMS code would.",
+   "why_wrong": [
+    "",
+    "The phishing page did capture the typed password; multi-factor authentication does nothing to encrypt what a user types into a fake site.",
+    "Multi-factor authentication adds a layer but does not excuse a weak or reused password, which remains the first line of defence.",
+    "Multi-factor authentication controls logins; filtering malicious mail is the job of spam filters and the user's own caution."
+   ],
+   "key": "CSE111-U2-081"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "recall",
+   "q": "Why is an authenticator app or a hardware security key usually considered a stronger second factor than an SMS one-time password?",
+   "options": [
+    "SMS codes can be intercepted, and the number can be taken over by SIM swapping",
+    "SMS codes count as something you know rather than something you have",
+    "An authenticator app removes the need for any password at all",
+    "SMS one-time passwords never expire, so they can be reused"
+   ],
+   "correct": 0,
+   "explain": "An SMS code depends on the phone network and on your mobile operator, and attackers have persuaded operators to move a victim's number to a new SIM in order to receive the codes. An authenticator app or hardware key generates the code on a device you physically hold, with no network path to hijack. SMS is still far better than having no second factor at all.",
+   "why_wrong": [
+    "",
+    "An SMS code arrives on a device you possess, so it is still something you have; the weakness lies in how it is delivered.",
+    "The second factor sits alongside the password; it does not replace it.",
+    "One-time passwords are short-lived by design, whichever channel delivers them."
+   ],
+   "key": "CSE111-U2-082"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "recall",
+   "q": "A firewall is best described as:",
+   "options": [
+    "A system that monitors incoming and outgoing network traffic and allows or blocks it according to configured rules",
+    "A program that scans stored files and removes infected ones",
+    "A service that encrypts your traffic so it cannot be read in transit",
+    "A tool that keeps a second copy of your data in case of loss"
+   ],
+   "correct": 0,
+   "explain": "A firewall sits between a trusted machine or network and an untrusted one such as the Internet, and checks traffic against a rulebook with a default policy, usually deny unless explicitly allowed. It can be hardware, software, or both. Think of it as a gatekeeper deciding what may pass, not as something that inspects or repairs the machine itself.",
+   "why_wrong": [
+    "",
+    "That describes antivirus software, which works on files on the machine rather than on traffic crossing the boundary.",
+    "Encrypting traffic is the job of a VPN or of HTTPS; a firewall filters traffic but does not conceal it.",
+    "That describes a backup system, which is unrelated to filtering network traffic."
+   ],
+   "key": "CSE111-U2-083"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "recall",
+   "q": "A simple packet-filtering firewall decides whether to allow a packet mainly by looking at:",
+   "options": [
+    "The source and destination addresses and the port numbers",
+    "The name of the user who is currently logged in to the computer",
+    "Whether the file being transferred matches a known virus signature",
+    "Whether the person at the keyboard has typed the correct password"
+   ],
+   "correct": 0,
+   "explain": "Packet filtering is the simplest kind of firewall rule: it compares each packet's source and destination address and port against the rulebook and allows or denies it, with deny unless allowed as the usual default. More advanced firewalls go further by tracking the state of a connection or inspecting the application content inside the traffic. In every case the decision is about traffic crossing the boundary, not about the contents of the disk.",
+   "why_wrong": [
+    "",
+    "Packet filter rules are written in terms of addresses and ports, not in terms of whichever person happens to be signed in at that moment.",
+    "Comparing files against virus signatures is antivirus work; a packet filter does not scan for malware signatures.",
+    "Checking a password is authentication done by the service being reached, not a filtering decision made on each packet."
+   ],
+   "key": "CSE111-U2-084"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "situation",
+   "q": "Karan's laptop is hit by ransomware after he downloads a cracked copy of a paid program. He protests that his firewall was switched on the whole time. What is the correct explanation?",
+   "options": [
+    "A firewall filters network traffic against rules; it cannot remove or stop malware he chose to download and run on the machine",
+    "A hardware firewall would have deleted the ransomware, but a software firewall cannot",
+    "A firewall only inspects outgoing traffic, so it never sees anything arriving",
+    "The firewall failed only because it was not set to deny by default; a correct rulebook removes malware"
+   ],
+   "correct": 0,
+   "explain": "Firewalls decide what traffic may cross a boundary; they do not examine or clean files running on the machine. Karan personally authorised the download and then executed it, so the traffic looked like ordinary permitted web use. Protection here would have come from not running untrusted software, plus antivirus and up-to-date backups.",
+   "why_wrong": [
+    "",
+    "Hardware firewalls protect a whole network at its edge, but they also filter traffic rather than remove malware from a computer.",
+    "Firewalls inspect both incoming and outgoing traffic; direction is not the issue here.",
+    "No firewall rulebook, however strict, removes malware from disk; that is the job of antivirus software."
+   ],
+   "key": "CSE111-U2-085"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "recall",
+   "q": "Which statement correctly distinguishes a hardware firewall from a software firewall?",
+   "options": [
+    "A hardware firewall is a separate device, often built into the router, protecting a whole network; a software firewall runs on one computer and protects that machine",
+    "A hardware firewall protects a single computer; a software firewall protects the entire network from the router",
+    "A software firewall can only block outgoing traffic, while a hardware firewall only blocks incoming traffic",
+    "A hardware firewall only records traffic for later review, while a software firewall actually blocks it"
+   ],
+   "correct": 0,
+   "explain": "The difference is where the firewall sits and how much it covers. A hardware firewall guards the boundary of a whole network, so every device behind it benefits; a software firewall such as Windows Defender Firewall protects only the computer it runs on, including when that laptop is on someone else's network. Using both together is common and sensible.",
+   "why_wrong": [
+    "",
+    "This reverses the two: the separate device at the network edge is the hardware firewall.",
+    "Both kinds can filter traffic in either direction; the rules decide, not the form factor.",
+    "Both kinds enforce allow and deny decisions; logging is an extra feature, not the distinction."
+   ],
+   "key": "CSE111-U2-086"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "recall",
+   "q": "The principle of least privilege states that:",
+   "options": [
+    "Every user and program should have only the minimum access needed to do its job, and no more",
+    "Everyday work should be done in the administrator account so that prompts do not interrupt it",
+    "Everyone in a lab should share one account so that settings stay consistent",
+    "All users should be given administrator rights, provided their passwords are strong"
+   ],
+   "correct": 0,
+   "explain": "Least privilege limits the damage any single account or program can do if it is misused or compromised. It is why operating systems separate administrator, standard and guest accounts in the first place, and why you elevate only for the specific task that needs it. Less standing power means a smaller blast radius when something goes wrong.",
+   "why_wrong": [
+    "",
+    "Working as administrator is the opposite of least privilege, since anything that runs then inherits full control of the system.",
+    "A shared account destroys accountability, because no action can be traced to the person who performed it.",
+    "Strong passwords do not reduce what malware can do once it is running with administrator rights."
+   ],
+   "key": "CSE111-U2-087"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "situation",
+   "q": "Yash does all his coursework and browsing while logged in as Administrator. A friend advises him to use a standard account for daily work instead. Why is that safer?",
+   "options": [
+    "Malware that runs in a standard account inherits only that account's limited rights and cannot silently change system-wide settings or other users' files",
+    "A standard account automatically scans every download for viruses before it opens",
+    "Malware simply cannot execute at all inside a standard account",
+    "A standard account encrypts everything he downloads from the Internet"
+   ],
+   "correct": 0,
+   "explain": "A program runs with the privileges of the account that starts it, so working as a standard user puts a ceiling on what any malicious program can reach. It might damage his own files, but it cannot quietly install itself system-wide or touch other users' data without an administrator password. When he genuinely needs to install something, he elevates deliberately for that one task.",
+   "why_wrong": [
+    "",
+    "Account type does not provide malware scanning; that is antivirus software's job.",
+    "Malware can still run as a standard user; what changes is how much it is permitted to affect.",
+    "Standard accounts do not encrypt downloads; encryption is a separate feature entirely."
+   ],
+   "key": "CSE111-U2-088"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "recall",
+   "q": "Which statement about a Guest account is correct?",
+   "options": [
+    "It is a temporary, heavily restricted account that cannot install software or reach other users' files",
+    "It has the same rights as a standard user, just with a different password",
+    "It can install software as long as the software is installed only for the guest",
+    "It is the Windows name for the Linux root account"
+   ],
+   "correct": 0,
+   "explain": "A guest account exists so a visitor can use a machine briefly without gaining any lasting access. It is deliberately the most restricted of the account types: no installing, no system changes, and no reading of other people's files. Administrator, standard and guest form a ladder of decreasing privilege.",
+   "why_wrong": [
+    "",
+    "A guest is more restricted than a standard user, who at least keeps their own files and settings between sessions.",
+    "Installing software is exactly what a guest account is prevented from doing.",
+    "Root on Linux is the fully privileged account, which is the opposite of a guest."
+   ],
+   "key": "CSE111-U2-089"
+  },
+  {
+   "topic": "Security Controls",
+   "kind": "situation",
+   "q": "On a shared Linux lab machine, Priya's attempt to install a compiler fails with a permission denied message. She normally works in her own ordinary account. What is the best thing to do?",
+   "options": [
+    "Run just that one installation command with sudo and then carry on working as her normal user",
+    "Log in as root and stay as root for the rest of the session so nothing is blocked again",
+    "Change the permissions on the system directories so no command needs privileges",
+    "Give her own account permanent administrator rights so the prompts never appear again"
+   ],
+   "correct": 0,
+   "explain": "Elevating briefly and deliberately for the single command that needs it is exactly what sudo on Linux, and Run as administrator with its UAC prompt on Windows, are designed for. The moment the command finishes she is back to limited rights, so anything else she runs cannot touch the system. Staying elevated turns a one-minute need into a session-long risk.",
+   "why_wrong": [
+    "",
+    "Remaining root means every later command, including a mistyped or malicious one, runs with full system power.",
+    "Loosening permissions on system directories removes the protection for every user on the machine and is far worse than the original problem.",
+    "Permanent elevation defeats least privilege; the point is to hold the power only while it is actually needed."
+   ],
+   "key": "CSE111-U2-090"
+  },
+  {
+   "topic": "Safe Practices & Cyber Ethics",
+   "kind": "recall",
+   "q": "A shopping site's address bar shows https:// and a closed padlock icon. By itself, what does this prove?",
+   "options": [
+    "The connection between your browser and that site is encrypted",
+    "The site is run by an honest business and is safe to buy from",
+    "The site has been scanned and found free of malware",
+    "The identity of the site's owner has been verified by the government"
+   ],
+   "correct": 0,
+   "explain": "HTTPS with the padlock means the traffic between you and that server is encrypted, so someone eavesdropping on the network cannot read it. It says nothing about the honesty of whoever is on the other end, because criminals can obtain certificates just as easily as anyone else. That is why you still have to read the domain name carefully for look-alike spellings before trusting a page.",
+   "why_wrong": [
+    "",
+    "Honesty is not certified by a padlock at all, and phishing sites routinely use HTTPS so that they look trustworthy.",
+    "No malware scan is involved in getting a certificate; the padlock only concerns how the data travels.",
+    "An ordinary certificate confirms control of the domain name, not a government check on who the owner is."
+   ],
+   "key": "CSE111-U2-091"
+  },
+  {
+   "topic": "Safe Practices & Cyber Ethics",
+   "kind": "situation",
+   "q": "Riya is at a cafe using its free open Wi-Fi and wants to pay her hostel fee through her bank's website. What is the safest thing for her to do?",
+   "options": [
+    "Go ahead on the cafe Wi-Fi, since the bank site uses HTTPS and that makes any network safe",
+    "Switch to her own mobile data, or use a VPN if she must stay on the cafe Wi-Fi",
+    "Ask the staff for the Wi-Fi password, because a password-protected network is private",
+    "Open the bank site in a private or incognito window while on the cafe Wi-Fi"
+   ],
+   "correct": 1,
+   "explain": "Public or free Wi-Fi should be treated as untrusted, so banking and password entry are best done off it. Her own mobile data avoids the untrusted network entirely, and a VPN encrypts all her traffic through a secure tunnel if she has to stay connected. Encryption of the path is exactly what the risk calls for here.",
+   "why_wrong": [
+    "HTTPS protects the contents of the connection, but it does not remove the other risks of an untrusted network, such as a fake hotspot steering you to a look-alike site.",
+    "",
+    "A Wi-Fi password printed on the menu is known to every customer, so the network is shared, not private.",
+    "A private window only stops history and cookies being saved on that device; it does not encrypt your traffic or hide it from the network."
+   ],
+   "key": "CSE111-U2-092"
+  },
+  {
+   "topic": "Safe Practices & Cyber Ethics",
+   "kind": "recall",
+   "q": "Which of the following is an example of a PASSIVE digital footprint?",
+   "options": [
+    "Uploading a photo of a college fest to your social media account",
+    "Cookies recording which websites you visited and for how long",
+    "Writing a review of a restaurant on a maps app",
+    "Filling in an online scholarship application form"
+   ],
+   "correct": 1,
+   "explain": "A passive footprint is data collected about you without any deliberate act of sharing, such as your IP address, cookies, browsing history, location and device details. An active footprint is what you knowingly put online yourself. The test is simple: did you choose to publish it, or was it gathered while you were just using the service?",
+   "why_wrong": [
+    "Uploading a photo is a deliberate act of sharing, which makes it an active footprint.",
+    "",
+    "Writing and publishing a review is something you consciously post, so it is active.",
+    "Typing your details into a form is deliberate sharing, so this is an active footprint too."
+   ],
+   "key": "CSE111-U2-093"
+  },
+  {
+   "topic": "Safe Practices & Cyber Ethics",
+   "kind": "situation",
+   "q": "In the college computer lab, Neha finds that the previous user, her friend Priya, walked away leaving her email account signed in, with several unread messages visible. What should Neha do?",
+   "options": [
+    "Read the unread messages to see whether anything is urgent, then tell Priya about them",
+    "Sign the account out without reading anything, and tell Priya she left it open",
+    "Change the account password so nobody else can get in, and pass the new one to Priya",
+    "Screenshot the inbox and send it to Priya on WhatsApp as proof that she left it open"
+   ],
+   "correct": 1,
+   "explain": "Two rules meet here. Accounts on shared or public computers must always be logged out, so closing the session is the right protective step. And respecting privacy means not reading someone else's messages even when nothing technically stops you and even when you mean well.",
+   "why_wrong": [
+    "Reading her messages is a privacy violation; being able to see them does not make it acceptable.",
+    "",
+    "Changing someone else's password without permission is interference with an account that is not yours, and it can lock her out.",
+    "A screenshot copies her private inbox onto your phone and into a chat, which spreads the exposure instead of ending it."
+   ],
+   "key": "CSE111-U2-094"
+  },
+  {
+   "topic": "Safe Practices & Cyber Ethics",
+   "kind": "recall",
+   "q": "Which of the following is NOT a safe internet practice?",
+   "options": [
+    "Installing operating system and browser updates soon after they are released",
+    "Granting an app every permission it asks for so that it works properly",
+    "Installing software only from the official website or an official app store",
+    "Locking your phone and laptop with a PIN, password or biometric"
+   ],
+   "correct": 1,
+   "explain": "Permissions should be reviewed, not handed over automatically: an app only needs access that matches what it does, so a torch app asking for your contacts and location is a warning sign. Granting everything gives an app far more of your data than its job requires. The other three are standard protective habits.",
+   "why_wrong": [
+    "Updates mostly exist to close security holes that attackers are already exploiting, so installing them quickly is good practice.",
+    "",
+    "Official sources are the safest supply route, since cracked or modified software is a common way of delivering trojans.",
+    "A screen lock is the basic protection for a device that could be lost, stolen or simply left unattended."
+   ],
+   "key": "CSE111-U2-095"
+  },
+  {
+   "topic": "Safe Practices & Cyber Ethics",
+   "kind": "situation",
+   "q": "Arjun's laptop is hit by ransomware: his project files are encrypted and a note demands payment to unlock them. He has no copies anywhere else. Which habit would have let him recover without paying?",
+   "options": [
+    "Keeping regular backups of important files, with at least one copy kept offline",
+    "Using a longer and stronger password on his laptop account",
+    "Browsing only in private or incognito mode",
+    "Storing the files in a hidden folder with an unusual name"
+   ],
+   "correct": 0,
+   "explain": "Ransomware works by making your only copy unreadable, so the reliable answer is having another copy it cannot reach. An offline backup matters because a drive or sync folder that stays connected can be encrypted along with everything else. Paying is never a guarantee that the files come back.",
+   "why_wrong": [
+    "",
+    "A strong password protects the account from being guessed, but it does nothing once malware is already running on the machine.",
+    "Private browsing only avoids saving history and cookies locally; it neither blocks malware nor restores files.",
+    "Hiding or renaming a folder does not stop encryption software, which simply works through the files it finds."
+   ],
+   "key": "CSE111-U2-096"
+  },
+  {
+   "topic": "Safe Practices & Cyber Ethics",
+   "kind": "recall",
+   "q": "Which statement about your digital footprint is correct?",
+   "options": [
+    "Deleting a post guarantees the content is gone from the internet",
+    "Content can survive deletion in caches, screenshots and archives, and may resurface years later",
+    "Your footprint is stored only on your own device, so wiping the device erases it",
+    "Only well-known public figures have a digital footprint worth worrying about"
+   ],
+   "correct": 1,
+   "explain": "A digital footprint is persistent, searchable and easy to copy, so deleting the original does not recall the copies other people and systems already hold. This matters because colleges, scholarship committees and employers routinely search for applicants. The practical takeaway is to think before you post, because that is the one point where you have full control.",
+   "why_wrong": [
+    "Once content has been cached, archived or screenshotted by someone else, deleting your copy does not remove theirs.",
+    "",
+    "The trail sits on other companies' servers, in other users' copies and in archives, so wiping your own device removes none of it.",
+    "Anyone who uses the internet leaves a trail, and ordinary students are searched by admissions and recruiters too."
+   ],
+   "key": "CSE111-U2-097"
+  },
+  {
+   "topic": "Safe Practices & Cyber Ethics",
+   "kind": "situation",
+   "q": "Kabir copies three paragraphs from a blog into his assignment report, changes a few words here and there, and submits it with no mention of where the text came from. How should this be judged?",
+   "options": [
+    "Acceptable, because the blog is freely available to read on the internet",
+    "Plagiarism, because material taken from a source must be credited whether or not it is free to read",
+    "Acceptable, because he rewrote some of the words rather than copying them exactly",
+    "Acceptable, because he is not selling the report or making money from it"
+   ],
+   "correct": 1,
+   "explain": "Respecting intellectual property is a core part of cyber ethics, and plagiarism is presenting someone else's work as your own. Free access is about reading, not about ownership, so the author still deserves credit. Quoting or paraphrasing is fine as long as you cite the source.",
+   "why_wrong": [
+    "Free to read is not the same as free to reuse without credit; the author still holds rights over the work.",
+    "",
+    "Swapping a few words leaves the ideas and structure as someone else's, which is still plagiarism.",
+    "Plagiarism is about false credit, not profit, so a non-commercial report is judged the same way."
+   ],
+   "key": "CSE111-U2-098"
+  },
+  {
+   "topic": "Safe Practices & Cyber Ethics",
+   "kind": "situation",
+   "q": "A forwarded message reaches Sana's class group claiming that a well-known bank is collapsing and that everyone should withdraw their money today. It names no source. What is the ethical response?",
+   "options": [
+    "Forward it to her family groups at once, since it is better to be safe than sorry",
+    "Check it against the bank's official announcements or a reliable news source, and not forward it unless it is verified",
+    "Forward it only to a few close friends, since a small group cannot cause any harm",
+    "Forward it with a note saying she is not sure it is true, leaving readers to decide"
+   ],
+   "correct": 1,
+   "explain": "Not spreading misinformation is part of cyber ethics: verify before forwarding, and do not amplify rumours. An unverified financial rumour can cause real panic and real losses, so the cost of forwarding it is not zero. If you cannot confirm it, the right action is to stop it with you.",
+   "why_wrong": [
+    "Forwarding first and checking later is exactly how a rumour spreads, and it can trigger the panic the message describes.",
+    "",
+    "Small groups forward onward too, so limited sharing still starts a chain and still lends the rumour your credibility.",
+    "A disclaimer does not undo the spread; you have still passed on unverified content and taken responsibility for it."
+   ],
+   "key": "CSE111-U2-099"
+  },
+  {
+   "topic": "Safe Practices & Cyber Ethics",
+   "kind": "recall",
+   "q": "Which of the following is an example of cyberbullying?",
+   "options": [
+    "Repeatedly posting mocking comments about a classmate's photo in a class group",
+    "Forwarding a health claim to friends without checking whether it is true",
+    "Downloading a paid film from a pirate site instead of paying for it",
+    "Typing a whole message in capital letters in a group chat"
+   ],
+   "correct": 0,
+   "explain": "Cyberbullying is using online channels to harass, mock, threaten or humiliate a person, especially repeatedly. The guiding idea in cyber ethics is that behaviour which would be wrong face to face is equally wrong online, because there is a real person on the other side. The other three options are also failures of cyber ethics, but each is a different one.",
+   "why_wrong": [
+    "",
+    "This is spreading misinformation: the failure is not verifying before forwarding, rather than targeting a person.",
+    "This is piracy, a violation of copyright and intellectual property rather than harassment of someone.",
+    "Writing in all capitals reads as shouting, which is poor netiquette; it is rude, not bullying."
+   ],
+   "key": "CSE111-U2-100"
+  }
+ ]
+}

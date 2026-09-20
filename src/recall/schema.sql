@@ -259,3 +259,84 @@ CREATE TABLE IF NOT EXISTS card_explanations (
   model        TEXT NOT NULL,
   created_at   TEXT NOT NULL
 );
+
+-- Yash Made Test: a hand-curated multiple-choice bank, the same for everybody.
+--
+-- OWNERSHIP: none, deliberately, and this is the ONE table in the app without
+-- it. These are course content, like the registry in lpu.py — every user reads
+-- the same rows, which is what makes the leaderboard mean anything. What a
+-- user DOES with them (mcq_attempts, mcq_answers) is scoped by user_id exactly
+-- as everything else is.
+--
+-- IDENTITY: `key` (e.g. 'CSE111-U1-042'), written by hand in the JSON under
+-- src/recall/mcq/bank/ and upserted on every boot by recall.mcq.seed. The row
+-- id must survive an edit — attempts store it — so editing a question's text
+-- fixes it in place, and a question deleted from the JSON is RETIRED
+-- (active = 0) rather than deleted, so attempts that already drew it stay
+-- readable and gradable.
+--
+-- No CHECK constraint on any column, for the reason written above `lessons`:
+-- a later rebuild to alter one is what left test_questions pointing at
+-- tests_old. options/correct/kind/why_wrong are validated in
+-- recall.mcq.bank.validate_question, which is also where the message that
+-- names the offending key lives.
+CREATE TABLE IF NOT EXISTS mcq_questions (
+  id             INTEGER PRIMARY KEY,
+  key            TEXT NOT NULL UNIQUE,
+  subject_code   TEXT NOT NULL,
+  unit           INTEGER NOT NULL,  -- as printed on the deck, 1-based
+  topic          TEXT NOT NULL,     -- short group label, e.g. 'Linux'
+  kind           TEXT NOT NULL,     -- 'recall' | 'situation'
+  question       TEXT NOT NULL,
+  options_json   TEXT NOT NULL,     -- JSON array of exactly 4 strings
+  correct        INTEGER NOT NULL,  -- 0-3, in the STORED order
+  explain        TEXT NOT NULL,
+  why_wrong_json TEXT NOT NULL,     -- JSON array of 4; the correct one is ""
+  active         INTEGER NOT NULL DEFAULT 1,
+  updated_at     TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_mcq_questions_unit
+  ON mcq_questions(subject_code, unit);
+
+-- One sitting of the curated bank.
+--
+-- question_ids_json and option_orders_json are what make an attempt resumable
+-- and gradable later without recomputing anything: the draw and both shuffles
+-- happened once, at creation, and are stored. option_orders_json[i] is a
+-- permutation of 0..3 mapping the SHOWN position of an option to its stored
+-- index, so `chosen` and `correct_index` on the wire are always positions in
+-- the shown order and the client never learns the stored one.
+CREATE TABLE IF NOT EXISTS mcq_attempts (
+  id                INTEGER PRIMARY KEY,
+  user_id           INTEGER NOT NULL REFERENCES users(id),
+  subject_code      TEXT NOT NULL,
+  units_json        TEXT NOT NULL,  -- JSON array of unit numbers, sorted
+  length            TEXT NOT NULL,  -- '30' | '60' | 'full', as asked for
+  question_ids_json TEXT NOT NULL,
+  option_orders_json TEXT NOT NULL,
+  total             INTEGER NOT NULL,  -- questions actually drawn
+  started_at        TEXT NOT NULL,
+  submitted_at      TEXT,
+  duration_s        INTEGER,
+  score             INTEGER
+);
+CREATE INDEX IF NOT EXISTS idx_mcq_attempts_user
+  ON mcq_attempts(user_id, started_at);
+
+-- One answer. The first click is the answer: UNIQUE(attempt_id, position) is
+-- what makes a second one a 409 rather than an overwrite, including when two
+-- of them arrive at once.
+--
+-- OWNERSHIP: attempt_id -> mcq_attempts.user_id. Every read and write here
+-- arrives through an attempt row already filtered by user_id.
+CREATE TABLE IF NOT EXISTS mcq_answers (
+  id          INTEGER PRIMARY KEY,
+  attempt_id  INTEGER NOT NULL REFERENCES mcq_attempts(id),
+  position    INTEGER NOT NULL,  -- 1-based, into question_ids_json
+  question_id INTEGER NOT NULL,
+  chosen      INTEGER NOT NULL,  -- 0-3, in the SHOWN order
+  is_correct  INTEGER NOT NULL,
+  answered_at TEXT NOT NULL,
+  UNIQUE(attempt_id, position)
+);
+CREATE INDEX IF NOT EXISTS idx_mcq_answers_attempt ON mcq_answers(attempt_id);

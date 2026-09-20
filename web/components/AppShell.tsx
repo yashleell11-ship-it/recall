@@ -17,6 +17,7 @@ import { hasModifier, isTypingTarget } from "@/lib/keys";
 import { buildDefaultActions } from "@/lib/palette";
 import { useNavCollapsed } from "@/lib/nav";
 import { useSkin } from "@/lib/skin";
+import { setTestMode } from "@/lib/testMode";
 import type { AuthUser } from "@/lib/types";
 import { CommandPalette, ToastProvider, useToast } from "./rich";
 import { ShortcutsOverlay } from "./Shortcuts";
@@ -198,6 +199,18 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
     const other = skin === "phosphor" ? "ember" : "phosphor";
     return [
       ...actions,
+      {
+        // Beside "Go to Test", because from the keyboard the two are the same
+        // destination with a different test waiting on it.
+        id: "nav-yash-made-test",
+        title: "Yash Made Test",
+        section: "Navigate",
+        keywords: "mcq multiple choice bank curated quiz yash",
+        perform: () => {
+          setTestMode("yash");
+          router.push("/test");
+        },
+      },
       {
         id: "skin-switch",
         title: `Switch skin — ${other}`,
