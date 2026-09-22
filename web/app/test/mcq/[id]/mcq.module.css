@@ -1,0 +1,518 @@
+/* ---------------------------------------------------------------------------
+   MCQ — the shared visual language of the three "Yash Made Test" screens.
+
+   NOT local to this folder: the picker (app/test/YashMadeTest.tsx) and the
+   result (./McqResultView.tsx) import this module too, so the class names
+   below are a contract between three screens. Rename nothing here without
+   checking all three.
+
+   Semantic tokens only, never a literal colour — ember light, ember dark,
+   phosphor and github all have to stay correct. Knowledge (the question, the
+   options, the teaching note) wears --k-face; labels, keycaps and counters
+   wear --font-mono; the accent is spent only where the action is.
+--------------------------------------------------------------------------- */
+
+/* --- the sitting's frame -------------------------------------------------- */
+
+/* One column, centred, with the card sitting a little above true centre —
+   the optical centre, which is where a thing being worked through belongs. */
+.screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  /* Clears the phone's floating nav button; the sidebar owns the space at md. */
+  padding: 2.75rem 1rem 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .screen {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .screen {
+    padding-top: 1.25rem;
+  }
+}
+
+.column {
+  width: 100%;
+  max-width: 46rem;
+  margin-inline: auto;
+}
+
+.stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  /* Bottom-heavy on purpose: content lands above the true centre. */
+  padding: 1.5rem 0 4vh;
+}
+
+.card {
+  width: 100%;
+}
+
+/* --- progress you can feel ------------------------------------------------ */
+
+/* One tick per drawn question: twelve are broad bars and sixty are fine ones,
+   both across the same measure. A flex row, NOT an auto-fit grid — a grid
+   with a 7px minimum track holds 34 ticks in a 343px phone column and pushes
+   the other 26 onto a second row, which is what a sixty-question draw did on
+   a phone. `flex: 1 1 0` with `min-width: 0` divides whatever width there is
+   between however many ticks there are, so the strip is always exactly one
+   row. Past TICK_LIMIT the session swaps it for .progressBar anyway. */
+.progressStrip {
+  display: flex;
+  gap: 3px;
+  width: 100%;
+}
+
+/* The gap must not out-measure the tick: on a phone at sixty it would. */
+@media (max-width: 639px) {
+  .progressStrip {
+    gap: 2px;
+  }
+}
+
+.tick {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--line);
+  transition: background-color 140ms ease-out;
+}
+
+.tickPending {
+  background: var(--line);
+}
+
+.tickCorrect {
+  background: var(--g-good);
+}
+
+.tickWrong {
+  background: var(--g-again);
+}
+
+/* The accent marks where you are, and keeps the verdict fill underneath it. */
+.tickCurrent {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.tickCurrent.tickPending {
+  background: var(--accent);
+}
+
+/* The long draw: one continuous bar, answered from the left, with the cursor
+   riding the position. Counts sit beside it — this is information, not trim. */
+.progressBar {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.barGood {
+  background: var(--g-good);
+  transition: width 240ms ease-out;
+}
+
+.barWrong {
+  background: var(--g-again);
+  transition: width 240ms ease-out;
+}
+
+.barCursor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--accent);
+  transition: left 240ms ease-out;
+}
+
+/* --- micro-labels --------------------------------------------------------- */
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 7px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xs);
+  background: var(--surface);
+  color: var(--fg-2);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.chipMuted {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 7px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-xs);
+  background: var(--bg-sunken);
+  color: var(--fg-3);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* The one chip that carries a verdict: "unanswered" on the result sheet. It
+   is a state, not a label, so it wears the again tokens — and it lives here
+   rather than as an inline style on the result, because a third chip style
+   invented at the call site is exactly how three screens drift apart. */
+.chipAgain {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 7px;
+  border: 1px solid var(--g-again);
+  border-radius: var(--radius-xs);
+  background: var(--g-again-bg);
+  color: var(--g-again);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* --- the question --------------------------------------------------------- */
+
+/* Sized by the global .k-question; capped here so it reads as a card, not an
+   article. */
+.question {
+  max-width: 70ch;
+  margin-top: 0.85rem;
+}
+
+/* --- the options: the most important control in the product --------------- */
+
+.optionList {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0.8rem 0.95rem;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--fg);
+  box-shadow: var(--shadow-1);
+  transition:
+    background-color 120ms ease-out,
+    border-color 120ms ease-out,
+    box-shadow 120ms ease-out,
+    opacity 120ms ease-out;
+}
+
+@media (hover: hover) {
+  .option:not(:disabled):hover {
+    background: var(--surface-hover);
+    border-color: var(--line-strong);
+    box-shadow: var(--shadow-2);
+  }
+
+  .option:not(:disabled):hover .optionLetter {
+    border-color: var(--fg-3);
+    color: var(--fg);
+  }
+}
+
+.option:not(:disabled):active {
+  background: var(--surface-hover);
+  box-shadow: none;
+}
+
+.option:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.option:disabled {
+  cursor: default;
+}
+
+/* Verdict states. They are compound selectors on purpose, so .isCorrect and
+   .isWrong can also mark a verdict line without colliding with these. */
+.option.isCorrect {
+  border-color: var(--g-good);
+  background: var(--g-good-bg);
+  color: var(--fg);
+  box-shadow: none;
+}
+
+.option.isWrong {
+  border-color: var(--g-again);
+  background: var(--g-again-bg);
+  color: var(--fg);
+  box-shadow: none;
+}
+
+/* The options nobody picked. They step back by flattening — no lift, no tint,
+   quieter ink — and NOT by fading: these are still the three sentences the
+   student has to read to learn why theirs was wrong, and every one of them is
+   read again on the result sheet. --fg-3 under an opacity fell to 2.2:1 in
+   all four skins, which is a wall of ghosts; --fg-2 at full strength holds
+   5.1:1 in the tightest skin and still reads as the quiet row. */
+.option.isDimmed {
+  border-color: var(--line);
+  background: var(--surface);
+  color: var(--fg-2);
+  box-shadow: none;
+}
+
+/* The letter is an object you press, so it is drawn as one. */
+.optionLetter {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 1.7rem;
+  height: 1.7rem;
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-xs);
+  background: var(--bg-sunken);
+  color: var(--fg-2);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1;
+  transition:
+    color 120ms ease-out,
+    border-color 120ms ease-out;
+}
+
+.option.isCorrect .optionLetter {
+  border-color: var(--g-good);
+  background: transparent;
+  color: var(--g-good);
+}
+
+.option.isWrong .optionLetter {
+  border-color: var(--g-again);
+  background: transparent;
+  color: var(--g-again);
+}
+
+/* The letter still has to be legible: the verdict line says "B was right",
+   and that sentence is unreadable if B is not. */
+.option.isDimmed .optionLetter {
+  border-color: var(--line);
+  background: transparent;
+  color: var(--fg-2);
+}
+
+.optionText {
+  padding-top: 0.1rem;
+  font-family: var(--k-face);
+  font-size: 15px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* The word beside the colour: "CORRECT" / "YOUR PICK". Colour never carries a
+   meaning on its own. */
+.optionMark {
+  margin-left: auto;
+  align-self: center;
+  padding-left: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--fg-3);
+}
+
+.option.isCorrect .optionMark {
+  color: var(--g-good);
+}
+
+.option.isWrong .optionMark {
+  color: var(--g-again);
+}
+
+/* --- the reveal ----------------------------------------------------------- */
+
+/* The slot exists from mount so its aria-live region is there before the
+   answer lands; only the contents animate. */
+.revealSlot {
+  display: block;
+}
+
+.reveal {
+  margin-top: 1.1rem;
+  animation: mcq-reveal 140ms cubic-bezier(0.22, 0.9, 0.3, 1) 1;
+}
+
+@keyframes mcq-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.verdictLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.verdictLine.isCorrect {
+  color: var(--g-good);
+}
+
+.verdictLine.isWrong {
+  color: var(--g-again);
+}
+
+/* The quiet half of the verdict line — "C was right." */
+.verdictAside {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fg-2);
+}
+
+.teach {
+  max-width: 68ch;
+  margin-top: 0.55rem;
+  font-family: var(--k-face);
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--fg);
+}
+
+.whyWrong {
+  max-width: 68ch;
+  margin-top: 0.9rem;
+  padding: 0.6rem 0.85rem;
+  border-left: 2px solid var(--g-again);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--g-again-bg);
+}
+
+.whyWrongLabel {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--g-again);
+}
+
+.whyWrongText {
+  margin-top: 0.3rem;
+  font-family: var(--k-face);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--fg-2);
+}
+
+/* --- keycaps and the action bar ------------------------------------------- */
+
+/* Hidden on phones, where there is no keyboard to discover. The display
+   switch lives here rather than in a utility class: a CSS module rule is
+   unlayered and would beat Tailwind's `hidden`. */
+.hint {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .hint {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1.2rem;
+    font-size: 11.5px;
+    /* --fg-3 measured 4.12:1 here against the phosphor ground, under the 4.5
+       AA floor for text this size. Quiet is the intent; unreadable is not. */
+    color: var(--fg-2);
+  }
+}
+
+.hintGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.hintSep {
+  color: var(--line-strong);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+/* The sitting docks its action footer to the bottom of the viewport.
+   Measured: once a reveal opens (verdict + teaching + why-wrong), the bar
+   landed at y=889 in a 768px-tall window — 121px below the fold, so the
+   primary action after every single answer required a scroll. Sticky keeps
+   it reachable while the question above scrolls normally.
+
+   It must sit on the FOOTER, not the inner .actions row: a sticky element
+   can only travel inside its own parent's box, and the footer was exactly
+   as tall as the row, so there was nowhere to travel. The result screen
+   deliberately does NOT use this — there the bar is a genuine end, not a
+   control you return to between questions. */
+.actionsDock {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  padding-bottom: 0.9rem;
+  background: var(--bg);
+}
+

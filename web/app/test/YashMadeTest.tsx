@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
-import { useCallback, useMemo, useState } from "react";
-import { Reveal, Skeleton } from "@/components/rich";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { AnimatedNumber, Reveal, Skeleton } from "@/components/rich";
 import { EmptyState, ErrorState, Panel, TopicCode } from "@/components/ui";
 import {
   abandonMcqAttempt,
@@ -14,7 +14,7 @@ import {
   getMcqLeaderboard,
   getMcqSubjects,
 } from "@/lib/api";
-import { formatDuration, mediumDate, plural } from "@/lib/format";
+import { daysAgo, formatDuration, mediumDate, plural } from "@/lib/format";
 import type {
   McqAttemptSummary,
   McqDifficulty,
@@ -22,6 +22,8 @@ import type {
   McqSubject,
 } from "@/lib/types";
 import { useResource } from "@/lib/useResource";
+import m from "./mcq/[id]/mcq.module.css";
+import s from "./yashMadeTest.module.css";
 
 /** Length is free choice now: any whole number in this range, or "full". */
 const MIN_COUNT = 5;
@@ -54,53 +56,118 @@ function unitList(units: number[]): string {
   return `${plural(units.length, "unit")} ${units.join(", ")}`;
 }
 
-/* --- chips ---------------------------------------------------------------- */
+/** "3 days ago" while it is still recent, the date once it is not. A sitting
+ *  from this morning and one from March are read in different units. */
+function relativeDate(value: string): string {
+  const days = daysAgo(value);
+  if (days <= 0) return "today";
+  if (days === 1) return "yesterday";
+  if (days < 7) return `${days} days ago`;
+  return mediumDate(value);
+}
+
+/* --- the controls --------------------------------------------------------- */
 
 /**
- * One selectable chip. A chip that cannot be chosen says why on its own line
- * rather than vanishing: a unit with no questions yet is waiting for
- * material, not missing from the course.
+ * The mark beside a control that is chosen: a square where several may be
+ * chosen, a dot where exactly one may be. It is the half of "chosen" that is
+ * not colour — the accent alone never carries the meaning.
  */
-function Chip({
-  active,
+function Mark({ round, on }: { round?: boolean; on: boolean }) {
+  return (
+    <span
+      className={`${s.mark} ${round ? s.markRound : ""}`}
+      aria-hidden="true"
+    >
+      {on ? <span className={s.markDot} /> : null}
+    </span>
+  );
+}
+
+/**
+ * One unit. A unit that cannot be chosen says why on its own line rather than
+ * vanishing: a unit with no questions yet is waiting for material, not
+ * missing from the course.
+ */
+function UnitCard({
+  on,
   disabled,
   onClick,
   title,
   note,
+  wide,
 }: {
-  active: boolean;
+  on: boolean;
   disabled?: boolean;
   onClick: () => void;
   title: string;
-  note?: string;
+  note: string;
+  wide?: boolean;
 }) {
-  const reduced = useReducedMotion();
   return (
-    <motion.button
+    <button
       type="button"
-      aria-pressed={active}
+      aria-pressed={on}
+      aria-label={`${title} — ${note}`}
       disabled={disabled}
       onClick={onClick}
-      whileTap={reduced || disabled ? undefined : { scale: 0.98 }}
-      transition={{ type: "spring", stiffness: 500, damping: 30 }}
-      className={`text-left px-3 py-2 rounded-sm border text-[13px] min-h-[44px]
-        transition-[border-color,background-color] duration-[90ms]
-        disabled:opacity-45 disabled:pointer-events-none
-        ${
-          active
-            ? "bg-surface-raised border-accent text-fg"
-            : "bg-surface border-line text-fg-2 hover:border-line-strong hover:bg-surface-hover"
-        }`}
+      className={`${s.press} ${s.unit} ${on ? s.on : ""} ${wide ? s.wide : ""}`}
     >
-      <span className={`block ${active ? "font-semibold" : "font-medium"}`}>
-        {title}
+      <Mark on={on} />
+      <span className={s.unitBody}>
+        <span className={s.unitName}>{title}</span>
+        <span className={s.unitNote}>{note}</span>
       </span>
-      {note ? (
-        <span className="telemetry block text-[11px] text-fg-3 mt-0.5">
-          {note}
-        </span>
-      ) : null}
-    </motion.button>
+    </button>
+  );
+}
+
+/**
+ * The count under a rung. Five rungs share one row at every width, so the
+ * rung can be as narrow as 52px — where "544 questions" bleeds through the
+ * card edge. The number is its own span and the word is its own span, and
+ * the stylesheet drops the word when the rung it sits in is too narrow to
+ * hold it. The button's aria-label always carries the whole sentence.
+ */
+function TierNote({ n }: { n: number }) {
+  return (
+    <>
+      {n}
+      <span className={s.tierWord}> {plural(n, "question")}</span>
+    </>
+  );
+}
+
+/** One rung of the ladder — Mixed included, because Mixed is a rung and not
+ *  the absence of one. */
+function TierCard({
+  on,
+  disabled,
+  onClick,
+  title,
+  note,
+  label,
+}: {
+  on: boolean;
+  disabled?: boolean;
+  onClick: () => void;
+  title: string;
+  note: ReactNode;
+  label?: string;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      aria-label={label}
+      disabled={disabled}
+      onClick={onClick}
+      className={`${s.press} ${s.tier} ${on ? s.on : ""}`}
+    >
+      <Mark round on={on} />
+      <span className={s.tierName}>{title}</span>
+      <span className={s.tierNote}>{note}</span>
+    </button>
   );
 }
 
@@ -139,72 +206,86 @@ function AttemptRow({
       });
   }, [attempt.id, onDropped]);
 
-  return (
-    <li
-      className="flex flex-wrap items-baseline gap-x-3 gap-y-1 px-3 py-2
-        border-b border-line last:border-b-0"
-    >
-      <TopicCode code={attempt.subject_code} />
-      <span className="text-fg-2 tnum">{unitList(attempt.units)}</span>
-      <span className="text-fg-3">{lengthLabel(attempt.length)}</span>
-      <span className="text-fg-3">{difficultyLabel(attempt.difficulty)}</span>
-      <span className="text-fg-3">{mediumDate(attempt.started_at)}</span>
+  const score = attempt.score ?? 0;
+  const wrong = Math.max(0, attempt.answered - score);
+  const share = (n: number) => (attempt.total > 0 ? (100 * n) / attempt.total : 0);
+  const percent = attempt.total > 0 ? Math.round(share(score)) : 0;
 
-      <span className="ml-auto flex items-baseline gap-3 shrink-0">
-        {error && (
-          <span className="text-[12px]" style={{ color: "var(--g-again)" }}>
-            {error}
+  return (
+    <li className={s.attemptRow}>
+      <span className={s.attemptMeta}>
+        {/* The same chip row the result sheet opens with: the subject in the
+            bordered chip, everything narrowing it in the muted one. An
+            unboxed TopicCode here left one bold code standing beside three
+            boxed chips, which is the row reading in two idioms at once. */}
+        <span className={m.chip}>{attempt.subject_code}</span>
+        <span className={m.chipMuted}>{unitList(attempt.units)}</span>
+        <span className={m.chipMuted}>{difficultyLabel(attempt.difficulty)}</span>
+        <span className={m.chipMuted}>{lengthLabel(attempt.length)}</span>
+      </span>
+
+      {open ? (
+        <span className={s.attemptScore}>
+          <span className={m.chip}>open</span>
+          <span className={s.scoreText}>
+            {attempt.answered}/{attempt.total} answered
           </span>
-        )}
+        </span>
+      ) : (
+        <span className={s.attemptScore}>
+          {/* The sitting screen's own bar, filled the same way: what was
+              right, what was wrong, and the rest of the draw left as track. */}
+          <span className={s.scoreBar}>
+            <span className={m.progressBar} aria-hidden="true">
+              <span className={m.barGood} style={{ width: `${share(score)}%` }} />
+              <span className={m.barWrong} style={{ width: `${share(wrong)}%` }} />
+            </span>
+          </span>
+          <span className={s.scoreText}>
+            {score}/{attempt.total}
+            <span className={s.scorePercent}>{percent}%</span>
+          </span>
+        </span>
+      )}
+
+      <span className={s.attemptDate}>{relativeDate(attempt.started_at)}</span>
+
+      <span className={s.attemptActions}>
+        {error && <span className={s.rowError}>{error}</span>}
         {confirming ? (
           <>
-            <span className="text-fg-2 text-[12px]">Discard it?</span>
+            <span className={s.rowAction}>Discard it?</span>
             <button
               onClick={drop}
               disabled={busy}
-              className="link text-[12.5px] disabled:opacity-50"
-              style={{ color: "var(--g-again)" }}
+              className={`link ${s.rowAction} ${s.danger} disabled:opacity-50`}
             >
               {busy ? "dropping…" : "Yes, drop"}
             </button>
             <button
               onClick={() => setConfirming(false)}
               disabled={busy}
-              className="link text-fg-3 text-[12.5px] disabled:opacity-50"
+              className={`link ${s.rowAction} text-fg-3 disabled:opacity-50`}
             >
               Keep
             </button>
           </>
         ) : open ? (
           <>
-            <span className="telemetry text-[11px] text-fg-3">
-              {attempt.answered}/{attempt.total} answered
-            </span>
-            <Link href={`/test/mcq/${attempt.id}`} className="link">
+            <Link href={`/test/mcq/${attempt.id}`} className={`link ${s.rowAction}`}>
               Resume
             </Link>
             <button
               onClick={() => setConfirming(true)}
-              className="link text-fg-3 text-[12.5px]"
+              className={`link ${s.rowAction} text-fg-3`}
             >
               Drop
             </button>
           </>
         ) : (
-          <>
-            <span className="telemetry text-[11.5px] text-fg-2">
-              {attempt.score ?? 0}/{attempt.total}
-              <span className="text-fg-3 ml-2">
-                {attempt.total > 0
-                  ? Math.round((100 * (attempt.score ?? 0)) / attempt.total)
-                  : 0}
-                %
-              </span>
-            </span>
-            <Link href={`/test/mcq/${attempt.id}`} className="link">
-              Review
-            </Link>
-          </>
+          <Link href={`/test/mcq/${attempt.id}`} className={`link ${s.rowAction}`}>
+            Review
+          </Link>
         )}
       </span>
     </li>
@@ -251,10 +332,10 @@ export function YashMadeTest() {
   const subject = useMemo(() => {
     if (subjects.length === 0) return null;
     if (picked) {
-      const named = subjects.find((s) => s.subject_code === picked.subject);
+      const named = subjects.find((x) => x.subject_code === picked.subject);
       if (named) return named;
     }
-    return subjects.find((s) => s.units.some((u) => u.count > 0)) ?? subjects[0];
+    return subjects.find((x) => x.units.some((u) => u.count > 0)) ?? subjects[0];
   }, [subjects, picked]);
 
   /** Every unit that has questions — the "All units" selection, and the
@@ -412,19 +493,56 @@ export function YashMadeTest() {
       });
   }, [subject, units, length, difficulty, selectable, starting, router]);
 
-  const attempts = attemptsRes.data ?? [];
+  const attempts = useMemo(() => attemptsRes.data ?? [], [attemptsRes.data]);
   const drawn = length === "full" ? selectable : Math.min(length, selectable);
+
+  /**
+   * Which board rows are yours, worked out from the attempts already on this
+   * screen rather than from a round trip for your identity: a submitted
+   * attempt of yours for exactly this selection, matched to the row by the
+   * instant it was submitted and the score it got. A board row that predates
+   * the attempts the server returned simply goes unmarked — quietly, which is
+   * the right failure for a decoration.
+   */
+  const mine = useMemo(() => {
+    const keys = new Set<string>();
+    if (!subject) return keys;
+    for (const a of attempts) {
+      if (a.submitted_at === null || a.score === null) continue;
+      if (a.subject_code !== subject.subject_code) continue;
+      if (String(a.length) !== String(length)) continue;
+      if ((a.difficulty ?? null) !== difficulty) continue;
+      if (
+        a.units.length !== units.length ||
+        !a.units.every((u) => units.includes(u))
+      ) {
+        continue;
+      }
+      keys.add(`${a.submitted_at}|${a.score}`);
+    }
+    return keys;
+  }, [attempts, subject, units, length, difficulty]);
 
   if (subjectsRes.loading && !subjectsRes.data) {
     return (
-      <div aria-label="Reading the question bank">
-        <Skeleton className="h-4 w-52" />
-        <div className="flex gap-2 mt-4">
-          <Skeleton className="h-11 w-44" />
-          <Skeleton className="h-11 w-44" />
-          <Skeleton className="h-11 w-28" />
+      <div className={s.wrap} aria-label="Reading the question bank">
+        <div className={s.layout}>
+          <div className="panel p-4">
+            <Skeleton className="h-3 w-40" />
+            <div className="grid gap-2 mt-4 sm:grid-cols-2">
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+            </div>
+            <Skeleton className="h-12 w-full mt-2" />
+            <Skeleton className="h-11 w-full mt-4" />
+            <Skeleton className="h-11 w-44 mt-4" />
+          </div>
+          <div className="panel p-4">
+            <Skeleton className="h-8 w-24" />
+            <Skeleton className="h-3 w-full mt-4" />
+            <Skeleton className="h-3 w-4/5 mt-2" />
+          </div>
         </div>
-        <Skeleton className="h-9 w-40 mt-5" />
       </div>
     );
   }
@@ -445,297 +563,400 @@ export function YashMadeTest() {
     );
   }
 
+  const allUnitsOn =
+    allUnits.length > 0 &&
+    units.length === allUnits.length &&
+    allUnits.every((u) => units.includes(u));
+
+  const drawLine =
+    selectable === 0
+      ? "nothing in this selection yet"
+      : length === "full"
+        ? `full — all ${selectable} of them`
+        : length > selectable
+          ? `only ${selectable} available — you will get ${selectable}`
+          : `${drawn} of ${selectable} available · any number ${MIN_COUNT}–${MAX_COUNT}`;
+
   return (
-    <div>
-      {/* --- subject ------------------------------------------------------ */}
+    <div className={s.wrap}>
+      <div className={s.layout}>
+        {/* --- the paper being built ------------------------------------- */}
 
-      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        {subjects.length > 1 ? (
-          <select
-            value={subject.subject_code}
-            onChange={(e) => {
-              const next = subjects.find(
-                (s) => s.subject_code === e.target.value,
-              );
-              if (!next) return;
-              setPicked({
-                subject: next.subject_code,
-                units: next.units.filter((u) => u.count > 0).map((u) => u.unit),
-              });
-            }}
-            aria-label="Subject"
-            className="h-8 px-2 rounded-sm border border-line bg-surface text-[13px] text-fg
-              hover:border-line-strong transition-colors duration-[90ms]"
-          >
-            {subjects.map((s) => (
-              <option key={s.subject_code} value={s.subject_code}>
-                {s.subject_code} — {s.label}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <span className="flex items-baseline gap-2">
-            <TopicCode code={subject.subject_code} />
-            <span className="text-[13px] text-fg-2">{subject.label}</span>
-          </span>
-        )}
-        <span className="telemetry text-[11px] text-fg-3">
-          {available} {plural(available, "question")} in these units
-        </span>
-      </div>
+        <section className={`panel ${s.builder}`} aria-label="Build the paper">
+          <div className={s.head}>
+            <span className={s.headSubject}>
+              {subjects.length > 1 ? (
+                <select
+                  value={subject.subject_code}
+                  onChange={(e) => {
+                    const next = subjects.find(
+                      (x) => x.subject_code === e.target.value,
+                    );
+                    if (!next) return;
+                    setPicked({
+                      subject: next.subject_code,
+                      units: next.units
+                        .filter((u) => u.count > 0)
+                        .map((u) => u.unit),
+                    });
+                  }}
+                  aria-label="Subject"
+                  className={s.select}
+                >
+                  {subjects.map((x) => (
+                    <option key={x.subject_code} value={x.subject_code}>
+                      {x.subject_code} — {x.label}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <>
+                  <TopicCode code={subject.subject_code} />
+                  <span className={s.headLabel}>{subject.label}</span>
+                </>
+              )}
+            </span>
+            <span className={s.meta}>
+              {available} {plural(available, "question")} in these units
+            </span>
+          </div>
 
-      {/* --- units -------------------------------------------------------- */}
+          {/* --- units --------------------------------------------------- */}
 
-      <h2 className="label mt-4 mb-2">Units</h2>
-      <div className="flex flex-wrap gap-2">
-        {subject.units.map((u) => (
-          <Chip
-            key={u.unit}
-            active={units.includes(u.unit)}
-            disabled={u.count === 0}
-            onClick={() => toggleUnit(u.unit)}
-            title={`Unit ${u.unit} — ${u.label}`}
-            note={
-              u.count === 0
-                ? "waiting for material"
-                : `${u.count} ${plural(u.count, "question")}`
-            }
-          />
-        ))}
-        {allUnits.length > 1 && (
-          <Chip
-            active={
-              units.length === allUnits.length &&
-              allUnits.every((u) => units.includes(u))
-            }
-            onClick={() => setUnits(allUnits)}
-            title="All units"
-            note={`${allUnits.length} with material`}
-          />
-        )}
-      </div>
-
-      {/* --- difficulty --------------------------------------------------- */}
-
-      <h2 className="label mt-4 mb-2">Difficulty</h2>
-      <div className="flex flex-wrap gap-2">
-        <Chip
-          active={difficulty === null}
-          onClick={() => setPickedDifficulty(null)}
-          title="Mixed"
-          note={`${available} ${plural(available, "question")}`}
-        />
-        {DIFFICULTIES.map((d) => {
-          const n = countOf(d);
-          return (
-            <Chip
-              key={d}
-              active={difficulty === d}
-              disabled={n === 0}
-              onClick={() => setPickedDifficulty(d)}
-              title={DIFFICULTY_LABEL[d]}
-              note={
-                n === 0
-                  ? "none at this tier yet"
-                  : `${n} ${plural(n, "question")}`
-              }
-            />
-          );
-        })}
-      </div>
-      <p className="text-[12px] text-fg-3 mt-2 max-w-prose">
-        Easy: straight definitions. Medium: telling similar things apart. Hard:
-        work out which idea applies. Max: the tricky ones.
-      </p>
-
-      {/* --- how many ----------------------------------------------------- */}
-
-      <h2 className="label mt-4 mb-2">How many</h2>
-      <div className="flex flex-wrap items-center gap-2">
-        {lengths.map((l) => (
-          <Chip
-            key={String(l)}
-            active={l === length}
-            onClick={() => pickLength(l)}
-            title={lengthLabel(l)}
-            note={
-              l === "full" || selectable < Number(l)
-                ? `${selectable} available`
-                : "questions"
-            }
-          />
-        ))}
-        <label
-          className={`flex items-center gap-2 px-3 rounded-sm border text-[13px] min-h-[44px]
-            transition-[border-color,background-color] duration-[90ms]
-            ${
-              customCount
-                ? "bg-surface-raised border-accent text-fg"
-                : "bg-surface border-line text-fg-2"
-            }`}
-        >
-          <span className="text-[12px] text-fg-3">any</span>
-          <input
-            type="number"
-            inputMode="numeric"
-            min={MIN_COUNT}
-            max={MAX_COUNT}
-            step={1}
-            value={countDraft}
-            onChange={(e) => {
-              setCountDraft(e.target.value);
-              setCountEdited(true);
-            }}
-            onBlur={commitCount}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                e.currentTarget.blur();
-              }
-            }}
-            aria-label={`How many questions, ${MIN_COUNT} to ${MAX_COUNT}`}
-            className="w-[4.25rem] h-8 px-2 rounded-sm border border-line bg-surface
-              text-[13px] text-fg tnum hover:border-line-strong
-              focus:border-accent focus:outline-none transition-colors duration-[90ms]"
-          />
-        </label>
-      </div>
-      <p className="telemetry text-[11px] text-fg-3 mt-2">
-        {selectable === 0
-          ? "nothing in this selection yet"
-          : length === "full"
-            ? `full — all ${selectable} of them`
-            : length > selectable
-              ? `only ${selectable} available — you will get ${selectable}`
-              : `${drawn} of ${selectable} available · any number ${MIN_COUNT}–${MAX_COUNT}`}
-      </p>
-
-      {startError && (
-        <div
-          className="mt-4 px-3 py-2 border-l-2 bg-surface text-[13px]"
-          style={{ borderLeftColor: "var(--g-again)" }}
-          role="alert"
-        >
-          {startError}
-        </div>
-      )}
-
-      {/* --- start -------------------------------------------------------- */}
-
-      <div className="flex flex-wrap items-center gap-3 mt-5">
-        <motion.button
-          onClick={start}
-          disabled={starting || selectable === 0}
-          whileTap={reduced ? undefined : { scale: 0.98 }}
-          transition={{ type: "spring", stiffness: 500, damping: 30 }}
-          className="glow-behind accent-grad glow-accent-hover inline-flex items-center gap-2.5
-            h-9 px-4 rounded-sm text-[13px] font-semibold border border-accent
-            disabled:opacity-40 disabled:pointer-events-none"
-        >
-          {starting
-            ? "Shuffling…"
-            : `Start ${drawn}${difficulty ? ` ${difficulty}` : ""} ${plural(
-                drawn,
-                "question",
-              )}`}
-        </motion.button>
-        <p className="text-[12px] text-fg-3">
-          {selectable === 0
-            ? difficulty === null
-              ? "Pick a unit that has questions."
-              : `No ${difficulty} questions in these units yet — pick another tier.`
-            : `${drawn} ${plural(drawn, "question")}, shuffled — and so are the
-               options, so two sittings never look the same.`}
-        </p>
-      </div>
-
-      {/* --- history and the board ---------------------------------------- */}
-
-      <div className="grid gap-4 lg:grid-cols-2 items-start mt-6">
-        <Reveal>
-          <Panel
-            title="Your attempts"
-            aside={attempts.length ? `${attempts.length}` : undefined}
-          >
-            {attemptsRes.error && !attemptsRes.data ? (
-              <ErrorState
-                message={attemptsRes.error}
-                onRetry={attemptsRes.reload}
-              />
-            ) : attemptsRes.loading && !attemptsRes.data ? (
-              <div className="px-3 py-3">
-                {[0, 1, 2].map((i) => (
-                  <Skeleton key={i} className="h-3 w-full my-2" />
-                ))}
-              </div>
-            ) : attempts.length === 0 ? (
-              <EmptyState>
-                You have not sat this test yet. Pick a unit and press Start —
-                nothing here touches your review schedule.
-              </EmptyState>
-            ) : (
-              <ul className="text-[12.5px]">
-                {attempts.slice(0, 8).map((a) => (
-                  <AttemptRow
-                    key={a.id}
-                    attempt={a}
-                    onDropped={attemptsRes.reload}
+          <div className={s.group} role="group" aria-labelledby="ymt-units">
+            <h2 id="ymt-units" className={`label ${s.groupLabel}`}>
+              Units
+            </h2>
+            <div className={s.groupBody}>
+              <div className={s.unitGrid}>
+                {subject.units.map((u) => (
+                  <UnitCard
+                    key={u.unit}
+                    on={units.includes(u.unit)}
+                    disabled={u.count === 0}
+                    onClick={() => toggleUnit(u.unit)}
+                    title={`Unit ${u.unit} — ${u.label}`}
+                    note={
+                      u.count === 0
+                        ? "waiting for material"
+                        : `${u.count} ${plural(u.count, "question")}`
+                    }
                   />
                 ))}
-              </ul>
-            )}
-          </Panel>
-        </Reveal>
-
-        <Reveal index={1}>
-          <Panel
-            title="Leaderboard"
-            aside={`${subject.subject_code} · ${unitList(units)} · ${lengthLabel(
-              length,
-            )} · ${difficultyLabel(difficulty)}`}
-          >
-            {boardRes.error && !boardRes.data ? (
-              <ErrorState message={boardRes.error} onRetry={boardRes.reload} />
-            ) : boardRes.loading && !boardRes.data ? (
-              <div className="px-3 py-3">
-                {[0, 1, 2].map((i) => (
-                  <Skeleton key={i} className="h-3 w-full my-2" />
-                ))}
+                {allUnits.length > 1 && (
+                  <UnitCard
+                    wide
+                    on={allUnitsOn}
+                    onClick={() => setUnits(allUnits)}
+                    title="All units"
+                    note={`${allUnits.length} units with material · ${available} questions in the selection`}
+                  />
+                )}
               </div>
-            ) : (boardRes.data ?? []).length === 0 ? (
-              <EmptyState>Nobody has sat this yet — be first.</EmptyState>
+            </div>
+          </div>
+
+          {/* --- difficulty ---------------------------------------------- */}
+
+          <div className={s.group} role="group" aria-labelledby="ymt-tier">
+            <h2 id="ymt-tier" className={`label ${s.groupLabel}`}>
+              Tier
+            </h2>
+            <div className={s.groupBody}>
+              <div className={s.ladder}>
+                <TierCard
+                  on={difficulty === null}
+                  onClick={() => setPickedDifficulty(null)}
+                  title="Mixed"
+                  note={<TierNote n={available} />}
+                  label={`Mixed — ${available} ${plural(
+                    available,
+                    "question",
+                  )} across all four tiers`}
+                />
+                {DIFFICULTIES.map((d) => {
+                  const n = countOf(d);
+                  return (
+                    <TierCard
+                      key={d}
+                      on={difficulty === d}
+                      disabled={n === 0}
+                      onClick={() => setPickedDifficulty(d)}
+                      title={DIFFICULTY_LABEL[d]}
+                      note={n === 0 ? "none yet" : <TierNote n={n} />}
+                      label={
+                        n === 0
+                          ? `${DIFFICULTY_LABEL[d]} — no questions at this tier in these units yet`
+                          : `${DIFFICULTY_LABEL[d]} — ${n} ${plural(
+                              n,
+                              "question",
+                            )}`
+                      }
+                    />
+                  );
+                })}
+              </div>
+              <p className={s.note}>
+                Easy: straight definitions. Medium: telling similar things
+                apart. Hard: work out which idea applies. Max: the tricky ones.
+              </p>
+            </div>
+          </div>
+
+          {/* --- how many ------------------------------------------------ */}
+
+          <div className={s.group} role="group" aria-labelledby="ymt-count">
+            <h2 id="ymt-count" className={`label ${s.groupLabel}`}>
+              How many
+            </h2>
+            <div className={s.groupBody}>
+              <div className={s.lengthGrid}>
+                {lengths.map((l) => {
+                  const on = l === length;
+                  const short =
+                    l !== "full" && selectable > 0 && selectable < Number(l);
+                  return (
+                    <button
+                      key={String(l)}
+                      type="button"
+                      aria-pressed={on}
+                      aria-label={
+                        l === "full"
+                          ? `Full — every question in the selection, ${selectable} right now`
+                          : `${l} questions${
+                              short ? `, only ${selectable} available` : ""
+                            }`
+                      }
+                      onClick={() => pickLength(l)}
+                      className={`${s.press} ${s.preset} ${on ? s.on : ""}`}
+                    >
+                      <span className={s.presetHead}>
+                        <Mark round on={on} />
+                        <span className={s.presetName}>{lengthLabel(l)}</span>
+                      </span>
+                      {l === "full" ? (
+                        <span className={s.presetNote}>all {selectable}</span>
+                      ) : short ? (
+                        <span className={s.presetNote}>&rarr; {selectable}</span>
+                      ) : null}
+                    </button>
+                  );
+                })}
+
+                {/* The free number, as its own full-width row — the same
+                    shape "All units" makes above it. */}
+                <label
+                  className={`${s.field} ${s.wide} ${customCount ? s.on : ""}`}
+                >
+                  <Mark round on={customCount} />
+                  <span className={s.anyLabel}>any number</span>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={MIN_COUNT}
+                    max={MAX_COUNT}
+                    step={1}
+                    value={countDraft}
+                    onChange={(e) => {
+                      setCountDraft(e.target.value);
+                      setCountEdited(true);
+                    }}
+                    onBlur={commitCount}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        e.currentTarget.blur();
+                      }
+                    }}
+                    aria-label={`How many questions, ${MIN_COUNT} to ${MAX_COUNT}`}
+                    className={s.anyInput}
+                  />
+                  <span className={s.meta}>
+                    {MIN_COUNT}&ndash;{MAX_COUNT}
+                  </span>
+                </label>
+              </div>
+              <p className={s.meta}>{drawLine}</p>
+            </div>
+          </div>
+
+          {/* --- start ---------------------------------------------------- */}
+
+          {startError && <ErrorState message={startError} />}
+
+          <div className={s.startBar}>
+            <motion.button
+              onClick={start}
+              disabled={starting || selectable === 0}
+              whileTap={reduced ? undefined : { scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              className="glow-behind accent-grad glow-accent-hover inline-flex items-center gap-2.5
+                h-11 px-4 rounded-sm text-[13px] font-semibold border border-accent
+                disabled:opacity-40 disabled:pointer-events-none"
+            >
+              {starting
+                ? "Shuffling…"
+                : `Start ${drawn}${difficulty ? ` ${difficulty}` : ""} ${plural(
+                    drawn,
+                    "question",
+                  )}`}
+            </motion.button>
+            {selectable === 0 ? (
+              <p className={s.startNote}>
+                {difficulty === null
+                  ? "Pick a unit that has questions."
+                  : `No ${difficulty} questions in these units yet — pick another tier.`}
+              </p>
             ) : (
-              <ul className="text-[12.5px]">
-                {(boardRes.data ?? []).map((row, i) => (
-                  <li
-                    key={`${row.user_id}-${row.submitted_at}`}
-                    className="flex items-baseline gap-3 px-3 py-2 border-b border-line last:border-b-0"
-                  >
-                    <span className="telemetry text-[11px] text-fg-3 w-6 shrink-0">
-                      #{i + 1}
-                    </span>
-                    <span className="font-medium text-fg truncate">
-                      {row.name}
-                    </span>
-                    <span className="ml-auto telemetry text-[11.5px] text-fg-2 shrink-0">
-                      {row.score}/{row.total}
-                      <span className="text-fg-3 ml-2">
-                        {row.total > 0
-                          ? Math.round((100 * row.score) / row.total)
-                          : 0}
-                        %
-                      </span>
-                      <span className="text-fg-3 ml-2">
-                        {formatDuration(row.duration_s * 1000)}
-                      </span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <p className={s.startNote}>
+                Nothing here touches your review schedule.
+              </p>
             )}
-          </Panel>
-        </Reveal>
+          </div>
+        </section>
+
+        {/* --- what is about to be sat, and who has sat it ---------------- */}
+
+        <div className={s.rail}>
+          <Reveal>
+            <Panel title="The paper" aside={subject.subject_code}>
+              <div className={s.summary}>
+                <div>
+                  <p className={s.drawRow}>
+                    <span className={s.drawNumber}>
+                      <AnimatedNumber value={drawn} />
+                    </span>
+                    <span className={s.drawWord}>
+                      {plural(drawn, "question")} drawn
+                    </span>
+                  </p>
+                  <p className={`${s.meta} mt-1.5`}>
+                    {selectable === 0
+                      ? "nothing in this selection yet"
+                      : `drawn from ${selectable} in this selection`}
+                  </p>
+                </div>
+
+                <dl className={s.spec}>
+                  <dt className={`label ${s.specKey}`}>Subject</dt>
+                  <dd className={s.specValue}>
+                    {subject.subject_code} — {subject.label}
+                  </dd>
+
+                  <dt className={`label ${s.specKey}`}>Units</dt>
+                  <dd className={s.specValue}>
+                    {units.length === 0
+                      ? "none chosen"
+                      : allUnitsOn
+                        ? `all — ${units.join(", ")}`
+                        : units.join(", ")}
+                  </dd>
+
+                  <dt className={`label ${s.specKey}`}>Tier</dt>
+                  <dd className={s.specValue}>{difficultyLabel(difficulty)}</dd>
+
+                  <dt className={`label ${s.specKey}`}>Asked for</dt>
+                  <dd className={s.specValue}>
+                    {length === "full"
+                      ? "Full — everything in the selection"
+                      : `${length} ${plural(Number(length), "question")}`}
+                  </dd>
+                </dl>
+
+                <p className={s.summaryNote}>
+                  The questions are drawn fresh and the four options are
+                  shuffled again every attempt, so two sittings never look the
+                  same. Unanswered questions score 0 against the whole draw.
+                </p>
+              </div>
+            </Panel>
+          </Reveal>
+
+          <Reveal index={1}>
+            <Panel
+              title="Leaderboard"
+              aside={`${lengthLabel(length)} · ${difficultyLabel(difficulty)}`}
+            >
+              {boardRes.error && !boardRes.data ? (
+                <ErrorState message={boardRes.error} onRetry={boardRes.reload} />
+              ) : boardRes.loading && !boardRes.data ? (
+                <div className={s.skeletonRows}>
+                  {[0, 1, 2].map((i) => (
+                    <Skeleton key={i} className="h-3 w-full" />
+                  ))}
+                </div>
+              ) : (boardRes.data ?? []).length === 0 ? (
+                <EmptyState>Nobody has sat this yet — be first.</EmptyState>
+              ) : (
+                <ul>
+                  {(boardRes.data ?? []).map((row, i) => {
+                    const yours = mine.has(`${row.submitted_at}|${row.score}`);
+                    const percent =
+                      row.total > 0
+                        ? Math.round((100 * row.score) / row.total)
+                        : 0;
+                    return (
+                      <li
+                        key={`${row.user_id}-${row.submitted_at}`}
+                        className={`${s.boardRow} ${yours ? s.you : ""}`}
+                      >
+                        <span className={s.rank}>#{i + 1}</span>
+                        <span className={s.nameCell}>
+                          <span className={s.name}>{row.name}</span>
+                          {yours ? <span className={m.chip}>you</span> : null}
+                        </span>
+                        <span className={s.boardScore}>
+                          {row.score}/{row.total}
+                        </span>
+                        <span className={s.boardMeta}>
+                          {percent}% · {formatDuration(row.duration_s * 1000)}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </Panel>
+          </Reveal>
+        </div>
       </div>
+
+      {/* --- what you have already sat ---------------------------------- */}
+
+      <Reveal index={2} className={s.attempts}>
+        <Panel
+          title="Your attempts"
+          aside={attempts.length ? `${attempts.length}` : undefined}
+        >
+          {attemptsRes.error && !attemptsRes.data ? (
+            <ErrorState
+              message={attemptsRes.error}
+              onRetry={attemptsRes.reload}
+            />
+          ) : attemptsRes.loading && !attemptsRes.data ? (
+            <div className={s.skeletonRows}>
+              {[0, 1, 2].map((i) => (
+                <Skeleton key={i} className="h-3 w-full" />
+              ))}
+            </div>
+          ) : attempts.length === 0 ? (
+            <EmptyState>
+              You have not sat this test yet. Pick a unit and press Start —
+              nothing here touches your review schedule.
+            </EmptyState>
+          ) : (
+            <ul>
+              {attempts.slice(0, 8).map((a) => (
+                <AttemptRow
+                  key={a.id}
+                  attempt={a}
+                  onDropped={attemptsRes.reload}
+                />
+              ))}
+            </ul>
+          )}
+        </Panel>
+      </Reveal>
     </div>
   );
 }

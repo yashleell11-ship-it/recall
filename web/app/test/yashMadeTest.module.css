@@ -1,0 +1,659 @@
+/* ---------------------------------------------------------------------------
+   Yash Made Test — the picker.
+
+   The sitting screen owns the visual language (./mcq/[id]/mcq.module.css) and
+   this file consumes it: chips, the progress bar and its fills come from
+   there. What lives here is only what the picker needs and the sitting does
+   not — the two-column composition, and the controls you press to build the
+   paper.
+
+   Semantic tokens only, never a literal colour: ember light, ember dark,
+   phosphor and github all have to stay correct. The accent is spent on the
+   selection marks and on Start, and nowhere else.
+--------------------------------------------------------------------------- */
+
+/* --- the two columns ------------------------------------------------------
+   Keyed to the CONTENT box, not the viewport: this screen sits inside a
+   sidebar that is 13rem wide on desktop and can be collapsed to a rail, so a
+   viewport media query would put two columns into 400px of room on one
+   machine and leave 900px empty on another. */
+
+.wrap {
+  container-type: inline-size;
+}
+
+.layout {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+}
+
+@container (min-width: 46rem) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 19rem;
+    gap: 1.25rem;
+  }
+}
+
+/* The rail: what is about to be sat, and who has sat it. */
+.rail {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  min-width: 0;
+}
+
+.attempts {
+  margin-top: 1rem;
+}
+
+/* --- the instrument -------------------------------------------------------
+   One card, three groups, one path down to Start. The groups share a label
+   gutter so the eye runs down a single edge instead of restarting at every
+   heading. */
+
+.builder {
+  overflow: hidden;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem 0.9rem;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-sunken);
+}
+
+.headSubject {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.headLabel {
+  font-size: 12.5px;
+  color: var(--fg-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select {
+  height: 2rem;
+  padding: 0 0.4rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xs);
+  background: var(--surface);
+  color: var(--fg);
+  font-size: 13px;
+  transition: border-color 90ms ease-out;
+}
+
+.select:hover {
+  border-color: var(--line-strong);
+}
+
+.group {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.85rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+
+@container (min-width: 34rem) {
+  .group {
+    grid-template-columns: 5rem minmax(0, 1fr);
+    column-gap: 1rem;
+    row-gap: 0;
+    align-items: start;
+    padding: 0.95rem 1rem;
+  }
+}
+
+.groupLabel {
+  align-self: start;
+}
+
+@container (min-width: 34rem) {
+  .groupLabel {
+    padding-top: 0.5rem;
+  }
+}
+
+.groupBody {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+/* Prose that explains a control, and the mono line that states the draw. */
+.note {
+  max-width: 64ch;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--fg-3);
+}
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-3);
+}
+
+/* --- things you press -----------------------------------------------------
+   Drawn as objects: a hairline, a heavier bottom edge, a shadow that lifts on
+   hover and goes flat when the thing is pressed or chosen. */
+
+.press {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--fg);
+  box-shadow: var(--shadow-1);
+  transition:
+    background-color 120ms ease-out,
+    border-color 120ms ease-out,
+    box-shadow 120ms ease-out,
+    transform 120ms ease-out;
+}
+
+@media (hover: hover) {
+  .press:not(:disabled):hover {
+    background: var(--surface-hover);
+    border-color: var(--line-strong);
+    box-shadow: var(--shadow-2);
+  }
+}
+
+.press:not(:disabled):active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+/* Chosen reads as pressed in: flat, accent edge, and a filled mark. */
+.press.on {
+  border-color: var(--accent);
+  background: var(--accent-quiet);
+  box-shadow: none;
+}
+
+.press:disabled {
+  opacity: 0.5;
+  box-shadow: none;
+  cursor: default;
+}
+
+/* The mark is the half of "chosen" that is not colour: a square for the units
+   you can pick several of, a dot for the ones you pick one of. */
+.mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-xs);
+  background: var(--bg-sunken);
+}
+
+.markRound {
+  border-radius: 50%;
+}
+
+.on .mark,
+.on.field .mark {
+  border-color: var(--accent);
+  background: transparent;
+}
+
+.markDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 1px;
+  background: var(--accent);
+}
+
+.markRound .markDot {
+  border-radius: 50%;
+}
+
+/* --- units ---------------------------------------------------------------
+   auto-fit over a real minimum, so the cards divide the row cleanly at every
+   width, and "All units" is a deliberate full-width row under them rather
+   than a card that orphans onto a second line. */
+
+.unitGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+  gap: 0.4rem;
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+.unit {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  min-height: 2.9rem;
+  padding: 0.5rem 0.6rem;
+}
+
+.unitBody {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.unitName {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.on .unitName {
+  font-weight: 600;
+}
+
+/* The counts inside a control are not decoration — they are the number the
+   choice is made on. --fg-3 reads 3.1:1 at 10px on paper; --fg-2 is the
+   system's own secondary ink and holds 5.1:1 in the tightest skin, still a
+   clear step below the name above it. The surrounding prose stays --fg-3. */
+.unitNote {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--fg-2);
+}
+
+/* --- the ladder ----------------------------------------------------------
+   Five rungs, always five columns: Mixed and the four tiers read as one
+   scale, and no rung is ever left alone on a second row. */
+
+.ladder {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+/* Each rung is its own container: five columns of 1fr are ~58px on a phone
+   and ~52px at the two-column breakpoint, and "544 questions" needs 63px
+   before it starts bleeding through the card's edge. Asking the RUNG how
+   wide it is — rather than the page — drops the word at exactly the widths
+   where it does not fit, at both of those places and every width between. */
+.tier {
+  container-type: inline-size;
+  display: grid;
+  gap: 0.2rem;
+  justify-items: center;
+  align-content: center;
+  min-height: 2.9rem;
+  padding: 0.45rem 0.2rem;
+  text-align: center;
+}
+
+.tierName {
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.on .tierName {
+  font-weight: 600;
+}
+
+.tierNote {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  line-height: 1.3;
+  letter-spacing: 0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-2);
+}
+
+/* The count is the fact; the word is the courtesy. On a narrow rung the
+   courtesy goes — the full sentence is still on the button's aria-label.
+   "Medium" is the widest name and cannot break, so it comes down a notch
+   here too: at 12.5px it stood 4px proud of a 52px rung, which is what the
+   ladder narrows to at the two-column breakpoint. */
+@container (max-width: 68px) {
+  .tierWord {
+    display: none;
+  }
+
+  .tierName {
+    font-size: 11.5px;
+  }
+}
+
+/* --- how many ------------------------------------------------------------
+   The presets divide the row; the free number box is the full-width row
+   under them — the same shape the unit group makes, so the two groups share
+   one rhythm. */
+
+.lengthGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(3.6rem, 1fr));
+  gap: 0.35rem;
+}
+
+.preset {
+  display: grid;
+  gap: 0.15rem;
+  justify-items: center;
+  align-content: center;
+  min-height: 2.75rem;
+  padding: 0.4rem 0.35rem;
+  text-align: center;
+}
+
+.presetHead {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.presetName {
+  font-size: 13px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.on .presetName {
+  font-weight: 600;
+}
+
+.presetNote {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-2);
+}
+
+/* The number box wears the same edge as the buttons beside it, without the
+   press — it is a field, not a button. */
+.field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  transition:
+    background-color 120ms ease-out,
+    border-color 120ms ease-out;
+}
+
+.field.on {
+  border-color: var(--accent);
+  background: var(--accent-quiet);
+}
+
+.anyLabel {
+  font-size: 12.5px;
+  color: var(--fg-2);
+}
+
+/* No outline reset here: the global :focus-visible ring is the only thing
+   telling a keyboard user where they are. */
+.anyInput {
+  width: 5rem;
+  height: 2rem;
+  padding: 0 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xs);
+  background: var(--surface);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  transition: border-color 90ms ease-out;
+}
+
+.anyInput:hover {
+  border-color: var(--line-strong);
+}
+
+.anyInput:focus {
+  border-color: var(--accent);
+}
+
+/* --- start ---------------------------------------------------------------- */
+
+.startBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.85rem 1rem;
+  border-top: 1px solid var(--line);
+  background: var(--bg-sunken);
+}
+
+.startNote {
+  max-width: 34ch;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--fg-3);
+}
+
+/* --- the paper, summarised ------------------------------------------------ */
+
+.summary {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.8rem 0.9rem;
+}
+
+.drawRow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+}
+
+.drawNumber {
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.drawWord {
+  font-size: 12.5px;
+  color: var(--fg-2);
+}
+
+.spec {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.3rem 0.7rem;
+  align-items: baseline;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--line);
+}
+
+.specKey {
+  padding-top: 0.15rem;
+}
+
+.specValue {
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
+.summaryNote {
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--line);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--fg-3);
+}
+
+/* --- the board ------------------------------------------------------------ */
+
+.boardRow {
+  display: grid;
+  grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+  gap: 0.1rem 0.5rem;
+  align-items: baseline;
+  padding: 0.5rem 0.8rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.boardRow:last-child {
+  border-bottom: 0;
+}
+
+/* Your own row, marked by an edge and by the word "you" — never by colour
+   on its own. */
+.you {
+  border-left: 2px solid var(--accent);
+  padding-left: calc(0.8rem - 2px);
+}
+
+.rank {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-3);
+}
+
+.nameCell {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.name {
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.boardScore {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-2);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.boardMeta {
+  grid-column: 2 / -1;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-3);
+}
+
+/* --- your attempts -------------------------------------------------------- */
+
+.attemptRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+  padding: 0.5rem 0.85rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.attemptRow:last-child {
+  border-bottom: 0;
+}
+
+.attemptMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 1 1 13rem;
+  min-width: 0;
+}
+
+.attemptScore {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+}
+
+.scoreBar {
+  display: block;
+  width: 4.25rem;
+  flex: 0 0 auto;
+}
+
+.scoreText {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-2);
+  white-space: nowrap;
+}
+
+.scorePercent {
+  margin-left: 0.4rem;
+  color: var(--fg-3);
+}
+
+.attemptDate {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--fg-3);
+  white-space: nowrap;
+}
+
+.attemptActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+/* Row controls are the one place a 44px target has to be made on purpose:
+   they are links in a dense list. */
+.rowAction {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+.danger {
+  color: var(--g-again);
+}
+
+.rowError {
+  font-size: 12px;
+  color: var(--g-again);
+}
+
+.skeletonRows {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem 0.85rem;
+}
