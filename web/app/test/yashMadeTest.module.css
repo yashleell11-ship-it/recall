@@ -48,9 +48,9 @@
 }
 
 /* --- the instrument -------------------------------------------------------
-   One card, three groups, one path down to Start. The groups share a label
-   gutter so the eye runs down a single edge instead of restarting at every
-   heading. */
+   One card, four groups — subject, units, tier, length — and one path down
+   to Start. The groups share a label gutter so the eye runs down a single
+   edge instead of restarting at every heading. */
 
 .builder {
   overflow: hidden;
@@ -80,21 +80,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.select {
-  height: 2rem;
-  padding: 0 0.4rem;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-xs);
-  background: var(--surface);
-  color: var(--fg);
-  font-size: 13px;
-  transition: border-color 90ms ease-out;
-}
-
-.select:hover {
-  border-color: var(--line-strong);
 }
 
 .group {
@@ -224,6 +209,82 @@
 
 .markRound .markDot {
   border-radius: 50%;
+}
+
+/* --- subject -------------------------------------------------------------
+   Six subjects, and the grid is chosen so none is ever left alone on a row:
+   two columns on a phone (3 x 2), three once the group has the room (2 x 3).
+   The column count for the wide case comes from the markup as
+   --subject-cols, because it depends on how many subjects there are — four
+   read as 2 x 2, not 3 + 1. On the two-column phone grid an odd last card
+   takes the whole row, the same move "All units" makes below.
+
+   The group body is its own container: the gutter beside it and the rail
+   beside the builder both take width away, so the page's width says nothing
+   about how much room six cards actually have. */
+
+.subjectField {
+  container: subjects / inline-size;
+}
+
+.subjectGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.subjectGrid > :last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+@container subjects (min-width: 30rem) {
+  .subjectGrid {
+    grid-template-columns: repeat(var(--subject-cols, 3), minmax(0, 1fr));
+  }
+
+  .subjectGrid > :last-child:nth-child(odd) {
+    grid-column: auto;
+  }
+}
+
+.subject {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  min-height: 2.9rem;
+  padding: 0.5rem 0.6rem;
+}
+
+.subjectBody {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+/* The code is how the timetable, the syllabus and the CA sheet all name the
+   course, so it leads; the name under it is what it means. */
+.subjectCode {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 15px;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-2);
+}
+
+.on .subjectCode {
+  color: var(--fg);
+}
+
+.subjectName {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.on .subjectName {
+  font-weight: 600;
 }
 
 /* --- units ---------------------------------------------------------------

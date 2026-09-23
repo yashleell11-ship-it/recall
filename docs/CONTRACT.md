@@ -321,10 +321,57 @@ the JSON is **retired** (`active = 0`), never deleted, for the same reason.
 A question is: `key`, `subject_code`, `unit` (the number printed on the deck,
 1-based), `topic` (a short group label such as `Linux`), `kind`
 (`recall` | `situation`), `difficulty` (the ladder below), `question`,
-`options` (exactly 4), `correct` (0–3 in the stored order), `explain` (2–4
-sentences teaching the point), `why_wrong` (exactly 4 strings aligned with
-`options`; the correct one's entry is `""`).
+optionally `code` and `options_mono` (below), `options` (exactly 4),
+`correct` (0–3 in the stored order), `explain` (2–4 sentences teaching the
+point), `why_wrong` (exactly 4 strings aligned with `options`; the correct
+one's entry is `""`).
 No CHECK constraints on any of these tables — validate in Python.
+
+### Code questions
+
+The Python (INT108) and web (CSE326) banks are full of "what does this print"
+questions, and a question used to be one string rendered in a proportional
+serif — which collapses whitespace. In Python the whitespace is the program:
+a snippet whose indentation was flattened is a different program, and the
+question would mark the student wrong for reading correctly what they were
+shown. So a question may carry two more fields, both optional in the JSON:
+
+- `code` — the snippet, **exactly as typed**: leading spaces, tabs, blank
+  lines, trailing whitespace and the final newline all survive loader, table
+  and wire byte for byte. The loader never strips it. Absent or `""` means no
+  snippet. A value that is only whitespace is **refused**, naming the key: it
+  is a paste that went wrong, and it would render an empty code block under
+  "what does this print". A non-string is refused too.
+- `options_mono` — `true` when the four options are code, program output,
+  values, expressions, tags or selectors and must be shown in monospace
+  exactly as written; absent means `false` (prose). A real JSON boolean only:
+  `1`, `"true"` and `null` are refused, naming the key, rather than guessed
+  at from truthiness.
+
+Neither field says which option is right, so **both are sent with the
+question before it is answered** — on a fresh attempt, on a resumed one, and
+again on the review sheet (`missed`). The pre-answer payload still carries no
+`correct_index`, no `why_wrong` and no `explain`; adding a field next to the
+options is exactly where one could leak, and a test sits on it.
+
+On the wire `code` is a string or **`null`** — never `""` — so a client tests
+one thing; `options_mono` is always a boolean. In `mcq_questions` they are
+`code TEXT` (NULL for no snippet, the same spelling a migrated row has) and
+`options_mono INTEGER NOT NULL DEFAULT 0`. The live table already held the
+CSE111 bank and real attempts pointing at its row ids, so both columns arrive
+through `_migrate()`'s guarded `ALTER TABLE ... ADD COLUMN`, exactly as
+`difficulty` did — never a rebuild. Existing rows become "no snippet, prose
+options", which is what every CSE111 question is; re-seeding upserts both
+fields on the stable key like every other.
+
+Every existing rule still holds on a code question — four options, no
+duplicate answers, a `""` note on the correct option. The duplicate check
+compares options the way they are read. Prose options are folded on case and
+whitespace, exactly as before. Monospace options are compared as written,
+because `True` and `true` are different Python and `a  b` is not `a b`. Only
+what a monospace line cannot show is folded: trailing whitespace, and a tab
+against the spaces it renders as (tab-size 4). So `True`/`true` may be two
+options when `options_mono` is `true`, and `x`/`x  ` still may not.
 
 ### The difficulty ladder
 
@@ -349,10 +396,38 @@ what the live database's existing rows became when the column was added, so
 nothing had to be rewritten while real attempts were in flight. Re-seeding then
 stamps each row with the tier its JSON declares.
 
+### Six subjects, and where their units come from
+
 Unit labels and which units exist per subject live in
 `recall.mcq.registry.MCQ_UNITS`, so a unit that has no questions yet still
 appears on the picker with a count of 0 and a "waiting for material" note
-rather than vanishing.
+rather than vanishing. The registry lists **all six** Semester-1 subjects —
+MTH165, CSE111, INT108, INT335, MEC103, CSE326 — whether or not a single
+question has been written for them: a subject with no bank files is listed
+with every unit at 0, and asking to sit it is the ordinary 422 for a
+selection with no questions. The picker shows the whole semester, including
+what is still being written.
+
+**Five of the six are derived from `recall.lpu`, not retyped.** Their label is
+`SUBJECTS[code]["full_name"]` and their units are `SUBJECTS[code]["units"]`
+numbered 1..6, computed at import. `lpu.py` is where the syllabus lives — read
+off LPU's own Session 2026-27 PDFs and corrected against them — and a second
+hand-typed copy of the same unit names would drift from it the first time
+either was fixed. Fix a unit name there and the picker follows.
+
+**CSE111 is the exception, and it is written out on purpose.** Its bank was
+written against the photographed CA1 syllabus, whose two units — "Computational
+Thinking & Computing Environment" and "Version Control & Cyber Security
+Basics" — are not `lpu.py`'s seven. Every question in the live bank carries
+those unit numbers, so deriving CSE111 would renumber all of them.
+
+`GET /api/mcq/subjects` returns the subjects **that hold questions first, most
+questions first, then the ones still waiting**, because the picker opens on
+the first entry and registry order would open it on Mathematics — a subject it
+then refuses to start. Ties, and the waiting subjects among themselves, keep
+the semester order in `registry.MCQ_SUBJECTS`. Only questions in a unit the
+registry declares count toward that order: a stray file under a unit that
+does not exist cannot be sat, so it must not lift its subject up the list.
 
 ### Sitting an attempt
 
@@ -427,7 +502,7 @@ Nothing here feeds the scheduler: these are not cards.
 
 | Method | Path | Request | Response |
 |---|---|---|---|
-| GET | `/api/mcq/subjects` | — | `[McqSubject]` — every subject in `MCQ_UNITS`, each unit with its `count` of active questions and a per-tier breakdown |
+| GET | `/api/mcq/subjects` | — | `[McqSubject]` — every subject in `MCQ_UNITS`, each unit with its `count` of active questions and a per-tier breakdown; subjects with questions first (most first), then the rest in semester order |
 | POST | `/api/mcq/attempts` | `{subject_code, units: [1], length, difficulty?}` | `McqAttempt`. **422** for an unknown subject, a unit not in the registry, a length outside 5–200, an unknown difficulty, or a selection with zero questions |
 | GET | `/api/mcq/attempts/{id}` | — | `McqAttempt` with recorded answers, for resuming. **404** if not yours |
 | POST | `/api/mcq/attempts/{id}/answer` | `{position, chosen}` | `McqFeedback`. **409** if that position is already answered or the attempt is submitted; **422** if position or chosen is out of range |
@@ -446,6 +521,8 @@ McqSubject        = {subject_code, label,
                      difficulties: ["easy","medium","hard","max"],
                      length_min: 5, length_max: 200}
 McqQuestion       = {position, topic, kind, difficulty, question,
+                     code: string | null,          // exact snippet; null = none
+                     options_mono: boolean,        // options are code: monospace
                      options: [string ×4],                        // shown order
                      answer: McqFeedback | null}
 McqAttempt        = {attempt_id, subject_code, units, length,
@@ -457,7 +534,8 @@ McqFeedback       = {position, chosen, correct_index, is_correct,
 McqResult         = {attempt_id, score, total, answered, percent, duration_s,
                      by_topic: [{topic, correct, total}],
                      by_difficulty: [{difficulty, correct, total}],  // ladder order
-                     missed: [{position, topic, question, options, chosen | null,
+                     missed: [{position, topic, question, code, options_mono,
+                               options, chosen | null,
                                correct_index, explain, why_wrong}],
                      rank: {position, of} | null}    // on the leaderboard for this selection
 McqAttemptSummary = {id, subject_code, units, length,

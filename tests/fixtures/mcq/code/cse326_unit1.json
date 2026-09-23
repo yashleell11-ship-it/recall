@@ -1,0 +1,31 @@
+{
+  "_note": "FIXTURE, not the real bank. One HTML question: a snippet with indented markup and tags as options.",
+  "subject_code": "CSE326",
+  "unit": 1,
+  "unit_label": "HTML Fundamentals",
+  "questions": [
+    {
+      "key": "CSE326-U1-001",
+      "topic": "Lists",
+      "kind": "recall",
+      "difficulty": "medium",
+      "q": "Which tag, used in place of <ul>, would number these items?",
+      "code": "<ul>\n  <li>One</li>\n  <li>Two</li>\n</ul>\n",
+      "options_mono": true,
+      "options": [
+        "<ol>",
+        "<nl>",
+        "<dl>",
+        "<list>"
+      ],
+      "correct": 0,
+      "explain": "<ol> is the ordered list: the browser numbers its <li> items for you. <ul> is the unordered list, drawn with bullets; the items inside are <li> in both.",
+      "why_wrong": [
+        "",
+        "There is no <nl> element in HTML; the numbered list is the ordered list, <ol>.",
+        "<dl> is a description list of terms and their definitions, and it is not numbered.",
+        "HTML has no <list> element; its lists are <ul>, <ol> and <dl>."
+      ]
+    }
+  ]
+}

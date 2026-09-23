@@ -147,6 +147,21 @@ def _migrate(conn: sqlite3.Connection) -> None:
     if mcqa_cols and "difficulty" not in mcqa_cols:
         conn.execute("ALTER TABLE mcq_attempts ADD COLUMN difficulty TEXT")
 
+    # mcq_questions.code / mcq_questions.options_mono (2026-09-23, code
+    # questions for INT108 and CSE326). Same recipe as difficulty above and for
+    # the same reason — the live table holds the CSE111 bank and real attempts
+    # point at its row ids, so it gains columns and is never rebuilt. Neither
+    # carries a CHECK. `code` is NULL for every existing row, which is exactly
+    # what a question with no snippet is; `options_mono` backfills 0, prose,
+    # which every CSE111 option is. Re-seeding then writes whatever the JSON
+    # declares. `mcqq_cols` was read before the difficulty ALTER, which is fine:
+    # that ALTER adds neither of these.
+    if mcqq_cols and "code" not in mcqq_cols:
+        conn.execute("ALTER TABLE mcq_questions ADD COLUMN code TEXT")
+    if mcqq_cols and "options_mono" not in mcqq_cols:
+        conn.execute("ALTER TABLE mcq_questions ADD COLUMN options_mono INTEGER"
+                     " NOT NULL DEFAULT 0")
+
     # tests.kind CHECK gained 'mte40'. SQLite cannot alter a CHECK, so rebuild —
     # and the ORDER MATTERS: renaming the OLD table away rewrites every foreign
     # key that pointed at it (test_questions ended up referencing "tests_old"),

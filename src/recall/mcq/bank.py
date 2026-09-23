@@ -64,6 +64,23 @@ def _fail(key: object, reason: str) -> ValueError:
     return ValueError(f"mcq question {key!r}: {reason}")
 
 
+def _as_read(option: str, mono: bool) -> str:
+    """An option as a reader tells it apart from its neighbours.
+
+    Prose is folded on case and whitespace: "Git Hub" and "git  hub" read as
+    one answer. Monospace options are code, output and values, shown exactly
+    as written on a pre-wrap line, and folding them would refuse real
+    questions: `True` and `true` are different Python, and `a  b` against
+    `a b` is the whole point of a `sep=` question. So only what that line
+    cannot show is folded there — trailing whitespace, and a tab against the
+    spaces it renders as (tab-size 4, as the screen sets it).
+    """
+    if not mono:
+        return " ".join(option.split()).casefold()
+    lines = [line.expandtabs(4).rstrip() for line in option.splitlines()]
+    return "\n".join(lines).rstrip("\n")
+
+
 def validate_question(question: dict, *, where: str = "") -> None:
     """Raise ValueError naming the key and the reason, or return None.
 
@@ -100,11 +117,13 @@ def validate_question(question: dict, *, where: str = "") -> None:
     # Two options that read the same make a question unanswerable, and the
     # failure is silent and cruel: `is_correct` compares POSITIONS, so a
     # student who picks the duplicate of the right answer is marked wrong
-    # while looking at the words that were right. Compared on collapsed
-    # whitespace and case, because that is how a reader compares them.
+    # while looking at the words that were right. Compared the way a reader
+    # compares them — see _as_read: prose folded on case and whitespace,
+    # monospace options as written.
+    mono = question.get("options_mono") is True
     seen_options: dict[str, int] = {}
     for i, option in enumerate(options):
-        folded = " ".join(option.split()).casefold()
+        folded = _as_read(option, mono)
         if folded in seen_options:
             raise _fail(key, f"options {seen_options[folded]} and {i} are the "
                              f"same answer ({option!r})")
@@ -133,10 +152,35 @@ def validate_question(question: dict, *, where: str = "") -> None:
             raise _fail(key, f"why_wrong[{i}] is blank; every wrong option "
                              "needs a reason")
 
+    # `code` is optional: absent or "" is a question with no snippet. When it
+    # is there it is kept EXACTLY as typed — never stripped, never re-indented
+    # — because in Python the indentation is the program, and a snippet that
+    # lost its leading spaces asks about code nobody wrote. A value that is
+    # nothing but whitespace is refused rather than treated as "no snippet":
+    # it is a paste that went wrong, and the question would otherwise render
+    # an empty code block above text that says "what does this print".
+    code = question.get("code", "")
+    if not isinstance(code, str):
+        raise _fail(key, f"code must be a string, got {code!r}")
+    if code and not code.strip():
+        raise _fail(key, "code is only whitespace; leave it out or \"\" when "
+                         "the question has no snippet")
+
+    # `options_mono` is optional and defaults to false. A real boolean only:
+    # 1, "true" and null are what a hand-edited file produces by accident, and
+    # a flag that decides whether "print(x)" keeps its spacing on screen must
+    # not be guessed at from truthiness.
+    options_mono = question.get("options_mono", False)
+    if not isinstance(options_mono, bool):
+        raise _fail(key, "options_mono must be true or false, got "
+                         f"{options_mono!r}")
+
 
 def _normalise(question: dict, subject_code: str, unit: int,
                unit_label: str) -> dict:
-    """The question as the database stores it: `q` becomes `question`."""
+    """The question as the database stores it: `q` becomes `question`, and the
+    two optional fields are filled in — `code` as "" and `options_mono` as
+    False — so nothing downstream has to know they were optional."""
     return {
         "key": question["key"].strip(),
         "subject_code": subject_code,
@@ -146,6 +190,9 @@ def _normalise(question: dict, subject_code: str, unit: int,
         "kind": question["kind"],
         "difficulty": question["difficulty"],
         "question": question["q"].strip(),
+        # Byte for byte, deliberately unstripped: see validate_question.
+        "code": question.get("code", ""),
+        "options_mono": question.get("options_mono", False),
         "options": list(question["options"]),
         "correct": int(question["correct"]),
         "explain": question["explain"].strip(),

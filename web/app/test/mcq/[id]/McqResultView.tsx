@@ -31,6 +31,60 @@ function toneFor(ratio: number): string {
 }
 
 /**
+ * Blank lines at either end go, and Windows line endings become plain ones.
+ * Nothing else is touched: the first line keeps its indentation, every
+ * interior space and tab stays where it was typed, because in Python that
+ * whitespace is the program.
+ */
+function tidyCode(code: string): string {
+  return code
+    .replace(/\r\n?/g, "\n")
+    .replace(/^(?:[ \t]*\n)+/, "")
+    .replace(/(?:\n[ \t]*)+$/, "");
+}
+
+/** The option text's class: prose in --k-face, or code kept as written. */
+export function optionTextClass(mono: boolean | undefined): string {
+  return mono ? `${s.optionText} ${s.optionTextMono}` : s.optionText;
+}
+
+/**
+ * The program a question is about, drawn identically on the sitting and on
+ * the review sheet — the review is the same object as the question, so the
+ * code a student got wrong is the code they read again.
+ *
+ * Verbatim in a monospace block that scrolls sideways inside itself and never
+ * wraps. It is focusable because it can scroll: a keyboard user has to be
+ * able to reach the end of a long line, and a region nobody can focus is one
+ * nobody without a pointer can read. `data-mcq-code` is how the sitting's
+ * keyboard handler knows to leave the arrow keys to the block — while the
+ * block overflows; one that fits lets them move between questions.
+ *
+ * Renders nothing for a question without code — absent, null and "" alike.
+ */
+export function McqCode({
+  code,
+  label = "Code",
+}: {
+  code: string | null | undefined;
+  label?: string;
+}) {
+  const text = code ? tidyCode(code) : "";
+  if (text.trim() === "") return null;
+  return (
+    <pre
+      className={s.codeBlock}
+      role="region"
+      aria-label={label}
+      tabIndex={0}
+      data-mcq-code=""
+    >
+      <code>{text}</code>
+    </pre>
+  );
+}
+
+/**
  * The other face of a sitting: what the attempt scored, where it was weak,
  * and the sheet to re-read before the next one.
  *
@@ -270,6 +324,11 @@ export function McqResultView({
                     {m.question}
                   </p>
 
+                  <McqCode
+                    code={m.code}
+                    label={`Code for question ${m.position}`}
+                  />
+
                   {/* The same four rows the sitting drew, frozen at the verdict:
                       what was picked, what was right, and the rest stepped back. */}
                   <div
@@ -310,7 +369,9 @@ export function McqResultView({
                           <span className={s.optionLetter} aria-hidden="true">
                             {LETTERS[i]}
                           </span>
-                          <span className={s.optionText}>{option}</span>
+                          <span className={optionTextClass(m.options_mono)}>
+                            {option}
+                          </span>
                           {mark ? (
                             <span className={s.optionMark} aria-hidden="true">
                               {mark}

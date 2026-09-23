@@ -31,13 +31,13 @@ from datetime import datetime, timezone
 
 from recall.api.scheduling import iso, utc_now
 from recall.mcq.registry import (DIFFICULTIES, LENGTH_MAX, LENGTH_MIN, LENGTHS,
-                                 MCQ_UNITS)
+                                 MCQ_SUBJECTS, MCQ_UNITS)
 
 N_OPTIONS = 4
 
 #: Columns of one bank question, in the order the shaping helpers expect.
-_Q_COLUMNS = ("id, topic, kind, difficulty, question, options_json, correct,"
-              " explain, why_wrong_json")
+_Q_COLUMNS = ("id, topic, kind, difficulty, question, code, options_mono,"
+              " options_json, correct, explain, why_wrong_json")
 
 
 class McqConflict(Exception):
@@ -136,9 +136,21 @@ def list_subjects(conn) -> list[dict]:
     Driven by MCQ_UNITS rather than by what is in the table, so a unit nobody
     has written questions for yet appears with `count: 0` — "waiting for
     material" is information, and a unit that silently vanished from the picker
-    would look like a unit that does not exist.
+    would look like a unit that does not exist. A subject with no questions at
+    all is listed the same way, every unit at 0.
+
+    Ordered by what can be sat: subjects holding questions first, most
+    questions first, then the ones still waiting. The picker opens on the
+    first entry, and with six subjects of which one has a bank, registry order
+    would open it on Mathematics — a subject it then refuses to start. Ties,
+    and the waiting subjects among themselves, fall back to MCQ_SUBJECTS — the
+    semester's order — so the list does not reshuffle every time one question
+    lands. That tuple and not the dict's iteration order: a dict's order is
+    only the order its keys happened to be inserted in, and a key removed and
+    put back goes to the end.
     """
     out = []
+    totals = []
     for code, info in MCQ_UNITS.items():
         counts: dict[int, int] = {}
         tiers: dict[int, dict[str, int]] = {}
@@ -173,7 +185,14 @@ def list_subjects(conn) -> list[dict]:
             "length_min": LENGTH_MIN,
             "length_max": LENGTH_MAX,
         })
-    return out
+        # Counted over the registry's units only, the same units the picker
+        # prints: a stray row under a unit the registry does not declare
+        # cannot be sat, so it must not lift its subject up the list.
+        totals.append(sum(counts.get(unit, 0) for unit in info["units"]))
+    semester = {code: i for i, code in enumerate(MCQ_SUBJECTS)}
+    order = sorted(range(len(out)), key=lambda i: (
+        -totals[i], semester.get(out[i]["subject_code"], len(semester))))
+    return [out[i] for i in order]
 
 
 def _attempt_row(conn, user_id: int, attempt_id: int):
@@ -206,6 +225,20 @@ def _questions_by_id(conn, ids: list[int]) -> dict[int, dict]:
         f"SELECT {_Q_COLUMNS} FROM mcq_questions WHERE id IN ({holes})",
         tuple(ids)).fetchall()
     return {row["id"]: dict(row) for row in rows}
+
+
+def _presentation(question: dict) -> dict:
+    """How the question is SHOWN, beyond its words: the snippet and whether the
+    options are code. Both go out before the question is answered — neither
+    says which option is right — so this is shared by the attempt payload and
+    the review sheet, and one of them can never quietly lose it.
+
+    `code` is null rather than "" when there is none, so a client tests one
+    thing; when there is one it is exactly the string in the JSON file, which
+    is what keeps a Python snippet's indentation alive to the screen.
+    """
+    return {"code": question["code"] or None,
+            "options_mono": bool(question["options_mono"])}
 
 
 def _shown_options(question: dict, order: list[int]) -> list[str]:
@@ -285,6 +318,7 @@ def _attempt_shape(conn, row) -> dict:
             "kind": question["kind"],
             "difficulty": question["difficulty"],
             "question": question["question"],
+            **_presentation(question),
             "options": _shown_options(question, order),
             "answer": feedback.get(position),
         })
@@ -491,6 +525,7 @@ def submit_attempt(conn, user_id: int, attempt_id: int) -> dict:
             "position": position,
             "topic": question["topic"],
             "question": question["question"],
+            **_presentation(question),
             "options": _shown_options(question, order),
             "chosen": chosen,
             "correct_index": _shown_correct(question, order),

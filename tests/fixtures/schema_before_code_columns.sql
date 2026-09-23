@@ -294,14 +294,6 @@ CREATE TABLE IF NOT EXISTS mcq_questions (
   -- file and invents nothing — see recall.mcq.bank.validate_question.
   difficulty     TEXT NOT NULL DEFAULT 'medium',
   question       TEXT NOT NULL,
-  -- A code snippet shown under the question, EXACTLY as typed in the JSON —
-  -- indentation, tabs and blank lines included, since in Python they are the
-  -- program. NULL when the question has none; "" is never stored.
-  code           TEXT,
-  -- 1 when the options are code, output, values or selectors and must be
-  -- shown in monospace exactly as written; 0 for prose. Both columns reach a
-  -- live database through db.py's _migrate, like `difficulty` above.
-  options_mono   INTEGER NOT NULL DEFAULT 0,
   options_json   TEXT NOT NULL,     -- JSON array of exactly 4 strings
   correct        INTEGER NOT NULL,  -- 0-3, in the STORED order
   explain        TEXT NOT NULL,

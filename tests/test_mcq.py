@@ -337,7 +337,9 @@ def test_a_retired_question_comes_back_if_it_returns_to_the_json(tmp_path):
 
 def test_subjects_lists_every_unit_with_its_live_count(client):
     body = client.get("/api/mcq/subjects").json()
-    assert [s["subject_code"] for s in body] == ["CSE111"]
+    # All six registered; CSE111 first because it is the one with questions.
+    assert len(body) == 6
+    assert body[0]["subject_code"] == "CSE111"
     subject = body[0]
     assert subject["label"] == "Orientation to Computing"
     assert subject["lengths"] == [30, 60, "full"]
@@ -387,7 +389,8 @@ def test_a_fresh_attempt_never_carries_the_answer(client):
     assert "correct_index" not in r.text
     for question in r.json()["questions"]:
         assert set(question) == {"position", "topic", "kind", "difficulty",
-                                 "question", "options", "answer"}
+                                 "question", "code", "options_mono",
+                                 "options", "answer"}
         assert question["answer"] is None
 
 
@@ -1108,7 +1111,9 @@ def test_an_absent_bank_directory_seeds_nothing_and_raises_nothing(tmp_path):
     assert counts == {"files": 0, "questions": 0, "retired": 0, "active": 0,
                       "unreachable": 0}
     body = client_as(path, OWNER).get("/api/mcq/subjects").json()
-    assert [u["count"] for u in body[0]["units"]] == [0, 0]
+    cse111 = next(s for s in body if s["subject_code"] == "CSE111")
+    assert [u["count"] for u in cse111["units"]] == [0, 0]
+    assert all(u["count"] == 0 for s in body for u in s["units"])
 
 
 def test_every_contract_operation_is_on_the_app():
@@ -1245,9 +1250,11 @@ def test_seeding_counts_questions_no_picker_can_reach(tmp_path):
     entrypoint runs under `set -e` — but it must not be silent either."""
     bank_dir = tmp_path / "bank"
     bank_dir.mkdir()
-    (bank_dir / "cse326_unit1.json").write_text(json.dumps({
-        "subject_code": "CSE326", "unit": 1,
-        "questions": [a_question(key="CSE326-U1-001")],
+    # A subject the registry has never heard of. (This used to be CSE326,
+    # until CSE326 joined the registry and became reachable.)
+    (bank_dir / "xyz101_unit1.json").write_text(json.dumps({
+        "subject_code": "XYZ101", "unit": 1,
+        "questions": [a_question(key="XYZ101-U1-001")],
     }))
     (bank_dir / "cse111_unit9.json").write_text(json.dumps({
         "subject_code": "CSE111", "unit": 9,
@@ -1263,7 +1270,8 @@ def test_seeding_counts_questions_no_picker_can_reach(tmp_path):
     assert counts["questions"] == 14 and counts["unreachable"] == 2
 
     body = client_as(path, OWNER).get("/api/mcq/subjects").json()
-    assert [s["subject_code"] for s in body] == ["CSE111"]
+    assert "XYZ101" not in {s["subject_code"] for s in body}
+    assert body[0]["subject_code"] == "CSE111"
     assert [(u["unit"], u["count"]) for u in body[0]["units"]] == [(1, 12), (2, 0)]
 
 
@@ -1648,3 +1656,688 @@ def test_an_empty_difficulty_in_a_json_body_is_still_422(client):
         "subject_code": "CSE111", "units": [1], "length": 5, "difficulty": ""})
     assert r.status_code == 422, r.text
     assert "difficulty must be one of" in r.json()["detail"]
+
+
+# --- code questions: `code` and `options_mono` -----------------------------
+#
+# tests/fixtures/mcq/code holds INT108 unit 2 (four questions, two of them
+# "What does this print?" with indented snippets — spaces and a blank line in
+# one, tabs in the other) and CSE326 unit 1 (one HTML question). It is a
+# subdirectory so the CSE111 bank above keeps its counts: load_bank does not
+# recurse.
+
+CODE_FIXTURES = FIXTURES / "code"
+
+#: The code fixture keyed by (question text, snippet). Text alone is not a key
+#: here — two questions both ask "What does this print?", as a real Python
+#: bank will over and over — so nothing below may identify a question by it.
+CODE_BY = {(q["question"], q["code"]): q for q in load_questions(CODE_FIXTURES)}
+
+LEAKS = {"correct", "correct_index", "why_wrong", "explain"}
+
+
+def source_of(question: dict) -> dict:
+    """The fixture question behind a question on the wire."""
+    return CODE_BY[(question["question"], question["code"] or "")]
+
+
+def code_correct_shown(question: dict) -> int:
+    source = source_of(question)
+    return question["options"].index(source["options"][source["correct"]])
+
+
+def keys_anywhere(value) -> set:
+    """Every dict key at any depth — for asserting what a payload never holds."""
+    if isinstance(value, dict):
+        return set(value) | {k for v in value.values() for k in keys_anywhere(v)}
+    if isinstance(value, list):
+        return {k for v in value for k in keys_anywhere(v)}
+    return set()
+
+
+def combined_bank(tmp_path) -> Path:
+    """The CSE111 fixture and the code fixture in one directory."""
+    bank_dir = tmp_path / "combined"
+    bank_dir.mkdir()
+    for path in [*FIXTURES.glob("*.json"), *CODE_FIXTURES.glob("*.json")]:
+        shutil.copy(path, bank_dir)
+    return bank_dir
+
+
+@pytest.fixture
+def code_db(tmp_path):
+    path = str(tmp_path / "code.db")
+    make_db(path, combined_bank(tmp_path))
+    return path
+
+
+def start_code(client: TestClient, subject="INT108", units=(2,),
+               length="full") -> dict:
+    r = client.post("/api/mcq/attempts", json={
+        "subject_code": subject, "units": list(units), "length": length})
+    assert r.status_code == 200, r.text
+    return r.json()
+
+
+def test_the_code_fixture_loads_and_fills_the_defaults():
+    by_key = {q["key"]: q for q in load_questions(CODE_FIXTURES)}
+    assert len(by_key) == 5
+    assert by_key["INT108-U2-002"]["code"].startswith("for i in range(3):\n\t")
+    assert by_key["INT108-U2-003"]["code"] == ""            # absent -> ""
+    assert by_key["INT108-U2-003"]["options_mono"] is True
+    assert by_key["INT108-U2-004"]["code"] == ""
+    assert by_key["INT108-U2-004"]["options_mono"] is False  # absent -> False
+    # And the CSE111 bank, written before either field existed, still loads
+    # with both defaulted rather than refused.
+    assert all(q["code"] == "" and q["options_mono"] is False
+               for q in load_questions(FIXTURES))
+
+
+@pytest.mark.parametrize("overrides", [
+    {"code": ""},
+    {"code": "print(1)"},
+    {"code": "  indented = True\n"},
+    {"options_mono": True},
+    {"options_mono": False},
+    {"code": "x = 1\n", "options_mono": True},
+])
+def test_both_fields_are_accepted_when_well_formed(overrides):
+    validate_question(a_question(**overrides))
+
+
+@pytest.mark.parametrize("overrides,reason", [
+    ({"code": 42}, "code must be a string"),
+    ({"code": None}, "code must be a string"),
+    ({"code": ["print(1)"]}, "code must be a string"),
+    ({"code": True}, "code must be a string"),
+    ({"code": "   "}, "code is only whitespace"),
+    ({"code": "\n\t\n  \n"}, "code is only whitespace"),
+    ({"options_mono": "true"}, "options_mono must be true or false"),
+    ({"options_mono": 1}, "options_mono must be true or false"),
+    ({"options_mono": 0}, "options_mono must be true or false"),
+    ({"options_mono": None}, "options_mono must be true or false"),
+])
+def test_a_malformed_code_field_is_refused_by_key(overrides, reason):
+    with pytest.raises(ValueError) as exc:
+        validate_question(a_question(**overrides))
+    message = str(exc.value)
+    assert "X-1" in message, message
+    assert reason in message, message
+
+
+def test_the_existing_rules_still_hold_on_a_code_question():
+    """The new fields loosen nothing: a code question with three options, or
+    a note on its correct option, is refused exactly as before."""
+    for overrides, reason in (
+            ({"options": ["1", "2", "3"]}, "exactly 4 options"),
+            ({"correct": 1}, "correct option"),
+            ({"options": ["1", "2", "1", "3"]}, "options 0 and 2")):
+        with pytest.raises(ValueError, match=reason):
+            validate_question(a_question(code="print(1)\n", options_mono=True,
+                                         **overrides))
+
+
+def test_code_and_options_mono_round_trip_through_the_seed(tmp_path):
+    bank_dir = combined_bank(tmp_path)
+    path = str(tmp_path / "seed.db")
+    make_db(path, bank_dir)
+    conn = connect(path)
+    rows = {r["key"]: r for r in conn.execute(
+        "SELECT key, code, options_mono FROM mcq_questions")}
+    for q in load_questions(CODE_FIXTURES):
+        row = rows[q["key"]]
+        assert row["code"] == (q["code"] or None), q["key"]
+        assert row["options_mono"] == (1 if q["options_mono"] else 0), q["key"]
+    # A CSE111 row: no snippet is NULL, never "", and prose options are 0.
+    assert rows["CSE111-U2-001"]["code"] is None
+    assert rows["CSE111-U2-001"]["options_mono"] == 0
+
+    # Both are upserted on the key like every other field: editing them in
+    # the JSON changes the row in place, and removing the snippet nulls it.
+    before = conn.execute("SELECT id FROM mcq_questions WHERE key = ?",
+                          ("INT108-U2-001",)).fetchone()["id"]
+    target = bank_dir / "int108_unit2.json"
+    data = json.loads(target.read_text())
+    for q in data["questions"]:
+        if q["key"] == "INT108-U2-001":
+            del q["code"]
+            q["options_mono"] = False
+        if q["key"] == "INT108-U2-004":
+            q["code"] = "if False:\n    print('never')\n"
+    target.write_text(json.dumps(data))
+    seed_mcq_bank(conn, bank_dir)
+    after = {r["key"]: r for r in conn.execute(
+        "SELECT id, key, code, options_mono FROM mcq_questions")}
+    conn.close()
+    assert after["INT108-U2-001"]["id"] == before
+    assert after["INT108-U2-001"]["code"] is None
+    assert after["INT108-U2-001"]["options_mono"] == 0
+    assert after["INT108-U2-004"]["code"] == "if False:\n    print('never')\n"
+
+
+def test_a_snippet_survives_byte_for_byte(tmp_path):
+    """Leading spaces on the FIRST line, tabs, blank lines, a line of only
+    spaces, trailing whitespace and the final newline: everything str.strip()
+    or a whitespace-collapsing renderer would eat. In Python the indentation is
+    the program, so any change here makes the question wrong."""
+    snippet = ("  first = 1\n"
+               "\tif first:\n"
+               "\t\tprint(first)   \n"
+               "\n"
+               "    \n"
+               "  \t mixed = [\n"
+               "        1,  2,\n"
+               "  ]\n"
+               "\n")
+    bank_dir = tmp_path / "bank"
+    bank_dir.mkdir()
+    (bank_dir / "int108_unit1.json").write_text(json.dumps({
+        "subject_code": "INT108", "unit": 1,
+        "questions": [a_question(key="INT108-U1-900", code=snippet,
+                                 options_mono=True)],
+    }))
+    path = str(tmp_path / "bytes.db")
+    make_db(path, bank_dir)
+
+    conn = connect(path)
+    stored = conn.execute("SELECT code FROM mcq_questions").fetchone()["code"]
+    conn.close()
+    assert stored.encode("utf-8") == snippet.encode("utf-8")
+
+    client = client_as(path, OWNER)
+    attempt = start_code(client, units=(1,))
+    assert attempt["questions"][0]["code"].encode("utf-8") == \
+        snippet.encode("utf-8")
+    resumed = client.get(f"/api/mcq/attempts/{attempt['attempt_id']}").json()
+    assert resumed["questions"][0]["code"] == snippet
+    missed = client.post(
+        f"/api/mcq/attempts/{attempt['attempt_id']}/submit").json()["missed"]
+    assert missed[0]["code"] == snippet
+
+
+def test_a_code_attempt_carries_both_fields_and_no_answer(code_db):
+    """Both fields go out BEFORE the question is answered — neither reveals
+    anything — and adding them must not have let the answer out with them."""
+    client = client_as(code_db, OWNER)
+    r = client.post("/api/mcq/attempts", json={
+        "subject_code": "INT108", "units": [2], "length": "full"})
+    assert r.status_code == 200, r.text
+    assert "why_wrong" not in r.text
+    assert "correct_index" not in r.text
+    assert not keys_anywhere(r.json()) & LEAKS, keys_anywhere(r.json()) & LEAKS
+
+    questions = r.json()["questions"]
+    assert len(questions) == 4
+    for question in questions:
+        assert set(question) == {"position", "topic", "kind", "difficulty",
+                                 "question", "code", "options_mono",
+                                 "options", "answer"}
+        assert question["answer"] is None
+        source = source_of(question)
+        assert question["code"] == (source["code"] or None)
+        assert question["options_mono"] is source["options_mono"]
+        assert sorted(question["options"]) == sorted(source["options"])
+    by_code = {q["code"] for q in questions}
+    assert None in by_code, "a question with no snippet sends null, not \"\""
+    assert "" not in by_code
+
+
+def test_a_prose_question_sends_null_code_and_false_mono(client):
+    for question in start(client, units=[1, 2])["questions"]:
+        assert question["code"] is None
+        assert question["options_mono"] is False
+
+
+def test_a_resumed_code_attempt_keeps_both_fields(code_db):
+    client = client_as(code_db, OWNER)
+    attempt = start_code(client)
+    aid = attempt["attempt_id"]
+    first = attempt["questions"][0]
+    reveal = client.post(f"/api/mcq/attempts/{aid}/answer", json={
+        "position": 1, "chosen": code_correct_shown(first)}).json()
+    assert reveal["is_correct"] is True
+
+    resumed = client.get(f"/api/mcq/attempts/{aid}").json()
+    assert [(q["code"], q["options_mono"], q["options"])
+            for q in resumed["questions"]] == \
+        [(q["code"], q["options_mono"], q["options"])
+         for q in attempt["questions"]]
+    assert resumed["questions"][0]["answer"]["is_correct"] is True
+    # The unanswered questions on a resumed attempt still hold no answer.
+    assert not keys_anywhere(resumed["questions"][1:]) & LEAKS
+
+
+def test_the_review_sheet_carries_both_fields(code_db):
+    """McqMissed is where a student rereads the snippet they got wrong."""
+    client = client_as(code_db, OWNER)
+    attempt = start_code(client)
+    aid = attempt["attempt_id"]
+    first = attempt["questions"][0]
+    wrong = next(i for i in range(4) if i != code_correct_shown(first))
+    client.post(f"/api/mcq/attempts/{aid}/answer",
+                json={"position": 1, "chosen": wrong})
+    result = client.post(f"/api/mcq/attempts/{aid}/submit").json()
+    assert result["score"] == 0 and len(result["missed"]) == 4
+    shown = {q["position"]: q for q in attempt["questions"]}
+    for missed in result["missed"]:
+        question = shown[missed["position"]]
+        assert missed["code"] == question["code"]
+        assert missed["options_mono"] is question["options_mono"]
+        assert missed["options"] == question["options"]
+    assert result["missed"][0]["chosen"] == wrong
+
+
+def test_an_html_question_keeps_its_markup(code_db):
+    client = client_as(code_db, OWNER)
+    question = start_code(client, subject="CSE326", units=(1,))["questions"][0]
+    assert question["code"] == "<ul>\n  <li>One</li>\n  <li>Two</li>\n</ul>\n"
+    assert question["options_mono"] is True
+    assert "<ol>" in question["options"]
+
+
+# --- migrating a database that has the ladder but not the code columns -----
+
+#: mcq_questions exactly as the live database holds it today: the difficulty
+#: ladder has landed, `code` and `options_mono` have not.
+_LADDER_QUESTIONS_DDL = """CREATE TABLE mcq_questions (
+  id INTEGER PRIMARY KEY, key TEXT NOT NULL UNIQUE, subject_code TEXT NOT NULL,
+  unit INTEGER NOT NULL, topic TEXT NOT NULL, kind TEXT NOT NULL,
+  difficulty TEXT NOT NULL DEFAULT 'medium',
+  question TEXT NOT NULL, options_json TEXT NOT NULL, correct INTEGER NOT NULL,
+  explain TEXT NOT NULL, why_wrong_json TEXT NOT NULL,
+  active INTEGER NOT NULL DEFAULT 1, updated_at TEXT)"""
+
+
+def test_a_database_without_the_code_columns_migrates_and_still_grades(
+        tmp_path):
+    """The live table holds the CSE111 bank and real attempts that point at
+    its row ids. The two columns arrive by ALTER — never a rebuild — every row
+    keeps its id, and a sitting with answers already recorded still resumes
+    and grades."""
+    path = str(tmp_path / "ladder.db")
+    conn = connect(path)
+    conn.execute(_LADDER_QUESTIONS_DDL)
+    conn.execute("""CREATE TABLE mcq_attempts (
+      id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL,
+      subject_code TEXT NOT NULL, units_json TEXT NOT NULL,
+      length TEXT NOT NULL, difficulty TEXT,
+      question_ids_json TEXT NOT NULL, option_orders_json TEXT NOT NULL,
+      total INTEGER NOT NULL, started_at TEXT NOT NULL, submitted_at TEXT,
+      duration_s INTEGER, score INTEGER)""")
+    conn.execute("""CREATE TABLE mcq_answers (
+      id INTEGER PRIMARY KEY, attempt_id INTEGER NOT NULL,
+      position INTEGER NOT NULL, question_id INTEGER NOT NULL,
+      chosen INTEGER NOT NULL, is_correct INTEGER NOT NULL,
+      answered_at TEXT NOT NULL, UNIQUE(attempt_id, position))""")
+    conn.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)")
+    conn.execute("INSERT INTO users (id, name) VALUES (1, 'owner')")
+    source = [q for q in load_questions(FIXTURES) if q["unit"] == 1][:4]
+    for q in source:
+        conn.execute(
+            "INSERT INTO mcq_questions (key, subject_code, unit, topic, kind,"
+            " difficulty, question, options_json, correct, explain,"
+            " why_wrong_json) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            (q["key"], q["subject_code"], q["unit"], q["topic"], q["kind"],
+             q["difficulty"], q["question"], json.dumps(q["options"]),
+             q["correct"], q["explain"], json.dumps(q["why_wrong"])))
+    ids_before = {r["key"]: r["id"] for r in
+                  conn.execute("SELECT id, key FROM mcq_questions")}
+    ids = [ids_before[q["key"]] for q in source]
+    cur = conn.execute(
+        "INSERT INTO mcq_attempts (user_id, subject_code, units_json, length,"
+        " difficulty, question_ids_json, option_orders_json, total,"
+        " started_at) VALUES (1,'CSE111','[1]','30','easy',?,?,?,"
+        " '2026-09-22T00:00:00+00:00')",
+        (json.dumps(ids), json.dumps([[0, 1, 2, 3]] * 4), 4))
+    aid = int(cur.lastrowid)
+    for position in (1, 2):                  # one right, one wrong
+        q = source[position - 1]
+        chosen = q["correct"] if position == 1 else (q["correct"] + 1) % 4
+        conn.execute(
+            "INSERT INTO mcq_answers (attempt_id, position, question_id,"
+            " chosen, is_correct, answered_at) VALUES (?,?,?,?,?,?)",
+            (aid, position, ids[position - 1], chosen,
+             1 if position == 1 else 0, "2026-09-22T00:01:00+00:00"))
+    conn.commit()
+
+    init_db(conn)                            # the migration under test
+    init_db(conn)                            # and it is idempotent
+
+    cols = {r["name"]: r for r in
+            conn.execute("PRAGMA table_info(mcq_questions)")}
+    assert "code" in cols and "options_mono" in cols
+    assert cols["options_mono"]["notnull"] == 1
+    rows = conn.execute("SELECT key, id, code, options_mono FROM mcq_questions"
+                        ).fetchall()
+    assert {r["key"]: r["id"] for r in rows} == ids_before, "no rebuild"
+    assert all(r["code"] is None and r["options_mono"] == 0 for r in rows)
+
+    # Resumes before any re-seed: the backfilled rows are well-formed.
+    resumed = service.get_attempt(conn, 1, aid)
+    assert [(q["code"], q["options_mono"]) for q in resumed["questions"]] == \
+        [(None, False)] * 4
+    assert resumed["questions"][0]["answer"]["is_correct"] is True
+    assert resumed["questions"][1]["answer"]["is_correct"] is False
+
+    # The boot seed that follows the migration, with the code bank alongside.
+    seed_mcq_bank(conn, combined_bank(tmp_path))
+    assert {r["key"]: r["id"] for r in conn.execute(
+        "SELECT id, key FROM mcq_questions WHERE subject_code = 'CSE111'"
+        " AND key IN (%s)" % ",".join("?" * 4), [q["key"] for q in source])} \
+        == ids_before
+    result = service.submit_attempt(conn, 1, aid)
+    assert (result["score"], result["total"], result["answered"]) == (1, 4, 2)
+    assert len(result["missed"]) == 3
+    assert all(m["code"] is None and m["options_mono"] is False
+               for m in result["missed"])
+
+    # And a code question drawn on the migrated database arrives intact.
+    fresh = service.create_attempt(conn, 1, "INT108", [2], "full",
+                                   rng=random.Random(3))
+    assert {q["code"] for q in fresh["questions"]} == \
+        {q["code"] or None for q in load_questions(CODE_FIXTURES)
+         if q["subject_code"] == "INT108"}
+    conn.close()
+
+
+# --- six subjects ----------------------------------------------------------
+
+SIX = ("MTH165", "CSE111", "INT108", "INT335", "MEC103", "CSE326")
+
+
+def test_the_registry_lists_all_six_subjects():
+    from recall.lpu import SUBJECTS
+    assert registry.MCQ_SUBJECTS == SIX
+    assert set(registry.MCQ_UNITS) == set(SIX) == set(SUBJECTS)
+
+
+def test_the_order_does_not_depend_on_dict_insertion(db_path, monkeypatch):
+    """A registry key removed and put back lands at the END of the dict — which
+    is exactly what monkeypatch.delitem does on teardown. The waiting subjects
+    must still come out in the semester's order."""
+    entry = registry.MCQ_UNITS["MTH165"]
+    monkeypatch.delitem(registry.MCQ_UNITS, "MTH165")
+    monkeypatch.setitem(registry.MCQ_UNITS, "MTH165", entry)
+    assert list(registry.MCQ_UNITS)[-1] == "MTH165"
+    assert subject_order(db_path) == ["CSE111", "MTH165", "INT108", "INT335",
+                                      "MEC103", "CSE326"]
+
+
+def test_cse111_keeps_its_own_ca1_units():
+    """CSE111's bank follows the photographed CA1 syllabus, not lpu.py's seven
+    units; deriving it would renumber every question in the live bank."""
+    assert registry.MCQ_UNITS["CSE111"] == {
+        "label": "Orientation to Computing",
+        "units": {
+            1: "Computational Thinking & Computing Environment",
+            2: "Version Control & Cyber Security Basics",
+        },
+    }
+
+
+@pytest.mark.parametrize("code", [c for c in SIX if c != "CSE111"])
+def test_the_other_five_are_derived_from_lpu(code):
+    from recall.lpu import SUBJECTS
+    entry = registry.MCQ_UNITS[code]
+    assert entry["label"] == SUBJECTS[code]["full_name"]
+    assert entry["units"] == dict(enumerate(SUBJECTS[code]["units"], start=1))
+    assert sorted(entry["units"]) == [1, 2, 3, 4, 5, 6]
+
+
+def test_a_subject_with_no_bank_files_is_listed_with_every_count_zero(client):
+    from recall.lpu import SUBJECTS
+    body = {s["subject_code"]: s for s in
+            client.get("/api/mcq/subjects").json()}
+    assert set(body) == set(SIX)
+    zero = {"easy": 0, "medium": 0, "hard": 0, "max": 0}
+    for code in SIX:
+        if code == "CSE111":
+            continue
+        subject = body[code]
+        assert subject["label"] == SUBJECTS[code]["full_name"]
+        assert [u["unit"] for u in subject["units"]] == [1, 2, 3, 4, 5, 6]
+        assert [u["label"] for u in subject["units"]] == SUBJECTS[code]["units"]
+        assert all(u["count"] == 0 and u["difficulties"] == zero
+                   for u in subject["units"]), code
+        # The sitting controls are the same for every subject.
+        assert subject["lengths"] == [30, 60, "full"]
+        assert subject["difficulties"] == ["easy", "medium", "hard", "max"]
+
+
+@pytest.mark.parametrize("body,needle", [
+    ({"subject_code": "MTH165", "units": [1], "length": 30},
+     "have no questions yet"),
+    ({"subject_code": "MEC103", "units": [1, 2, 3, 4, 5, 6], "length": "full"},
+     "have no questions yet"),
+    ({"subject_code": "INT108", "units": [1], "length": 5,
+      "difficulty": "easy"}, "have no easy questions yet"),
+    ({"subject_code": "INT335", "units": [7], "length": 30},
+     "INT335 has units 1, 2, 3, 4, 5, 6"),
+])
+def test_a_subject_with_no_questions_cannot_be_started(client, body, needle):
+    r = client.post("/api/mcq/attempts", json=body)
+    assert r.status_code == 422, r.text
+    assert needle in r.json()["detail"], r.text
+
+
+def subject_order(path: str) -> list[str]:
+    return [s["subject_code"] for s in
+            client_as(path, OWNER).get("/api/mcq/subjects").json()]
+
+
+def test_subjects_with_questions_come_first(db_path):
+    # CSE111 holds the only questions; the rest wait in registry order.
+    assert subject_order(db_path) == ["CSE111", "MTH165", "INT108", "INT335",
+                                      "MEC103", "CSE326"]
+
+
+def test_subjects_are_ordered_by_how_many_questions_they_hold(tmp_path):
+    only_code = str(tmp_path / "code_only.db")
+    make_db(only_code, CODE_FIXTURES)
+    # INT108 (4) then CSE326 (1) — CSE326 jumps MTH165, CSE111, INT335 and
+    # MEC103, which all come before it in the registry but hold nothing.
+    assert subject_order(only_code) == ["INT108", "CSE326", "MTH165",
+                                        "CSE111", "INT335", "MEC103"]
+
+    both = str(tmp_path / "both.db")
+    make_db(both, combined_bank(tmp_path))
+    assert subject_order(both) == ["CSE111", "INT108", "CSE326", "MTH165",
+                                   "INT335", "MEC103"]
+
+
+def test_a_tie_keeps_registry_order(tmp_path):
+    bank_dir = tmp_path / "bank"
+    bank_dir.mkdir()
+    for code in ("CSE326", "MTH165"):
+        (bank_dir / f"{code.lower()}_unit1.json").write_text(json.dumps({
+            "subject_code": code, "unit": 1,
+            "questions": [a_question(key=f"{code}-U1-001")]}))
+    path = str(tmp_path / "tie.db")
+    make_db(path, bank_dir)
+    assert subject_order(path)[:2] == ["MTH165", "CSE326"]
+
+
+def test_questions_nobody_can_sit_do_not_lift_a_subject(tmp_path):
+    """Three questions under a unit CSE326 does not have are counted
+    `unreachable` by the seed and cannot be drawn, so they must not put CSE326
+    above a subject with one question somebody can actually sit — nor above
+    the subjects still waiting."""
+    bank_dir = tmp_path / "bank"
+    bank_dir.mkdir()
+    (bank_dir / "cse326_unit9.json").write_text(json.dumps({
+        "subject_code": "CSE326", "unit": 9,
+        "questions": [a_question(key=f"CSE326-U9-00{i}") for i in range(3)]}))
+    (bank_dir / "mec103_unit1.json").write_text(json.dumps({
+        "subject_code": "MEC103", "unit": 1,
+        "questions": [a_question(key="MEC103-U1-001")]}))
+    path = str(tmp_path / "stray.db")
+    make_db(path, bank_dir)
+    assert subject_order(path) == ["MEC103", "MTH165", "CSE111", "INT108",
+                                   "INT335", "CSE326"]
+
+
+def test_retired_questions_do_not_count_toward_the_order(tmp_path):
+    bank_dir = tmp_path / "bank"
+    shutil.copytree(CODE_FIXTURES, bank_dir)
+    path = str(tmp_path / "retired.db")
+    make_db(path, bank_dir)
+    assert subject_order(path)[0] == "INT108"
+    data = json.loads((bank_dir / "int108_unit2.json").read_text())
+    (bank_dir / "int108_unit2.json").write_text(
+        json.dumps({**data, "questions": []}))
+    conn = connect(path)
+    assert seed_mcq_bank(conn, bank_dir)["retired"] == 4
+    conn.close()
+    assert subject_order(path)[0] == "CSE326"
+
+
+# --- duplicate options, read the way the screen shows them -----------------
+
+def four_wrong_notes(correct: int = 0) -> list[str]:
+    return ["" if i == correct else f"not option {i}" for i in range(4)]
+
+
+@pytest.mark.parametrize("options", [
+    ["True", "true", "TRUE", "1"],               # Python is case-sensitive
+    ["a  b", "a b", "ab", "a\nb"],               # print(..., sep="  ")
+    ["   5", "5", "0005", "5.0"],                # f"{5:4}" keeps its padding
+    ["<P>", "<p>", "<br>", "<hr>"],
+])
+def test_monospace_options_that_differ_as_written_are_accepted(options):
+    validate_question(a_question(options=options, options_mono=True,
+                                 why_wrong=four_wrong_notes()))
+
+
+@pytest.mark.parametrize("options,reason", [
+    (["True", "true", "TRUE", "1"], "options 0 and 1"),
+    (["a  b", "a b", "ab", "c"], "options 0 and 1"),
+])
+def test_prose_options_are_still_folded_on_case_and_space(options, reason):
+    """The prose rule is unchanged: without options_mono these read as one."""
+    with pytest.raises(ValueError, match=reason):
+        validate_question(a_question(options=options,
+                                     why_wrong=four_wrong_notes()))
+
+
+@pytest.mark.parametrize("options,reason", [
+    (["x", "x  ", "y", "z"], "options 0 and 1"),          # trailing: invisible
+    (["x\n", "x", "y", "z"], "options 0 and 1"),
+    (["a\tb", "a   b", "y", "z"], "options 0 and 1"),     # tab-size 4
+    (["if x:\n    y", "if x:  \n    y\n", "y", "z"], "options 0 and 1"),
+])
+def test_monospace_options_the_screen_cannot_tell_apart_are_refused(
+        options, reason):
+    with pytest.raises(ValueError, match=reason):
+        validate_question(a_question(options=options, options_mono=True,
+                                     why_wrong=four_wrong_notes()))
+
+
+# --- migrating the database exactly as HEAD's schema left it ---------------
+
+#: schema.sql as it stood before `code` and `options_mono` existed — the
+#: schema the live database was built by. Hand-typed DDL tests the recipe;
+#: this tests the recipe against the real table, its indexes and every other
+#: table init_db has to walk past on the way.
+_SCHEMA_BEFORE_CODE = (Path(__file__).resolve().parent / "fixtures"
+                       / "schema_before_code_columns.sql")
+
+_PRE_CODE_INSERT = (
+    "INSERT INTO mcq_questions (key, subject_code, unit, topic, kind,"
+    " difficulty, question, options_json, correct, explain, why_wrong_json,"
+    " active, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,1,?)")
+
+
+def test_the_real_pre_code_schema_migrates_and_its_attempts_still_work(
+        tmp_path):
+    path = str(tmp_path / "live.db")
+    conn = connect(path)
+    conn.executescript(_SCHEMA_BEFORE_CODE.read_text())
+    assert "code" not in {r["name"] for r in
+                          conn.execute("PRAGMA table_info(mcq_questions)")}
+    for uid, name in ((OWNER, "owner"), (INTRUDER, "rival")):
+        conn.execute("INSERT INTO users (id, name) VALUES (?,?)", (uid, name))
+        conn.execute("INSERT INTO settings (user_id) VALUES (?)", (uid,))
+    # The bank as the old seed wrote it: no code, no options_mono.
+    for q in load_questions(FIXTURES):
+        conn.execute(_PRE_CODE_INSERT, (
+            q["key"], q["subject_code"], q["unit"], q["topic"], q["kind"],
+            q["difficulty"], q["question"], json.dumps(q["options"]),
+            q["correct"], q["explain"], json.dumps(q["why_wrong"]),
+            "2026-09-22T00:00:00+00:00"))
+    before = [dict(r) for r in conn.execute(
+        "SELECT * FROM mcq_questions ORDER BY id")]
+    by_id = {r["id"]: r for r in before}
+    ids = [r["id"] for r in before if r["unit"] == 1][:6]
+    orders = [[3, 1, 0, 2], [0, 1, 2, 3], [2, 3, 1, 0],
+              [1, 0, 3, 2], [0, 2, 1, 3], [3, 2, 1, 0]]
+
+    def sitting(user_id, submitted):
+        cur = conn.execute(
+            "INSERT INTO mcq_attempts (user_id, subject_code, units_json,"
+            " length, difficulty, question_ids_json, option_orders_json,"
+            " total, started_at, submitted_at, duration_s, score)"
+            " VALUES (?,'CSE111','[1]','30',NULL,?,?,6,"
+            " '2026-09-22T00:00:00+00:00',?,?,?)",
+            (user_id, json.dumps(ids), json.dumps(orders),
+             "2026-09-22T00:09:00+00:00" if submitted else None,
+             540 if submitted else None, 1 if submitted else None))
+        return int(cur.lastrowid)
+
+    def record(aid, position, chosen):
+        order = orders[position - 1]
+        right = order[chosen] == by_id[ids[position - 1]]["correct"]
+        conn.execute(
+            "INSERT INTO mcq_answers (attempt_id, position, question_id,"
+            " chosen, is_correct, answered_at) VALUES (?,?,?,?,?,?)",
+            (aid, position, ids[position - 1], chosen, 1 if right else 0,
+             "2026-09-22T00:01:00+00:00"))
+        return right
+
+    rival = sitting(INTRUDER, submitted=True)
+    record(rival, 1, orders[0].index(by_id[ids[0]]["correct"]))  # 1 of 6
+    mine = sitting(OWNER, submitted=False)
+    right_one = orders[0].index(by_id[ids[0]]["correct"])
+    right_two = orders[1].index(by_id[ids[1]]["correct"])
+    assert record(mine, 1, right_one) is True
+    assert record(mine, 2, (right_two + 1) % 4) is False
+    conn.commit()
+
+    init_db(conn)                            # the migration under test
+    init_db(conn)                            # idempotent
+
+    cols = {r["name"]: r for r in
+            conn.execute("PRAGMA table_info(mcq_questions)")}
+    assert cols["options_mono"]["notnull"] == 1
+    assert "code" in cols
+    after = [dict(r) for r in conn.execute(
+        "SELECT * FROM mcq_questions ORDER BY id")]
+    assert [{k: r[k] for k in before[0]} for r in after] == before
+    assert all(r["code"] is None and r["options_mono"] == 0 for r in after)
+    assert conn.execute("SELECT COUNT(*) AS n FROM mcq_answers"
+                        ).fetchone()["n"] == 3
+
+    report = seed_mcq_bank(conn, combined_bank(tmp_path))  # the boot seed
+    assert report["retired"] == 0
+    assert {r["key"]: r["id"] for r in conn.execute(
+        "SELECT id, key FROM mcq_questions WHERE subject_code = 'CSE111'")} \
+        == {r["key"]: r["id"] for r in before}
+
+    resumed = service.get_attempt(conn, OWNER, mine)
+    assert [q["answer"]["is_correct"] if q["answer"] else None
+            for q in resumed["questions"]] == [True, False, None, None, None,
+                                               None]
+    for q in resumed["questions"]:
+        assert (q["code"], q["options_mono"]) == (None, False)
+    assert not keys_anywhere(resumed["questions"][2:]) & LEAKS
+    with pytest.raises(LookupError):
+        service.get_attempt(conn, INTRUDER, mine)
+
+    service.answer_attempt(conn, OWNER, mine, 3,
+                           orders[2].index(by_id[ids[2]]["correct"]))
+    result = service.submit_attempt(conn, OWNER, mine)
+    assert (result["score"], result["total"], result["answered"]) == (2, 6, 3)
+    assert result["rank"] == {"position": 1, "of": 2}
+    board = service.leaderboard(conn, "CSE111", [1], 30)
+    assert [(row["name"], row["score"]) for row in board] == \
+        [("owner", 2), ("rival", 1)]
+    conn.close()

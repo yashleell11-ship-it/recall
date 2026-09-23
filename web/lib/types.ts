@@ -593,6 +593,22 @@ export interface McqQuestion {
    *  so every drawn question carries one even in a Mixed attempt. */
   difficulty: McqDifficulty;
   question: string;
+  /**
+   * OPTIONAL / ADDITIVE. The snippet the question is about — "what does this
+   * print" — exactly as typed. Every space, tab and newline is load-bearing
+   * (Python's indentation is its syntax), so the client shows it verbatim in
+   * a monospace block and never reflows it. Absent, null or "" when the
+   * question has none. It gives nothing away, so it is sent with the
+   * question before it is answered.
+   */
+  code?: string | null;
+  /**
+   * OPTIONAL / ADDITIVE. True when the options are themselves code, program
+   * output, values, expressions, tags or selectors, and must be shown in
+   * monospace exactly as written — `[1, 2, 3]` and `'abc'` read as a program
+   * prints them, spaces kept. Absent means false: prose options.
+   */
+  options_mono?: boolean;
   /** Exactly four, already shuffled for this attempt. */
   options: string[];
   /** null until answered. */
@@ -632,6 +648,12 @@ export interface McqMissed {
   position: number;
   topic: string;
   question: string;
+  /** OPTIONAL / ADDITIVE. The question's snippet, verbatim, exactly as
+   *  McqQuestion.code — the review sheet shows the program it asked about. */
+  code?: string | null;
+  /** OPTIONAL / ADDITIVE. As McqQuestion.options_mono: the options are code
+   *  or output and are shown in monospace, spaces kept. */
+  options_mono?: boolean;
   options: string[];
   chosen: number | null;
   correct_index: number;

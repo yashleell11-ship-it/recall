@@ -1,0 +1,97 @@
+{
+  "_note": "FIXTURE, not the real bank. Code questions for the code/options_mono tests. Lives in a subdirectory so the CSE111 fixture bank one level up keeps its counts: load_bank globs *.json non-recursively. Two snippets are indented on purpose — one with spaces and a blank line inside the loop body, one with tabs — because those are exactly what a stripped or whitespace-collapsed snippet destroys. INT108-U2-004 carries neither field, to pin the defaults.",
+  "subject_code": "INT108",
+  "unit": 2,
+  "unit_label": "Conditional and Iterative Statements",
+  "questions": [
+    {
+      "key": "INT108-U2-001",
+      "topic": "Loops",
+      "kind": "recall",
+      "difficulty": "easy",
+      "q": "What does this print?",
+      "code": "total = 0\nfor i in range(1, 4):\n    total += i\n\n    if total > 3:\n        print(\"big\", total)\n",
+      "options_mono": true,
+      "options": [
+        "big 6",
+        "big 3",
+        "big 10",
+        "big 1"
+      ],
+      "correct": 0,
+      "explain": "range(1, 4) yields 1, 2 and 3, so total climbs 1, 3, 6. The if sits inside the loop and is checked on every pass, but only the last pass leaves total above 3, so exactly one line prints.",
+      "why_wrong": [
+        "",
+        "After the second pass total is exactly 3, and 3 > 3 is False, so nothing prints until the third pass makes it 6.",
+        "range(1, 4) stops before 4, so the loop adds 1, 2 and 3 and never 4; total ends at 6, not 10.",
+        "total is 1 only after the first pass, and 1 > 3 is False, so that pass prints nothing."
+      ]
+    },
+    {
+      "key": "INT108-U2-002",
+      "topic": "Loops",
+      "kind": "recall",
+      "difficulty": "medium",
+      "q": "What does this print?",
+      "code": "for i in range(3):\n\tif i == 1:\n\t\tcontinue\n\tprint(i, end=\" \")\n",
+      "options_mono": true,
+      "options": [
+        "0 2",
+        "0 1 2",
+        "0",
+        "1"
+      ],
+      "correct": 0,
+      "explain": "continue ends the current pass of the loop and goes straight to the next one. On the pass where i is 1 the print is skipped, so only 0 and 2 are printed, each followed by a space.",
+      "why_wrong": [
+        "",
+        "continue skips the rest of the body when i == 1, so print never runs on that pass.",
+        "continue ends only the current pass, not the loop; stopping the loop entirely is what break does.",
+        "The condition picks out i == 1 to SKIP; it is the one value that is not printed."
+      ]
+    },
+    {
+      "key": "INT108-U2-003",
+      "topic": "Conditions",
+      "kind": "situation",
+      "difficulty": "hard",
+      "q": "Which condition is True exactly when n is an even number greater than 10?",
+      "options_mono": true,
+      "options": [
+        "n % 2 == 0 and n > 10",
+        "n % 2 == 1 and n > 10",
+        "n % 2 == 0 or n > 10",
+        "n / 2 == 0 and n > 10"
+      ],
+      "correct": 0,
+      "explain": "Evenness is a remainder of 0 on division by 2, written n % 2 == 0, and both halves have to hold at once, which is what and means. 12 passes; 11, 8 and 4 do not.",
+      "why_wrong": [
+        "",
+        "A remainder of 1 on division by 2 is what makes n odd, so this picks out the odd numbers above 10.",
+        "or is True when either half is, so 4 (even, not above 10) and 11 (above 10, odd) would both pass.",
+        "n / 2 is half of n, which equals 0 only when n is 0; the evenness test is the remainder, n % 2."
+      ]
+    },
+    {
+      "key": "INT108-U2-004",
+      "topic": "Conditions",
+      "kind": "recall",
+      "difficulty": "easy",
+      "q": "What does an if statement with no else branch do when its condition is False?",
+      "options": [
+        "Skips its block and carries on with the next statement",
+        "Raises an error because there is no else",
+        "Runs its block anyway, once",
+        "Stops the program"
+      ],
+      "correct": 0,
+      "explain": "else is optional. Without it, a False condition simply means the indented block is skipped and execution continues with whatever follows the if.",
+      "why_wrong": [
+        "",
+        "else is optional in Python; an if on its own is a complete statement.",
+        "The block runs only when the condition is True; that is the whole point of the if.",
+        "A False condition is an ordinary outcome, not an error, and the program carries on."
+      ]
+    }
+  ]
+}

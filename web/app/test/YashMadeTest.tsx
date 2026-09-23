@@ -3,7 +3,14 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
-import { useCallback, useMemo, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 import { AnimatedNumber, Reveal, Skeleton } from "@/components/rich";
 import { EmptyState, ErrorState, Panel, TopicCode } from "@/components/ui";
 import {
@@ -43,6 +50,67 @@ const DIFFICULTY_LABEL: Record<McqDifficulty, string> = {
   max: "Max",
 };
 
+/** Where the last subject chosen is remembered, per browser. */
+const SUBJECT_KEY = "recall.mcq.subject";
+
+function readStoredSubject(): string | null {
+  try {
+    return localStorage.getItem(SUBJECT_KEY);
+  } catch {
+    return null; // private mode, storage disabled, or the server render
+  }
+}
+
+function storeSubject(code: string): void {
+  try {
+    localStorage.setItem(SUBJECT_KEY, code);
+  } catch {
+    /* ignore — remembering is a courtesy, not a requirement */
+  }
+}
+
+function forgetSubject(): void {
+  try {
+    localStorage.removeItem(SUBJECT_KEY);
+  } catch {
+    /* ignore — as above */
+  }
+}
+
+/** Every active question the subject holds, across all its units. */
+function subjectTotal(subject: McqSubject): number {
+  return subject.units.reduce((n, u) => n + u.count, 0);
+}
+
+/** The units of a subject that have questions — its default selection. */
+function unitsWithMaterial(subject: McqSubject): number[] {
+  return subject.units.filter((u) => u.count > 0).map((u) => u.unit);
+}
+
+/**
+ * How a unit selection splits down the ladder. `null` when the server sends
+ * no breakdown at all — an older server — in which case every tier stays
+ * offered and the draw is simply whatever it holds.
+ */
+function tierCountsOf(
+  subject: McqSubject | null,
+  units: number[],
+): Record<McqDifficulty, number> | null {
+  const out: Record<McqDifficulty, number> = {
+    easy: 0,
+    medium: 0,
+    hard: 0,
+    max: 0,
+  };
+  let known = false;
+  for (const u of subject?.units ?? []) {
+    if (!units.includes(u.unit) || !u.difficulties) continue;
+    known = true;
+    for (const d of DIFFICULTIES) out[d] += u.difficulties[d] ?? 0;
+  }
+  return known ? out : null;
+}
+
 function lengthLabel(length: McqLength): string {
   return length === "full" ? "Full" : String(length);
 }
@@ -81,6 +149,44 @@ function Mark({ round, on }: { round?: boolean; on: boolean }) {
     >
       {on ? <span className={s.markDot} /> : null}
     </span>
+  );
+}
+
+/**
+ * One subject: its code, its name, and how much of it is written. The first
+ * step of building a paper, drawn in the same object language as the units
+ * under it. A subject with nothing in the bank yet stays on the list, visibly
+ * disabled and saying why — the same rule the units follow — rather than
+ * vanishing and leaving the student to wonder whether it exists.
+ */
+function SubjectCard({
+  subject,
+  on,
+  onClick,
+}: {
+  subject: McqSubject;
+  on: boolean;
+  onClick: () => void;
+}) {
+  const total = subjectTotal(subject);
+  const note =
+    total === 0 ? "waiting for material" : `${total} ${plural(total, "question")}`;
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      aria-label={`${subject.subject_code} — ${subject.label} — ${note}`}
+      disabled={total === 0}
+      onClick={onClick}
+      className={`${s.press} ${s.subject} ${on ? s.on : ""}`}
+    >
+      <Mark round on={on} />
+      <span className={s.subjectBody}>
+        <span className={s.subjectCode}>{subject.subject_code}</span>
+        <span className={s.subjectName}>{subject.label}</span>
+        <span className={s.unitNote}>{note}</span>
+      </span>
+    </button>
   );
 }
 
@@ -300,6 +406,12 @@ export function YashMadeTest() {
   const subjectsRes = useResource<McqSubject[]>("mcq-subjects", getMcqSubjects);
   const attemptsRes = useResource("mcq-attempts", getMcqAttempts);
 
+  /** The subject this browser last chose, read once. Only ever consulted
+   *  after the subject list has arrived from the network, so the server
+   *  render — which cannot see localStorage — never disagrees with the
+   *  first client render about what is on screen. */
+  const [storedSubject] = useState<string | null>(readStoredSubject);
+
   /** Null until something is actually picked; the default is derived, not
    *  written into state by an effect. */
   const [picked, setPicked] = useState<{
@@ -327,22 +439,44 @@ export function YashMadeTest() {
 
   const subjects = useMemo(() => subjectsRes.data ?? [], [subjectsRes.data]);
 
-  /** The first subject that actually has material, so the picker opens on
-   *  something startable rather than on an empty one. */
+  /** What was picked here; else what this browser chose last time, while it
+   *  still has questions; else the first subject that actually has material,
+   *  so the picker opens on something startable rather than on an empty one. */
   const subject = useMemo(() => {
     if (subjects.length === 0) return null;
     if (picked) {
       const named = subjects.find((x) => x.subject_code === picked.subject);
       if (named) return named;
     }
-    return subjects.find((x) => x.units.some((u) => u.count > 0)) ?? subjects[0];
-  }, [subjects, picked]);
+    if (storedSubject) {
+      const remembered = subjects.find(
+        (x) => x.subject_code === storedSubject && subjectTotal(x) > 0,
+      );
+      if (remembered) return remembered;
+    }
+    return subjects.find((x) => subjectTotal(x) > 0) ?? subjects[0];
+  }, [subjects, picked, storedSubject]);
+
+  /** A remembered subject the bank no longer offers — renamed, retired, or
+   *  emptied — is forgotten once the list arrives, rather than lingering in
+   *  storage to reappear the day a subject by that name next holds
+   *  questions. Storage only: what is on screen is already the fallback.
+   *  It reads storage afresh rather than the value read at mount, so a list
+   *  that revalidates after a pick checks the pick, not what it replaced. */
+  useEffect(() => {
+    if (!subjectsRes.data) return;
+    const now = readStoredSubject();
+    if (now === null) return;
+    const live = subjectsRes.data.some(
+      (x) => x.subject_code === now && subjectTotal(x) > 0,
+    );
+    if (!live) forgetSubject();
+  }, [subjectsRes.data]);
 
   /** Every unit that has questions — the "All units" selection, and the
    *  default one. */
   const allUnits = useMemo(
-    () =>
-      (subject?.units ?? []).filter((u) => u.count > 0).map((u) => u.unit),
+    () => (subject ? unitsWithMaterial(subject) : []),
     [subject],
   );
 
@@ -361,26 +495,12 @@ export function YashMadeTest() {
     [subject, units],
   );
 
-  /**
-   * How the current unit selection splits down the ladder. `null` when the
-   * server sends no breakdown at all — an older server — in which case every
-   * tier stays offered and the draw is simply whatever it holds.
-   */
-  const tierCounts = useMemo(() => {
-    const out: Record<McqDifficulty, number> = {
-      easy: 0,
-      medium: 0,
-      hard: 0,
-      max: 0,
-    };
-    let known = false;
-    for (const u of subject?.units ?? []) {
-      if (!units.includes(u.unit) || !u.difficulties) continue;
-      known = true;
-      for (const d of DIFFICULTIES) out[d] += u.difficulties[d] ?? 0;
-    }
-    return known ? out : null;
-  }, [subject, units]);
+  /** How the current unit selection splits down the ladder; null from a
+   *  server older than the ladder. */
+  const tierCounts = useMemo(
+    () => tierCountsOf(subject, units),
+    [subject, units],
+  );
 
   const countOf = useCallback(
     (d: McqDifficulty | null): number => {
@@ -461,6 +581,31 @@ export function YashMadeTest() {
       );
     },
     [units, setUnits],
+  );
+
+  /**
+   * A new subject is a new paper: its units reset to every unit it has
+   * material for, and the tier on show carries over only if the new subject
+   * holds questions at it — otherwise Mixed. What is written into state is
+   * the tier that was ON SCREEN, not a pick that had already quietly fallen
+   * back to Mixed, so a switch never brings back a tier the student could
+   * not see was still chosen. Choosing the subject already chosen changes
+   * nothing: it must not throw away a unit selection.
+   */
+  const pickSubject = useCallback(
+    (next: McqSubject) => {
+      if (subject && next.subject_code === subject.subject_code) return;
+      const nextUnits = unitsWithMaterial(next);
+      setPicked({ subject: next.subject_code, units: nextUnits });
+      storeSubject(next.subject_code);
+      const counts = tierCountsOf(next, nextUnits);
+      setPickedDifficulty(
+        difficulty !== null && (counts === null || counts[difficulty] > 0)
+          ? difficulty
+          : null,
+      );
+    },
+    [subject, difficulty],
   );
 
   // A selection is subject + units + length + difficulty, and that whole
@@ -584,42 +729,53 @@ export function YashMadeTest() {
 
         <section className={`panel ${s.builder}`} aria-label="Build the paper">
           <div className={s.head}>
+            {/* The paper's title: whichever subject the first group has
+                chosen, restated where the paper begins. */}
             <span className={s.headSubject}>
-              {subjects.length > 1 ? (
-                <select
-                  value={subject.subject_code}
-                  onChange={(e) => {
-                    const next = subjects.find(
-                      (x) => x.subject_code === e.target.value,
-                    );
-                    if (!next) return;
-                    setPicked({
-                      subject: next.subject_code,
-                      units: next.units
-                        .filter((u) => u.count > 0)
-                        .map((u) => u.unit),
-                    });
-                  }}
-                  aria-label="Subject"
-                  className={s.select}
-                >
-                  {subjects.map((x) => (
-                    <option key={x.subject_code} value={x.subject_code}>
-                      {x.subject_code} — {x.label}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <>
-                  <TopicCode code={subject.subject_code} />
-                  <span className={s.headLabel}>{subject.label}</span>
-                </>
-              )}
+              <TopicCode code={subject.subject_code} />
+              <span className={s.headLabel}>{subject.label}</span>
             </span>
             <span className={s.meta}>
               {available} {plural(available, "question")} in these units
             </span>
           </div>
+
+          {/* --- subject -------------------------------------------------
+              The first step, in the same label gutter as the rest. One
+              subject is not a choice, so with one the head above is the
+              whole story and this group does not appear. */}
+
+          {subjects.length > 1 && (
+            <div className={s.group} role="group" aria-labelledby="ymt-subject">
+              <h2 id="ymt-subject" className={`label ${s.groupLabel}`}>
+                Subject
+              </h2>
+              <div className={`${s.groupBody} ${s.subjectField}`}>
+                <div
+                  className={s.subjectGrid}
+                  style={
+                    {
+                      "--subject-cols":
+                        subjects.length <= 3
+                          ? subjects.length
+                          : subjects.length === 4
+                            ? 2
+                            : 3,
+                    } as CSSProperties
+                  }
+                >
+                  {subjects.map((x) => (
+                    <SubjectCard
+                      key={x.subject_code}
+                      subject={x}
+                      on={x.subject_code === subject.subject_code}
+                      onClick={() => pickSubject(x)}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* --- units --------------------------------------------------- */}
 
@@ -875,7 +1031,7 @@ export function YashMadeTest() {
           <Reveal index={1}>
             <Panel
               title="Leaderboard"
-              aside={`${lengthLabel(length)} · ${difficultyLabel(difficulty)}`}
+              aside={`${subject.subject_code} · ${lengthLabel(length)} · ${difficultyLabel(difficulty)}`}
             >
               {boardRes.error && !boardRes.data ? (
                 <ErrorState message={boardRes.error} onRetry={boardRes.reload} />

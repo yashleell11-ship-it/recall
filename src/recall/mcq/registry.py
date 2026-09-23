@@ -4,13 +4,40 @@ Declared here rather than derived from what happens to be in the bank, so a
 unit with nothing written yet still appears on the picker with a count of 0
 and a "waiting for material" note. A unit that vanishes from a screen because
 nobody has written its questions is indistinguishable, to the student, from a
-unit that does not exist.
+unit that does not exist. The same holds one level up: a subject with no
+questions at all is still listed, every unit at 0, so the picker shows the
+student the whole semester and which parts of it are still being written.
 
 The unit numbers are the ones printed on the lecture decks, 1-based.
+
+**Five of the six subjects are derived from `recall.lpu`, not retyped.** That
+registry is where the LPU syllabus lives — read off the Session 2026-27 PDFs
+and corrected against them — and a second hand-typed copy of the same unit
+names here would drift from it the first time either one was fixed. So for
+every subject except CSE111 the label is `SUBJECTS[code]["full_name"]` and the
+units are `SUBJECTS[code]["units"]` numbered 1..6, computed at import. Fix a
+unit name in lpu.py and the picker follows.
+
+**CSE111 is the exception, and it is written out on purpose.** Its MCQ bank
+was written against the photographed CA1 syllabus, whose two units are not
+lpu.py's seven: "Computational Thinking & Computing Environment" and "Version
+Control & Cyber Security Basics" group the course the way the CA was set, and
+the 544 questions already in the live bank carry those unit numbers. Deriving
+CSE111 from lpu.py would renumber every one of them.
 """
 
-#: subject_code -> {"label": str, "units": {unit_number: unit_label}}
-MCQ_UNITS: dict[str, dict] = {
+from recall.lpu import SUBJECTS as _LPU_SUBJECTS
+
+#: The subjects the bank covers, in the order recall.lpu lists the semester.
+#: Named explicitly rather than taken as "everything in lpu.py": a course added
+#: there is a decision about the timetable, not yet one about the bank, and a
+#: code that disappears from lpu.py should fail this import loudly rather than
+#: quietly drop a subject — and its attempts' labels — off the picker.
+MCQ_SUBJECTS: tuple = ("MTH165", "CSE111", "INT108", "INT335", "MEC103",
+                       "CSE326")
+
+#: Subjects whose MCQ units do NOT follow lpu.py. See the module docstring.
+_OWN_UNITS: dict[str, dict] = {
     "CSE111": {
         "label": "Orientation to Computing",
         "units": {
@@ -18,6 +45,25 @@ MCQ_UNITS: dict[str, dict] = {
             2: "Version Control & Cyber Security Basics",
         },
     },
+}
+
+
+def _from_lpu(code: str) -> dict:
+    """One subject's entry built from recall.lpu: its full name and its units
+    numbered from 1, as the decks print them. A fresh dict every time, so a
+    test that edits MCQ_UNITS can never reach back into lpu.SUBJECTS."""
+    subject = _LPU_SUBJECTS[code]
+    return {
+        "label": subject["full_name"],
+        "units": {number: name
+                  for number, name in enumerate(subject["units"], start=1)},
+    }
+
+
+#: subject_code -> {"label": str, "units": {unit_number: unit_label}}
+MCQ_UNITS: dict[str, dict] = {
+    code: _OWN_UNITS[code] if code in _OWN_UNITS else _from_lpu(code)
+    for code in MCQ_SUBJECTS
 }
 
 #: The ladder, hardest last. Order is load-bearing: `by_difficulty` on a result
@@ -46,4 +92,5 @@ LENGTH_MIN = 5
 LENGTH_MAX = 200
 
 
-__all__ = ["MCQ_UNITS", "LENGTHS", "LENGTH_MIN", "LENGTH_MAX", "DIFFICULTIES"]
+__all__ = ["MCQ_SUBJECTS", "MCQ_UNITS", "LENGTHS", "LENGTH_MIN", "LENGTH_MAX",
+           "DIFFICULTIES"]

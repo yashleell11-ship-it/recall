@@ -14,7 +14,7 @@ import {
 } from "@/lib/api";
 import { hasModifier, isTypingTarget } from "@/lib/keys";
 import type { McqAttempt, McqFeedback, McqResult } from "@/lib/types";
-import { McqResultView } from "./McqResultView";
+import { McqCode, McqResultView, optionTextClass } from "./McqResultView";
 import s from "./mcq.module.css";
 
 const LETTERS = ["A", "B", "C", "D"];
@@ -180,6 +180,18 @@ export function McqSession({ id }: { id: number }) {
       // Never while the focus is in a field: the picker has a number box, and
       // "typing 3 answers question 3" is the classic bug on this screen.
       if (isTypingTarget(e) || hasModifier(e)) return;
+      // The arrow keys belong to a focused code block that is wider than its
+      // box: they are how a keyboard reaches the end of a long line. A block
+      // that fits has nothing to scroll, and swallowing the keys there would
+      // leave them doing nothing at all — so they move between questions,
+      // as they do everywhere else.
+      if (
+        (e.key === "ArrowLeft" || e.key === "ArrowRight") &&
+        e.target instanceof Element
+      ) {
+        const block = e.target.closest("[data-mcq-code]");
+        if (block && block.scrollWidth > block.clientWidth) return;
+      }
       const revealed = !!(question && answers[question.position]);
 
       // One character only. `"1234".indexOf(e.key)` is 0 for an empty key —
@@ -364,6 +376,10 @@ export function McqSession({ id }: { id: number }) {
 
           <h1 className={`k-question ${s.question}`}>{question.question}</h1>
 
+          {/* The program the question is about, verbatim — between the
+              question and the options, where it is read. */}
+          <McqCode code={question.code} />
+
           {/* --- the options ----------------------------------------------- */}
 
           <div className={s.optionList} role="group" aria-label="Options">
@@ -401,7 +417,9 @@ export function McqSession({ id }: { id: number }) {
                   <span className={s.optionLetter} aria-hidden="true">
                     {LETTERS[i]}
                   </span>
-                  <span className={s.optionText}>{option}</span>
+                  <span className={optionTextClass(question.options_mono)}>
+                    {option}
+                  </span>
                   {mark ? (
                     <span className={s.optionMark} aria-hidden="true">
                       {mark}

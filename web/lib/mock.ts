@@ -2384,8 +2384,7 @@ export async function getLesson(
 /* --- Yash Made Test (curated MCQ bank) ------------------------------------
  *
  * The bank is shared course content, so it is a module constant rather than
- * part of the per-tab `store()`: every user reads these same twelve
- * questions. What IS mutable is everything a user does with them — the
+ * part of the per-tab `store()`: every user reads these same questions. What IS mutable is everything a user does with them — the
  * attempts below hold their own draw, their own option permutation and their
  * own answers, so a second attempt genuinely looks different from the first.
  */
@@ -2401,6 +2400,12 @@ interface BankQuestion {
    *  picker's disabled-tier state is reachable offline. */
   difficulty: McqDifficulty;
   question: string;
+  /** A snippet shown verbatim under the question, or absent. Written here as
+   *  an array of lines joined with "\n", so the indentation that makes it a
+   *  Python program is visible in this file too. */
+  code?: string;
+  /** True when the options are code or program output, shown monospace. */
+  options_mono?: boolean;
   /** Exactly four, in the stored order. */
   options: string[];
   /** Index into `options` as stored, 0–3. */
@@ -2782,6 +2787,200 @@ const MCQ_BANK: BankQuestion[] = [
       "strcpy writes into the buffer you hand it and allocates nothing.",
     ],
   },
+  /* --- beyond CSE111 ----------------------------------------------------
+   * Enough of four more subjects to reach every state the picker and the
+   * sitting have: a Python program whose indentation IS the answer, a line
+   * long enough to scroll sideways on a phone, options that are program
+   * output, HTML with selector options, and Unicode maths. INT335 and
+   * MEC103 have nothing written, so a subject waiting for material is on
+   * screen too. MTH165 and INT108 have no `max` question, so switching to
+   * them from a Max paper drops back to Mixed.
+   */
+  {
+    key: "INT108-U1-001",
+    subject_code: "INT108",
+    unit: 1,
+    topic: "Operators",
+    kind: "recall",
+    difficulty: "easy",
+    question: "What does this print?",
+    code: ["x = 7", "y = 2", "print(x // y, x % y, x / y)"].join("\n"),
+    options_mono: true,
+    options: ["3 1 3.5", "3.5 1 3", "3 1 3", "3.5 3.5 3.5"],
+    correct: 0,
+    explain:
+      "// is floor division and keeps only the whole part, 3. % is the remainder, 1. / is true division and always gives a float in Python 3, 3.5. print separates its arguments with one space.",
+    why_wrong: [
+      "",
+      "That swaps // and /: // is the one that drops the fraction.",
+      "In Python 3, / never truncates — 7 / 2 is 3.5, not 3. That was Python 2's behaviour for two ints.",
+      "Only / gives 3.5; // floors and % gives the remainder.",
+    ],
+  },
+  {
+    key: "INT108-U2-001",
+    subject_code: "INT108",
+    unit: 2,
+    topic: "Loops",
+    kind: "recall",
+    difficulty: "medium",
+    question: "What does this program print?",
+    code: [
+      "def f(n):",
+      "    total = 0",
+      "    for i in range(n):",
+      "        if i % 2 == 0:",
+      "            total += i",
+      "    return total",
+      "",
+      "print(f(5))",
+    ].join("\n"),
+    options_mono: true,
+    options: ["6", "0", "10", "4"],
+    correct: 0,
+    explain:
+      "range(5) gives 0, 1, 2, 3 and 4, and the if keeps the even ones — 0, 2 and 4 — so total ends at 6. The return is indented to the level of the for, not inside it, so it runs once, after the loop has finished.",
+    why_wrong: [
+      "",
+      "That is what happens if return total is indented under the for: the function returns on the first pass, while total is still 0. Here it sits outside the loop.",
+      "10 is 0 + 1 + 2 + 3 + 4, every value range(5) yields; the if i % 2 == 0 skips the odd ones.",
+      "4 is 1 + 3, the odd values — i % 2 == 0 is true for even i.",
+    ],
+  },
+  {
+    key: "INT108-U3-001",
+    subject_code: "INT108",
+    unit: 3,
+    topic: "Dictionaries",
+    kind: "recall",
+    difficulty: "hard",
+    question: "What does this print?",
+    code: [
+      'words = ["alpha", "beta", "gamma", "delta"]',
+      'result = {w: len(w) for w in words if len(w) > 4 and not w.startswith("d")}',
+      "print(result)",
+    ].join("\n"),
+    options_mono: true,
+    options: [
+      "{'alpha': 5, 'gamma': 5}",
+      "{'alpha': 5, 'gamma': 5, 'delta': 5}",
+      "['alpha', 'gamma']",
+      "{'beta': 4}",
+    ],
+    correct: 0,
+    explain:
+      "A dict comprehension builds a key: value pair for every item that passes its if. beta fails len(w) > 4; delta passes that but fails not w.startswith(\"d\"), and the and needs both. Only alpha and gamma survive, each mapped to its length, 5.",
+    why_wrong: [
+      "",
+      "delta has five letters, but it starts with d, so not w.startswith(\"d\") is False and the and fails.",
+      "Braces around a key: value pair build a dict; square brackets would build a list.",
+      "beta is the word the len(w) > 4 test removes, not the one it keeps.",
+    ],
+  },
+  {
+    // Tab-indented, with a whitespace-only line inside the loop and a line
+    // long enough to scroll on a phone: the snippet states the bank's JSON
+    // can hold, drawn next to INT108-U3-001 so two long blocks are
+    // neighbours in a unit-3 sitting.
+    key: "INT108-U3-002",
+    subject_code: "INT108",
+    unit: 3,
+    topic: "Lists",
+    kind: "recall",
+    difficulty: "medium",
+    question: "What does this print?",
+    code: [
+      "total = 0",
+      'for word in ["tab", "indented", "loop", "whitespace"]:',
+      "\tif len(word) > 4:",
+      "\t\ttotal += len(word)  # only words longer than four letters add their length",
+      "\t",
+      "\telse:",
+      "\t\ttotal -= 1",
+      "print(total)",
+    ].join("\n"),
+    options_mono: true,
+    options: ["16", "18", "21", "25"],
+    correct: 0,
+    explain:
+      "tab and loop have at most four letters, so each takes the else branch and subtracts 1. indented (8) and whitespace (10) add their lengths. -1 + 8 - 1 + 10 = 16. The whitespace-only line inside the loop is ignored; the else still belongs to the if.",
+    why_wrong: [
+      "",
+      "18 is 8 + 10 with the else branch skipped: the two short words each subtract 1.",
+      "21 counts loop as longer than four letters. len(\"loop\") is 4, and 4 > 4 is False.",
+      "25 adds every word's length, as if there were no if at all.",
+    ],
+  },
+  {
+    key: "CSE326-U3-001",
+    subject_code: "CSE326",
+    unit: 3,
+    topic: "Selectors",
+    kind: "situation",
+    difficulty: "medium",
+    question: "Given this markup, which selector styles only the About link?",
+    code: [
+      '<ul class="menu">',
+      '  <li><a href="/">Home</a></li>',
+      '  <li class="active"><a href="/about">About</a></li>',
+      "</ul>",
+    ].join("\n"),
+    options_mono: true,
+    options: [".menu .active a", ".menu a.active", "ul.active a", ".menu > a"],
+    correct: 0,
+    explain:
+      "A space is the descendant combinator: .menu .active a matches an a anywhere inside an element with class active that is itself inside .menu. The class sits on the li, not the a, so the selector has to step through the li to reach the link.",
+    why_wrong: [
+      "",
+      "a.active needs the class on the a itself; here it is on the li around it.",
+      "ul.active needs the ul to carry the class active; the ul's class is menu.",
+      "> matches direct children only, and each a is a grandchild of the ul — it sits inside an li.",
+    ],
+  },
+  {
+    key: "MTH165-U1-001",
+    subject_code: "MTH165",
+    unit: 1,
+    topic: "Matrices",
+    kind: "recall",
+    difficulty: "medium",
+    question: "For A = [[2, 1], [5, 3]], what is A⁻¹?",
+    options_mono: true,
+    options: [
+      "[[3, −1], [−5, 2]]",
+      "[[3, 1], [5, 2]]",
+      "[[2, −1], [−5, 3]]",
+      "[[−3, 1], [5, −2]]",
+    ],
+    correct: 0,
+    explain:
+      "For a 2×2 matrix [[a, b], [c, d]], A⁻¹ = (1/det A)·[[d, −b], [−c, a]]: swap the diagonal, negate the other two, divide by the determinant. Here det A = 2·3 − 1·5 = 1, so A⁻¹ = [[3, −1], [−5, 2]]. Check it: A·A⁻¹ = I.",
+    why_wrong: [
+      "",
+      "The diagonal was swapped but the off-diagonal entries kept their signs; b and c are negated.",
+      "The off-diagonal entries were negated but a and d were never swapped.",
+      "That is the right matrix times −1 — what you get if det A is taken as −1 instead of 1.",
+    ],
+  },
+  {
+    key: "MTH165-U2-001",
+    subject_code: "MTH165",
+    unit: 2,
+    topic: "Derivatives",
+    kind: "recall",
+    difficulty: "easy",
+    question: "What is d/dx (x²·√x)?",
+    options: ["(5/2)·x√x", "2x · 1/(2√x)", "(5/2)·√x", "(2/7)·x³√x"],
+    correct: 0,
+    explain:
+      "Write it as one power first: x²·√x = x² · x^(1/2) = x^(5/2). The power rule brings the 5/2 down and lowers the power by one, to x^(3/2), which is x√x. So the derivative is (5/2)·x√x.",
+    why_wrong: [
+      "",
+      "That multiplies the two derivatives together. The derivative of a product is not the product of the derivatives — combine the powers, or use the product rule.",
+      "The power went down by two instead of one: x^(5/2) differentiates to x^(3/2) = x√x, not x^(1/2).",
+      "That is the antiderivative, (2/7)·x^(7/2) — the power went up, not down.",
+    ],
+  },
 ];
 
 /** The registry the picker reads: which subjects and units exist at all, so a
@@ -2800,11 +2999,50 @@ const MCQ_UNITS: {
     ],
   },
   {
-    subject_code: "INT335",
-    label: "Linux and shell scripting",
+    subject_code: "MTH165",
+    label: "Mathematics for Engineers",
     units: [
-      { unit: 1, label: "The shell and the filesystem" },
-      { unit: 2, label: "Permissions, processes and scripting" },
+      { unit: 1, label: "Matrix Methods and Linear Systems" },
+      { unit: 2, label: "Differential Calculus and Its Applications" },
+      { unit: 3, label: "Fundamentals of Integral Calculus" },
+    ],
+  },
+  {
+    subject_code: "INT108",
+    label: "Python Programming",
+    units: [
+      { unit: 1, label: "Environment, Variables, Expressions and Statements" },
+      { unit: 2, label: "Conditional and Iterative Statements" },
+      { unit: 3, label: "Strings, Lists, Tuples and Dictionaries" },
+    ],
+  },
+  {
+    // Nothing written yet: on the picker as a subject waiting for material.
+    subject_code: "INT335",
+    label: "Design Thinking",
+    units: [
+      { unit: 1, label: "Foundations of Learning, Creativity and Design Thinking" },
+      { unit: 2, label: "Empathy, Observation and Problem Identification" },
+      { unit: 3, label: "Ideation and Creative Problem Solving" },
+    ],
+  },
+  {
+    subject_code: "CSE326",
+    label: "Internet Programming",
+    units: [
+      { unit: 1, label: "HTML Fundamentals" },
+      { unit: 2, label: "Semantic HTML and Forms" },
+      { unit: 3, label: "Cascading Style Sheets" },
+    ],
+  },
+  {
+    // Nothing written yet either.
+    subject_code: "MEC103",
+    label: "Engineering Graphics",
+    units: [
+      { unit: 1, label: "Introduction to Engineering Drawing" },
+      { unit: 2, label: "Projections of Points, Lines and Planes" },
+      { unit: 3, label: "Orthographic Projections" },
     ],
   },
 ];
@@ -2912,6 +3150,8 @@ function toMcqAttempt(t: MockMcqAttempt): McqAttempt {
       kind: item.q.kind,
       difficulty: item.q.difficulty,
       question: item.q.question,
+      code: item.q.code ?? null,
+      options_mono: item.q.options_mono ?? false,
       options: mcqShownOptions(item),
       answer: mcqFeedback(t, item),
     })),
@@ -3013,7 +3253,21 @@ function mcqBoardFor(
 
 export async function getMcqSubjects(): Promise<McqSubject[]> {
   await delay();
-  return MCQ_UNITS.map((s) => ({
+  // CONTRACT.md: subjects that hold questions first, most first; ties and the
+  // subjects still waiting keep registry order (Array.sort is stable).
+  const held = (code: string) =>
+    MCQ_BANK.filter(
+      (q) =>
+        q.subject_code === code &&
+        MCQ_UNITS.some(
+          (s) =>
+            s.subject_code === code && s.units.some((u) => u.unit === q.unit),
+        ),
+    ).length;
+  const ordered = [...MCQ_UNITS].sort(
+    (a, b) => held(b.subject_code) - held(a.subject_code),
+  );
+  return ordered.map((s) => ({
     subject_code: s.subject_code,
     label: s.label,
     units: s.units.map((u) => {
@@ -3191,6 +3445,8 @@ export async function submitMcqAttempt(id: number): Promise<McqResult> {
       position: item.position,
       topic: item.q.topic,
       question: item.q.question,
+      code: item.q.code ?? null,
+      options_mono: item.q.options_mono ?? false,
       options: mcqShownOptions(item),
       chosen: item.chosen,
       correct_index: mcqCorrectShown(item),

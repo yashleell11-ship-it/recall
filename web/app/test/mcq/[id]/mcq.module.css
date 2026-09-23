@@ -53,8 +53,11 @@
   padding: 1.5rem 0 4vh;
 }
 
+/* min-width: 0 so nothing inside the card can set its floor: it is a flex
+   item of .stage, and a flex item's automatic minimum is its content. */
 .card {
   width: 100%;
+  min-width: 0;
 }
 
 /* --- progress you can feel ------------------------------------------------ */
@@ -215,6 +218,61 @@
   margin-top: 0.85rem;
 }
 
+/* --- the program a question is about --------------------------------------
+   "What does this print" is only a fair question if the program is the one
+   that was written. The question text is set in --k-face, which collapses
+   whitespace — and Python's indentation IS its syntax, so a reflowed snippet
+   is a different program with a different answer. This block keeps every
+   space, tab and newline exactly as typed and never wraps: a long line
+   scrolls sideways inside the block, not the page.
+
+   `contain: inline-size` is what keeps that promise. `white-space: pre` makes
+   the longest line the block's min-content width, and without containment
+   that width climbs through every flex and grid ancestor — the sitting's
+   centred card, the result sheet's grid — until the whole page scrolls
+   sideways on a phone. Contained, the block is exactly as wide as the column
+   it sits in and the overflow stays its own. */
+.codeBlock {
+  contain: inline-size;
+  max-width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-sunken);
+  color: var(--fg);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+.codeBlock:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Ligatures off: a question about `!=` must show two characters, not a ≠
+   the student then has to guess the spelling of. */
+.codeBlock code {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre;
+  tab-size: 4;
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+}
+
+@media (min-width: 640px) {
+  .codeBlock code {
+    font-size: 13.5px;
+  }
+}
+
 /* --- the options: the most important control in the product --------------- */
 
 .optionList {
@@ -346,6 +404,22 @@
   font-size: 15px;
   line-height: 1.5;
   overflow-wrap: anywhere;
+}
+
+/* Options that are code, output, values, tags or selectors: monospace, and
+   every space kept, so `[1, 2, 3]` and `'abc'` read exactly as a program
+   prints them. `pre-wrap`, not `pre` — an option is a button, and a long one
+   wraps inside it rather than scrolling. Compound with .optionText so it
+   wins the face whatever order the two land in. */
+.optionText.optionTextMono {
+  padding-top: 0.2rem;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  tab-size: 4;
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
 }
 
 /* The word beside the colour: "CORRECT" / "YOUR PICK". Colour never carries a
