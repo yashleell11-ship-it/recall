@@ -1,0 +1,1088 @@
+{
+ "subject_code": "INT335",
+ "unit": 2,
+ "unit_label": "Empathy, Observation and Problem Identification",
+ "questions": [
+  {
+   "topic": "AEIOU Observation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does AEIOU stand for in the AEIOU observation framework?",
+   "code": "",
+   "options": [
+    "Attitudes, Emotions, Insights, Observations, Understanding",
+    "Activities, Experiences, Interactions, Objects, Users",
+    "Activities, Environments, Interactions, Objects, Users",
+    "Activities, Environments, Insights, Objects, Users"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "AEIOU is a field-observation checklist with five categories: Activities (goal-directed things people do), Environments (the setting), Interactions (exchanges between people, or between people and things), Objects (the items and devices present) and Users (the people being observed). Every category is something a researcher can actually see in the field, not a feeling or a conclusion.",
+   "why_wrong": [
+    "Swaps every letter for an abstract or mental word; AEIOU records observable things such as activities and objects, not attitudes, emotions or insights.",
+    "E stands for Environments, the physical setting; 'Experiences' is a common mix-up.",
+    "",
+    "I stands for Interactions, the exchanges people have; 'Insights' are conclusions drawn later, not a category of observation."
+   ],
+   "key": "INT335-U2-001"
+  },
+  {
+   "topic": "AEIOU Observation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In the AEIOU framework, which category records the character of the setting itself — its layout, lighting, noise and crowding?",
+   "code": "",
+   "options": [
+    "Environments",
+    "Objects",
+    "Activities",
+    "Users"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Environments covers the whole space where the activity happens: its layout, atmosphere and function. Individual items inside that space, such as a card machine or a signboard, are recorded under Objects instead.",
+   "why_wrong": [
+    "",
+    "Objects are the individual items and devices within the space, not the space's layout, lighting or noise.",
+    "Activities are the goal-directed things people do, such as queuing for lunch, not features of the setting.",
+    "Users are the people being observed, who they are and what roles they have, not the place they are in."
+   ],
+   "key": "INT335-U2-002"
+  },
+  {
+   "topic": "AEIOU Observation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the AEIOU framework mainly used for in design thinking?",
+   "code": "",
+   "options": [
+    "Generating new ideas by substituting, combining or adapting parts of an existing product",
+    "Measuring how long users take to complete a task in a usability test",
+    "Writing the final point-of-view statement for the design challenge",
+    "Organising what a researcher observes about people in a real setting"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "AEIOU is an observation tool used while empathising. It gives the researcher five headings for sorting field notes, so nothing important about the setting is missed. Defining the problem and generating ideas come later and use other tools.",
+   "why_wrong": [
+    "Substituting, combining and adapting are prompts from SCAMPER, an ideation technique, not AEIOU.",
+    "Timing tasks produces quantitative usability data during testing; AEIOU sorts qualitative field observations.",
+    "The POV statement is written when defining the problem, after observations have been gathered and organised.",
+    ""
+   ],
+   "key": "INT335-U2-003"
+  },
+  {
+   "topic": "Empathy Maps and Personas",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What are the four quadrants of the four-quadrant empathy map used in this course?",
+   "code": "",
+   "options": [
+    "Activities, Environments, Interactions, Objects",
+    "Says, Thinks, Does, Feels",
+    "Think & Feel, Hear, See, Say & Do",
+    "Name, Background, Goals, Frustrations"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The four-quadrant empathy map sorts research evidence into Says (the user's own words), Thinks (inferred thoughts and beliefs), Does (observed actions) and Feels (emotions). Putting them side by side exposes gaps and contradictions, such as between what a user says and what they do.",
+   "why_wrong": [
+    "These are four of the five AEIOU observation categories, which belong to a different tool.",
+    "",
+    "These are four of the six sections of the original XPLANE empathy map, which also has Pain and Gain; they are not the Says/Thinks/Does/Feels quadrants.",
+    "Name, background, goals and frustrations are typical contents of a persona, not empathy-map quadrants."
+   ],
+   "key": "INT335-U2-004"
+  },
+  {
+   "topic": "Empathy Maps and Personas",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In design thinking, what is a persona?",
+   "code": "",
+   "options": [
+    "A research-based fictional archetype representing a group of users with similar goals and behaviours",
+    "A word-for-word record of what one particular interviewee said in a session",
+    "A timeline of the stages a user passes through while using a service",
+    "A real customer selected by the team to approve the final design"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A persona is synthesised from research on many users. The team gives one archetype a name and a background so it can design for a concrete person rather than for 'everyone'. Because it is a synthesis, it does not belong to any single interviewee.",
+   "why_wrong": [
+    "",
+    "A persona combines many users and is not a transcript of one person; verbatim words belong in interview notes or the Says quadrant.",
+    "A timeline of stages over time is a journey map, not a persona.",
+    "A persona is not a real individual at all; it is a composite archetype built from research."
+   ],
+   "key": "INT335-U2-005"
+  },
+  {
+   "topic": "Empathy Maps and Personas",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which tool lays out the sequence of stages a user goes through over time, with their actions and feelings at each stage?",
+   "code": "",
+   "options": [
+    "Empathy map",
+    "Persona",
+    "Journey map",
+    "Affinity diagram"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A journey map is organised along time. It follows the user from stage to stage and records what they do and feel at each one, which shows where the experience breaks down. An empathy map is a snapshot with no time axis.",
+   "why_wrong": [
+    "An empathy map sorts evidence into Says, Thinks, Does and Feels; it has no sequence of stages over time.",
+    "A persona describes who a representative user is, not the steps of their experience.",
+    "",
+    "An affinity diagram groups research notes into themes by similarity, not into a time sequence."
+   ],
+   "key": "INT335-U2-006"
+  },
+  {
+   "topic": "User Research Methods",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Qualitative user research is mainly concerned with which of these?",
+   "code": "",
+   "options": [
+    "How many users completed the task",
+    "What percentage of users prefer design A",
+    "The average time users take to finish a task",
+    "Why users behave as they do, described through their words and actions"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Qualitative research is descriptive: interviews and observation show why people act as they do. Counts, percentages and task times measure how many or how much, so they are quantitative.",
+   "why_wrong": [
+    "'How many' is a count, which makes it quantitative.",
+    "A percentage is a measured number, which makes it quantitative.",
+    "A task time is a measurement, which makes it quantitative.",
+    ""
+   ],
+   "key": "INT335-U2-007"
+  },
+  {
+   "topic": "User Research Methods",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In a user interview, what is an open question?",
+   "code": "",
+   "options": [
+    "A question worded so that it hints at the answer the interviewer expects",
+    "A question that invites a full answer in the participant's own words, not just yes or no",
+    "A question that the participant can fully answer with a simple yes or no",
+    "A question that asks the participant to rate something on a scale of 1 to 5"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Open questions, which often begin with 'how', 'what' or 'tell me about', let participants describe their experience freely. This brings out details the researcher did not think to ask about. Yes/no and rating questions limit the answer to options the researcher already chose.",
+   "why_wrong": [
+    "That describes a leading question, which pushes the participant towards an answer.",
+    "",
+    "That describes a closed question.",
+    "A rating question fixes the answer to a number on a scale, so it is closed, not open."
+   ],
+   "key": "INT335-U2-008"
+  },
+  {
+   "topic": "User Research Methods",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A behaviour-anchored interview question asks the participant about what?",
+   "code": "",
+   "options": [
+    "A specific real occasion in the past, such as the last time they did the task",
+    "What they would do in an imagined future situation",
+    "Whether they agree with the interviewer's own idea",
+    "How they would rate the product on a numbered scale"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A behaviour-anchored question ties the answer to something that actually happened, for example 'Tell me about the last time you looked for a room in a block you had never visited.' People describe real past events more accurately than they predict their own future behaviour or give general opinions.",
+   "why_wrong": [
+    "",
+    "That is a hypothetical question: it asks for a prediction, not a real past behaviour.",
+    "Asking for agreement with the interviewer's idea makes the question leading.",
+    "A rating scale produces a number, not an account of a real occasion."
+   ],
+   "key": "INT335-U2-009"
+  },
+  {
+   "topic": "Explicit and Implicit Needs",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is an explicit user need?",
+   "code": "",
+   "options": [
+    "A need the researcher infers from the user's behaviour or workarounds",
+    "A need that has been confirmed by counting how many users share it",
+    "A need the user states directly, in their own words",
+    "A need that is always phrased as a specific feature"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Explicit needs are the ones users say out loud, for example in an interview. What decides the label is how the need was found (stated by the user), not how many people share it or how it is worded.",
+   "why_wrong": [
+    "A need inferred from behaviour or workarounds is an implicit need.",
+    "Counting users is quantitative evidence of how common a need is; it does not show whether the need was stated.",
+    "",
+    "An explicit need can be worded in any way; users often voice solutions, but the label comes from the need being stated, not from its wording."
+   ],
+   "key": "INT335-U2-010"
+  },
+  {
+   "topic": "Explicit and Implicit Needs",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "An implicit user need is identified mainly from which of these?",
+   "code": "",
+   "options": [
+    "The user's direct answer when asked, 'What do you need?'",
+    "The user's behaviour, contradictions between what they say and do, and workarounds they have built",
+    "The list of features in a competitor's product",
+    "The design team's own brainstormed solution ideas"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Implicit needs are never voiced, so they have to be inferred from evidence such as a repeated behaviour, a gap between what someone says and what they do, or a workaround they have created. That is why observation matters as much as asking questions.",
+   "why_wrong": [
+    "A need given in the user's own answer is stated, so it is explicit.",
+    "",
+    "A competitor's features describe another product, not what your users need.",
+    "Brainstormed solutions come from the team during ideation; they are ideas, not evidence of a user need."
+   ],
+   "key": "INT335-U2-011"
+  },
+  {
+   "topic": "Problem Definition",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which of these is the standard point-of-view (POV) statement template?",
+   "code": "",
+   "options": [
+    "How might we [action] for [user]?",
+    "[User] wants [feature] so that [benefit].",
+    "[Product] helps [user] by [feature].",
+    "[User] needs a way to [need] because [insight]."
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A POV statement has three parts: a specific user, a need written as an outcome, and an insight from research that explains why the need matters. It defines the problem. How Might We questions are built from it afterwards to start ideation.",
+   "why_wrong": [
+    "That is a How Might We question, which turns the POV into an opportunity for ideation.",
+    "This template puts a feature where the need should be and contains no research insight.",
+    "That describes a product and its feature, which makes it a solution statement rather than a problem definition.",
+    ""
+   ],
+   "key": "INT335-U2-012"
+  },
+  {
+   "topic": "Problem Definition",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In a point-of-view statement, what goes after the word 'because'?",
+   "code": "",
+   "options": [
+    "An insight about the user, drawn from research",
+    "The feature the team plans to build",
+    "The user's name and age",
+    "The number of users who were interviewed"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The 'because' clause carries the insight: the research finding that explains why the user has this need. Without it, the statement names a need but does not tell the team what drives it.",
+   "why_wrong": [
+    "",
+    "A feature is a solution, and putting one in the POV closes off other ideas before ideation starts.",
+    "Name and age are persona details; they identify the user but do not explain the need.",
+    "A count of interviews describes the research sample, not an insight about the user."
+   ],
+   "key": "INT335-U2-013"
+  },
+  {
+   "topic": "Problem Definition",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "How should the need in a problem statement be phrased?",
+   "code": "",
+   "options": [
+    "As a specific feature, such as 'needs a green confirmation button'",
+    "As the technology the team will use, such as 'needs a mobile app'",
+    "As an outcome the user wants, such as 'needs to know the payment went through'",
+    "As the team's business goal, such as 'needs more app downloads'"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A need written as an outcome describes what the user wants to achieve and leaves every possible solution open. Writing a feature into the need turns the problem statement into a solution statement and narrows ideation before it has started.",
+   "why_wrong": [
+    "A confirmation button is one possible solution; the need behind it is knowing the payment succeeded.",
+    "A mobile app is a technology choice, which is a solution and not the user's need.",
+    "",
+    "More downloads is the business's goal, not something the user needs."
+   ],
+   "key": "INT335-U2-014"
+  },
+  {
+   "topic": "AEIOU Observation",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A researcher's field notes from a campus canteen read: (1) Students are queuing to collect lunch. (2) The hall is noisy, crowded and poorly lit. (3) There is one card-swipe machine and a tray of printed token slips. (4) A student asks the cashier whether the thali is still available. Which AEIOU categories do notes 1–4 belong to?",
+   "code": "",
+   "options": [
+    "1 Activities, 2 Objects, 3 Environments, 4 Interactions",
+    "1 Activities, 2 Environments, 3 Objects, 4 Interactions",
+    "1 Interactions, 2 Environments, 3 Objects, 4 Activities",
+    "1 Users, 2 Environments, 3 Objects, 4 Interactions"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Queuing for lunch is a goal-directed thing people do (Activities). Noise, crowding and lighting describe the setting (Environments), and the card machine and token slips are items within it (Objects). A student asking the cashier a question is an exchange between two people (Interactions).",
+   "why_wrong": [
+    "Swaps the setting and the items: noise and lighting describe the Environment, while the machine and slips are Objects.",
+    "",
+    "Swaps notes 1 and 4: queuing is the Activity, and the question to the cashier is the Interaction that happens within it.",
+    "Note 1 records what the students are doing, not who they are, so it is an Activity rather than Users."
+   ],
+   "key": "INT335-U2-015"
+  },
+  {
+   "topic": "AEIOU Observation",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of the following is NOT one of the five AEIOU observation categories?",
+   "code": "",
+   "options": [
+    "Interactions",
+    "Environments",
+    "Users",
+    "Insights"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The five AEIOU categories are Activities, Environments, Interactions, Objects and Users. The I stands for Interactions, meaning exchanges between people or between people and things. Insights are conclusions the team draws later from the observations; they are not recorded in the field.",
+   "why_wrong": [
+    "Interactions is the genuine I of AEIOU; picking it comes from assuming the I stands for Insights.",
+    "Environments is the genuine E of AEIOU; picking it comes from assuming the E stands for Emotions or Experiences.",
+    "Users is the genuine U of AEIOU; picking it comes from assuming the U stands for Understanding.",
+    ""
+   ],
+   "key": "INT335-U2-016"
+  },
+  {
+   "topic": "Empathy Maps and Personas",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does a persona contain that a four-quadrant empathy map (Says, Thinks, Does, Feels) does not?",
+   "code": "",
+   "options": [
+    "A name, background and goals presented as one archetype standing for a whole group of similar users",
+    "Separate records of what the user says, thinks, does and feels",
+    "The stages of the user's experience in time order, with the user's feelings at each stage",
+    "A ranked list of solution ideas that the team plans to prototype next"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "An empathy map sorts evidence into four quadrants but does not turn it into a character. A persona goes further: it combines research on many users into one named archetype with a background, goals and frustrations that the team can design for.",
+   "why_wrong": [
+    "",
+    "Says, Thinks, Does and Feels are the empathy map's own quadrants, so this is something the empathy map already has.",
+    "Stages in time order belong to a journey map, which is neither a persona nor an empathy map.",
+    "Solution ideas come from ideation; neither a persona nor an empathy map is a list of solutions."
+   ],
+   "key": "INT335-U2-017"
+  },
+  {
+   "topic": "Empathy Maps and Personas",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "On a four-quadrant empathy map (Says, Thinks, Does, Feels), where do these three pieces of evidence go? (a) a direct quotation from the participant; (b) an action the researcher watched the participant perform; (c) the researcher's cautious inference about what the participant believes.",
+   "code": "",
+   "options": [
+    "(a) Says, (b) Says, (c) Does",
+    "(a) Thinks, (b) Does, (c) Says",
+    "(a) Says, (b) Does, (c) Thinks",
+    "(a) Says, (b) Does, (c) Does"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Evidence is placed by its type, not its topic. Words the participant spoke go under Says, actions that were observed go under Does, and a cautious inference about their beliefs goes under Thinks. Keeping inferences out of Does stops the team treating a guess as something it actually saw.",
+   "why_wrong": [
+    "Files the observed action under Says just because the researcher wrote it down in words, and moves the inference into Does as if it had been observed.",
+    "Swaps (a) and (c): a direct quotation is what the participant said, and an inference was never spoken, so it cannot go under Says.",
+    "",
+    "Treats the inference as an observed action; nobody saw the participant's belief, so it belongs under Thinks."
+   ],
+   "key": "INT335-U2-018"
+  },
+  {
+   "topic": "Empathy Maps and Personas",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these statements about empathy maps, personas and journey maps is NOT correct?",
+   "code": "",
+   "options": [
+    "A persona is a synthesised archetype built from research on many users.",
+    "An empathy map lays out a user's experience as a sequence of stages over time.",
+    "A journey map follows the user through stages, recording actions and feelings at each one.",
+    "The four-quadrant empathy map sorts evidence into Says, Thinks, Does and Feels."
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A sequence of stages over time is what defines a journey map. An empathy map has no time axis: it sorts evidence about a user into Says, Thinks, Does and Feels. The two are easily confused because both record feelings.",
+   "why_wrong": [
+    "This statement is true: a persona is a synthesised archetype, not one real interviewee, so it is not the incorrect one.",
+    "",
+    "This statement is true: stages over time with actions and feelings is exactly what a journey map shows.",
+    "This statement is true: these are the four quadrants of the empathy map taught in this course."
+   ],
+   "key": "INT335-U2-019"
+  },
+  {
+   "topic": "User Research Methods",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these research findings is quantitative?",
+   "code": "",
+   "options": [
+    "Participants described the signboards as confusing.",
+    "One participant said she felt embarrassed asking a guard for directions.",
+    "Several participants explained that they follow classmates instead of reading the signs.",
+    "In a test, 7 of 10 participants could not find the room within five minutes."
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Quantitative findings are counted or measured: how many, what percentage, how long. '7 of 10 within five minutes' is a count against a time limit, so it is quantitative. The other findings describe what people said, felt or did and why, which makes them qualitative.",
+   "why_wrong": [
+    "A description of how participants saw the signs is descriptive, so it is qualitative.",
+    "One person's reported feeling is descriptive interview evidence, so it is qualitative.",
+    "'Several' loosely describes a behaviour and the reason for it; it is not a measured count, so this finding is qualitative.",
+    ""
+   ],
+   "key": "INT335-U2-020"
+  },
+  {
+   "topic": "User Research Methods",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these interview questions is a leading question?",
+   "code": "",
+   "options": [
+    "Don't you find the signboards in this building confusing?",
+    "How do you usually find a classroom you have never been to before?",
+    "Tell me about the last time you had to find a room in a block you had never visited.",
+    "What do you do when you need to find a room in a new block?"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A leading question builds the expected answer into the question (here, 'confusing') and invites the participant to agree. Neutral questions let participants describe their own experience, whether or not it matches what the researcher assumes.",
+   "why_wrong": [
+    "",
+    "This is an open question: it asks how, and it does not suggest any particular answer.",
+    "This is a behaviour-anchored question about a real past occasion; it assumes nothing about how the participant felt.",
+    "This is an open question about what the participant does; it does not suggest an answer."
+   ],
+   "key": "INT335-U2-021"
+  },
+  {
+   "topic": "Explicit and Implicit Needs",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these points to an implicit need rather than an explicit one?",
+   "code": "",
+   "options": [
+    "A student says in the interview, \"The room numbers on the doors should be bigger.\"",
+    "A student tells the interviewer, \"I really wish there were more signboards in the corridors.\"",
+    "A student photographs the floor plan beside the lift and checks the photo at every turn, but never mentions doing so.",
+    "A student writes \"please add a campus map app\" in the end-of-term feedback form."
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "An implicit need is inferred from behaviour or a workaround; the user does not state it. Photographing the floor plan is a workaround the student created and never mentioned, so it reveals an unspoken need: a way to keep track of where she is in the building. The other three are stated requests, so they are explicit.",
+   "why_wrong": [
+    "The student said this out loud, so it is explicit, and it is also phrased as a solution.",
+    "A wish voiced to the interviewer is stated, so it is explicit.",
+    "",
+    "Writing a request in a feedback form is still stating it, so it is explicit."
+   ],
+   "key": "INT335-U2-022"
+  },
+  {
+   "topic": "Explicit and Implicit Needs",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these user comments describes a pain point rather than a request for a particular solution?",
+   "code": "",
+   "options": [
+    "You should build an app with indoor GPS.",
+    "I only find out a room is on the upper floor after I've climbed the wrong staircase.",
+    "Put colour-coded arrows on the floor.",
+    "I want a touchscreen kiosk at the entrance."
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A pain point describes the friction the user experiences, while a solution request names a fix the user has already imagined. The staircase comment tells the team what goes wrong and leaves them free to explore many fixes. Each of the others commits to one feature.",
+   "why_wrong": [
+    "An indoor GPS app is a solution the user proposes, not the friction itself.",
+    "",
+    "Floor arrows are one specific fix, so this is a solution request.",
+    "A kiosk is one specific fix; the comment says what the user wants built, not what goes wrong."
+   ],
+   "key": "INT335-U2-023"
+  },
+  {
+   "topic": "Explicit and Implicit Needs",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these is correctly classified?",
+   "code": "",
+   "options": [
+    "A student says, \"I wish the portal loaded faster\" — implicit need.",
+    "A student never complains about waking up, but sets five backup alarms before every exam — explicit need.",
+    "A need the researcher inferred from a user's workaround — explicit, because the researcher wrote it down.",
+    "A student says the canteen queue is fine, yet leaves it every day to eat outside — implicit need."
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Explicit needs are stated by the user; implicit needs are inferred from behaviour, a contradiction or a workaround. In the canteen case, what the student says contradicts what she does, so the need it points to is implicit. Who writes a need down does not change its type.",
+   "why_wrong": [
+    "The student said it out loud, so the need is explicit, not implicit.",
+    "Nothing was said; the need is inferred from a repeated workaround, so it is implicit, not explicit.",
+    "Writing a need down does not make it explicit; it was inferred rather than stated by the user, so it is implicit.",
+    ""
+   ],
+   "key": "INT335-U2-024"
+  },
+  {
+   "topic": "Problem Definition",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these is a complete, well-formed point-of-view statement?",
+   "code": "",
+   "options": [
+    "A first-year student visiting a new block needs a way to reach her classroom on time because the signs use building codes she has not learned yet.",
+    "A first-year student visiting a new block needs a campus navigation app because the signs are confusing.",
+    "A first-year student visiting a new block needs a way to reach her classroom on time.",
+    "Students on this campus need better signage because the signs are confusing."
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A POV needs three parts: a specific user, a need phrased as an outcome, and a research insight after 'because'. Only the first statement has all three. Its insight, that the signs use building codes she has not learned, tells the team why the need exists.",
+   "why_wrong": [
+    "",
+    "Puts a feature (a navigation app) where the need should be, which turns the POV into a solution statement.",
+    "Has a user and a need but no 'because' insight, so the team does not know why the need exists.",
+    "The user is vague, 'better signage' is a solution rather than a need, and 'the signs are confusing' repeats the complaint instead of explaining it."
+   ],
+   "key": "INT335-U2-025"
+  },
+  {
+   "topic": "Problem Definition",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Arrange these steps in the order a team would normally follow. P: Write a point-of-view statement. Q: Observe and interview users. R: Sort the evidence onto an empathy map. S: Identify the users' needs from the map.",
+   "code": "",
+   "options": [
+    "Q → S → R → P",
+    "P → Q → R → S",
+    "Q → R → S → P",
+    "R → Q → S → P"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Evidence comes first, so observation and interviews start the sequence. Next the evidence is sorted onto the empathy map and the needs are read from the map. The POV is written last because it states a need and an insight that the earlier steps produced.",
+   "why_wrong": [
+    "Identifies needs before sorting the evidence, but step S reads the needs from the map, so R has to come before S.",
+    "Writes the POV before any research, yet a POV has to rest on needs and insights found in the field.",
+    "",
+    "Builds the empathy map before observing anyone, so there would be no evidence to put on it."
+   ],
+   "key": "INT335-U2-026"
+  },
+  {
+   "topic": "AEIOU Observation",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Your team is sent to watch the hostel mess during dinner for one hour. You may not interview anyone. The mentor wants the notes organised so that nothing about the scene is missed: who is there, what they do, how they deal with each other and with things, the space itself, and the things in it. Which tool should structure your notes?",
+   "code": "",
+   "options": [
+    "A four-quadrant empathy map (Says, Thinks, Does, Feels) of the mess",
+    "A persona of the typical student who eats at the mess",
+    "An AEIOU sheet with headings for Activities, Environments, Interactions, Objects and Users",
+    "A point-of-view statement written before entering the mess"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "AEIOU is an observation framework. Its five headings make the observer record what people do (Activities), the space (Environments), their exchanges with people and things (Interactions), the things themselves (Objects) and who the people are (Users). It is used while watching a setting, which is exactly this brief. Empathy maps and personas are built afterwards to make sense of what was learned about users, and a POV comes later still.",
+   "why_wrong": [
+    "An empathy map is organised around one user's words, actions, thoughts and feelings, not around a whole scene. It has no heading for the space or the things in it.",
+    "A persona is an archetype pieced together after research across many users. It cannot structure raw notes while you are still observing.",
+    "",
+    "A POV defines the problem after research. Writing one before observing puts the conclusion ahead of the evidence."
+   ],
+   "key": "INT335-U2-027"
+  },
+  {
+   "topic": "AEIOU Observation",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "During an AEIOU observation at the library photocopy counter, a teammate writes under Activities: 'Students are careless and waste time in the queue.' Which rewrite turns this into a usable observation note?",
+   "code": "",
+   "options": [
+    "Students are impatient in the queue and do not plan their printing in advance.",
+    "Students wait in a queue of about eight; most look at their phones, and two leave before reaching the counter.",
+    "Students need an online print-order system so that they never have to queue.",
+    "Students feel the queue system at the counter is unfair to them."
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "An observation note records what could be seen or heard: who did what, how many, for how long. Judgement is left for later, when the notes are analysed. The correct rewrite describes behaviour that anyone standing at the counter could confirm. 'Careless', 'impatient' and 'feel … unfair' are the observer's interpretations, and an online system is a solution, not an observation.",
+   "why_wrong": [
+    "'Impatient' and 'do not plan' are still judgements about the students, not something the observer saw. It is the original mistake in politer words.",
+    "",
+    "It names a solution. An observation note records what happens, and jumping to a fix skips the research the note is meant to feed.",
+    "It states the students' feelings as fact although nobody said so. That is an inference, not an observed activity."
+   ],
+   "key": "INT335-U2-028"
+  },
+  {
+   "topic": "AEIOU Observation",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "An observer at the library entrance notes: 'A student taps her ID card on the gate reader three times; it beeps red twice before the gate opens.' A teammate says this cannot go under Interactions because no second person is involved, so it must go under Objects. Which response is correct?",
+   "code": "",
+   "options": [
+    "The teammate is right: Interactions covers only exchanges between two or more people, so a person using a machine is recorded under Objects.",
+    "It belongs under Environments, because the gate reader is part of the entrance and Environments covers the fixtures of the space.",
+    "It belongs under Users, because it records how one particular student behaved at the entrance.",
+    "It belongs under Interactions, because that category covers a person's exchanges with someone or something else, machines included; the reader itself is listed under Objects."
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "In AEIOU, Interactions are exchanges between a person and someone or something else. A person–machine exchange such as tapping a card and getting a beep therefore counts. The reader as a thing (what it is and where it sits) goes under Objects, but the back-and-forth of taps and beeps is an interaction. Interactions are the building blocks of activities; here the larger activity is entering the library.",
+   "why_wrong": [
+    "This narrows Interactions to exchanges between people. The category explicitly includes a person's exchanges with objects and machines.",
+    "Environments records the character of the setting (layout, lighting, noise, crowding), not one person's exchange with a single device.",
+    "Users records who the people are, such as their roles and relationships, not the step-by-step exchange one person had with a device.",
+    ""
+   ],
+   "key": "INT335-U2-029"
+  },
+  {
+   "topic": "AEIOU Observation",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "After an AEIOU observation at a bus stop, a teammate proposes: 'U stands for Understanding, so let us write our conclusions about why the crowd forms under U.' Which correction is right?",
+   "code": "",
+   "options": [
+    "U stands for Users, meaning the people observed and their roles. Conclusions are not an AEIOU category; they are drawn out later, when the notes are analysed.",
+    "The teammate is right: U holds the team's understanding of the scene, which is why it comes last in the sequence.",
+    "U stands for Users, but conclusions belong under I, which stands for Insights drawn from the other four headings.",
+    "U stands for Users, but conclusions belong under O, which stands for Observations the team has interpreted."
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "AEIOU stands for Activities, Environments, Interactions, Objects and Users: five categories, all of them things an observer can see. 'I' is Interactions and 'O' is Objects, so there is no slot for conclusions. Explanations of why something happens come afterwards, when the team groups its notes and looks for patterns. Keeping them out of the notes stops guesses being mistaken for evidence.",
+   "why_wrong": [
+    "",
+    "U is Users, not Understanding. AEIOU records what is observed, not the observer's conclusions.",
+    "I stands for Interactions, not Insights. Insights come from analysing the notes after observing, not from an AEIOU heading.",
+    "O stands for Objects, not Observations. Every AEIOU heading is already a kind of observation."
+   ],
+   "key": "INT335-U2-030"
+  },
+  {
+   "topic": "Empathy Maps and Personas",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "On one student's empathy map, the Says quadrant holds 'I always check the notice board for exam updates'. The Does quadrant records that over three days of observation she never looked at the board and instead asked classmates in the class group chat. What should the team do with these two entries?",
+   "code": "",
+   "options": [
+    "Delete the Says entry, because observed behaviour is more reliable than what people say.",
+    "Move the quotation to Does, since it describes her behaviour.",
+    "Keep both entries, because the gap between what she says and what she does is a clue worth following up for an insight.",
+    "Merge them into a single note under Feels, such as 'feels unsure about exam updates'."
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "An empathy map is meant to hold contradictions side by side, because the real insight often lies in the gap between Says and Does. Perhaps she trusts classmates more than the board, or the board is hard to use. Deleting either entry throws away evidence. Moving the quote misfiles it: words the participant spoke always go under Says, whatever they are about.",
+   "why_wrong": [
+    "Deleting the quote loses the contradiction itself, which is the most useful clue on the map.",
+    "Quadrants are chosen by type of evidence, not by topic. Words she spoke stay under Says even when they describe her behaviour.",
+    "",
+    "Merging two pieces of evidence into an invented feeling destroys both. Feels should hold emotions the evidence supports, not a compromise between entries."
+   ],
+   "key": "INT335-U2-031"
+  },
+  {
+   "topic": "Empathy Maps and Personas",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team's persona draft for 'Aman, 18, first-year day scholar' contains these four lines. Which one should be taken out of the persona?",
+   "code": "",
+   "options": [
+    "Goal: reach his 9 a.m. class without running from the bus stop.",
+    "Frustration: the college bus timetable changes without notice.",
+    "Behaviour: leaves home 40 minutes early 'just in case'.",
+    "Planned feature: a live bus-tracking app with push alerts."
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A persona describes the user through goals, behaviours, needs and frustrations drawn from research, so the team can judge ideas against him later. A planned feature is the team's own solution, not a fact about Aman. Writing it into the persona builds an answer into the tool that is meant to test answers. Features belong in ideation, after the problem has been defined.",
+   "why_wrong": [
+    "Goals are core persona content: they state what the user is trying to achieve.",
+    "Frustrations are core persona content and feed directly into the problem definition.",
+    "Observed behaviours, including workarounds like leaving early, are what make a persona research-based.",
+    ""
+   ],
+   "key": "INT335-U2-032"
+  },
+  {
+   "topic": "Empathy Maps and Personas",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A team builds a persona called 'Riya, 19, hosteller' by copying the name, exact quotes and daily routine of their most articulate interviewee, whose real name is Riya. The mentor objects. Which statement identifies the actual problem?",
+   "code": "",
+   "options": [
+    "A persona must never include a name or a quotation, so both should be removed from the draft.",
+    "A persona is an archetype built from patterns across many users. This one records a single interviewee, who may be unusual.",
+    "Nothing is wrong: a persona is supposed to record what one specific interviewee said and did.",
+    "Personas hold only demographic facts such as age and course, so the quotes and routine belong on an empathy map."
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A persona is a behavioural archetype built from patterns seen across many participants. It usually gets a name, a representative quote and details so it feels real, but it is not any one person. Copying one interviewee produces a portrait of that single individual, which is what an empathy map of that participant would record, and the team may end up designing for an outlier. The fix is to rebuild the persona from what the interviews have in common.",
+   "why_wrong": [
+    "Personas usually do carry a name and a representative quote so they feel real. The problem is where the content came from, not that it exists.",
+    "",
+    "This is the trap. Recording one specific interviewee is what an empathy map of that person does; a persona is built up across many users.",
+    "Personas hold goals, behaviours, needs and frustrations, not just demographics. The quotes and routine are not the problem; the fact that they come from one person is."
+   ],
+   "key": "INT335-U2-033"
+  },
+  {
+   "topic": "Empathy Maps and Personas",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A researcher watched a student walk past the photocopier queue straight to the counter, then go back and join the end of the queue after the attendant pointed at it. She never spoke. Under Does, the researcher wrote: 'Walked straight to the counter because she thought the queue was only for staff.' How should this entry be handled on a four-quadrant empathy map?",
+   "code": "",
+   "options": [
+    "Keep the whole sentence under Does, because it is a single account of what she did at the counter.",
+    "Move the whole sentence to Says, because the researcher recorded it in words during the session.",
+    "Split it. The walk to the counter and the return to the queue go under Does, and 'thought the queue was only for staff' goes under Thinks as a tentative inference.",
+    "Delete the 'because' part, since an empathy map should record only what was directly seen or heard."
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Each piece of evidence is filed by its type. The walk to the counter and the return to the queue were observed, so they go under Does. The reason was never spoken or seen; it is the researcher's guess about what she believed, so it goes under Thinks, marked as tentative. Inferences are not banned: Thinks exists for exactly these cautious guesses, as long as they are not presented as observations.",
+   "why_wrong": [
+    "Leaving the inference under Does presents a guess as if it had been observed. That is the misfiling the quadrants exist to prevent.",
+    "Says holds the participant's own words. She said nothing, and the researcher writing a note does not turn it into a quotation.",
+    "",
+    "The Thinks quadrant exists for cautious inferences about what the user believes. Deleting this one throws away a useful lead."
+   ],
+   "key": "INT335-U2-034"
+  },
+  {
+   "topic": "User Research Methods",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A teammate drafts this interview question for first-year students: 'Wouldn't a big map at the block entrance help you find your classrooms faster?' Which rewrite fixes its problems?",
+   "code": "",
+   "options": [
+    "Tell me about the last time you had to find a classroom you had never been to. What did you do?",
+    "Would you use a map at the entrance if we put one up there next term?",
+    "Don't you think finding classrooms in this block is really confusing?",
+    "On a scale of 1 to 5, how useful would a map at the entrance be for you?"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The draft has three problems: it is leading (it signals the answer 'yes'), it is closed, and it is built around the team's own solution. The rewrite is open, neutral and tied to a real past event, so the student describes what actually happened instead of guessing about a future product. Questions about real past behaviour produce evidence; hypothetical questions about features mostly produce polite agreement.",
+   "why_wrong": [
+    "",
+    "It still centres on the team's own solution and asks for a yes-or-no guess about the future instead of a description of real behaviour.",
+    "It swaps one leading question for another: 'Don't you think… really confusing?' signals the answer the interviewer wants.",
+    "A rating still centres on the map idea and turns the interview into a survey item. It reveals nothing about what students actually do."
+   ],
+   "key": "INT335-U2-035"
+  },
+  {
+   "topic": "User Research Methods",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A campus survey shows that 38 of 50 day scholars reach their first lecture late at least once a week. The team does not yet know why. Which next step fits best?",
+   "code": "",
+   "options": [
+    "Send the same survey to 500 more students to make the figure more reliable.",
+    "Interview a few late-arriving students and shadow them through a morning to learn why it happens.",
+    "Write the POV now: 'Day scholars need to arrive on time because 76% are late.'",
+    "Brainstorm solutions such as extra buses, since the problem is already clear."
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The survey is quantitative: it counts how many are late (38/50 = 76%) but cannot say why. Qualitative methods, such as interviewing and observing a few people in depth, are the tool for finding out why. A bigger sample only makes the same count more precise. Writing a POV or brainstorming now would build on a cause nobody has found.",
+   "why_wrong": [
+    "More respondents make the 'how many' figure more precise but still give no reasons. The gap is qualitative, not a sample-size problem.",
+    "",
+    "A statistic is not an insight. The 'because' clause must explain why the need exists, and the team does not know that yet.",
+    "Jumping to solutions assumes the cause (not enough buses) before any research has found it."
+   ],
+   "key": "INT335-U2-036"
+  },
+  {
+   "topic": "User Research Methods",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "In six interviews, hostellers complained that the mess runs out of breakfast by 8:15 a.m. Before changing anything, the team wants to know whether most of the 2,000 hostellers face this, or only these six. Which method fits this question?",
+   "code": "",
+   "options": [
+    "More one-hour in-depth interviews with other hostellers until the pattern feels clear",
+    "A persona built from the six interviewees' answers about breakfast",
+    "An empathy map for each of the six interviewees, compared side by side",
+    "A short survey of a large sample of hostellers, asking when they reach the mess and how often breakfast has run out"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "'How many' and 'how widespread' are quantitative questions, so a survey of a large sample is the method that fits. The interviews found the issue and explain why it matters; the survey checks how far it extends. Personas and empathy maps organise evidence the team already has and cannot show how common something is.",
+   "why_wrong": [
+    "In-depth interviews are the qualitative tool for finding out why. They cannot reach enough of 2,000 people to answer 'how many'.",
+    "A persona pulls existing research together into an archetype. It adds no evidence about how common the complaint is.",
+    "Empathy maps organise what the six said and did. They still describe only those six people.",
+    ""
+   ],
+   "key": "INT335-U2-037"
+  },
+  {
+   "topic": "User Research Methods",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "In interviews, nearly every student insists, 'I always take the stairs if I'm only going up one or two floors.' The team suspects this is not what actually happens. Which method would best settle the question?",
+   "code": "",
+   "options": [
+    "A survey of 300 students asking how often they take the lift for just one or two floors",
+    "A focus group in which students discuss their lift and stair habits with one another",
+    "Watching the lift lobby at class-change times and recording how many people ride it for only one or two floors",
+    "Re-interviewing the same students and asking them to be completely honest this time"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The doubt is about the gap between what people say and what they do. Every self-report method (survey, focus group, re-interview) just asks people to say it again. Only direct observation records actual behaviour. The survey is tempting because it is bigger, but a larger sample of the same self-report reproduces the same gap.",
+   "why_wrong": [
+    "A survey is still self-report. More respondents make the stated answer more precise, not closer to real behaviour.",
+    "A focus group is self-report in a group, where people may also echo one another. It cannot show what they actually do.",
+    "",
+    "Asking the same people again, however politely, still collects what they say rather than what they do."
+   ],
+   "key": "INT335-U2-038"
+  },
+  {
+   "topic": "User Research Methods",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which of these interview questions is both open and not leading?",
+   "code": "",
+   "options": [
+    "How annoying is the hostel Wi-Fi when you study at night?",
+    "Do you find the hostel Wi-Fi annoying when you study at night?",
+    "Would you prefer a faster Wi-Fi plan or more routers on your floor?",
+    "Tell me about the last time you studied online in your room at night."
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "An open question lets the participant answer in their own words; a leading one plants the answer. 'How annoying is…' starts like an open question but assumes the Wi-Fi is annoying, so the participant can only choose how much. 'Tell me about the last time…' is open, assumes nothing, and ties the answer to a real past event.",
+   "why_wrong": [
+    "It sounds open because it starts with 'How', but it assumes annoyance. The participant can only say how much, not whether.",
+    "It is closed (yes or no) and names the feeling the interviewer expects.",
+    "It is a closed either-or choice between the team's own solutions, so the participant cannot describe what actually happens.",
+    ""
+   ],
+   "key": "INT335-U2-039"
+  },
+  {
+   "topic": "Explicit and Implicit Needs",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Asked about the college app, a student says, 'The timetable section is fine.' Over a week, the researcher sees her take a screenshot of the timetable every morning and check the screenshot, not the app, before each class. She never mentions this. Which reading of the evidence is correct?",
+   "code": "",
+   "options": [
+    "It is a workaround pointing to an implicit need: quick, reliable access to her timetable.",
+    "No need should be recorded, because she said herself that the timetable section is fine.",
+    "It is an explicit need, because she repeats the screenshot habit every single day.",
+    "It points to an implicit need for a screenshot button inside the timetable section."
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "An implicit need is inferred from behaviour, a contradiction or a workaround, not from what the user says. Here all three line up: she calls the section fine, yet does extra work every day to avoid opening it. The need is written as an outcome (quick, reliable access to her timetable), not as the feature that happens to match her workaround.",
+   "why_wrong": [
+    "",
+    "This takes the spoken 'fine' at face value and ignores a daily workaround that contradicts it.",
+    "Explicit means stated by the user. Repeating a behaviour does not make it stated, and she never mentioned it.",
+    "It turns the need into a feature. A screenshot button is one possible solution, and naming it rules out every other."
+   ],
+   "key": "INT335-U2-040"
+  },
+  {
+   "topic": "Explicit and Implicit Needs",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "During a shadowing session that starts at 6:30 a.m., the researcher hears a hosteller's phone ring five times, two minutes apart, before she gets up. She set all five alarms herself. In her interview she never mentions waking up as a problem. Which is the best statement of the implicit need this suggests?",
+   "code": "",
+   "options": [
+    "She needs a louder alarm app.",
+    "She needs a way to be confident she will wake up in time.",
+    "She needs to go to bed earlier.",
+    "She needs to set five alarms every morning."
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A workaround shows the user doing extra work to protect something that matters, so ask what it gives her. Five alarms give her confidence that she will not oversleep, and the need is written as that outcome. A louder app is one solution, 'go to bed earlier' is the researcher's advice, and restating the workaround describes the behaviour, not the need behind it.",
+   "why_wrong": [
+    "It names one solution. A louder alarm is only one of many ways the outcome could be met.",
+    "",
+    "This is the researcher's advice about her habits, not a need inferred from what the workaround does for her.",
+    "This restates the workaround itself. The need is what the five alarms are for, not the alarms."
+   ],
+   "key": "INT335-U2-041"
+  },
+  {
+   "topic": "Explicit and Implicit Needs",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "In an interview, a canteen customer says, 'You need a louder bell so I know when my order is ready.' Which statement about this comment is correct?",
+   "code": "",
+   "options": [
+    "It is an implicit need, because the real need behind the bell has to be dug out by the researcher.",
+    "It is explicit because she stated it, but it is phrased as a solution; the need to record is knowing when her order is ready.",
+    "It is an explicit need, and it should go into the POV exactly as stated: she needs a louder bell.",
+    "It should be set aside, because users are not designers and their suggested fixes carry little information."
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Explicit versus implicit depends on whether the user said it. She did, and she even named the outcome herself: 'so I know when my order is ready'. But her request is a solution, and a problem definition needs the outcome behind it so the team can consider other ways to meet it, such as a token display or a message. Her suggestion is useful evidence of the pain point, not a specification to copy.",
+   "why_wrong": [
+    "She said it aloud, outcome included, so it is explicit. Having to rephrase a stated request does not make it implicit.",
+    "",
+    "It is explicit, but copying a feature into the POV rules out every other solution. The need must be written as an outcome.",
+    "User suggestions point straight at a real pain point. The fix is to reframe the suggestion as an outcome, not to throw it away."
+   ],
+   "key": "INT335-U2-042"
+  },
+  {
+   "topic": "Explicit and Implicit Needs",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "In an interview, a hosteller says, 'I don't trust the mess-card balance shown in the app, so after every meal I write my balance in my diary.' A teammate records this as an implicit need, reasoning that a workaround always signals an implicit need. Which judgement is correct?",
+   "code": "",
+   "options": [
+    "It is explicit. She stated the workaround and its reason herself, so nothing was inferred: she needs to be sure her balance is right.",
+    "The teammate is right: any need that shows up through a workaround is implicit by definition.",
+    "It is implicit, because she described a habit and never actually used the word 'need'.",
+    "It is not a need at all, because writing in a diary is simply a personal habit of hers."
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Explicit versus implicit depends on one condition: did the user state it, or did the team have to infer it? Workarounds usually reveal implicit needs because users rarely mention them. She described this one and its reason herself, so the need (to be sure her balance is correct) is explicit. If the team had only spotted the diary without her explanation, the same need would have been implicit.",
+   "why_wrong": [
+    "",
+    "Workarounds usually point to implicit needs only because users rarely explain them. Once she states the reason herself, nothing is inferred, so the need is explicit.",
+    "A need does not have to contain the word 'need'. She clearly stated what she lacks: trust in the balance.",
+    "A habit that costs her extra work after every meal is exactly the kind of evidence that reveals a need. Dismissing it loses the finding."
+   ],
+   "key": "INT335-U2-043"
+  },
+  {
+   "topic": "Problem Definition",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Research summary: hostellers often walk about 10 minutes from their block to the mess, find out only at the counter that the dish is one they dislike, and then pay extra to eat outside. Several said this happens a few times a week. Which point-of-view statement best captures this research?",
+   "code": "",
+   "options": [
+    "A hosteller needs a menu-display app in the hostel lobby because she dislikes some of the dishes the mess serves.",
+    "A hosteller needs a way to eat healthier food because mess food is unhealthy and she worries about her diet.",
+    "A hosteller needs a way to know what the mess is serving before she sets out, because she only finds out at the counter, after a 10-minute walk, and then pays extra to eat outside.",
+    "A hosteller needs a way to know what the mess is serving before she sets out, because she needs to know the menu in advance."
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A POV follows '[user] needs a way to [need] because [insight]', and both the need and the insight must come from the research. The correct statement names an outcome (knowing the menu before setting out) and an insight that explains why it matters (a wasted walk and extra spending). The others put a solution where the need should be, bring in a claim the research never made, or repeat the need as its own reason.",
+   "why_wrong": [
+    "It puts a solution (an app) where the need should be, and 'dislikes some dishes' misses the real cost the research found: the wasted walk and the extra spending.",
+    "Healthier food and unhealthy mess food were never part of the findings. The POV must come from the research, not from the team's assumptions.",
+    "",
+    "The 'because' clause just restates the need, so it explains nothing. The insight must say why the need exists."
+   ],
+   "key": "INT335-U2-044"
+  },
+  {
+   "topic": "Problem Definition",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student asks for 'a dark mode in the college app'. When the researcher asks when she would use it, she explains that she revises in bed after lights-out and the bright screen wakes her roommate. What should the team carry into its problem definition?",
+   "code": "",
+   "options": [
+    "The request itself: she needs a dark mode.",
+    "The pain point: she needs a way to revise at night without disturbing her sleeping roommate.",
+    "Nothing yet, because a feature request is not research evidence.",
+    "A broad need: students need a better app."
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "'Dark mode' is a request for a particular solution. The follow-up question uncovered the pain point behind it: revising after lights-out without waking her roommate. A problem definition carries the pain point, phrased as an outcome, because that leaves room for other answers (a dimmer reading view, audio notes, a late-night study room) that a copied feature request would rule out.",
+   "why_wrong": [
+    "It copies the user's proposed solution, so any POV built on it can only lead to dark mode.",
+    "",
+    "The request is useful evidence: it led the researcher to the real pain point. It needs reframing, not discarding.",
+    "It is so vague that it throws away the specific user, situation and pain point the follow-up question uncovered."
+   ],
+   "key": "INT335-U2-045"
+  },
+  {
+   "topic": "Problem Definition",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A team writes: 'A day scholar who drives to campus needs a way to book a parking slot through an app because by 9 a.m. every lot near her block is full and she circles for up to 20 minutes, missing the start of her first class.' What is the main flaw?",
+   "code": "",
+   "options": [
+    "There is no flaw: it follows the 'needs a way to' template and ends with a concrete, research-based insight.",
+    "The insight contains numbers such as '9 a.m.' and '20 minutes', and a POV must stay qualitative.",
+    "The user is too specific. A POV should speak for all students, not for one day scholar who drives.",
+    "The need names a solution (booking a slot through an app) instead of an outcome such as being parked and in class on time."
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The words 'needs a way to' do not make what follows a need. 'Book a parking slot through an app' is a feature, so the statement slips a solution into the problem. Rewritten as an outcome (being parked and in class on time), it leaves room for other ideas such as shuttles or staggered timings. The specific user and the concrete, research-based insight are strengths, not flaws.",
+   "why_wrong": [
+    "The template is satisfied only on the surface. What follows 'needs a way to' is a feature, so the need is a solution in disguise.",
+    "Concrete details from research, including counts and times, strengthen an insight. Nothing forbids numbers in a POV.",
+    "A specific user is what makes a POV useful. 'All students' would make the need too vague to design for.",
+    ""
+   ],
+   "key": "INT335-U2-046"
+  },
+  {
+   "topic": "Problem Definition",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A hosteller says, 'We need more washing machines. On Sunday evening, the only time I'm free, every one is taken.' Over a week, the team sees the machines standing mostly idle on weekday mornings and afternoons, and fully in use only on Sunday evenings. Which point-of-view statement best reflects the research?",
+   "code": "",
+   "options": [
+    "A hosteller free only on Sunday evenings needs a way to wash then without a long wait, because demand piles into that one evening while the machines stand mostly idle on weekday mornings and afternoons.",
+    "A hosteller needs more washing machines, because on Sunday evenings every machine in the hostel is taken.",
+    "A hosteller needs a laundry booking app, because the machines stand idle on weekday mornings and afternoons.",
+    "The team cannot write a POV yet, because what the user said and what the team observed contradict each other."
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Her request for more machines is explicit, but it is a solution, and the observation undercuts it. There are not too few machines overall; everyone wants them at the same time. A good POV keeps her real need (washing on the one evening she is free without a long wait) and uses the observed pattern as the insight. A contradiction like this is raw material for insight, not a reason to stop.",
+   "why_wrong": [
+    "",
+    "It copies her stated solution as the need. The observation shows the machines sit idle most of the week, so more machines is one possible fix, not the need.",
+    "It puts a solution (a booking app) where the need should be, and its 'because' clause states a fact without explaining her problem.",
+    "A gap between what users say and what is observed is where insight comes from. It calls for a sharper POV, not a delay."
+   ],
+   "key": "INT335-U2-047"
+  }
+ ]
+}

@@ -1,0 +1,1111 @@
+{
+ "subject_code": "MEC103",
+ "unit": 6,
+ "unit_label": "Isometric Projections",
+ "questions": [
+  {
+   "topic": "Isometric Axes",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the angle between any two of the three isometric axes?",
+   "code": "",
+   "options": [
+    "90°",
+    "120°",
+    "60°",
+    "45°"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The three isometric axes are equally inclined to one another, so they split the full turn around their meeting point into three equal parts: 360° ÷ 3 = 120°. This equal spacing is why all three axes are equally foreshortened.",
+   "why_wrong": [
+    "90° is the angle between the real edges of a cube, not between their isometric images; right angles are not shown true in isometric.",
+    "",
+    "60° is the acute angle of the rhombus a square face becomes, not the spacing between the axes.",
+    "45° is the usual receding-axis angle of oblique projection, not an isometric value."
+   ],
+   "key": "MEC103-U6-001"
+  },
+  {
+   "topic": "Isometric Axes",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In an isometric drawing one isometric axis is vertical. At what angle to the horizontal are the other two axes drawn?",
+   "code": "",
+   "options": [
+    "45°",
+    "60°",
+    "120°",
+    "30°"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The two non-vertical isometric axes are drawn at 30° to the horizontal, one rising to the left and one to the right. Together with the vertical axis this places all three axes 120° apart (90° + 30° = 120°).",
+   "why_wrong": [
+    "45° belongs to the receding axis of oblique projection, not to isometric.",
+    "60° is the angle each of these axes makes with the vertical axis line, not with the horizontal.",
+    "120° is the angle between two isometric axes, not an axis's inclination to the horizontal.",
+    ""
+   ],
+   "key": "MEC103-U6-002"
+  },
+  {
+   "topic": "Isometric Axes",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A square face of a cube lies on an isometric plane. What are the interior angles of the rhombus that represents it in isometric?",
+   "code": "",
+   "options": [
+    "90° and 90°",
+    "60° and 120°",
+    "45° and 135°",
+    "30° and 150°"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The square's sides are drawn along two isometric axes. For the top face, the two axes at 30° to the horizontal enclose 180° − 2·30° = 120°, and the adjacent corner is 180° − 120° = 60°; the vertical faces give the same pair. So every square face becomes a rhombus with angles 60° and 120°, and no right angle appears true.",
+   "why_wrong": [
+    "Keeping 90° treats the face as parallel to the plane of projection; every isometric face is inclined to it.",
+    "",
+    "45° and 135° come from the 45° receding axis of oblique projection.",
+    "30° and 150° mistake each axis's 30° inclination to the horizontal for the angle between two axes."
+   ],
+   "key": "MEC103-U6-003"
+  },
+  {
+   "topic": "Isometric Axes",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "On an isometric drawing, lines are drawn in the four directions below. Which one is NOT an isometric line?",
+   "code": "",
+   "options": [
+    "A vertical line",
+    "A line rising to the right at 30° to the horizontal",
+    "A horizontal line",
+    "A line rising to the left at 30° to the horizontal"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Isometric lines are lines parallel to the three isometric axes, which on paper run vertically and at 30° to the horizontal on either side. A horizontal line is parallel to none of them, so it is a non-isometric line and cannot be measured directly.",
+   "why_wrong": [
+    "The vertical is one of the three isometric axes, so a vertical line is an isometric line.",
+    "30° rising to the right is the direction of one receding isometric axis.",
+    "",
+    "30° rising to the left is the direction of the other receding isometric axis."
+   ],
+   "key": "MEC103-U6-004"
+  },
+  {
+   "topic": "Isometric Scale",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the isometric scale ratio, i.e. isometric length ÷ true length for a line parallel to an isometric axis?",
+   "code": "",
+   "options": [
+    "0.866",
+    "0.707",
+    "0.816",
+    "0.577"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The isometric scale reduces every isometric line to √2/√3 ≈ 0.816 of its true length (about 9/11). It is used for an isometric projection; an isometric view (drawing) ignores it and uses true lengths.",
+   "why_wrong": [
+    "0.866 is cos 30°. The axes are at 30°, but this is not the foreshortening ratio.",
+    "0.707 is cos 45° = 1/√2, only one factor of the true ratio; it still has to be divided by cos 30°.",
+    "",
+    "0.577 = 1/√3 is the minor-to-major axis ratio of an isometric ellipse, not the scale for a line."
+   ],
+   "key": "MEC103-U6-005"
+  },
+  {
+   "topic": "Isometric Scale",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "An edge 60 mm long is parallel to an isometric axis. What length is set off for it in an isometric PROJECTION?",
+   "code": "",
+   "options": [
+    "60.0 mm",
+    "49.0 mm",
+    "73.5 mm",
+    "52.0 mm"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "An isometric projection uses the isometric scale, so every isometric line is reduced to 0.816 of its true length: 60 × 0.816 = 49.0 mm (more exactly 48.99 mm).",
+   "why_wrong": [
+    "60 mm is the true length, which is used in an isometric VIEW (drawing), not in an isometric projection.",
+    "",
+    "73.5 mm comes from dividing by 0.816 (i.e. multiplying by about 1.225) instead of multiplying by it, which inverts the isometric scale.",
+    "52.0 mm comes from multiplying by 0.866 (cos 30°) instead of the isometric scale 0.816."
+   ],
+   "key": "MEC103-U6-006"
+  },
+  {
+   "topic": "Isometric Scale",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In an isometric VIEW (isometric drawing), what length is set off along the isometric axes for an edge parallel to them?",
+   "code": "",
+   "options": [
+    "True length",
+    "0.816 × true length",
+    "0.866 × true length",
+    "0.5 × true length"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "An isometric view (isometric drawing) is made with true lengths along the isometric axes and does not use the isometric scale. So it comes out about 1.22 times larger than the isometric projection of the same object, with exactly the same shape.",
+   "why_wrong": [
+    "",
+    "0.816 × true length is the isometric scale, which is used for an isometric PROJECTION, not a view.",
+    "0.866 is cos 30°, not a scale used anywhere in isometric.",
+    "Halving the depth belongs to cabinet oblique projection, not isometric."
+   ],
+   "key": "MEC103-U6-007"
+  },
+  {
+   "topic": "Isometric Scale",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "The isometric scale ratio 0.816 is the decimal value of which exact expression?",
+   "code": "",
+   "options": [
+    "√3/2",
+    "1/√2",
+    "√2/√3",
+    "1/√3"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The isometric scale is √2/√3 = √(2/3) ≈ 0.816. It equals cos 45° ÷ cos 30° = (1/√2) ÷ (√3/2) = 2/√6 = √2/√3.",
+   "why_wrong": [
+    "√3/2 = 0.866 is cos 30°, not the isometric scale.",
+    "1/√2 = 0.707 is cos 45° alone; it still has to be divided by cos 30°.",
+    "",
+    "1/√3 = 0.577 is the minor-to-major axis ratio of an isometric ellipse."
+   ],
+   "key": "MEC103-U6-008"
+  },
+  {
+   "topic": "Isometric Scale",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The same object is drawn once as an isometric VIEW and once as an isometric PROJECTION. How does the size of the view compare with the size of the projection?",
+   "code": "",
+   "options": [
+    "The view is about 0.816 times the projection",
+    "The view is about 1.22 times the projection",
+    "The view is about 1.15 times the projection",
+    "Both are the same size"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The view uses true lengths, while the projection uses 0.816 × true length. So view ÷ projection = 1 ÷ 0.816 ≈ 1.22. The view is the larger of the two, and both have exactly the same shape.",
+   "why_wrong": [
+    "0.816 is projection ÷ view. This inverts the relationship and wrongly makes the projection the larger one.",
+    "",
+    "1.15 = 1 ÷ 0.866 uses cos 30° instead of the isometric scale.",
+    "The lengths set off differ (true length versus 0.816 × true length), so the two drawings differ in size, though not in shape."
+   ],
+   "key": "MEC103-U6-009"
+  },
+  {
+   "topic": "Isometric Scale",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "To construct an isometric scale, a horizontal base line is drawn. True lengths are marked on one line through its end, and each mark is carried onto a second line through the same end by vertical projectors. Which pair of angles to the base makes the second line read 0.816 × true length?",
+   "code": "",
+   "options": [
+    "True lengths on a 30° line, isometric lengths on a 45° line",
+    "True lengths on a 60° line, isometric lengths on a 30° line",
+    "True lengths on a 45° line, isometric lengths on a 60° line",
+    "True lengths on a 45° line, isometric lengths on a 30° line"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A vertical projector keeps the horizontal distance fixed, so length on the second line = true length × cos(first angle) ÷ cos(second angle). For 45° and 30° this gives 0.707 ÷ 0.866 = 0.816, which is the isometric scale.",
+   "why_wrong": [
+    "Swapping the lines gives cos 30° ÷ cos 45° = 0.866 ÷ 0.707 = 1.22, which enlarges instead of reducing.",
+    "cos 60° ÷ cos 30° = 0.5 ÷ 0.866 = 0.577. That is the ellipse's axis ratio, not the isometric scale.",
+    "cos 45° ÷ cos 60° = 0.707 ÷ 0.5 = 1.41, which enlarges instead of reducing.",
+    ""
+   ],
+   "key": "MEC103-U6-010"
+  },
+  {
+   "topic": "Non-Isometric Lines",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is a non-isometric line?",
+   "code": "",
+   "options": [
+    "A line that is not parallel to any of the three isometric axes",
+    "A line parallel to the vertical isometric axis",
+    "A line drawn at 30° to the horizontal",
+    "A line drawn shorter than its true length by the isometric scale"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A line parallel to any isometric axis is an isometric line and can be measured directly along that axis. A line not parallel to any of the three axes, such as an inclined edge or a diagonal, is a non-isometric line and does not appear in true length.",
+   "why_wrong": [
+    "",
+    "The vertical axis is an isometric axis, so a line parallel to it is an isometric line.",
+    "30° to the horizontal is the direction of a receding isometric axis, so such a line is isometric.",
+    "Reduction by the isometric scale is applied to isometric lines in a projection. It does not define a non-isometric line."
+   ],
+   "key": "MEC103-U6-011"
+  },
+  {
+   "topic": "Non-Isometric Lines",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "How is a non-isometric line, such as a sloping edge, drawn in isometric?",
+   "code": "",
+   "options": [
+    "Its true length is set off at its true angle using a protractor",
+    "Its true length is multiplied by 0.816 and set off along the line",
+    "Its two end points are located by offsets along the isometric axes and then joined",
+    "It is drawn parallel to the nearest isometric axis"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A non-isometric line does not appear in true length, so it cannot be measured directly. Its end points are found by measuring along isometric lines (offsets parallel to the axes), where measurement is allowed, and the line is drawn by joining them.",
+   "why_wrong": [
+    "Neither the length nor the angle of an inclined line appears true in isometric, so measuring with a protractor gives the wrong line.",
+    "The 0.816 scale applies only to lines parallel to the axes. A non-isometric line changes by a different amount that depends on its direction.",
+    "",
+    "Drawing it parallel to an axis changes its direction and turns it into an isometric line, which it is not."
+   ],
+   "key": "MEC103-U6-012"
+  },
+  {
+   "topic": "Non-Isometric Lines",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which statement about angles in an isometric drawing is correct?",
+   "code": "",
+   "options": [
+    "Angles do not appear in true size, so they are never set off with a protractor",
+    "Angles on isometric faces appear in their true size",
+    "Only right angles appear in their true size",
+    "Angles appear true in an isometric view but not in an isometric projection"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Isometric distorts angles: even the 90° corner of a square face appears as 60° or 120°. So an angle is never measured with a protractor. The ends of its arms are located by offsets along the isometric axes and then joined.",
+   "why_wrong": [
+    "",
+    "The faces are inclined to the plane of projection, so angles on them are distorted. A square face becomes a rhombus.",
+    "Right angles visibly change to 60° or 120°, so they are not shown true either.",
+    "The view and the projection differ only in overall size (1.22 : 1), so angles are distorted in the same way in both."
+   ],
+   "key": "MEC103-U6-013"
+  },
+  {
+   "topic": "Non-Isometric Lines",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A square face of side 40 mm lies on an isometric plane. In an isometric VIEW it becomes a rhombus. How long is the rhombus's shorter diagonal?",
+   "code": "",
+   "options": [
+    "56.6 mm",
+    "40.0 mm",
+    "69.3 mm",
+    "46.2 mm"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "In the view the sides stay 40 mm and the rhombus angles are 60° and 120°. The shorter diagonal cuts off a triangle with two 40 mm sides enclosing 60°, which is equilateral, so that diagonal is 40 mm. The true diagonal is 40√2 = 56.6 mm, so a diagonal, being a non-isometric line, is not drawn to true length.",
+   "why_wrong": [
+    "56.6 mm (40√2) is the true diagonal. Diagonals are non-isometric lines and are not drawn to true length.",
+    "",
+    "69.3 mm (40√3) is the longer diagonal, which joins the 60° corners.",
+    "46.2 mm applies the 0.816 isometric scale to the true diagonal, but that scale holds only for lines parallel to the axes."
+   ],
+   "key": "MEC103-U6-014"
+  },
+  {
+   "topic": "Non-Isometric Lines",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A rectangular block has one top edge cut away by a sloping chamfer face. In its isometric drawing, which of these lines can NOT be set off by direct measurement?",
+   "code": "",
+   "options": [
+    "A vertical edge of the block",
+    "An edge of the chamfer face that runs along the block's length",
+    "The sloping edge where the chamfer meets an end face",
+    "An edge along the width of the block"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Edges parallel to the length, width or height of the block lie along isometric axes and may be measured directly. The chamfer's edge on the end face slopes relative to both axes of that face, so it is a non-isometric line. Its end points are located by offsets along the axes and then joined.",
+   "why_wrong": [
+    "A vertical edge is parallel to the vertical isometric axis, so it is an isometric line and is measured directly.",
+    "This edge belongs to the sloping face, but it runs along the length, parallel to an isometric axis, so it is still an isometric line.",
+    "",
+    "An edge along the width is parallel to an isometric axis, so it is measured directly."
+   ],
+   "key": "MEC103-U6-015"
+  },
+  {
+   "topic": "Non-Isometric Lines",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "In an isometric VIEW of a square pyramid standing on its base with its axis vertical, how is the apex correctly located?",
+   "code": "",
+   "options": [
+    "Set off the true slant-edge length from each base corner with a compass",
+    "Measure the pyramid's height vertically up from the centre of the base rhombus, then join the apex to the base corners",
+    "Draw each slant edge from a base corner at its true inclination to the base, using a protractor",
+    "Set off 0.816 × the true slant-edge length along each slant edge"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The slant edges of a pyramid are non-isometric lines, so neither their lengths nor their angles can be set off directly. The axis is vertical, which makes it an isometric line, so the height is measured along it from the base centre. The slant edges are then drawn simply by joining the apex to the base corners.",
+   "why_wrong": [
+    "Slant edges are non-isometric lines and do not appear in true length, so a compass set to the true length puts the apex in the wrong place.",
+    "",
+    "Angles do not appear in true size in isometric, so an angle set with a protractor gives a wrong slant edge.",
+    "The 0.816 scale applies only to lines parallel to the isometric axes, and a VIEW uses no reduction at all."
+   ],
+   "key": "MEC103-U6-016"
+  },
+  {
+   "topic": "Isometric Circles",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "How does a circle lying on an isometric face of an object appear in isometric?",
+   "code": "",
+   "options": [
+    "As a circle of the same diameter",
+    "As an ellipse",
+    "As a rhombus",
+    "As a circle reduced by 0.816"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "An isometric face is inclined to the plane of projection, so a circle on it is seen at a slant and appears as an ellipse. The ellipse is normally drawn by the four-centre method inside the rhombus that represents the circle's enclosing square.",
+   "why_wrong": [
+    "A circle stays a circle only on a face parallel to the plane of projection, and no isometric face is.",
+    "",
+    "The rhombus is the image of the enclosing square. The circle itself becomes the ellipse drawn inside it.",
+    "Scaling by 0.816 changes only the size. The circle's shape itself becomes an ellipse."
+   ],
+   "key": "MEC103-U6-017"
+  },
+  {
+   "topic": "Isometric Circles",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which method is normally used to construct the ellipse that represents a circle on an isometric face?",
+   "code": "",
+   "options": [
+    "Directrix–focus method",
+    "Concentric circles method",
+    "Box method",
+    "Four-centre method"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The standard construction is the four-centre method. The circle's enclosing square is drawn as a rhombus, and four circular arcs struck from four centres found within it make up the ellipse. It works directly from the rhombus, with no need to find foci or axes first.",
+   "why_wrong": [
+    "The directrix–focus method is a conic-section construction that needs a focus, a directrix and an eccentricity, which an isometric circle does not supply.",
+    "The concentric circles method needs the ellipse's major and minor axes first. The isometric ellipse is normally built directly from the rhombus.",
+    "The box method encloses a solid in a box to locate its points. It is not an ellipse construction.",
+    ""
+   ],
+   "key": "MEC103-U6-018"
+  },
+  {
+   "topic": "Isometric Circles",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A circle of 60 mm diameter lies on an isometric face. In an isometric PROJECTION, what is the minor axis of its ellipse?",
+   "code": "",
+   "options": [
+    "34.6 mm",
+    "60.0 mm",
+    "49.0 mm",
+    "42.4 mm"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "In an isometric projection the ellipse's major axis equals the true diameter D, and its minor axis is 0.577D (= D/√3). So the minor axis = 0.577 × 60 = 34.6 mm.",
+   "why_wrong": [
+    "",
+    "60 mm is the major axis in an isometric projection, not the minor axis.",
+    "49.0 mm applies the line scale 0.816 to the diameter, but the ellipse's minor axis is shortened more than that.",
+    "42.4 mm (0.707D) is the minor axis in an isometric VIEW, which is drawn 1.22 times larger than the projection."
+   ],
+   "key": "MEC103-U6-019"
+  },
+  {
+   "topic": "Isometric Circles",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A circle is drawn on a vertical face of a block. The isometric axis normal (perpendicular) to that face is one of the two axes inclined at 30° to the horizontal. Along which direction does the MINOR axis of the circle's ellipse lie?",
+   "code": "",
+   "options": [
+    "Along the vertical isometric axis",
+    "Horizontal",
+    "Along the 30° isometric axis that is normal to the face",
+    "Along the other 30° isometric axis, which lies in the face"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The minor axis of an isometric ellipse always lies along the isometric axis normal to the face that carries the circle, and the major axis is at right angles to it. Here the face's normal is a 30° axis, so the minor axis lies along it. The major axis is at 90° to it, which is 60° to the horizontal.",
+   "why_wrong": [
+    "The vertical axis lies in this face. It carries the minor axis only for a circle on a horizontal face.",
+    "Horizontal is the major-axis direction for a circle on a horizontal (top) face, not the minor axis here.",
+    "",
+    "That axis lies in the face itself. The minor axis follows the axis normal to the face."
+   ],
+   "key": "MEC103-U6-020"
+  },
+  {
+   "topic": "Isometric Circles",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A hole of 50 mm diameter appears on an isometric face. What is the MAJOR axis of its ellipse in an isometric VIEW (isometric drawing)?",
+   "code": "",
+   "options": [
+    "50.0 mm",
+    "40.8 mm",
+    "35.4 mm",
+    "61.2 mm"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "In an isometric projection the major axis equals the true diameter, 50 mm. An isometric view is 1 ÷ 0.816 ≈ 1.225 times the projection, so its major axis is 1.225 × 50 = 61.2 mm, and its minor axis is 0.707 × 50 = 35.4 mm.",
+   "why_wrong": [
+    "50 mm is the major axis in an isometric PROJECTION. The view is drawn 1.22 times larger.",
+    "40.8 mm applies the 0.816 reduction, which belongs to lines in a projection, not to the view's ellipse.",
+    "35.4 mm (0.707D) is the MINOR axis in the view, not the major axis.",
+    ""
+   ],
+   "key": "MEC103-U6-021"
+  },
+  {
+   "topic": "Isometric Circles",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For the ellipse that represents a circle on an isometric face, what is the ratio of the minor axis to the major axis, in either an isometric view or an isometric projection?",
+   "code": "",
+   "options": [
+    "0.577",
+    "0.816",
+    "0.707",
+    "0.5"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "In a projection the axes are 0.577D and D. In a view they are 0.707D and 1.22D. Either way minor ÷ major = 0.577 (= 1/√3), because the view is just the projection enlarged by the same factor in every direction.",
+   "why_wrong": [
+    "",
+    "0.816 is the isometric scale for lines, not the ellipse's shape ratio.",
+    "0.707 is the view's minor axis ÷ D, not minor ÷ major. The view's major axis is 1.22D, not D.",
+    "0.5 is the cabinet oblique depth factor and has nothing to do with the isometric ellipse."
+   ],
+   "key": "MEC103-U6-022"
+  },
+  {
+   "topic": "Pictorial Projection Types",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Isometric projection is a type of which projection?",
+   "code": "",
+   "options": [
+    "Oblique projection",
+    "Perspective projection",
+    "Axonometric projection",
+    "Multiview (first-angle) projection"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Isometric is the axonometric case in which all three axes are equally inclined to the plane of projection and equally foreshortened. It is not oblique, which keeps one face in true shape, and it is not perspective, in which parallel edges converge.",
+   "why_wrong": [
+    "Oblique projection (cavalier, cabinet) keeps one face true and draws a receding axis at an angle. Isometric shows no face true.",
+    "In a perspective drawing parallel edges converge towards vanishing points. Isometric keeps parallel edges parallel.",
+    "",
+    "Multiview projection gives separate 2-D views (front, top, side), while isometric shows three faces in one pictorial view."
+   ],
+   "key": "MEC103-U6-023"
+  },
+  {
+   "topic": "Pictorial Projection Types",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In isometric projection, how are the three principal axes foreshortened?",
+   "code": "",
+   "options": [
+    "Two equally, the third differently",
+    "All three differently",
+    "Only the receding axis, by half",
+    "All three equally"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "'Isometric' means equal measure. All three axes are equally inclined to the plane of projection, so all are reduced by the same factor, 0.816. Two equal axes gives dimetric projection, and none equal gives trimetric.",
+   "why_wrong": [
+    "Two equal and one different describes dimetric projection.",
+    "All three different describes trimetric projection.",
+    "Halving only the receding axis describes cabinet oblique projection.",
+    ""
+   ],
+   "key": "MEC103-U6-024"
+  },
+  {
+   "topic": "Pictorial Projection Types",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of the following is NOT a form of axonometric projection?",
+   "code": "",
+   "options": [
+    "Isometric",
+    "Dimetric",
+    "Trimetric",
+    "Cabinet"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Axonometric projections are classified by how many axes are equally foreshortened: all three (isometric), two (dimetric) or none (trimetric). Cabinet projection is oblique: one face is kept in true shape and the receding depth is halved.",
+   "why_wrong": [
+    "Isometric is the axonometric case with all three axes equally foreshortened.",
+    "Dimetric is the axonometric case with two axes equally foreshortened.",
+    "Trimetric is the axonometric case with all three axes foreshortened differently.",
+    ""
+   ],
+   "key": "MEC103-U6-025"
+  },
+  {
+   "topic": "Pictorial Projection Types",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement correctly distinguishes isometric projection from cavalier oblique projection?",
+   "code": "",
+   "options": [
+    "In isometric no face is shown in true shape and all three axes are equally foreshortened; in cavalier one face is in true shape and the receding axis is drawn at an angle",
+    "In isometric the front face is in true shape; in cavalier all three axes are equally foreshortened",
+    "In isometric the receding axis is drawn at half length; in cavalier it is drawn at full length",
+    "Isometric is an oblique projection with receding axes at 30°, while cavalier is an oblique projection with the receding axis at 45°"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Isometric is axonometric: the object is turned so that all three axes are equally inclined and equally foreshortened, and no face appears in true shape. Cavalier is oblique: one face is kept parallel to the plane and drawn true, and the receding axis is drawn at an angle at full length. Cabinet is the oblique form that halves the receding axis.",
+   "why_wrong": [
+    "",
+    "This swaps the two: cavalier is the one that keeps a face true, and isometric is the one that foreshortens all three axes equally.",
+    "Halving the receding axis is cabinet oblique. Isometric reduces all three axes equally by 0.816, or not at all in a view.",
+    "Isometric is axonometric, not oblique. Its 30° axes come from all three axes being equally inclined, not from a receding axis."
+   ],
+   "key": "MEC103-U6-026"
+  },
+  {
+   "topic": "Isometric Axes",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "A rectangular block 60 mm long, 40 mm wide and 30 mm high is drawn as an isometric VIEW (true lengths). Its 60 mm edges run along the axis rising at 30° to the right, and its 40 mm edges along the axis rising at 30° to the left. What is the overall horizontal width of the drawing?",
+   "code": "",
+   "options": [
+    "100.0 mm",
+    "50.0 mm",
+    "86.6 mm",
+    "70.7 mm"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Each receding edge is inclined at 30° to the horizontal, so its horizontal spread is its length × cos 30° = length × 0.866. The two receding edges spread to opposite sides of the vertical edge, so width = 60 × 0.866 + 40 × 0.866 = 51.96 + 34.64 = 86.6 mm. The 30 mm height is vertical and adds nothing to the width.",
+   "why_wrong": [
+    "Adds 60 + 40 as if the receding edges were drawn horizontal. They are inclined at 30°, so only cos 30° of each length shows horizontally.",
+    "Uses sin 30° = 0.5 instead of cos 30°. The sine gives each edge's vertical rise, not its horizontal spread.",
+    "",
+    "Uses cos 45° = 0.707, which means drawing the receding axes at 45° instead of 30° to the horizontal."
+   ],
+   "key": "MEC103-U6-027"
+  },
+  {
+   "topic": "Isometric Axes",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "In an isometric VIEW, O is the front corner of a block's top face. A point P on that face is 50 mm from O along the axis rising at 30° to the right, and 30 mm along the axis rising at 30° to the left. Where is P on the paper relative to O?",
+   "code": "",
+   "options": [
+    "17.3 mm to the right, 40.0 mm above",
+    "10.0 mm to the right, 69.3 mm above",
+    "14.1 mm to the right, 56.6 mm above",
+    "14.1 mm to the right, 32.7 mm above"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "In a view, offsets are set off at true length along the axes and then resolved horizontally and vertically. Horizontal: 50 cos 30° − 30 cos 30° = 20 × 0.866 = 17.3 mm to the right, because the two axes lean opposite ways. Vertical: 50 sin 30° + 30 sin 30° = 80 × 0.5 = 40.0 mm up, because both axes rise.",
+   "why_wrong": [
+    "",
+    "Swaps sine and cosine (20 × 0.5 across, 80 × 0.866 up), which draws the axes at 60° to the horizontal instead of 30°.",
+    "Resolves with 0.707, i.e. draws the receding axes at 45° instead of 30° to the horizontal.",
+    "Multiplies the correct offsets by 0.816. The isometric scale belongs to an isometric projection, and this is a view drawn with true lengths."
+   ],
+   "key": "MEC103-U6-028"
+  },
+  {
+   "topic": "Isometric Axes",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A cube of 49 mm edge stands on its base and is drawn as an isometric PROJECTION. Its outline is a hexagon. What is the overall vertical height of that hexagon on the paper?",
+   "code": "",
+   "options": [
+    "98 mm",
+    "80 mm",
+    "60 mm",
+    "69.3 mm"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "In an isometric projection each edge is set off to the isometric scale: 49 × 0.816 ≈ 40 mm. The height is one vertical edge plus the rise of the top face. The back corner of the top face is two receding edges beyond the front corner, and each edge rises 40 sin 30° = 20 mm, so height = 40 + 20 + 20 = 80 mm, twice the drawn edge.",
+   "why_wrong": [
+    "Uses the true 49 mm edge (2 × 49 = 98 mm). That is the height in an isometric VIEW, not in the projection.",
+    "",
+    "Counts only one receding rise (40 + 20). The back corner of the top face lies two receding edges beyond the front corner, so the rise is 20 + 20.",
+    "Gives the overall WIDTH, 2 × 40 × cos 30° = 69.3 mm, not the height."
+   ],
+   "key": "MEC103-U6-029"
+  },
+  {
+   "topic": "Isometric Scale",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student has no isometric scale and uses the approximation 9/11 in its place. What lengths should she set off for the edges of a block 110 mm × 55 mm × 33 mm in its isometric PROJECTION?",
+   "code": "",
+   "options": [
+    "95.3, 47.6 and 28.6 mm",
+    "77.8, 38.9 and 23.3 mm",
+    "134.4, 67.2 and 40.3 mm",
+    "90, 45 and 27 mm"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The isometric scale is √2/√3 ≈ 0.816, and 9/11 = 0.818 is a close, convenient approximation of it. All three edges are isometric lines, so each one is multiplied by 9/11: 110 × 9/11 = 90, 55 × 9/11 = 45 and 33 × 9/11 = 27 mm. The exact factor √2/√3 ≈ 0.8165 gives 89.8, 44.9 and 26.9 mm, each within 0.2 mm of these.",
+   "why_wrong": [
+    "Multiplies by 0.866 (cos 30°), which is not the isometric scale.",
+    "Multiplies by 0.707 (cos 45°), which is not the isometric scale.",
+    "Inverts the ratio (× 11/9 ≈ 1.22), which enlarges the edges. The projection must be smaller than true size.",
+    ""
+   ],
+   "key": "MEC103-U6-030"
+  },
+  {
+   "topic": "Isometric Scale",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A drawing's title block reads ISOMETRIC PROJECTION. It was drawn to the isometric scale with no other reduction. An edge parallel to an isometric axis measures 57.1 mm with an ordinary rule. What is the true length of that edge?",
+   "code": "",
+   "options": [
+    "46.6 mm",
+    "70 mm",
+    "57.1 mm",
+    "65.9 mm"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "In an isometric projection every isometric line is drawn at 0.816 of its true length, so true length = measured ÷ 0.816. Here 57.1 ÷ 0.816 ≈ 70 mm, and the check 70 × 0.816 = 57.1 mm confirms it. An ordinary rule reads the reduced length, not the true one.",
+   "why_wrong": [
+    "Multiplies by 0.816 instead of dividing, which reduces a length that is already reduced.",
+    "",
+    "Takes the measured length as the true length. That is correct only for an isometric VIEW, which is drawn with true lengths.",
+    "Divides by 0.866 (cos 30°), which is not the isometric scale."
+   ],
+   "key": "MEC103-U6-031"
+  },
+  {
+   "topic": "Isometric Scale",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A face of an object lies on an isometric plane. On the isometric PROJECTION of the object this face covers 600 mm² of paper. What area does the same face cover on the isometric VIEW (isometric drawing) of the same object?",
+   "code": "",
+   "options": [
+    "735 mm²",
+    "400 mm²",
+    "900 mm²",
+    "600 mm²"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The view is the projection enlarged in every direction by 1/0.816 = √3/√2 ≈ 1.22. Every length grows by that factor, so every area grows by its square. Since (√3/√2)² = 3/2 exactly, the area becomes 600 × 1.5 = 900 mm².",
+   "why_wrong": [
+    "Applies the linear factor 1.22 to an area (600 × 1.225 ≈ 735). Areas scale by the square of the linear factor, (√3/√2)² = 1.5.",
+    "Applies the factor 2/3 the wrong way round. The view is the larger drawing, so its area must be more than 600 mm².",
+    "",
+    "Assumes both drawings are the same size. They have the same shape, but every length in the view is 1.22 times longer."
+   ],
+   "key": "MEC103-U6-032"
+  },
+  {
+   "topic": "Isometric Scale",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A sphere of 60 mm diameter is drawn in an isometric PROJECTION, using the isometric scale. What is its outline on the paper?",
+   "code": "",
+   "options": [
+    "A circle of 60 mm diameter",
+    "A circle of 49 mm diameter",
+    "An ellipse with a 60 mm major axis and a 34.6 mm minor axis",
+    "A circle of 73.5 mm diameter"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "An isometric projection is a true orthographic projection, and a sphere projected orthographically always shows as a circle of its true diameter. Its outline is the great circle parallel to the plane of projection, and that circle is not foreshortened. This matches the circle rule: each great circle parallel to an isometric plane becomes an ellipse with major axis D = 60 mm, and every such ellipse fits exactly inside the 60 mm outline. The outline is not a line set off along an isometric axis, so the 0.816 factor does not apply to it.",
+   "why_wrong": [
+    "",
+    "Applies the isometric scale to the outline (60 × 0.816 = 49 mm). The outline is the great circle parallel to the plane of projection, and it is not foreshortened.",
+    "Treats the sphere like a circle lying on an isometric face. Such circles become ellipses, but the sphere's outline surrounds all of them and stays a circle.",
+    "Uses 60 ÷ 0.816 ≈ 1.225 × 60 = 73.5 mm. That is the outline in an isometric VIEW, not in the projection."
+   ],
+   "key": "MEC103-U6-033"
+  },
+  {
+   "topic": "Isometric Scale",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A machine bed has a 200 mm edge parallel to an isometric axis. The bed is drawn as an isometric PROJECTION to a scale of 1 : 2. What length is set off on the paper for that edge?",
+   "code": "",
+   "options": [
+    "100.0 mm",
+    "163.2 mm",
+    "122.5 mm",
+    "81.6 mm"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Two reductions apply here: the representative fraction of 1/2 and the isometric scale of 0.816. First 200 × 1/2 = 100 mm, then 100 × 0.816 = 81.6 mm. Both are multiplying factors, so the order in which they are applied does not matter.",
+   "why_wrong": [
+    "Applies only the RF. At 1 : 2, 100 mm is the length in an isometric VIEW, not in the projection.",
+    "Applies only the isometric scale (200 × 0.816) and ignores the 1 : 2 reducing scale.",
+    "Applies the RF but then divides by 0.816 (about × 1.225) instead of multiplying, which enlarges where the isometric scale should reduce.",
+    ""
+   ],
+   "key": "MEC103-U6-034"
+  },
+  {
+   "topic": "Non-Isometric Lines",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "The top face of a hexagonal prism is a regular hexagon of 30 mm side. It is drawn on the top isometric plane with two opposite sides parallel to one isometric axis. In an isometric VIEW, how many of the hexagon's six sides can be set off directly as 30 mm with a scale?",
+   "code": "",
+   "options": [
+    "6",
+    "2",
+    "0",
+    "4"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Only lines parallel to an isometric axis are isometric lines that can be measured directly. Here only the two sides parallel to the chosen axis qualify, and each is set off as 30 mm. The other four sides make 60° with that axis, so they are non-isometric: their corners are located by offsets along the axes, inside an enclosing rectangle of 60 mm × 52 mm, and then joined. On paper those four sides come out at other lengths, none of them 30 mm.",
+   "why_wrong": [
+    "Assumes the six equal sides stay equal on paper. The four sides at 60° to the axis are non-isometric and are not drawn at their true length.",
+    "",
+    "Overlooks that sides parallel to an isometric axis are isometric lines. Two sides of this hexagon are parallel to an axis and are set off at the full 30 mm.",
+    "Takes the four sides at 60° to be along isometric axes because the axes look 60°/120° apart on paper. On the object those sides are not parallel to any axis."
+   ],
+   "key": "MEC103-U6-035"
+  },
+  {
+   "topic": "Non-Isometric Lines",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A ramp block has a rectangular base 80 mm long and 50 mm deep. It is 60 mm high at the front and 30 mm high at the back, and its top face slopes down from front to back. In the block's isometric PROJECTION, how is the sloping top edge of a side face drawn?",
+   "code": "",
+   "options": [
+    "Set off 60 mm up the front vertical edge and 30 mm up the back vertical edge, then join the two points",
+    "Reduce its true length √(50² + 30²) = 58.3 mm to 58.3 × 0.816 = 47.6 mm and set that off along the slope",
+    "Set off 49.0 mm up the front vertical edge and 24.5 mm up the back vertical edge, then join the two points",
+    "Draw it from the top of the front edge at its true slope angle of 31°, measured with a protractor"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The sloping edge is a non-isometric line, so it is never measured. Its two ends are located on isometric lines and then joined. The vertical edges are isometric lines, and in a projection they are reduced by the isometric scale: 60 × 0.816 = 49.0 mm and 30 × 0.816 = 24.5 mm. Joining the two points gives the sloping edge at whatever length and angle the projection produces.",
+   "why_wrong": [
+    "Uses true lengths, which is right only for an isometric VIEW. In a projection the vertical edges must be reduced to 0.816 of their true length.",
+    "Applies the isometric scale to a non-isometric line. The factor 0.816 holds only for lines parallel to the isometric axes, so a sloping edge cannot be scaled and set off.",
+    "",
+    "Angles do not appear in true size in isometric, so the 31° slope cannot be laid off with a protractor."
+   ],
+   "key": "MEC103-U6-036"
+  },
+  {
+   "topic": "Non-Isometric Lines",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A triangular rib has legs of 40 mm and 30 mm and a 50 mm hypotenuse. In an isometric VIEW, its 40 mm leg PQ is drawn from P along the axis rising at 30° to the right, and its 30 mm leg PR is drawn vertically upward from P. How long is the hypotenuse RQ on the paper?",
+   "code": "",
+   "options": [
+    "50.0 mm",
+    "40.8 mm",
+    "61.2 mm",
+    "36.1 mm"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "RQ is a non-isometric line, so its drawn length has to be found from its end points. Q is 40 cos 30° = 34.6 mm to the right of P and 40 sin 30° = 20 mm above it, while R is 30 mm above P. RQ therefore spans 34.6 mm across and 30 − 20 = 10 mm down, so RQ = √(34.6² + 10²) = √(1200 + 100) = √1300 = 36.1 mm, not the true 50 mm.",
+   "why_wrong": [
+    "Assumes the hypotenuse keeps its true length. In a view, only isometric lines are drawn at their true length.",
+    "Multiplies 50 by 0.816. The isometric scale applies only to lines parallel to the axes, and only in a projection. It never gives a sloping line's length.",
+    "Enlarges 50 by 1.22 as if the view were a scaled-up copy of the true shape. The rib is distorted, not uniformly enlarged.",
+    ""
+   ],
+   "key": "MEC103-U6-037"
+  },
+  {
+   "topic": "Non-Isometric Lines",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "On the top face of a cube, a diagonal runs from the front corner to the back corner, making 45° with each edge. In the isometric view, what angle does this diagonal make on the paper with the front-right top edge?",
+   "code": "",
+   "options": [
+    "60°",
+    "45°",
+    "30°",
+    "90°"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The top face becomes a rhombus whose front and back corners are its 120° corners, one directly above the other, so the front-to-back diagonal is drawn vertical. The front-right edge rises at 30° to the horizontal, so the angle between them is 90° − 30° = 60°. The true 45° is not kept, because the diagonal is a non-isometric line and angles are not shown in true size in isometric.",
+   "why_wrong": [
+    "",
+    "Assumes the true 45° is preserved. Angles do not appear in true size in isometric.",
+    "Treats the rhombus's front corner as a 60° corner and halves it. The front corner is a 120° corner, and its bisector makes 60° with each edge.",
+    "Draws the front-right edge horizontal, as in an orthographic top view. In isometric it rises at 30°, so its angle with the vertical diagonal is 60°."
+   ],
+   "key": "MEC103-U6-038"
+  },
+  {
+   "topic": "Isometric Circles",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A roller 50 mm in diameter and 90 mm long lies with its axis along one of the 30° isometric axes. In its isometric PROJECTION, what is the major axis of each end ellipse, and how far apart are the centres of the two end ellipses?",
+   "code": "",
+   "options": [
+    "40.8 mm; 73.5 mm",
+    "50 mm; 90 mm",
+    "50 mm; 73.5 mm",
+    "61.2 mm; 90 mm"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The end faces are circles on isometric planes. In an isometric projection an ellipse's major axis equals the true diameter, so each is 50 mm; the minor axis is 0.577 × 50 = 28.9 mm and lies along the roller's own axis. The 90 mm length runs along an isometric axis, so it is reduced by the isometric scale: 90 × 0.8165 ≈ 73.5 mm between centres.",
+   "why_wrong": [
+    "Reduces the major axis by 0.816. In a projection the major axis already equals the true diameter.",
+    "Leaves the 90 mm length unreduced. In a projection every length along an isometric axis is multiplied by 0.816.",
+    "",
+    "These are the isometric VIEW values (major 1.22 × 50, true length 90 mm). The question asks for the projection."
+   ],
+   "key": "MEC103-U6-039"
+  },
+  {
+   "topic": "Isometric Circles",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student uses the four-centre method to draw the ellipse for a hole on a top face, inside rhombus ABCD. A and C are the 60° corners and B and D are the 120° corners. He strikes the two large arcs from A and C, and the curve spills outside the rhombus. Where should the centres of the two large arcs be?",
+   "code": "",
+   "options": [
+    "At A and C, but with a smaller radius",
+    "At B and D, the 120° corners, with the radius reaching the midpoints of the opposite sides",
+    "At the two points where the lines from B and D to the midpoints of the opposite sides cross",
+    "At the centre of the rhombus, with a radius of half its side"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "In the four-centre method, a line is drawn from each 120° corner (B and D) to the midpoints of the two sides opposite it. B and D are themselves the centres of the two large arcs, which run between those midpoints. The two points where the lines cross are the centres of the two small arcs. All four arcs meet at the midpoints of the sides, so the ellipse touches the rhombus there and never crosses it.",
+   "why_wrong": [
+    "The 60° corners are not arc centres at any radius. The sharp ends of the ellipse point toward them and are drawn by the small arcs.",
+    "",
+    "Those crossing points are the centres of the two SMALL arcs, not the large ones.",
+    "A single centre gives a circle, and a circle on an isometric face is always drawn as an ellipse. The four-centre method needs four centres."
+   ],
+   "key": "MEC103-U6-040"
+  },
+  {
+   "topic": "Isometric Circles",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "The top face of a block is 80 mm long and 50 mm wide, and one end is rounded to a semicircle of 25 mm radius. In an isometric VIEW, how is that rounded end drawn?",
+   "code": "",
+   "options": [
+    "As a semicircle of 25 mm radius, drawn with a compass",
+    "As a semicircle of 25 × 0.816 = 20.4 mm radius",
+    "As half of an ellipse whose 50 mm major axis is laid along the isometric axis parallel to the block's width",
+    "As half of the ellipse a 50 mm circle would give (four-centre method), drawn in a half-rhombus 50 mm × 25 mm set off along the two isometric axes"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A semicircle on an isometric plane becomes half of an ellipse, in the same way that a full circle becomes an ellipse. Its enclosing half-square, 50 mm × 25 mm, becomes a half-rhombus set off at true length along the axes in a view, and the four-centre arcs are drawn inside it. The ellipse's major axis is then about 1.22 × 50 = 61 mm and lies across the rhombus, not along an isometric axis.",
+   "why_wrong": [
+    "A circular arc on an isometric face does not stay circular. It becomes part of an ellipse.",
+    "Still draws a circular arc, and also applies the isometric scale, which belongs only to a projection. The arc must be elliptical.",
+    "Places the major axis along an isometric axis at the true diameter. The 50 mm width does lie along the axis, but the major axis lies across the rhombus and is about 61 mm in a view.",
+    ""
+   ],
+   "key": "MEC103-U6-041"
+  },
+  {
+   "topic": "Isometric Circles",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A 40 mm hole on the top face of a block is drawn in an isometric VIEW (isometric drawing). Which statement about its ellipse is correct?",
+   "code": "",
+   "options": [
+    "Its major axis is 40 mm, equal to the true diameter",
+    "Its diameter drawn parallel to either edge direction of the face is 40 mm, because it touches a 40 mm rhombus at the midpoints of the sides",
+    "Its minor axis is 0.577 × 40 = 23.1 mm",
+    "It is drawn inside a rhombus of 0.816 × 40 = 32.6 mm side"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "In a view, the 40 mm square around the hole becomes a rhombus of 40 mm side, set off at true length, and the ellipse touches it at the midpoints of its sides. The chord through the centre parallel to an isometric axis joins two of those midpoints, so it is 40 mm long. The ellipse's own axes are enlarged: the major axis is about 1.225 × 40 = 49 mm and the minor axis about 0.707 × 40 = 28.3 mm.",
+   "why_wrong": [
+    "True for an isometric PROJECTION. In a view every length is 1.22 times larger, so the major axis is about 49 mm.",
+    "",
+    "0.577D is the minor axis in a PROJECTION. In a view it becomes about 0.707 × 40 = 28.3 mm.",
+    "The 0.816 reduction belongs to an isometric projection. A view uses true lengths, so the rhombus side is 40 mm."
+   ],
+   "key": "MEC103-U6-042"
+  },
+  {
+   "topic": "Isometric Circles",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "On an isometric VIEW (a true-length isometric drawing), the ellipse of a hole on an isometric face has a minor axis measuring 42.4 mm. What is the diameter of the hole?",
+   "code": "",
+   "options": [
+    "73.5 mm",
+    "52.0 mm",
+    "60 mm",
+    "42.4 mm"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "In a projection the minor axis is 0.577D. A view is 1.225 times larger, so there the minor axis is 1.225 × 0.577D ≈ 0.707D. Hence D = 42.4 ÷ 0.707 = 60 mm; as a check, the major axis of this ellipse is 1.225 × 60 = 73.5 mm.",
+   "why_wrong": [
+    "Divides by 0.577, the minor-axis ratio for a PROJECTION. In a view the ratio is about 0.707, and 73.5 mm is actually this ellipse's major axis.",
+    "Divides by 0.816 as if the minor axis were an isometric line. It is not an isometric line, and a view needs no isometric-scale correction.",
+    "",
+    "Takes the minor axis as the true diameter. A circle on an isometric face is shortened along the normal axis, so its minor axis is less than D."
+   ],
+   "key": "MEC103-U6-043"
+  },
+  {
+   "topic": "Pictorial Projection Types",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A pump cover has many circular holes and bosses on its front face and little detail anywhere else. The draughtsman wants a pictorial in which those circles can be drawn as true circles with a compass. Which pictorial should he choose?",
+   "code": "",
+   "options": [
+    "Isometric projection",
+    "Isometric drawing (isometric view)",
+    "Dimetric projection",
+    "Oblique projection, with the front face parallel to the plane of projection"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "In oblique projection (cavalier or cabinet), the face parallel to the plane of projection is shown in true shape. Its circles stay circles, and only the receding axis is drawn at an angle. Isometric and the other axonometric projections show no face in true shape, so every circle on a face becomes an ellipse.",
+   "why_wrong": [
+    "In isometric projection a circle on any face becomes an ellipse, with major axis D and minor axis 0.577D.",
+    "An isometric drawing is the projection enlarged 1.22 times, so its circles are still ellipses.",
+    "Dimetric is also axonometric. The object is tilted to the plane, so no face stays in true shape and circles still become ellipses.",
+    ""
+   ],
+   "key": "MEC103-U6-044"
+  },
+  {
+   "topic": "Pictorial Projection Types",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "You are handed a pictorial of a 60 mm cube. Its three edge directions on the paper are 120° apart, one vertical and two at 30° to the horizontal, and every edge measures 60 mm. What kind of pictorial is it?",
+   "code": "",
+   "options": [
+    "An isometric drawing (isometric view)",
+    "An isometric projection",
+    "A cavalier oblique projection",
+    "A cabinet oblique projection"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Axes 120° apart, one vertical and two at 30°, mark the pictorial as isometric. Every edge measures the full 60 mm, so it was drawn with true lengths, which makes it an isometric drawing. An isometric projection would show edges of 60 × 0.816 ≈ 49 mm.",
+   "why_wrong": [
+    "",
+    "An isometric projection uses the isometric scale, so its edges would measure 49 mm, not 60 mm.",
+    "Cavalier also keeps the full depth, but its front face is a true square with a 90° corner, which a 120° layout does not have.",
+    "Cabinet halves the depth, so its receding edges would be 30 mm, and its front face would be a true square."
+   ],
+   "key": "MEC103-U6-045"
+  },
+  {
+   "topic": "Pictorial Projection Types",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student draws the same 80 mm cube twice, once in cabinet oblique projection and once as an isometric projection. What length does he set off for a receding (depth) edge in each?",
+   "code": "",
+   "options": [
+    "Cabinet 80 mm; isometric projection 65.3 mm",
+    "Cabinet 40 mm; isometric projection 80 mm",
+    "Cabinet 40 mm; isometric projection 65.3 mm",
+    "Cabinet 56.6 mm; isometric projection 65.3 mm"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Cabinet oblique draws receding lines at half their true length: 80 ÷ 2 = 40 mm. An isometric projection reduces every edge along an isometric axis, depth included, by the isometric scale: 80 × 0.816 = 65.3 mm.",
+   "why_wrong": [
+    "80 mm is the full depth used in CAVALIER oblique. Cabinet halves it.",
+    "80 mm is the length in an isometric VIEW. An isometric projection uses the isometric scale.",
+    "",
+    "Multiplies the depth by 0.707 because the receding axis is often drawn at 45°. Cabinet depth is simply half the true length."
+   ],
+   "key": "MEC103-U6-046"
+  },
+  {
+   "topic": "Pictorial Projection Types",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "In a pictorial of a cube, the front face is a true square with a 90° corner and full-length edges. The depth edges recede at an angle and are drawn at half their true length. So two of the three directions share one scale and the third uses another. Which projection is this?",
+   "code": "",
+   "options": [
+    "Dimetric projection",
+    "Cabinet oblique projection",
+    "Cavalier oblique projection",
+    "Isometric projection"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Only oblique projection can show a face in true shape, with its edges at 90° and full length. In every axonometric projection (isometric, dimetric, trimetric) the object is tilted and no face keeps its true shape. Among the oblique projections, halving the receding depth is what defines cabinet; cavalier keeps the depth at full length.",
+   "why_wrong": [
+    "Two equal scales fits dimetric's foreshortening, but dimetric is axonometric and cannot show a true square face with a 90° corner.",
+    "",
+    "Cavalier is oblique too, but it draws the receding edges at full length, not half.",
+    "Isometric foreshortens all three axes equally and shows each face of a cube as a rhombus, never as a true square."
+   ],
+   "key": "MEC103-U6-047"
+  },
+  {
+   "topic": "Pictorial Projection Types",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which pictorial sets off all three principal dimensions of a rectangular block with one and the same scale, yet shows none of the block's faces in true shape?",
+   "code": "",
+   "options": [
+    "Cavalier oblique projection",
+    "Cabinet oblique projection",
+    "Dimetric projection",
+    "Isometric projection"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Isometric is the axonometric case in which all three axes are equally inclined and therefore equally foreshortened. One scale (the isometric scale, or true length in an isometric drawing) serves all three directions, and every face appears distorted, a square becoming a rhombus. Cavalier also uses one scale for all three directions, but its front face is in true shape. Cabinet and dimetric each need two different scales.",
+   "why_wrong": [
+    "Cavalier does use one scale for all three directions, but it draws its front face in true shape, so it fails the second condition.",
+    "Cabinet shows the front face in true shape and halves the depth, so it fails both conditions.",
+    "Dimetric shows no face in true shape, but only two of its axes share a scale. The third is foreshortened differently.",
+    ""
+   ],
+   "key": "MEC103-U6-048"
+  }
+ ]
+}

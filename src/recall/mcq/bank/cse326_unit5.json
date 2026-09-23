@@ -1,0 +1,1065 @@
+{
+ "subject_code": "CSE326",
+ "unit": 5,
+ "unit_label": "Interactive Web Development",
+ "questions": [
+  {
+   "topic": "Loops and Higher-Order Functions",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below log?",
+   "code": "let i = 5;\ndo {\n  console.log(i);\n  i++;\n} while (i < 5);",
+   "options": [
+    "It logs 5 once",
+    "It logs nothing",
+    "It logs 0 1 2 3 4",
+    "It loops forever"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A do...while loop runs its body first and checks the condition afterwards, so the body always runs at least once. It logs 5, i becomes 6, then 6 < 5 is false and the loop stops.",
+   "why_wrong": [
+    "",
+    "That is what a plain while (i < 5) loop would do, because it checks the condition before the first run; do...while checks after the body.",
+    "The counter starts at 5, not 0, and nothing in the loop resets it.",
+    "i++ raises i to 6, so the condition i < 5 is false at the first check and the loop ends."
+   ],
+   "key": "CSE326-U5-001"
+  },
+  {
+   "topic": "Loops and Higher-Order Functions",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below log?",
+   "code": "const nums = [1, 2, 3, 4];\nconst evens = nums.filter(n => n % 2 === 0);\nconsole.log(evens);",
+   "options": [
+    "[2, 4]",
+    "[1, 3]",
+    "[false, true, false, true]",
+    "2"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "filter() calls the callback once per element and builds a NEW array of only the elements for which the callback returned true. n % 2 === 0 is true for 2 and 4, so evens is [2, 4], and nums itself is unchanged.",
+   "why_wrong": [
+    "",
+    "Reverses the rule: filter keeps the elements whose callback returns true, and 1 and 3 give false.",
+    "That is what map() would return: the callback's result for every element, not the elements that passed.",
+    "That is what find() would return: only the first matching element, not an array."
+   ],
+   "key": "CSE326-U5-002"
+  },
+  {
+   "topic": "DOM Manipulation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does document.getElementById(\"title\") return?",
+   "code": "",
+   "options": [
+    "The one element whose id is \"title\", or null if there is none",
+    "An HTMLCollection of every element whose id is \"title\"",
+    "A NodeList containing the matching element",
+    "An array holding the matching element"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "An id is meant to be unique in a page, so getElementById returns a single Element object directly, not a collection. If no element has that id it returns null, which is why code often checks the result before using it.",
+   "why_wrong": [
+    "",
+    "getElementById is singular (Element, not Elements); HTMLCollections come from methods such as getElementsByClassName.",
+    "NodeLists come from querySelectorAll; getElementById hands back the element itself.",
+    "No DOM selection method returns a real array; getElementById returns one Element or null."
+   ],
+   "key": "CSE326-U5-003"
+  },
+  {
+   "topic": "DOM Manipulation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which call creates a brand-new <li> element that can later be added to the page?",
+   "code": "",
+   "options": [
+    "document.createElement(\"li\")",
+    "document.createTextNode(\"li\")",
+    "document.querySelector(\"li\")",
+    "document.getElementById(\"li\")"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "document.createElement(\"li\") builds a new, empty <li> element in memory. It does not appear on the page until you insert it, for example with list.append(li) or list.appendChild(li).",
+   "why_wrong": [
+    "",
+    "createTextNode makes a text node whose text is the two letters \"li\", not an element.",
+    "querySelector only finds an <li> that already exists in the page; it creates nothing.",
+    "getElementById looks up an existing element with id=\"li\"; it does not create one."
+   ],
+   "key": "CSE326-U5-004"
+  },
+  {
+   "topic": "DOM Manipulation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the paragraph show after the code below runs?",
+   "code": "<p id=\"msg\"></p>\n<script>\n  document.getElementById(\"msg\").textContent = \"<b>Hi</b>\";\n</script>",
+   "options": [
+    "The characters <b>Hi</b> exactly as written",
+    "The word Hi in bold",
+    "The word Hi in normal weight",
+    "Nothing; the paragraph stays empty"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "textContent sets plain text: the string is inserted as text and never parsed as HTML, so the tags appear literally on the page. That is why textContent is the safe default for user-supplied text, while innerHTML would parse the markup.",
+   "why_wrong": [
+    "",
+    "That is what innerHTML would do, because innerHTML parses the string as HTML.",
+    "textContent does not strip tags; it shows them as literal characters.",
+    "Assigning to textContent replaces the element's content, so the text does appear."
+   ],
+   "key": "CSE326-U5-005"
+  },
+  {
+   "topic": "Event Handling",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which call, placed inside a form's submit handler, stops the browser from submitting the form?",
+   "code": "",
+   "options": [
+    "event.preventDefault()",
+    "event.stopPropagation()",
+    "event.stopImmediatePropagation()",
+    "form.reset()"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Submitting the form is the browser's default action for the submit event, and preventDefault() cancels that default action. It is the usual first line of a JavaScript validation handler, so the fields can be checked before anything is sent.",
+   "why_wrong": [
+    "",
+    "stopPropagation() only stops the event travelling up to ancestor elements; the form still submits.",
+    "stopImmediatePropagation() also skips other listeners on the same element, but it still does not cancel the default action.",
+    "reset() clears the fields back to their initial values; it does not cancel the submission."
+   ],
+   "key": "CSE326-U5-006"
+  },
+  {
+   "topic": "Event Handling",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Inside a click listener, what does event.target refer to?",
+   "code": "",
+   "options": [
+    "The element the click actually happened on, such as the exact button clicked",
+    "The element the listener was attached to",
+    "The document object",
+    "The parent of the clicked element"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "event.target is the element where the event started: the innermost element that was clicked. It stays the same while the event bubbles up through ancestors, which is what lets one parent listener inspect event.target in event delegation.",
+   "why_wrong": [
+    "",
+    "That is event.currentTarget, which differs from target whenever the listener sits on an ancestor.",
+    "document is the target only for events dispatched on document itself, not for a click on a page element.",
+    "target is the clicked element itself; its parent only sees the event as it bubbles."
+   ],
+   "key": "CSE326-U5-007"
+  },
+  {
+   "topic": "Event Handling",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which options object, passed as the third argument to addEventListener, makes the handler run only the first time the event fires?",
+   "code": "",
+   "options": [
+    "{ once: true }",
+    "{ capture: true }",
+    "{ passive: true }",
+    "{ signal: controller.signal }"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "With { once: true } the browser removes the listener automatically right after its first run. For example, btn.addEventListener(\"click\", handler, { once: true }) handles only the first click.",
+   "why_wrong": [
+    "",
+    "capture: true makes the listener run during the capturing phase; it still runs on every event.",
+    "passive: true promises the handler will not call preventDefault(); it does not limit how often it runs.",
+    "signal removes the listener only when controller.abort() is called, not automatically after the first run."
+   ],
+   "key": "CSE326-U5-008"
+  },
+  {
+   "topic": "Validation, Regex and Dates",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below log?",
+   "code": "const pin = /^[0-9]{6}$/;\nconsole.log(pin.test(\"14441\"));",
+   "options": [
+    "false",
+    "true",
+    "\"14441\"",
+    "null"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The pattern needs exactly six digits from the start (^) to the end ($) of the string, and \"14441\" has only five, so the match fails. test() always returns a boolean, so it logs false.",
+   "why_wrong": [
+    "",
+    "{6} demands exactly six digits and the anchors stop a shorter string from passing; five digits is not enough.",
+    "test() returns true or false, never the matched string.",
+    "null is what match() or exec() return when nothing matches; test() returns false instead."
+   ],
+   "key": "CSE326-U5-009"
+  },
+  {
+   "topic": "Validation, Regex and Dates",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which call creates a Date for 15 August 2026?",
+   "code": "",
+   "options": [
+    "new Date(2026, 7, 15)",
+    "new Date(2026, 8, 15)",
+    "new Date(2026, 15, 8)",
+    "new Date(15, 8, 2026)"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The Date constructor takes (year, monthIndex, day), and monthIndex starts at 0 for January. August is the eighth month, so its index is 8 − 1 = 7.",
+   "why_wrong": [
+    "",
+    "Treats months as one-indexed; index 8 is September, so this gives 15 September 2026.",
+    "Swaps day and month; the second argument is always the month index.",
+    "Uses day-month-year order; the first argument must be the year."
+   ],
+   "key": "CSE326-U5-010"
+  },
+  {
+   "topic": "Validation, Regex and Dates",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "For a Date that falls on a Sunday, what does getDay() return?",
+   "code": "",
+   "options": [
+    "0",
+    "1",
+    "7",
+    "6"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "getDay() returns the day of the week as a number from 0 to 6, starting with 0 for Sunday, then 1 for Monday, up to 6 for Saturday. Do not confuse it with getDate(), which returns the day of the month (1-31).",
+   "why_wrong": [
+    "",
+    "Counts Sunday as day 1; in getDay() 1 means Monday.",
+    "7 is Sunday in Monday-first (ISO) numbering; getDay() never returns 7.",
+    "Counts from Monday = 0, which makes Sunday 6; in getDay() 6 is Saturday."
+   ],
+   "key": "CSE326-U5-011"
+  },
+  {
+   "topic": "Storage and Browser APIs",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below log?",
+   "code": "localStorage.setItem(\"count\", 5);\nconst value = localStorage.getItem(\"count\");\nconsole.log(typeof value);",
+   "options": [
+    "\"string\"",
+    "\"number\"",
+    "\"object\"",
+    "\"undefined\""
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Web Storage keeps every value as a string, so setItem converts 5 to \"5\" and getItem hands back \"5\". To get a number back you convert it yourself, for example with Number(value).",
+   "why_wrong": [
+    "",
+    "localStorage does not keep numbers as numbers; the 5 was converted to a string when it was stored.",
+    "getItem returns the stored string itself; typeof would say \"object\" only if the key were missing and getItem returned null.",
+    "The key exists, so getItem returns its value; setItem accepted the number by converting it to a string."
+   ],
+   "key": "CSE326-U5-012"
+  },
+  {
+   "topic": "Storage and Browser APIs",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below log?",
+   "code": "const student = { name: \"Asha\", age: 19 };\nconsole.log(JSON.stringify(student));",
+   "options": [
+    "{\"name\":\"Asha\",\"age\":19}",
+    "{name: \"Asha\", age: 19}",
+    "{\"name\":\"Asha\",\"age\":\"19\"}",
+    "[object Object]"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "JSON.stringify turns a JavaScript value into a JSON string. JSON puts every key in double quotes, keeps numbers as numbers, and adds no spaces by default, giving {\"name\":\"Asha\",\"age\":19}.",
+   "why_wrong": [
+    "",
+    "Unquoted keys are JavaScript object-literal syntax; JSON requires keys in double quotes.",
+    "Numbers stay numbers in JSON; stringify does not wrap 19 in quotes.",
+    "That is what you get when an object is converted with String() or joined to a string, not with JSON.stringify."
+   ],
+   "key": "CSE326-U5-013"
+  },
+  {
+   "topic": "Storage and Browser APIs",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does a call to fetch(\"/data.json\") return?",
+   "code": "",
+   "options": [
+    "A Promise that later fulfils with a Response object",
+    "The parsed JSON data from the file",
+    "The body of the file as a string",
+    "A Response object, returned straight away"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "fetch() is asynchronous: it immediately returns a Promise, which fulfils with a Response once the server answers. Reading the body is a second step, such as response.json(), which itself returns another Promise.",
+   "why_wrong": [
+    "",
+    "Parsing happens only when you call response.json(), and that returns yet another Promise.",
+    "The body text comes from response.text(), which is also a Promise; fetch itself does not return it.",
+    "The network request takes time, so fetch cannot return the Response synchronously; it wraps it in a Promise."
+   ],
+   "key": "CSE326-U5-014"
+  },
+  {
+   "topic": "Loops and Higher-Order Functions",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below log?",
+   "code": "const nums = [3, 5, 2];\nconst total = nums.reduce((acc, n) => acc + n * 2, 1);\nconsole.log(total);",
+   "options": [
+    "21",
+    "20",
+    "11",
+    "10"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "reduce starts the accumulator at the initial value 1, then adds n * 2 for each element: 1 + 6 = 7, 7 + 10 = 17, 17 + 4 = 21. The final accumulator, 21, is what reduce returns.",
+   "why_wrong": [
+    "",
+    "Starts the accumulator at 0 instead of the given initial value 1 (0 + 6 + 10 + 4 = 20).",
+    "Forgets the doubling and just adds the elements to 1 (1 + 3 + 5 + 2 = 11).",
+    "Ignores both the initial value and the doubling, giving the plain sum 3 + 5 + 2 = 10."
+   ],
+   "key": "CSE326-U5-015"
+  },
+  {
+   "topic": "Loops and Higher-Order Functions",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below log?",
+   "code": "const result = [1, 2, 3].forEach(n => n * 2);\nconsole.log(result);",
+   "options": [
+    "undefined",
+    "[2, 4, 6]",
+    "[1, 2, 3]",
+    "6"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "forEach runs the callback for each element but always returns undefined; the callback's return values are thrown away. To collect the doubled values into a new array you would use map instead.",
+   "why_wrong": [
+    "",
+    "That is what map() returns; forEach discards the callback's results.",
+    "forEach does not hand back the original array either; its return value is always undefined.",
+    "6 is the last callback result (3 * 2), but forEach returns no callback result at all."
+   ],
+   "key": "CSE326-U5-016"
+  },
+  {
+   "topic": "DOM Manipulation",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What happens when the code below runs?",
+   "code": "<ul>\n  <li>A</li>\n  <li>B</li>\n</ul>\n<script>\n  const items = document.querySelectorAll(\"li\");\n  const texts = items.map(li => li.textContent);\n  console.log(texts);\n</script>",
+   "options": [
+    "TypeError: items.map is not a function",
+    "[\"A\", \"B\"]",
+    "undefined",
+    "[]"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "querySelectorAll returns a static NodeList, not an array. A NodeList has forEach and length but no map method, so calling items.map throws a TypeError. Converting first with Array.from(items) or [...items] makes map work and gives [\"A\", \"B\"].",
+   "why_wrong": [
+    "",
+    "This would be right only after converting the NodeList to an array with Array.from or the spread operator.",
+    "A missing method is not skipped silently; calling undefined as a function throws an error.",
+    "The script runs after the <ul> is parsed, so both <li> elements are found; the problem is the missing map method."
+   ],
+   "key": "CSE326-U5-017"
+  },
+  {
+   "topic": "DOM Manipulation",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these returns a LIVE collection that updates by itself when matching elements are added to or removed from the page?",
+   "code": "",
+   "options": [
+    "document.getElementsByClassName(\"item\")",
+    "document.querySelectorAll(\".item\")",
+    "Array.from(document.querySelectorAll(\".item\"))",
+    "document.querySelector(\".item\")"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "getElementsByClassName returns a live HTMLCollection that always reflects the current DOM, so its length changes as matching elements come and go. querySelectorAll instead takes a static snapshot at the moment it is called. Liveness is why removing items inside an index-based loop over a live collection can skip elements.",
+   "why_wrong": [
+    "",
+    "querySelectorAll returns a static NodeList, a snapshot that does not change after the call.",
+    "Array.from copies that snapshot into a plain array, which is also static.",
+    "querySelector returns a single element (or null), not a collection at all."
+   ],
+   "key": "CSE326-U5-018"
+  },
+  {
+   "topic": "Event Handling",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The user clicks the link in the code below. What happens?",
+   "code": "<div id=\"box\">\n  <a href=\"https://example.com\" id=\"link\">Visit</a>\n</div>\n<script>\n  document.getElementById(\"box\").addEventListener(\"click\", () => {\n    console.log(\"box\");\n  });\n  document.getElementById(\"link\").addEventListener(\"click\", (e) => {\n    e.preventDefault();\n    console.log(\"link\");\n  });\n</script>",
+   "options": [
+    "\"link\" then \"box\" are logged, and the page does not navigate",
+    "Only \"link\" is logged, and the page does not navigate",
+    "\"link\" then \"box\" are logged, and the browser goes to example.com",
+    "\"box\" then \"link\" are logged, and the page does not navigate"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "preventDefault() cancels only the browser's default action, here following the link, so no navigation happens. It does not stop propagation, so the click still bubbles from the <a> up to the <div> and \"box\" is logged after \"link\". Stopping the bubbling would need a separate stopPropagation() call.",
+   "why_wrong": [
+    "",
+    "Assumes preventDefault() also stops propagation; only stopPropagation() would keep \"box\" from logging.",
+    "preventDefault() was called during the click, so the link's default navigation is cancelled.",
+    "Both are ordinary bubbling listeners, so the target (the link) runs first and its ancestor runs after."
+   ],
+   "key": "CSE326-U5-019"
+  },
+  {
+   "topic": "Event Handling",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these events bubbles, so one listener on a parent <form> can handle it for every input inside (event delegation)?",
+   "code": "",
+   "options": [
+    "focusin",
+    "focus",
+    "blur",
+    "mouseenter"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "focus, blur and mouseenter do not bubble, so a listener on an ancestor never receives them on the way up. focusin (and focusout) are the bubbling versions of focus and blur, which makes them the right choice for delegation.",
+   "why_wrong": [
+    "",
+    "focus does not bubble; its bubbling counterpart is focusin.",
+    "blur does not bubble; its bubbling counterpart is focusout.",
+    "mouseenter does not bubble; its bubbling counterpart is mouseover."
+   ],
+   "key": "CSE326-U5-020"
+  },
+  {
+   "topic": "Validation, Regex and Dates",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For the pattern in the code below, which value makes phone.test(value) return true?",
+   "code": "const phone = /^\\d{10}$/;",
+   "options": [
+    "\"9876543210\"",
+    "\"98765 43210\"",
+    "\"+919876543210\"",
+    "\"987654321\""
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "^ and $ anchor the match to the whole string, and \\d{10} demands exactly ten digit characters. Only \"9876543210\" is ten digits with nothing else before, between or after them.",
+   "why_wrong": [
+    "",
+    "The space is not a digit, and the anchors do not allow any extra character.",
+    "The + sign is not a digit, and with the country code the string has 12 digits.",
+    "Only nine digits; {10} needs exactly ten."
+   ],
+   "key": "CSE326-U5-021"
+  },
+  {
+   "topic": "Validation, Regex and Dates",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below log?",
+   "code": "const d = new Date(2026, 0, 32);\nconsole.log(d.getMonth(), d.getDate());",
+   "options": [
+    "1 1",
+    "0 32",
+    "2 1",
+    "NaN NaN"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "January has 31 days, so day 32 of January rolls over to 1 February 2026; Date adjusts out-of-range values instead of rejecting them. getMonth() is zero-indexed, so February gives 1, and getDate() gives the day of the month, 1.",
+   "why_wrong": [
+    "",
+    "Date does not keep an out-of-range day; it rolls it over into the next month.",
+    "Gets the rollover right but reads getMonth() as one-indexed; February is 1, not 2.",
+    "An out-of-range day does not make an invalid date; the value is rolled over, not rejected."
+   ],
+   "key": "CSE326-U5-022"
+  },
+  {
+   "topic": "Storage and Browser APIs",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about the Web Storage API is NOT true?",
+   "code": "",
+   "options": [
+    "sessionStorage data is shared by every tab open on the same site",
+    "localStorage data is still there after the browser is closed and reopened",
+    "Every stored value is a string, so objects are saved with JSON.stringify",
+    "localStorage data is not sent to the server with each HTTP request"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "sessionStorage is scoped to a single tab: each tab has its own copy, and it is cleared when that tab is closed. The other three statements are true: localStorage persists until code or the user clears it, all values are strings, and unlike cookies, Web Storage is never attached to HTTP requests.",
+   "why_wrong": [
+    "",
+    "This is true: localStorage has no expiry and survives closing the browser.",
+    "This is true: setItem converts values to strings, so objects need JSON.stringify to save and JSON.parse to read back.",
+    "This is true: cookies travel with requests, but Web Storage stays in the browser."
+   ],
+   "key": "CSE326-U5-023"
+  },
+  {
+   "topic": "Storage and Browser APIs",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The server answers the request in the code below with status 404. What is logged?",
+   "code": "fetch(\"/data.json\")\n  .then(res => console.log(res.ok, res.status))\n  .catch(() => console.log(\"failed\"));",
+   "options": [
+    "false 404",
+    "failed",
+    "true 404",
+    "false 404, then failed"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A 404 is still a completed HTTP response, so the fetch Promise fulfils with a Response and the .then runs. res.ok is true only for statuses 200-299, so it is false here, and since nothing throws, the .catch is skipped. The Promise rejects only on network-level failures, such as no connection.",
+   "why_wrong": [
+    "",
+    "Assumes fetch rejects on HTTP error statuses; it rejects only when the request fails at the network level.",
+    "res.ok is true only for statuses 200-299, so a 404 gives false.",
+    "The .then did not throw, so the chain never reaches .catch."
+   ],
+   "key": "CSE326-U5-024"
+  },
+  {
+   "topic": "Loops and Higher-Order Functions",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A results page must show the names, in capitals, of students who scored 40 or more. Using the students array in the code below, which expression gives [\"ASHA\", \"MEENA\"]?",
+   "code": "const students = [\n  { name: \"asha\",  marks: 72 },\n  { name: \"ravi\",  marks: 38 },\n  { name: \"meena\", marks: 40 }\n];",
+   "options": [
+    "students.map(s => s.name.toUpperCase()).filter(s => s.marks >= 40)",
+    "students.filter(s => s.marks >= 40).map(s => s.name.toUpperCase())",
+    "students.forEach(s => s.marks >= 40).map(s => s.name.toUpperCase())",
+    "students.filter(s => { s.marks >= 40 }).map(s => s.name.toUpperCase())"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "filter keeps the objects whose callback returns true (asha with 72, and meena, since 40 >= 40), and map then turns each kept object into its upper-case name. The order matters: after map runs, the elements are plain strings with no marks property. An arrow body in braces must say return, or the callback returns undefined.",
+   "why_wrong": [
+    "map runs first and produces strings. A string has no marks property, so s.marks >= 40 becomes undefined >= 40, which is false, and the result is [].",
+    "",
+    "forEach always returns undefined, so calling .map on its result throws a TypeError.",
+    "The arrow body is in braces with no return, so every callback returns undefined (falsy). filter keeps nothing and the result is []."
+   ],
+   "key": "CSE326-U5-025"
+  },
+  {
+   "topic": "Loops and Higher-Order Functions",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below log?",
+   "code": "let out = \"\";\nfor (let i = 1; i <= 10; i++) {\n  if (i % 2 === 0) continue;\n  if (i > 7) break;\n  out += i;\n}\nconsole.log(out);",
+   "options": [
+    "1357",
+    "13579",
+    "135",
+    "246"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "continue skips the rest of the body for even i, so only odd values reach the second check. i = 1, 3, 5 and 7 are all ≤ 7, so they are appended, giving \"1357\". At i = 9 the test i > 7 is true, and break ends the whole loop before 9 is added.",
+   "why_wrong": [
+    "",
+    "Thinks break only leaves the if block and the loop carries on, so 9 is appended too.",
+    "Reads i > 7 as i ≥ 7, so the loop stops at 7 before appending it.",
+    "Reverses continue, as if it skipped the odd numbers: 2, 4 and 6 are appended, then 8 > 7 triggers the break."
+   ],
+   "key": "CSE326-U5-026"
+  },
+  {
+   "topic": "DOM Manipulation",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below log?",
+   "code": "<div id=\"card\" class=\"card active\"></div>\n<script>\n  const card = document.getElementById(\"card\");\n  card.classList.toggle(\"active\");\n  card.classList.toggle(\"hidden\");\n  card.classList.add(\"card\");\n  console.log(card.className);\n</script>",
+   "options": [
+    "card hidden",
+    "card active hidden",
+    "card hidden card",
+    "card"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "toggle removes a class that is present and adds one that is absent. \"active\" is present, so it is removed; \"hidden\" is absent, so it is added. classList.add never duplicates a class the element already has, so add(\"card\") changes nothing, and className is \"card hidden\".",
+   "why_wrong": [
+    "",
+    "Assumes toggle only ever adds, so active is kept.",
+    "Assumes add appends the class again even though the element already has it.",
+    "Assumes toggle only removes, so toggling the absent class hidden does nothing."
+   ],
+   "key": "CSE326-U5-027"
+  },
+  {
+   "topic": "DOM Manipulation",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "In a to-do app, the code below moves task X from the Pending list to the Done list. Because of a bug, the append line runs twice. What is logged?",
+   "code": "<ul id=\"pending\"><li id=\"x\">X</li></ul>\n<ul id=\"done\"></ul>\n<script>\n  const task = document.getElementById(\"x\");\n  const done = document.getElementById(\"done\");\n  done.append(task);\n  done.append(task);\n  console.log(document.getElementById(\"pending\").children.length, done.children.length);\n</script>",
+   "options": [
+    "0 1",
+    "1 2",
+    "0 2",
+    "1 1"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A DOM node can be in only one place at a time. Appending an element that is already on the page moves it; it does not copy it. The first append takes X out of #pending and puts it in #done. The second append just moves it to the same last spot in #done, so #pending has 0 children and #done has 1.",
+   "why_wrong": [
+    "",
+    "Thinks append copies the node, so X stays in #pending and two copies end up in #done.",
+    "Knows the first append moves X but thinks the second append adds another copy.",
+    "Thinks append copies the node once and then ignores the second call."
+   ],
+   "key": "CSE326-U5-028"
+  },
+  {
+   "topic": "Event Handling",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "The user clicks the word Delete in the code below. What is logged?",
+   "code": "<ul id=\"list\">\n  <li data-id=\"7\"><span>Delete</span></li>\n</ul>\n<script>\n  document.getElementById(\"list\").addEventListener(\"click\", (e) => {\n    const li = e.target.closest(\"li\");\n    console.log(e.target.tagName, e.currentTarget.id, li.dataset.id);\n  });\n</script>",
+   "options": [
+    "SPAN list 7",
+    "LI list 7",
+    "UL list 7",
+    "SPAN SPAN 7"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "event.target is the innermost element that was actually clicked, the <span>, and tagName is upper case for HTML elements. event.currentTarget is the element whose listener is running, the <ul id=\"list\">. closest(\"li\") climbs from the span to the nearest <li>, and its data-id attribute is read as dataset.id, which is \"7\".",
+   "why_wrong": [
+    "",
+    "Confuses event.target with the element found by closest(). The click landed on the span inside the li.",
+    "Confuses event.target with event.currentTarget, the element the listener is attached to.",
+    "Thinks currentTarget is also the clicked element. It is the element that owns the running listener, the ul."
+   ],
+   "key": "CSE326-U5-029"
+  },
+  {
+   "topic": "Event Handling",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student reports that \"Hello\" appears in the console as soon as the page loads, and clicking Greet afterwards does nothing. Which explanation fits the code below?",
+   "code": "<button id=\"greet\">Greet</button>\n<script>\n  function showMsg() {\n    console.log(\"Hello\");\n  }\n  document.getElementById(\"greet\").addEventListener(\"click\", showMsg());\n</script>",
+   "options": [
+    "showMsg() is called right away, and its return value (undefined) is what gets registered, so no function is attached to the click",
+    "addEventListener fires the event once when it is registered, and then the listener removes itself",
+    "The script runs before the button exists, so the listener is attached to null",
+    "A click listener only responds to mouse clicks when it is registered with the capture flag set to true"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Writing showMsg() with brackets calls the function immediately, which logs \"Hello\" while the page loads. addEventListener receives the result of that call, undefined, and silently registers nothing. Passing the function itself, addEventListener(\"click\", showMsg), hands the browser a callback to run later on every click.",
+   "why_wrong": [
+    "",
+    "Registering a listener never dispatches the event. The early \"Hello\" comes from the brackets calling the function.",
+    "The script comes after the button, so getElementById finds it. Calling addEventListener on null would throw a TypeError, not log Hello.",
+    "The capture flag only decides which phase a listener runs in. Ordinary bubbling listeners respond to clicks perfectly well."
+   ],
+   "key": "CSE326-U5-030"
+  },
+  {
+   "topic": "Event Handling",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A custom video player has a progress bar that must move steadily while the video plays, based on video.currentTime. Which media event should the update code listen for?",
+   "code": "",
+   "options": [
+    "timeupdate",
+    "progress",
+    "play",
+    "ended"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "timeupdate fires again and again while the playback position (currentTime) changes, so it is the natural hook for a progress bar. progress is about downloading: it reports that the browser is fetching more of the media file. play and ended each fire once, at the start and at the end of playback.",
+   "why_wrong": [
+    "",
+    "progress tracks how much of the file has been downloaded or buffered, not the playback position, and the two can be far apart.",
+    "play fires once when playback starts or resumes, so the bar would move only at that moment.",
+    "ended fires once when playback finishes, which is too late to show progress."
+   ],
+   "key": "CSE326-U5-031"
+  },
+  {
+   "topic": "Validation, Regex and Dates",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A delivery form checks a 6-digit Indian PIN code with pin.test(value). The check must accept \"144411\" and reject both \"1234567\" and \"LPU144411\". Which pattern does that?",
+   "code": "",
+   "options": [
+    "/\\d{6}/",
+    "/^\\d{6}$/",
+    "/^\\d{6}/",
+    "/\\d{6}$/"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Without anchors, test() returns true if the pattern matches ANYWHERE in the string. ^ pins the match to the start and $ pins it to the end, so /^\\d{6}$/ accepts only a string that is exactly six digits. \"144411\" passes, while \"1234567\" (seven digits) and \"LPU144411\" (letters first) both fail.",
+   "why_wrong": [
+    "No anchors, so it finds six digits inside both \"1234567\" and \"LPU144411\", and both wrongly pass.",
+    "",
+    "Anchored only at the start: \"1234567\" begins with six digits, so it wrongly passes.",
+    "Anchored only at the end: \"1234567\" and \"LPU144411\" both end with six digits, so both wrongly pass."
+   ],
+   "key": "CSE326-U5-032"
+  },
+  {
+   "topic": "Validation, Regex and Dates",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below log?",
+   "code": "const start = new Date(2026, 1, 1);\nconst end   = new Date(2026, 2, 1);\nconst days  = (end - start) / (1000 * 60 * 60 * 24);\nconsole.log(days);",
+   "options": [
+    "28",
+    "31",
+    "29",
+    "NaN"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Date months are zero-indexed, so month 1 is February and month 2 is March. Subtracting two Dates gives the gap in milliseconds, and dividing by 1000 · 60 · 60 · 24 = 86,400,000 turns it into days. 2026 is not a leap year, so 1 February to 1 March is 28 days.",
+   "why_wrong": [
+    "",
+    "Reads the months as one-indexed (1 = January, 2 = February), so it counts January's 31 days.",
+    "Treats 2026 as a leap year. 2026 is not divisible by 4, so February has 28 days.",
+    "Assumes Dates cannot be subtracted. The minus operator converts each Date to its millisecond timestamp."
+   ],
+   "key": "CSE326-U5-033"
+  },
+  {
+   "topic": "Storage and Browser APIs",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "The server answers the request in the code below with status 200 and the body {\"total\": 88}. What is logged, and why?",
+   "code": "fetch(\"/marks.json\")\n  .then((res) => {\n    const data = res.json();\n    console.log(data.total);\n  });",
+   "options": [
+    "88, because res.json() parses the body into an object",
+    "undefined, because res.json() returns a Promise, and a Promise has no total property",
+    "88, but only after a short delay, because console.log waits for the Promise to settle",
+    "A TypeError, because json() cannot be called until the body has finished downloading"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "fetch() resolves to a Response once the headers arrive. Reading the body is a second asynchronous step, so res.json() returns another Promise that later fulfils with the parsed object. Here data is that Promise, so data.total is undefined. The fix is to return res.json() and read total in the next .then (or use await res.json()).",
+   "why_wrong": [
+    "Treats res.json() as returning the parsed object directly. It returns a Promise for that object.",
+    "",
+    "Reading a property never waits for a Promise. data.total is read immediately, on the Promise object itself.",
+    "json() can be called as soon as the Response exists. It is exactly the method that waits for the body and parses it."
+   ],
+   "key": "CSE326-U5-034"
+  },
+  {
+   "topic": "Storage and Browser APIs",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "On a quiz site, clicking Start runs the code below in Tab 1. The user then (i) reloads Tab 1, and (ii) opens a new tab, types the same site address and loads the page. What does sessionStorage.getItem(\"attempt\") return in each?",
+   "code": "sessionStorage.setItem(\"attempt\", 1);",
+   "options": [
+    "Tab 1 after reload: \"1\"; new tab: null",
+    "Tab 1 after reload: null; new tab: null",
+    "Tab 1 after reload: \"1\"; new tab: \"1\"",
+    "Tab 1 after reload: 1 (a number); new tab: null"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "sessionStorage belongs to one tab: it survives reloads of that tab and is cleared when the tab closes. A tab opened fresh starts with its own empty sessionStorage, so getItem returns null there. Web Storage always stores strings, so the number 1 comes back as the string \"1\". Sharing between tabs of the same site is what localStorage does.",
+   "why_wrong": [
+    "",
+    "Thinks a reload ends the session. sessionStorage lasts until the tab is closed.",
+    "Treats sessionStorage like localStorage, which every tab of the same origin shares.",
+    "Web Storage turns every value into a string on setItem, so the number 1 comes back as \"1\"."
+   ],
+   "key": "CSE326-U5-035"
+  },
+  {
+   "topic": "Storage and Browser APIs",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "On an HTTPS page where the user has already allowed location access, the code below runs. What does the last line print?",
+   "code": "let lat = \"unknown\";\nnavigator.geolocation.getCurrentPosition((pos) => {\n  lat = pos.coords.latitude;\n});\nconsole.log(\"Latitude:\", lat);",
+   "options": [
+    "Latitude: unknown",
+    "Latitude: followed by the user's real latitude, because permission was already granted",
+    "Latitude: undefined, because lat is reset while the position is being looked up",
+    "A ReferenceError, because pos is not defined outside the callback"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "getCurrentPosition() is asynchronous: it starts the lookup, returns immediately, and calls the success callback later with a position object. The console.log line runs before that callback, while lat still holds \"unknown\". Code that needs pos.coords.latitude must go inside the callback.",
+   "why_wrong": [
+    "",
+    "Permission removes the prompt but not the wait. The callback still runs later, after console.log.",
+    "Nothing assigns undefined to lat. It keeps \"unknown\" until the callback runs.",
+    "The last line reads only lat, never pos, so nothing can throw."
+   ],
+   "key": "CSE326-U5-036"
+  },
+  {
+   "topic": "DOM Manipulation",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "The code below is meant to remove every finished task. Which items are still on the page after it runs?",
+   "code": "<ul>\n  <li class=\"done\">A</li>\n  <li class=\"done\">B</li>\n  <li class=\"done\">C</li>\n  <li class=\"done\">D</li>\n</ul>\n<script>\n  const items = document.getElementsByClassName(\"done\");\n  for (let i = 0; i < items.length; i++) {\n    items[i].remove();\n  }\n</script>",
+   "options": [
+    "None; all four are removed",
+    "B and D",
+    "C and D",
+    "A and C"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "getElementsByClassName returns a LIVE HTMLCollection, which shrinks the moment an item leaves the page. i = 0 removes A, and the collection becomes [B, C, D]. i = 1 then removes C, leaving [B, D]. Now i = 2 is not less than the length 2, so the loop stops. Looping backwards, or using the static NodeList from querySelectorAll, would remove all four.",
+   "why_wrong": [
+    "Treats the collection as a fixed snapshot. That is how querySelectorAll's NodeList behaves, not getElementsByClassName's collection.",
+    "",
+    "Assumes the loop removed the first two items (A and B), ignoring that the indexes shift after each removal.",
+    "Gets the skipping right but reverses it: A and C are the items removed, not the ones left."
+   ],
+   "key": "CSE326-U5-037"
+  },
+  {
+   "topic": "DOM Manipulation",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The code below runs, and then the user clicks the Like button. What is logged?",
+   "code": "<div id=\"box\">\n  <button id=\"like\">Like</button>\n</div>\n<script>\n  const box = document.getElementById(\"box\");\n  const like = document.getElementById(\"like\");\n  like.addEventListener(\"click\", () => console.log(\"liked\"));\n  box.innerHTML += \"<p>New comment</p>\";\n</script>",
+   "options": [
+    "\"liked\", once",
+    "Nothing, because the Like button on screen is a new element with no listener",
+    "\"liked\" twice, because the listener is copied along with the new content",
+    "A TypeError, because the variable like now points to a removed element"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "box.innerHTML += ... means box.innerHTML = box.innerHTML + ...: it reads the box as an HTML string, throws away every child element, and builds new ones from that string. Listeners are not part of HTML text, so the new Like button has none. The old button, still held in the variable like, keeps its listener but is no longer on the page. Adding the paragraph with createElement and append would keep the original button.",
+   "why_wrong": [
+    "Assumes += only adds the new paragraph. In fact the whole contents are re-parsed and the original button is replaced.",
+    "",
+    "Listeners belong to element objects, not to the HTML string, so nothing is copied, let alone duplicated.",
+    "Nothing reads the variable like after the click. The detached button just sits unused, so no error is thrown."
+   ],
+   "key": "CSE326-U5-038"
+  },
+  {
+   "topic": "Event Handling",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The user clicks Go in the code below. What is logged?",
+   "code": "<div id=\"outer\">\n  <button id=\"btn\">Go</button>\n</div>\n<script>\n  const outer = document.getElementById(\"outer\");\n  const btn = document.getElementById(\"btn\");\n  outer.addEventListener(\"click\", (e) => {\n    console.log(\"outer\");\n    e.stopPropagation();\n  }, true);\n  btn.addEventListener(\"click\", () => console.log(\"btn\"));\n  document.addEventListener(\"click\", () => console.log(\"document\"));\n</script>",
+   "options": [
+    "outer",
+    "outer, btn",
+    "btn, outer",
+    "outer, btn, document"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The outer listener is registered with capture = true, so it runs on the way down, before the event reaches the button. stopPropagation() halts the event right there: it never reaches the target and never bubbles back up, so the btn and document listeners do not run. stopPropagation stops the event in whichever phase it is called, not only during bubbling.",
+   "why_wrong": [
+    "",
+    "Thinks stopPropagation only blocks bubbling above outer, so the target's own listener would still run.",
+    "Ignores the capture flag and treats outer as a bubbling listener that runs after btn.",
+    "Thinks stopPropagation has no effect when called in the capturing phase, so the event finishes normally."
+   ],
+   "key": "CSE326-U5-039"
+  },
+  {
+   "topic": "Event Handling",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below log?",
+   "code": "<button id=\"btn\">Go</button>\n<script>\n  const btn = document.getElementById(\"btn\");\n  const controller = new AbortController();\n  btn.addEventListener(\"click\", () => console.log(\"A\"), { signal: controller.signal });\n  btn.addEventListener(\"click\", () => console.log(\"B\"), { once: true });\n  btn.addEventListener(\"click\", () => console.log(\"C\"));\n  btn.click();\n  controller.abort();\n  btn.click();\n</script>",
+   "options": [
+    "A B C, then C",
+    "A B C, then A C",
+    "A B C, then nothing",
+    "A B C, then A B C"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The first click() runs all three listeners in the order they were registered: A, B, C. once: true removes B automatically after its first run, and controller.abort() removes every listener registered with that controller's signal, which is A. The second click() therefore finds only C.",
+   "why_wrong": [
+    "",
+    "Assumes AbortController only cancels fetch requests. Aborting its signal also removes the listeners registered with it.",
+    "Assumes abort() removes every listener on the button. It removes only the ones registered with that signal.",
+    "Assumes neither once nor abort() removes anything. once drops B after its first run and abort() drops A, so the second click reaches only C."
+   ],
+   "key": "CSE326-U5-040"
+  },
+  {
+   "topic": "Validation, Regex and Dates",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below log?",
+   "code": "<input id=\"pin\" pattern=\"[0-9]{6}\" value=\"1234567\">\n<script>\n  const pin = document.getElementById(\"pin\");\n  console.log(pin.checkValidity(), /[0-9]{6}/.test(pin.value));\n</script>",
+   "options": [
+    "false true",
+    "true true",
+    "false false",
+    "true false"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The HTML pattern attribute must match the WHOLE value, as if it had ^ at the start and $ at the end, so seven digits break it and checkValidity() returns false. A JavaScript regex gets no such automatic anchoring: test() looks for six digits anywhere, finds \"123456\", and returns true. To apply the same rule in JavaScript you must write ^ and $ yourself.",
+   "why_wrong": [
+    "",
+    "Assumes the pattern attribute also searches anywhere in the value, like an unanchored JavaScript regex.",
+    "Assumes test() must match the whole string too. Without ^ and $ it only needs a match somewhere.",
+    "Swaps the two rules: the attribute is the one that is anchored automatically, and the JavaScript regex is not."
+   ],
+   "key": "CSE326-U5-041"
+  },
+  {
+   "topic": "Validation, Regex and Dates",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "The user leaves the email box empty and clicks Join. What happens with the code below?",
+   "code": "<form id=\"signup\">\n  <input type=\"email\" name=\"email\" required>\n  <button>Join</button>\n</form>\n<script>\n  document.getElementById(\"signup\").addEventListener(\"submit\", (e) => {\n    e.preventDefault();\n    console.log(\"checking in JS\");\n  });\n</script>",
+   "options": [
+    "The browser shows its built-in \"fill in this field\" message on the email box, and nothing is logged",
+    "\"checking in JS\" is logged, and then the browser shows its message",
+    "\"checking in JS\" is logged and no message appears, because preventDefault() also switches off the required check",
+    "The form submits and the page reloads, because a button with no type attribute does not trigger validation"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Built-in constraint validation runs BEFORE the submit event is dispatched. The required field is empty, so the browser blocks the submission, fires an invalid event on the input and shows its message. The submit event never fires, so the handler does not run. A <button> inside a form defaults to type=\"submit\", so clicking it does start this process.",
+   "why_wrong": [
+    "",
+    "Gets the order backwards. The submit handler runs only after the form has passed validation.",
+    "The handler never runs here. Besides, preventDefault() only cancels the submission and has no say over required.",
+    "A button inside a form defaults to type=\"submit\", so it triggers validation like any submit button."
+   ],
+   "key": "CSE326-U5-042"
+  },
+  {
+   "topic": "Storage and Browser APIs",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below log?",
+   "code": "localStorage.setItem(\"score\", JSON.stringify(10));\nlet s = JSON.parse(localStorage.getItem(\"score\"));\ns += 5;\nlocalStorage.setItem(\"score\", s);\nconsole.log(localStorage.getItem(\"score\") + 1);",
+   "options": [
+    "16",
+    "151",
+    "1051",
+    "NaN"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "JSON.stringify(10) stores \"10\", and JSON.parse turns it back into the number 10, so s += 5 does arithmetic and s becomes 15. The second setItem is given a number but stores the string \"15\", because Web Storage keeps only strings. getItem returns \"15\", and \"15\" + 1 joins the two as text, giving \"151\".",
+   "why_wrong": [
+    "Assumes setItem kept s as the number 15. Storage converts it to the string \"15\", so + 1 joins text.",
+    "",
+    "Assumes JSON.parse returned the string \"10\", so s += 5 made \"105\". It returns the number 10.",
+    "A string plus a number does not give NaN. When either side of + is a string, the two are joined as text."
+   ],
+   "key": "CSE326-U5-043"
+  },
+  {
+   "topic": "Storage and Browser APIs",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "The user drags Pen onto the box in the code below. The box turns light yellow, but Pen never moves into it and the drop handler never runs. Which single change fixes it?",
+   "code": "<p id=\"item\" draggable=\"true\">Pen</p>\n<div id=\"bin\">Drop here</div>\n<script>\n  const bin = document.getElementById(\"bin\");\n  document.getElementById(\"item\").addEventListener(\"dragstart\", (e) => {\n    e.dataTransfer.setData(\"text/plain\", e.target.id);\n  });\n  bin.addEventListener(\"dragover\", (e) => {\n    bin.style.background = \"lightyellow\";\n  });\n  bin.addEventListener(\"drop\", (e) => {\n    e.preventDefault();\n    bin.append(document.getElementById(e.dataTransfer.getData(\"text/plain\")));\n  });\n</script>",
+   "options": [
+    "Call e.preventDefault() inside the dragover handler",
+    "Call e.preventDefault() inside the dragstart handler",
+    "Call e.stopPropagation() inside the drop handler",
+    "Add draggable=\"true\" to the #bin div"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "By default an element refuses drops: the browser's default action for dragover means \"no drop here\". A drop target must call e.preventDefault() in its dragover handler to cancel that default, and only then does the drop event fire. The preventDefault() already in the drop handler cannot help, because drop never happens.",
+   "why_wrong": [
+    "",
+    "Cancelling dragstart stops the drag from starting at all, so Pen could not even be picked up.",
+    "The drop handler never runs, so nothing added to it can help. stopPropagation also has nothing to do with whether a drop is allowed.",
+    "draggable marks the element that can be picked up, and Pen already has it. A drop target does not need it."
+   ],
+   "key": "CSE326-U5-044"
+  },
+  {
+   "topic": "Loops and Higher-Order Functions",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A student wants the total of the marks and writes the loop below. What does the code below log?",
+   "code": "const marks = [70, 80, 90];\nlet total = 0;\nfor (const m in marks) {\n  total += m;\n}\nconsole.log(total);",
+   "options": [
+    "240",
+    "3",
+    "0012",
+    "NaN"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "for...in walks over an array's keys, not its values, and those keys are the strings \"0\", \"1\" and \"2\". The first step is 0 + \"0\", and + with a string joins text, giving \"00\"; then \"001\", then \"0012\". for...of walks the values and would give 240.",
+   "why_wrong": [
+    "Treats for...in like for...of, which walks the values 70, 80 and 90.",
+    "Knows for...in gives the indexes but assumes they are numbers, so 0 + 1 + 2 = 3.",
+    "",
+    "A string added to a number does not give NaN. + joins them as text."
+   ],
+   "key": "CSE326-U5-045"
+  },
+  {
+   "topic": "Loops and Higher-Order Functions",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below log?",
+   "code": "const cart = [{ price: 40 }, { price: 25 }, { price: 10 }];\nconst total = cart.reduce((sum, item) => sum + item.price);\nconsole.log(total);",
+   "options": [
+    "75",
+    "35",
+    "[object Object]2510",
+    "NaN"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "With no initial value, reduce uses the FIRST ELEMENT as the starting accumulator and begins calling back from the second element. So sum starts as the object { price: 40 }, and object + 25 turns the object into the string \"[object Object]\", giving \"[object Object]25\" and then \"[object Object]2510\". Passing 0 as the second argument, reduce((sum, item) => sum + item.price, 0), gives 75.",
+   "why_wrong": [
+    "Assumes the accumulator starts at 0. That only happens when 0 is passed as reduce's second argument.",
+    "Knows the callback starts at the second item but forgets the first item still becomes the starting sum.",
+    "",
+    "Assumes sum starts as undefined, which would make undefined + 40 = NaN. Without an initial value, sum starts as the first element."
+   ],
+   "key": "CSE326-U5-046"
+  }
+ ]
+}

@@ -1,0 +1,835 @@
+{
+ "subject_code": "INT335",
+ "unit": 1,
+ "unit_label": "Foundations of Learning, Creativity and Design Thinking",
+ "questions": [
+  {
+   "topic": "Design Thinking Stages",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "How many modes does the Stanford d.school design thinking model have?",
+   "code": "",
+   "options": [
+    "Three",
+    "Four",
+    "Five",
+    "Six"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The d.school model has exactly five modes: Empathize, Define, Ideate, Prototype and Test. Each one has its own job, from understanding users to checking a prototype with them. Three-phase models come from IDEO's human-centred design toolkits, not from the d.school.",
+   "why_wrong": [
+    "Three is the number of phases in IDEO's human-centred design models (for example Hear, Create, Deliver), not the number of d.school modes.",
+    "Four leaves out one of the modes. The d.school keeps Empathize, Define, Ideate, Prototype and Test as five separate modes.",
+    "",
+    "Six adds an extra mode such as Implement or Assess, and the d.school model has no such mode."
+   ],
+   "key": "INT335-U1-001"
+  },
+  {
+   "topic": "Design Thinking Stages",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In the d.school model, which mode comes immediately after Ideate?",
+   "code": "",
+   "options": [
+    "Define",
+    "Prototype",
+    "Test",
+    "Empathize"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The order is Empathize → Define → Ideate → Prototype → Test. Once the team has generated many ideas in Ideate, it turns the chosen ones into quick, rough prototypes. Those prototypes then go to users in Test.",
+   "why_wrong": [
+    "Define comes before Ideate. It produces the problem statement that ideation then works on.",
+    "",
+    "Test comes after Prototype, because users need something to try before anything can be tested.",
+    "Empathize is the first mode. A team may loop back to it, but it is not the next mode in the sequence."
+   ],
+   "key": "INT335-U1-002"
+  },
+  {
+   "topic": "Design Thinking Stages",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the main output of the Define mode?",
+   "code": "",
+   "options": [
+    "A long list of possible solution ideas for the team to choose from",
+    "A rough paper or cardboard model of the solution",
+    "Notes on how users reacted when they tried a prototype",
+    "A point-of-view (POV) problem statement naming the user, their need and the insight behind it"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Define turns the raw material gathered in Empathize into one focused, actionable problem statement. It is often written as a point of view: user + need + insight. This gives ideation a clear target. Idea lists, prototypes and user feedback all come from later modes.",
+   "why_wrong": [
+    "A list of solution ideas is the output of Ideate, which comes after Define.",
+    "A rough physical model is the output of Prototype.",
+    "User reactions to a prototype are gathered in Test, the last mode.",
+    ""
+   ],
+   "key": "INT335-U1-003"
+  },
+  {
+   "topic": "Design Thinking Stages",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the main aim of the Ideate mode?",
+   "code": "",
+   "options": [
+    "To interview users about their experiences",
+    "To choose and build the one final product",
+    "To generate a wide range of possible solutions",
+    "To observe how users react to a prototype"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Ideate is about going wide: the team generates many possible solutions to the defined problem before narrowing down. Quantity comes first because more ideas give more chances of finding a good one. Interviewing users belongs to Empathize, and watching users react belongs to Test.",
+   "why_wrong": [
+    "Interviewing users is an Empathize activity.",
+    "Ideate goes wide instead of committing to one final product. Design thinking then builds rough prototypes and tests them rather than building the final product straight away.",
+    "",
+    "Observing how users react to a prototype happens in Test."
+   ],
+   "key": "INT335-U1-004"
+  },
+  {
+   "topic": "Design Thinking Stages",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In the d.school model, what does a team typically make in the Prototype mode?",
+   "code": "",
+   "options": [
+    "A fully working version of the final product, ready to launch",
+    "Quick, cheap, rough versions of its ideas, such as paper sketches or cardboard mock-ups, for users to try",
+    "A written report describing the users' needs",
+    "A detailed engineering drawing ready for manufacture"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "In the Prototype mode the team turns the ideas chosen in Ideate into quick, cheap, rough versions, such as paper screens, a cardboard model or a storyboard, that users can try in Test. These versions exist to learn from, not to launch, so the team does not mind changing them or throwing them away. If testing shows a problem, the team loops back and builds again.",
+   "why_wrong": [
+    "A finished, working product is not what the Prototype mode makes. Prototypes are rough versions built to learn from before anything is settled.",
+    "",
+    "A report on users' needs comes from Empathize and Define, before there is any idea to prototype.",
+    "A drawing ready for manufacture treats the design as settled. The Prototype mode makes rough versions for users to try, so the design can still change."
+   ],
+   "key": "INT335-U1-005"
+  },
+  {
+   "topic": "Learning and Thinking Modes",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does VARK stand for?",
+   "code": "",
+   "options": [
+    "Visual, Analytical, Reflective, Knowledge",
+    "Verbal, Aural, Rational, Kinesthetic",
+    "Visual, Active, Read/write, Knowledge",
+    "Visual, Aural, Read/write, Kinesthetic"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "VARK names four preferred ways of taking in information: Visual (diagrams, charts, graphs), Aural (listening and discussion), Read/write (written text) and Kinesthetic (hands-on practice and real examples). A learner can have more than one of these preferences.",
+   "why_wrong": [
+    "In VARK, A is Aural (not Analytical), R is Read/write (not Reflective) and K is Kinesthetic (not Knowledge).",
+    "V is Visual, not Verbal, and R is Read/write, not Rational.",
+    "A is Aural, not Active, and K is Kinesthetic, not Knowledge.",
+    ""
+   ],
+   "key": "INT335-U1-006"
+  },
+  {
+   "topic": "Learning and Thinking Modes",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which mode of thinking is relaxed and broad, letting the brain make new connections in the background?",
+   "code": "",
+   "options": [
+    "Focused mode",
+    "Diffuse mode",
+    "Convergent thinking",
+    "Rote learning"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Diffuse mode is the relaxed, wide-ranging state (on a walk, in the shower, just before sleep) in which the brain links ideas that seem unrelated. Focused mode is the opposite: deliberate concentration on a known approach. Good problem solving switches between the two.",
+   "why_wrong": [
+    "Focused mode is deliberate, narrow concentration on a known approach, the reverse of this description.",
+    "",
+    "Convergent thinking narrows many options down to one best answer. It is not relaxed background association.",
+    "Rote learning means memorising by repetition. It is not a relaxed mode that forms new connections."
+   ],
+   "key": "INT335-U1-007"
+  },
+  {
+   "topic": "Creativity and Innovation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is innovation?",
+   "code": "",
+   "options": [
+    "Any new idea that someone has just thought of",
+    "Creating a device that has never existed before, whether or not anyone uses it",
+    "Putting a new idea into practice so that it creates value",
+    "Filing a patent for a new product"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Innovation is implementation that produces value: a new idea actually put into use by real people, with a real benefit. It does not need new technology. A new payment or delivery model built on existing products can be an innovation. A new idea on its own is creativity, and a new device on its own is an invention.",
+   "why_wrong": [
+    "A new idea that has only been thought of is creativity. It becomes an innovation only once it is implemented and produces value.",
+    "Creating something new that nobody uses is an invention, not an innovation.",
+    "",
+    "A patent protects an invention. Filing one does not put the idea into use or create value."
+   ],
+   "key": "INT335-U1-008"
+  },
+  {
+   "topic": "Creativity and Innovation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is functional fixedness?",
+   "code": "",
+   "options": [
+    "A mental block in which a person sees an object only in its usual use",
+    "The fear of sharing ideas in case they are criticised",
+    "The habit of noticing only evidence that supports what you already believe",
+    "Working on a problem for hours without taking any breaks"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Functional fixedness is a cognitive block that ties an object to its familiar function, so other uses go unseen. An example is never thinking of a coin as a screwdriver. It limits creativity because useful resources get overlooked. Asking 'what else could this be used for?' helps break it.",
+   "why_wrong": [
+    "",
+    "Fear of criticism is an emotional block (fear of failure), not functional fixedness.",
+    "Noticing only the evidence that supports your view is confirmation bias.",
+    "Working without breaks describes staying stuck in focused mode. It is not a block about how objects can be used."
+   ],
+   "key": "INT335-U1-009"
+  },
+  {
+   "topic": "Creativity and Innovation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which of these best defines creativity?",
+   "code": "",
+   "options": [
+    "The ability to memorise large amounts of information",
+    "Copying a successful product exactly",
+    "Following a fixed procedure step by step without change",
+    "The ability to produce ideas that are both new and useful"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Creativity is generating ideas that are novel and also useful or appropriate to the problem. Novelty alone is not enough: a random idea that solves nothing is not creative in this sense. Creativity supplies the ideas that invention and innovation later build on.",
+   "why_wrong": [
+    "Memorising information is recall. It does not produce new ideas.",
+    "An exact copy produces nothing new, so it lacks the novelty that creativity requires.",
+    "Following a fixed procedure without change is routine work and generates no new ideas.",
+    ""
+   ],
+   "key": "INT335-U1-010"
+  },
+  {
+   "topic": "Design Thinking Principles",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "The idea of 'wicked problems' in design is most closely associated with:",
+   "code": "",
+   "options": [
+    "Herbert Simon",
+    "IDEO",
+    "Horst Rittel",
+    "The Stanford d.school"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Horst Rittel introduced the term 'wicked problems' for planning and design problems that are ill-defined, have no single right answer and have no clear point at which they are finished. Design thinking is often presented as an approach suited to such problems.",
+   "why_wrong": [
+    "Herbert Simon is known for describing design as changing existing situations into preferred ones, not for naming wicked problems.",
+    "IDEO is a design firm known for popularising human-centred design, not for coining the term 'wicked problems'.",
+    "",
+    "The Stanford d.school is known for the five-mode design thinking model, not for the term 'wicked problems'."
+   ],
+   "key": "INT335-U1-011"
+  },
+  {
+   "topic": "Design Thinking Principles",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does it mean to say that design thinking is human-centred?",
+   "code": "",
+   "options": [
+    "It starts from whatever technology the organisation already has",
+    "It starts from understanding the needs of the people who will use the solution",
+    "It can be carried out only by trained designers",
+    "It is used only to improve the look of a product"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Human-centred means the process begins with, and keeps coming back to, the people who will use the solution: their needs, behaviour and feelings. That is why Empathize is the first mode. Technology and appearance still matter, but they serve those needs rather than driving the process.",
+   "why_wrong": [
+    "Starting from the technology you already have is technology-driven, the opposite of human-centred.",
+    "",
+    "Non-designers use design thinking too. 'Human-centred' is about whose needs sit at the centre, not about who does the work.",
+    "Design thinking solves problems for people. It is not limited to styling how a product looks."
+   ],
+   "key": "INT335-U1-012"
+  },
+  {
+   "topic": "Design Thinking Principles",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which word best describes how the design thinking process moves through its stages?",
+   "code": "",
+   "options": [
+    "Linear and one-pass",
+    "Random, with no order to the stages",
+    "Top-down, decided by management alone",
+    "Iterative"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Design thinking is iterative: teams loop back to earlier modes whenever testing or new insights show that something needs rethinking. A prototype that fails a test can send the team back to Ideate, Define or even Empathize. Each loop improves both the understanding of the problem and the solution.",
+   "why_wrong": [
+    "Linear and one-pass describes a pipeline completed once in strict sequence. Design thinking loops back.",
+    "The modes have a clear logical order and purpose. Going back to an earlier mode is deliberate, not random.",
+    "Design thinking is driven by users' needs and testing with users, not by decisions made from the top alone.",
+    ""
+   ],
+   "key": "INT335-U1-013"
+  },
+  {
+   "topic": "Design Thinking Principles",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "How did Herbert Simon describe design?",
+   "code": "",
+   "options": [
+    "Devising courses of action aimed at changing existing situations into preferred ones",
+    "Making products look attractive",
+    "Producing detailed technical drawings",
+    "The last stage of manufacturing a product"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Herbert Simon described design very broadly: anyone who devises a course of action to change an existing situation into a preferred one is designing. On this view design covers services, policies and processes as well as objects. This broad view is why design thinking can be applied to many kinds of problem.",
+   "why_wrong": [
+    "",
+    "Appearance is only a small part of design. Simon's definition is about changing situations, not styling.",
+    "Technical drawings are one output of engineering work, not Simon's definition of design.",
+    "Simon treated design as purposefully planning a change, not as a final manufacturing step."
+   ],
+   "key": "INT335-U1-014"
+  },
+  {
+   "topic": "Design Thinking Stages",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which sequence gives the d.school modes in the correct order?",
+   "code": "",
+   "options": [
+    "Empathize → Ideate → Define → Prototype → Test",
+    "Define → Empathize → Ideate → Prototype → Test",
+    "Empathize → Define → Ideate → Prototype → Test",
+    "Empathize → Define → Prototype → Ideate → Test"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "First you understand users (Empathize). Then you turn that understanding into one focused problem statement (Define), generate ideas for it (Ideate), build rough versions (Prototype) and try them with users (Test). Each mode feeds the next: ideas need a defined problem, and testing needs a prototype.",
+   "why_wrong": [
+    "This puts Ideate before Define, so ideas would be generated for a problem the team has not yet agreed on.",
+    "This puts Define before Empathize, so the problem would be defined before the team understands its users.",
+    "",
+    "This puts Prototype before Ideate, but you cannot build a prototype before generating the ideas it represents."
+   ],
+   "key": "INT335-U1-015"
+  },
+  {
+   "topic": "Design Thinking Stages",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these is NOT one of the five d.school design thinking modes?",
+   "code": "",
+   "options": [
+    "Ideate",
+    "Implement",
+    "Define",
+    "Test"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The five modes are Empathize, Define, Ideate, Prototype and Test. Implementation does appear as a phase in one version of IDEO's three-phase model, but Implement is not a d.school mode. Adding a sixth mode to the d.school list is a common mistake.",
+   "why_wrong": [
+    "Ideate is the third d.school mode, where the team generates many ideas.",
+    "",
+    "Define is the second d.school mode. It produces the point-of-view problem statement.",
+    "Test is the fifth d.school mode, where users try the prototypes."
+   ],
+   "key": "INT335-U1-016"
+  },
+  {
+   "topic": "Design Thinking Stages",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which pairing of activity and d.school mode is correct?",
+   "code": "",
+   "options": [
+    "Interviewing users about their daily routine — Ideate",
+    "Brainstorming dozens of possible solutions — Define",
+    "Writing a point-of-view statement — Test",
+    "Building a paper mock-up of an app screen — Prototype"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A paper mock-up is a rough, cheap model built to learn from, which is exactly what the Prototype mode is for. Interviewing users belongs to Empathize, brainstorming to Ideate, and writing a POV statement to Define.",
+   "why_wrong": [
+    "Interviewing users builds understanding of them, which is Empathize, not Ideate.",
+    "Brainstorming solutions is Ideate. Define narrows findings into a problem statement, not a list of solutions.",
+    "A POV statement is the output of Define. Test is where users try a prototype.",
+    ""
+   ],
+   "key": "INT335-U1-017"
+  },
+  {
+   "topic": "Learning and Thinking Modes",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about the VARK model is accurate?",
+   "code": "",
+   "options": [
+    "VARK is a reason to present material in varied forms, but matching teaching to one preference has not been shown to improve achievement",
+    "Matching teaching to each student's VARK preference has been shown to reliably raise their marks and exam scores",
+    "Each learner can take in information only through their single preferred VARK mode, so other forms are wasted on them",
+    "A higher score on one VARK letter shows that a learner is more intelligent than someone with a lower score"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "VARK describes preferences for how people like to receive information. Research has not shown that matching teaching to a student's preferred style improves achievement, so the safe use of VARK is to present ideas in several forms. A preference does not limit how someone can learn, and it does not measure ability.",
+   "why_wrong": [
+    "",
+    "The evidence does not support the claim that matching teaching to a VARK preference raises achievement.",
+    "Preferences are not limits. People learn through all four modes, and many have more than one preference.",
+    "VARK describes how a person prefers to receive information, not how intelligent they are."
+   ],
+   "key": "INT335-U1-018"
+  },
+  {
+   "topic": "Learning and Thinking Modes",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which task is best suited to focused mode rather than diffuse mode?",
+   "code": "",
+   "options": [
+    "Taking a walk so an unexpected link between two ideas can surface",
+    "Letting the mind drift to make loose, broad associations",
+    "Checking a circuit design line by line against its specification",
+    "Stepping away from a hard problem and returning later with a fresh angle"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Focused mode is deliberate concentration on a known approach, which is what precise checking and verification need. The other three options are diffuse-mode activities. They are relaxed, broad and happen in the background, which helps form new connections but is poor for exact checking.",
+   "why_wrong": [
+    "A relaxed walk that lets new links surface is diffuse mode.",
+    "Loose, broad association is the defining feature of diffuse mode.",
+    "",
+    "Stepping away lets diffuse mode work in the background. The fresh angle comes from diffuse thinking, not focused thinking."
+   ],
+   "key": "INT335-U1-019"
+  },
+  {
+   "topic": "Learning and Thinking Modes",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which pairing of a VARK preference and a study activity is correct?",
+   "code": "",
+   "options": [
+    "Aural — discussing a topic aloud or listening to a recorded lecture",
+    "Visual — reading long paragraphs of text",
+    "Read/write — building a working physical model",
+    "Kinesthetic — studying a flowchart"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Aural learners prefer information that is heard or spoken, so discussion and recorded lectures suit them. Diagrams and flowcharts suit Visual learners, written text suits Read/write learners, and hands-on practice with real examples suits Kinesthetic learners.",
+   "why_wrong": [
+    "",
+    "Reading paragraphs of text is Read/write. Visual refers to diagrams, charts and graphs.",
+    "Building a physical model is hands-on, which makes it Kinesthetic.",
+    "A flowchart is a diagram, which fits Visual, not Kinesthetic."
+   ],
+   "key": "INT335-U1-020"
+  },
+  {
+   "topic": "Creativity and Innovation",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which option correctly matches creativity, invention and innovation?",
+   "code": "",
+   "options": [
+    "Creativity: putting ideas into practice for value · Invention: producing new ideas · Innovation: creating a new device",
+    "Creativity: producing new, useful ideas · Invention: creating something new · Innovation: putting a new idea into practice so it creates value",
+    "Creativity: creating a new device · Invention: putting it into practice for value · Innovation: producing new ideas",
+    "All three mean the same thing: having a new idea"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Creativity generates new and useful ideas. Invention creates something new. Innovation puts a new idea into practice so that it produces value for people. Innovation does not need an invention: a new payment model built on existing technology can be an innovation, while a patented device nobody uses is only an invention.",
+   "why_wrong": [
+    "This swaps the terms. Putting ideas into practice for value is innovation, and creating a new device is invention.",
+    "",
+    "This swaps the terms. Creating a new device is invention, and producing new ideas is creativity.",
+    "The terms are distinct. An idea that is never built or used is neither an invention nor an innovation."
+   ],
+   "key": "INT335-U1-021"
+  },
+  {
+   "topic": "Creativity and Innovation",
+   "difficulty": "medium",
+   "kind": "situation",
+   "q": "A new engine design is patented but never manufactured or used by anyone. How is it best classed?",
+   "code": "",
+   "options": [
+    "An innovation, because it is new technology",
+    "Both an invention and an innovation",
+    "An invention, but not an innovation",
+    "Neither, because a patented design is still only an idea"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Something new has been created, so it is an invention. Innovation requires implementation that produces value, meaning real use by real people, and this design has never been put into practice. Novelty or new technology alone does not make something an innovation.",
+   "why_wrong": [
+    "New technology is not enough. An innovation needs the idea to be put into use so that it creates value.",
+    "It cannot count as an innovation until it is implemented and produces value, and that has not happened.",
+    "",
+    "A patented design is a new thing that has been created, which makes it an invention, not merely an idea in someone's head."
+   ],
+   "key": "INT335-U1-022"
+  },
+  {
+   "topic": "Creativity and Innovation",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these is an example of functional fixedness?",
+   "code": "",
+   "options": [
+    "Keeping quiet in a meeting for fear an idea will be laughed at",
+    "Paying attention only to feedback that agrees with your own view",
+    "Rejecting an idea because 'that is not how things are done here'",
+    "Not thinking of using a coin as a screwdriver because a coin is 'for paying'"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Functional fixedness ties an object to its usual function, so other possible uses go unseen: the coin stays 'money' and is never seen as a tool. The other options are different blocks. Fear of ridicule is an emotional block, favouring agreeable feedback is confirmation bias, and 'not how things are done here' is a cultural block.",
+   "why_wrong": [
+    "Fear of being laughed at is an emotional block (fear of failure), not a block about how an object can be used.",
+    "Paying attention only to agreeable feedback is confirmation bias.",
+    "Rejecting an idea because of custom or tradition is a cultural block.",
+    ""
+   ],
+   "key": "INT335-U1-023"
+  },
+  {
+   "topic": "Design Thinking Principles",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement correctly contrasts design thinking with a linear engineering pipeline?",
+   "code": "",
+   "options": [
+    "Design thinking loops back to earlier modes when testing reveals something new; a linear pipeline moves through its stages once, in sequence",
+    "Design thinking goes through each mode exactly once; a linear pipeline repeatedly loops back to earlier stages",
+    "Both are one-pass processes and differ only in the number of stages they contain",
+    "Design thinking leaves out testing, while a linear pipeline always ends with it"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Design thinking is iterative: a failed test can send the team back to Ideate, Define or Empathize, and these loops are expected. A linear pipeline is planned as a single forward pass, with each stage finished before the next begins. What separates them is the loop, not the number of stages.",
+   "why_wrong": [
+    "",
+    "This reverses the two. Design thinking is the one that loops back, while a linear pipeline is a single forward pass.",
+    "Design thinking is not one-pass. Its modes are repeated whenever testing reveals something new.",
+    "Test is one of the five design thinking modes, so design thinking does not leave testing out."
+   ],
+   "key": "INT335-U1-024"
+  },
+  {
+   "topic": "Design Thinking Principles",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these is NOT a feature of a wicked problem?",
+   "code": "",
+   "options": [
+    "It has no single, definitive formulation",
+    "It has one correct answer that can be checked and confirmed",
+    "It has no clear point at which it is finished",
+    "Its solutions are better or worse rather than simply right or wrong"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Horst Rittel described wicked problems as ill-defined: they have no definitive formulation, no clear stopping point, and solutions that can only be judged better or worse. A problem with one checkable right answer is a well-defined ('tame') problem, the opposite of a wicked one.",
+   "why_wrong": [
+    "Having no definitive formulation is a defining feature of a wicked problem.",
+    "",
+    "Having no clear stopping point is a defining feature, because there is always room to do better.",
+    "Solutions being judged better or worse, not true or false, is a defining feature of a wicked problem."
+   ],
+   "key": "INT335-U1-025"
+  },
+  {
+   "topic": "Design Thinking Stages",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team builds a canteen pre-order app based only on what the developers think students want. No student is interviewed or observed. After launch, students ignore pre-ordering because they decide what to eat only after seeing the food at the counter. Which d.school mode did the team skip that would have shown them this before a single idea was generated?",
+   "code": "",
+   "options": [
+    "Define",
+    "Test",
+    "Empathize",
+    "Prototype"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "In Empathize the team observes and interviews real users to learn how they actually behave. Watching students at the counter would have shown that they choose food by sight, and that kills the pre-order idea before anything is built. Designing from the builders' own assumptions is exactly the mistake that the human-centred Empathize mode prevents.",
+   "why_wrong": [
+    "Define turns what was learnt in Empathize into a problem statement. With no user research there was nothing to turn into one, so the missing input comes from Empathize.",
+    "Testing would catch it, but only after an idea had been chosen and built. The question asks which mode shows it before any idea exists.",
+    "",
+    "A prototype is built after ideation, so it cannot show how users behave before any idea exists."
+   ],
+   "key": "INT335-U1-026"
+  },
+  {
+   "topic": "Design Thinking Stages",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "In Test, students use a prototype app for booking library seats without any difficulty. But several of them explain that they avoid the library for a different reason: it closes at 8 pm, before they have finished evening classes and dinner. What is the best next step in the d.school model?",
+   "code": "",
+   "options": [
+    "Keep polishing the booking app in Prototype, since it tested well",
+    "Treat the project as finished, because Test is the final mode",
+    "Run a new Ideate session for more booking-app features on the same problem statement",
+    "Go back to Define and reframe the problem statement around the new insight about opening hours"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Design thinking is iterative. Test does more than check a solution: it can show that the problem itself was framed wrongly. Here the prototype works, but the real barrier is the opening hours, so the POV written in Define no longer matches the users. The team loops back to Define to restate the need with this insight, then ideates again from there.",
+   "why_wrong": [
+    "The app works, but it solves the wrong problem. Refining it further does nothing about why students stay away.",
+    "Test is the last mode in the list, not the end of the process, and its findings often send teams back to earlier modes.",
+    "New features on the same POV keep solving the old problem, when the insight shows that the POV itself is wrong.",
+    ""
+   ],
+   "key": "INT335-U1-027"
+  },
+  {
+   "topic": "Learning and Thinking Modes",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student spends two hours staring at a circuit problem and gets nowhere. She gives up and goes for a walk, and on the way back a new approach suddenly occurs to her. Which explanation fits best?",
+   "code": "",
+   "options": [
+    "Focused mode kept running at full strength during the walk and finally found the answer",
+    "Diffuse mode kept working on the problem in the background and made a connection that concentration had blocked",
+    "She overcame functional fixedness by learning a new fact during the walk",
+    "Her kinesthetic VARK preference meant that the walk taught her the answer"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Focused mode concentrates on one known path. When that path is wrong, more effort just repeats the same dead end. Stepping away lets diffuse mode, which is relaxed, broad background thinking, link the problem to more distant ideas. The sudden idea on the walk is that background connection coming to the surface.",
+   "why_wrong": [
+    "Focused mode is deliberate concentration, and relaxing on a walk is the opposite, so this swaps the two modes.",
+    "",
+    "She learnt nothing new on the walk and did not reimagine any object's use. Functional fixedness is about seeing an object only in its usual role.",
+    "Kinesthetic means learning through hands-on work with the material. A walk that involves no circuit teaches nothing about the circuit."
+   ],
+   "key": "INT335-U1-028"
+  },
+  {
+   "topic": "Learning and Thinking Modes",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student reasons: 'New insights come from diffuse mode, so I'll skip studying the chapter and just relax until the answers come to me.' Why will this plan fail?",
+   "code": "",
+   "options": [
+    "Diffuse mode works on material that focused study has already loaded, so with no groundwork it has nothing to connect",
+    "Diffuse mode works only for Visual learners in the VARK model",
+    "Relaxing switches the brain into focused mode, which blocks creative insight",
+    "Diffuse mode is only for checking and verifying work, not for producing new ideas"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The two modes work as a pair. Focused study loads the concepts and the problem, and then diffuse mode links them in new ways during rest. Skip the focused part and the background processing has no raw material, so no insight arrives.",
+   "why_wrong": [
+    "",
+    "VARK preferences are about how a person likes information to be presented. They have nothing to do with which thinking mode is available.",
+    "This swaps the modes: relaxing is what brings in diffuse mode, not focused mode.",
+    "This is backwards. Checking and precise work are focused-mode tasks, and diffuse mode is where new connections form."
+   ],
+   "key": "INT335-U1-029"
+  },
+  {
+   "topic": "Learning and Thinking Modes",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "After a relaxed evening walk, an idea for fixing a bug in her project suddenly comes to a student. The project is due for grading tomorrow. What should she do next, and in which mode?",
+   "code": "",
+   "options": [
+    "Stay in diffuse mode and submit at once, because ideas from diffuse mode are already verified",
+    "Stay in diffuse mode and keep relaxing, because checking details is a diffuse-mode task",
+    "Switch to focused mode and drop the idea, because only focused mode produces reliable ideas",
+    "Switch to focused mode and carefully test and check the fix before submitting"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Diffuse mode is good at producing new connections, but it gives no guarantee that they are correct. Focused mode, which is deliberate step-by-step concentration, is the right tool for checking and precise work. The productive pattern is to let diffuse mode find the idea and then switch to focused mode to test it.",
+   "why_wrong": [
+    "Diffuse mode produces connections but does not check them. An insight can feel right and still be wrong.",
+    "This swaps the modes: careful checking of details is focused-mode work.",
+    "Focused mode is for checking the idea, not throwing it away. The diffuse insight is valuable and just needs testing.",
+    ""
+   ],
+   "key": "INT335-U1-030"
+  },
+  {
+   "topic": "Learning and Thinking Modes",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A student calls herself a 'visual learner' because she learns best by reading the bullet-point text on lecture slides and rewriting it as lists in her notebook. In VARK terms, which preference does this behaviour actually show?",
+   "code": "",
+   "options": [
+    "Visual",
+    "Aural",
+    "Read/write",
+    "Kinesthetic"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "VARK classifies how information is presented, not which sense organ takes it in. Printed words (lists, notes, text on slides) belong to Read/write, even when they are read off a screen. Visual in VARK means graphical forms such as diagrams, charts and flowcharts, so reading and rewriting bullet points is a Read/write preference.",
+   "why_wrong": [
+    "In VARK, Visual means diagrams, charts, maps and graphs, where information is shown as shapes and layouts. Printed words do not count as Visual just because they are seen.",
+    "Aural is learning by listening and discussing. She is reading and writing, not listening.",
+    "",
+    "Kinesthetic is learning through hands-on practice and real examples. Rewriting notes is text-based, not hands-on."
+   ],
+   "key": "INT335-U1-031"
+  },
+  {
+   "topic": "Creativity and Innovation",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A student sketches an idea for a folding study desk (stage 1). She then builds a working model and patents it (stage 2). Two years later a furniture company licenses the design, and hostels start buying and using the desk (stage 3). At which point does it first count as an innovation?",
+   "code": "",
+   "options": [
+    "Stage 1, when the original idea was conceived",
+    "Stage 2, when a working model exists and the patent is granted",
+    "Stage 3, when it is put into use and produces value for buyers and users",
+    "Never, because a folding desk uses no new technology"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The three ideas follow in sequence here: creativity is the idea, invention is the new thing actually made, and innovation is that thing put into practice so that it produces value. A patent proves the design is new, not that anyone uses it. Implementation plus value happens only when hostels buy and use the desk, so stage 3 is where it becomes an innovation.",
+   "why_wrong": [
+    "An idea is creativity. At this point nothing has been made or used.",
+    "A working, patented model is an invention: new and actually created. But nobody has adopted it yet, so it has produced no value in use.",
+    "",
+    "Innovation does not need new technology. It needs implementation that creates value, and that happens in stage 3."
+   ],
+   "key": "INT335-U1-032"
+  },
+  {
+   "topic": "Design Thinking Principles",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Which of these problems is best described as a wicked problem?",
+   "code": "",
+   "options": [
+    "Timetabling end-term exams for thousands of students so that no student has two papers at the same time",
+    "Reducing stress among students across a large university",
+    "Calculating the maximum load a steel beam of known size can carry",
+    "Finding the shortest route between two hostels on a campus map"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Rittel's wicked problems have no agreed definition and many stakeholders who disagree. They also have no clear stopping point, and their solutions are only better or worse, never right or wrong. Student stress fits: its causes are tangled, every intervention shifts the problem, and no test can say it is solved. The other tasks may be difficult, but each has a clear goal and an answer that can be checked, so they are tame.",
+   "why_wrong": [
+    "It is large and hard, but tame: the goal is clear, and any timetable can be checked for clashes and found right or wrong.",
+    "",
+    "This is a textbook calculation with a clear method and one correct answer. Nothing about it is poorly defined.",
+    "This is well defined, with a single best answer that can be checked. Size or difficulty alone does not make a problem wicked."
+   ],
+   "key": "INT335-U1-033"
+  },
+  {
+   "topic": "Design Thinking Principles",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Two teams are designing a better water-bottle holder for hostel bunk beds. Team X spends three weeks on a detailed CAD model before showing it to anyone. Team Y makes a cardboard-and-tape version in an hour, watches students use it that evening, and changes it the next day. Which design thinking principle is Team Y following?",
+   "code": "",
+   "options": [
+    "Prototype early and cheaply, so you learn from users quickly and can afford to fail",
+    "Perfect the design before users see it, so their first impression is good",
+    "Complete each mode once in strict order, never repeating any",
+    "Rely on the designers' own expertise rather than on users' reactions"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Design thinking favours rough, fast prototypes because their job is to help the team learn, not to impress anyone. A one-hour cardboard version can be tested the same day and thrown away without regret, so mistakes show up while they are cheap to fix. Team X will find the same flaws only after three weeks of work, when changing course costs far more.",
+   "why_wrong": [
+    "",
+    "This is Team X's approach. It delays learning and makes every flaw expensive to fix after three weeks of work.",
+    "Team Y is going round prototype, test and change again and again. That is iteration, not a single strict pass.",
+    "Team Y does the opposite: it changes the design based on watching real students use the holder."
+   ],
+   "key": "INT335-U1-034"
+  },
+  {
+   "topic": "Design Thinking Principles",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Why is an iterative design thinking approach better suited to a wicked problem than a linear, one-pass engineering pipeline?",
+   "code": "",
+   "options": [
+    "Because iteration guarantees that the single correct solution will eventually be found",
+    "Because wicked problems are simply larger, and iteration lets a team split them into small tame parts that are each solved once",
+    "Because trying solutions changes the team's understanding of the problem itself, so the problem has to be reframed as the work goes on",
+    "Because a linear pipeline cannot use prototypes at all"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A wicked problem cannot be fully defined before solving starts, because each attempted solution reveals more about what the problem really is. A linear pipeline fixes the problem statement at the start and runs forward, so it has no way to absorb that learning. Design thinking's loops, in which testing sends the team back to Define or Empathize, are built for exactly this moving target.",
+   "why_wrong": [
+    "Wicked problems have no single correct solution, only better or worse ones, so no method can guarantee one.",
+    "Size is not what makes a problem wicked. Its definition keeps shifting, so it cannot be cleanly split into fixed parts that are each solved once.",
+    "",
+    "Linear pipelines can build prototypes too. The real difference is whether what the team learns can send it back to redefine the problem."
+   ],
+   "key": "INT335-U1-035"
+  },
+  {
+   "topic": "Design Thinking Principles",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "By Herbert Simon's view of design, which of these people is designing?",
+   "code": "",
+   "options": [
+    "A civil engineer calculating the current stress in an existing bridge to report on its condition",
+    "A physicist measuring the speed of sound in air",
+    "A surveyor counting how many students live in each hostel block",
+    "A hostel warden reorganising the mess queue so that students wait less at lunchtime"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Simon described design as devising courses of action aimed at changing existing situations into preferred ones. The warden sees the current state (long waits), pictures a preferred one (shorter waits) and devises a change to get there. That is design, even though no product or drawing is involved. The engineer, the physicist and the surveyor are all describing things as they are now.",
+   "why_wrong": [
+    "Despite the engineering job, this is analysis: it describes how the bridge is now and devises no change toward a better state.",
+    "Science describes how the world is, and measuring a quantity changes no situation.",
+    "Counting records the existing situation, and no course of action toward a better one is devised.",
+    ""
+   ],
+   "key": "INT335-U1-036"
+  }
+ ]
+}

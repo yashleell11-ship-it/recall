@@ -1,0 +1,1042 @@
+{
+ "subject_code": "CSE326",
+ "unit": 4,
+ "unit_label": "JavaScript Fundamentals",
+ "questions": [
+  {
+   "topic": "Variables and Scope",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which keyword declares a variable that cannot be reassigned once it has been given a value?",
+   "code": "",
+   "options": [
+    "let",
+    "const",
+    "var",
+    "final"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "const creates a binding that must be initialised when it is declared and can never be reassigned; trying to do so throws a TypeError. let and var both allow reassignment. const fixes only the binding, so an object stored in a const can still have its properties changed.",
+   "why_wrong": [
+    "let allows the variable to be reassigned later; it only blocks redeclaring the same name in the same scope.",
+    "",
+    "var allows both reassignment and redeclaration.",
+    "final is Java's keyword for a constant; JavaScript has no final declaration."
+   ],
+   "key": "CSE326-U4-001"
+  },
+  {
+   "topic": "Variables and Scope",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "let x;\nconsole.log(x);",
+   "options": [
+    "null",
+    "0",
+    "undefined",
+    "ReferenceError: x is not defined"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "A variable that is declared but never assigned holds the value undefined. The declaration has already run by the time console.log reads x, so there is no error. null only appears if you assign it yourself.",
+   "why_wrong": [
+    "JavaScript never assigns null automatically; a declared variable with no value holds undefined.",
+    "JavaScript variables have no declared type, so there is no numeric default of 0.",
+    "",
+    "x is declared on the line before, so it exists; a ReferenceError comes from undeclared names or from reading a let variable before its declaration line."
+   ],
+   "key": "CSE326-U4-002"
+  },
+  {
+   "topic": "Variables and Scope",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A script file contains the code below. What happens?",
+   "code": "let score = 10;\nlet score = 20;\nconsole.log(score);",
+   "options": [
+    "It prints 20",
+    "It prints 10",
+    "It prints undefined",
+    "A SyntaxError is raised because score is declared twice"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "let does not allow the same name to be declared twice in the same scope, so the engine reports SyntaxError: Identifier 'score' has already been declared. Because it is a syntax error, the script is rejected before any line runs. If both declarations used var, redeclaring would be allowed and 20 would print.",
+   "why_wrong": [
+    "20 is what var would give, since var permits redeclaration; let does not.",
+    "Assumes the second declaration is quietly ignored; it is rejected as an error instead.",
+    "Assumes the second declaration resets score to no value; in fact the code never runs at all.",
+    ""
+   ],
+   "key": "CSE326-U4-003"
+  },
+  {
+   "topic": "Variables and Scope",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What happens when the code below runs?",
+   "code": "console.log(count);\nlet count = 10;",
+   "options": [
+    "It throws a ReferenceError",
+    "It prints undefined",
+    "It prints 10",
+    "It prints null"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "let declarations are hoisted, but the variable stays uninitialised in the temporal dead zone until its declaration line runs. Reading count before that line throws ReferenceError: Cannot access 'count' before initialization. With var instead of let, the same code would print undefined.",
+   "why_wrong": [
+    "",
+    "That is var's behaviour: var is hoisted and initialised to undefined, while let stays in the temporal dead zone.",
+    "The value 10 is assigned on the second line, after the read, so it cannot be seen yet.",
+    "JavaScript never initialises a variable to null by itself."
+   ],
+   "key": "CSE326-U4-004"
+  },
+  {
+   "topic": "Variables and Scope",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What is the result of running the code below?",
+   "code": "if (true) {\n  var a = 1;\n  let b = 2;\n}\nconsole.log(a);\nconsole.log(b);",
+   "options": [
+    "It prints 1, then 2",
+    "It prints 1, then throws a ReferenceError",
+    "It throws a ReferenceError at the first console.log",
+    "It prints undefined, then undefined"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "var ignores block boundaries: it is function-scoped (here global), so a is still visible after the if block and prints 1. let is block-scoped, so b exists only inside the braces. Reading b outside them throws ReferenceError: b is not defined.",
+   "why_wrong": [
+    "Treats let like var; let b is confined to the if block.",
+    "",
+    "Treats var like let; var is not block-scoped, so a is visible outside the braces.",
+    "The if (true) block does run, so a holds 1; and b is not just unassigned outside the block, it is out of scope entirely."
+   ],
+   "key": "CSE326-U4-005"
+  },
+  {
+   "topic": "Variables and Scope",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about var, let and const is NOT true?",
+   "code": "",
+   "options": [
+    "let and const are block-scoped",
+    "var can be redeclared in the same scope without an error",
+    "A const array cannot have new elements added to it with push()",
+    "A var declared inside a function is not visible outside that function"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "const fixes only the binding: the name must always point to the same array, but the array itself stays mutable, so push() works. What const forbids is reassignment such as arr = [], which throws a TypeError. The other three statements correctly describe scope and redeclaration.",
+   "why_wrong": [
+    "This is true: let and const exist only inside the { } block where they are declared.",
+    "This is true: var allows redeclaration; only let and const reject it.",
+    "",
+    "This is true: var is function-scoped, so it is local to the function that declares it."
+   ],
+   "key": "CSE326-U4-006"
+  },
+  {
+   "topic": "Data Types",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "console.log(typeof null);",
+   "options": [
+    "null",
+    "undefined",
+    "number",
+    "object"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "typeof null returns \"object\". This is a long-standing quirk kept for backward compatibility, even though null is its own primitive type. To test for null, compare directly with x === null.",
+   "why_wrong": [
+    "Assumes typeof returns the value's own name; for null the historical result is \"object\".",
+    "Confuses null with undefined; only typeof undefined gives \"undefined\".",
+    "Confuses typeof with numeric conversion: Number(null) is 0, but typeof does not convert anything.",
+    ""
+   ],
+   "key": "CSE326-U4-007"
+  },
+  {
+   "topic": "Data Types",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "console.log(typeof NaN);",
+   "options": [
+    "number",
+    "NaN",
+    "undefined",
+    "object"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "NaN (Not a Number) is a special value of the number type, produced by failed numeric operations such as \"abc\" * 2. So typeof NaN is \"number\". The name describes the result of a calculation, not its type.",
+   "why_wrong": [
+    "",
+    "typeof returns a type name, and there is no type called NaN; NaN is a value of type number.",
+    "NaN is a defined value, not a missing one, so its type is not \"undefined\".",
+    "NaN is a primitive number value, not an object."
+   ],
+   "key": "CSE326-U4-008"
+  },
+  {
+   "topic": "Data Types",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "const marks = [78, 85, 92];\nconsole.log(typeof marks);",
+   "options": [
+    "array",
+    "number",
+    "object",
+    "list"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Arrays in JavaScript are a special kind of object, so typeof reports \"object\" for them. typeof has no \"array\" result at all. To check whether a value is an array, use Array.isArray(marks), which returns true.",
+   "why_wrong": [
+    "typeof never returns \"array\"; arrays are objects, and Array.isArray is the dedicated test.",
+    "Reports the type of the elements inside the array, not of the array itself.",
+    "",
+    "\"list\" is not a JavaScript type name; typeof returns names such as \"object\", \"number\" or \"string\"."
+   ],
+   "key": "CSE326-U4-009"
+  },
+  {
+   "topic": "Data Types",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which expression correctly checks whether the variable x holds NaN?",
+   "code": "",
+   "options": [
+    "x === NaN",
+    "Number.isNaN(x)",
+    "x == NaN",
+    "typeof x === \"NaN\""
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "NaN is the only JavaScript value that is not equal to itself, so comparing with NaN using === or == is always false, even when x really is NaN. Number.isNaN(x) returns true only when x is the NaN value. Since typeof NaN is \"number\", a typeof check cannot detect it either.",
+   "why_wrong": [
+    "NaN === NaN is false, so this expression is false for every x, including NaN itself.",
+    "",
+    "Loose equality does not help: NaN == NaN is also false.",
+    "typeof NaN is \"number\"; typeof never returns \"NaN\", so this is always false."
+   ],
+   "key": "CSE326-U4-010"
+  },
+  {
+   "topic": "Data Types",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What two values does the code below print, in order?",
+   "code": "console.log(0.1 + 0.2);\nconsole.log(0.1 + 0.2 === 0.3);",
+   "options": [
+    "0.3, true",
+    "0.3, false",
+    "0.30000000000000004, false",
+    "0.30000000000000004, true"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "JavaScript numbers are binary floating-point values, and 0.1 and 0.2 cannot be stored exactly in binary. Their sum comes out as 0.30000000000000004, which is a different number from 0.3, so the strict comparison is false. This is why money calculations are usually rounded or done in whole units such as paise.",
+   "why_wrong": [
+    "Assumes decimal fractions are stored exactly; the binary rounding error shows up in the sum.",
+    "Right that the comparison is false, but the printed sum is not exactly 0.3; console.log shows the tiny error.",
+    "",
+    "Right about the printed sum, but a number that differs from 0.3 cannot be === 0.3."
+   ],
+   "key": "CSE326-U4-011"
+  },
+  {
+   "topic": "Operators and Conditionals",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "console.log(\"5\" + 2);",
+   "options": [
+    "7",
+    "52",
+    "NaN",
+    "TypeError"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "When either operand of + is a string, + performs string concatenation, so the number 2 becomes \"2\" and is joined to \"5\". The result is the string \"52\", which console.log prints as 52. Only + behaves this way; -, * and / convert strings to numbers.",
+   "why_wrong": [
+    "Assumes + converts the string to a number; with a string operand it concatenates instead.",
+    "",
+    "NaN appears only when a numeric conversion fails; here no numeric conversion happens at all.",
+    "JavaScript silently converts the number to a string here instead of throwing an error for mixing types."
+   ],
+   "key": "CSE326-U4-012"
+  },
+  {
+   "topic": "Operators and Conditionals",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "console.log(\"5\" === 5);",
+   "options": [
+    "false",
+    "true",
+    "undefined",
+    "TypeError"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "=== is strict equality: it compares without any type conversion, so a string is never equal to a number. \"5\" is a string and 5 is a number, so the result is false. Loose equality (\"5\" == 5) would convert the string first and give true.",
+   "why_wrong": [
+    "",
+    "That is the result of loose ==, which converts \"5\" to 5 before comparing; === does no conversion.",
+    "A comparison always produces a boolean, never undefined.",
+    "Comparing values of different types is allowed; === simply returns false."
+   ],
+   "key": "CSE326-U4-013"
+  },
+  {
+   "topic": "Operators and Conditionals",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "const marks = 45;\nconst result = marks >= 40 ? \"Pass\" : \"Fail\";\nconsole.log(result);",
+   "options": [
+    "Fail",
+    "true",
+    "Pass",
+    "45"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The conditional (ternary) operator condition ? a : b gives a when the condition is true and b when it is false. 45 >= 40 is true, so result is \"Pass\". It is a compact expression form of if...else.",
+   "why_wrong": [
+    "Picks the value for a false condition, but 45 >= 40 is true.",
+    "Prints the condition itself; the ternary returns one of its two branch values, not the boolean.",
+    "",
+    "Returns the variable being tested; the ternary returns the chosen branch value, not marks."
+   ],
+   "key": "CSE326-U4-014"
+  },
+  {
+   "topic": "Operators and Conditionals",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these comparisons evaluates to false?",
+   "code": "",
+   "options": [
+    "null == undefined",
+    "0 == false",
+    "null == 0",
+    "\"\" == 0"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Loose equality has a special rule for null: it is loosely equal only to null and undefined, and it is never converted to a number for ==. So null == 0 is false, even though Number(null) is 0. The other three are true: null == undefined by that same rule, false converts to 0, and \"\" converts to 0.",
+   "why_wrong": [
+    "This is true: null and undefined are loosely equal to each other by a special rule.",
+    "This is true: false is converted to 0, so the comparison becomes 0 == 0.",
+    "",
+    "This is true: the empty string converts to the number 0, so the comparison becomes 0 == 0."
+   ],
+   "key": "CSE326-U4-015"
+  },
+  {
+   "topic": "Operators and Conditionals",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "console.log(1 + 2 + \"3\", \"1\" + 2 + 3);",
+   "options": [
+    "123 123",
+    "6 6",
+    "33 15",
+    "33 123"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "+ is evaluated left to right. In 1 + 2 + \"3\", the first step is numeric (1 + 2 = 3), then 3 + \"3\" concatenates to \"33\". In \"1\" + 2 + 3, the string comes first, so \"1\" + 2 = \"12\" and then \"12\" + 3 = \"123\".",
+   "why_wrong": [
+    "Assumes a string anywhere turns the whole expression into concatenation; 1 + 2 is added as numbers before the string is reached.",
+    "Ignores string concatenation and adds everything as numbers.",
+    "Evaluates 2 + 3 first in the second expression; + groups left to right, so \"1\" + 2 happens first and gives \"12\".",
+    ""
+   ],
+   "key": "CSE326-U4-016"
+  },
+  {
+   "topic": "Strings and Arrays",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "console.log(\"JavaScript\".charAt(4));",
+   "options": [
+    "a",
+    "S",
+    "Script",
+    "Java"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "String indexes start at 0: J is 0, a is 1, v is 2, a is 3 and S is 4. charAt(4) returns the single character at index 4, which is \"S\".",
+   "why_wrong": [
+    "Counts positions from 1 instead of 0, landing on the second a.",
+    "",
+    "That is what slice(4) returns, everything from index 4 onward; charAt returns just one character.",
+    "That is what slice(0, 4) returns, the characters before index 4."
+   ],
+   "key": "CSE326-U4-017"
+  },
+  {
+   "topic": "Strings and Arrays",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which array method adds one or more elements to the end of an array?",
+   "code": "",
+   "options": [
+    "push()",
+    "pop()",
+    "shift()",
+    "unshift()"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "push() appends elements to the end of an array, changing it in place, and returns the new length. pop() removes from the end, shift() removes from the start and unshift() adds to the start.",
+   "why_wrong": [
+    "",
+    "pop() removes the last element instead of adding one.",
+    "shift() removes the first element of the array.",
+    "unshift() adds elements, but at the start of the array, not the end."
+   ],
+   "key": "CSE326-U4-018"
+  },
+  {
+   "topic": "Strings and Arrays",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does nums contain after the code below runs?",
+   "code": "const nums = [10, 1, 5, 25];\nnums.sort();",
+   "options": [
+    "[1, 5, 10, 25]",
+    "[1, 10, 25, 5]",
+    "[25, 10, 5, 1]",
+    "[10, 1, 5, 25]"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Without a comparator, sort() converts the elements to strings and compares them character by character. As strings, \"1\" < \"10\" < \"25\" < \"5\", because \"2\" comes before \"5\". For numeric order use nums.sort((a, b) => a - b). sort() rearranges nums itself rather than returning a copy.",
+   "why_wrong": [
+    "That is numeric order, which needs a comparator such as (a, b) => a - b; the default compares strings.",
+    "",
+    "sort() sorts in ascending order by default, not descending.",
+    "Assumes sort() returns a sorted copy and leaves nums alone; sort() rearranges the original array in place."
+   ],
+   "key": "CSE326-U4-019"
+  },
+  {
+   "topic": "Strings and Arrays",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these array methods does NOT change the original array?",
+   "code": "",
+   "options": [
+    "splice()",
+    "sort()",
+    "reverse()",
+    "slice()"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "slice() copies part of the array into a new array and leaves the original untouched. splice(), sort() and reverse() all modify the array they are called on. map(), filter() and concat() are other methods that return a new array instead of mutating.",
+   "why_wrong": [
+    "splice() adds or removes elements in place, changing the original array.",
+    "sort() rearranges the original array in place and returns that same array.",
+    "reverse() reverses the original array in place.",
+    ""
+   ],
+   "key": "CSE326-U4-020"
+  },
+  {
+   "topic": "Functions and Objects",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "function greet() {\n  const msg = \"Hello\";\n}\nconsole.log(greet());",
+   "options": [
+    "undefined",
+    "Hello",
+    "null",
+    "0"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A function that finishes without a return statement returns undefined. greet() creates msg as a local variable but never returns it, so console.log receives undefined.",
+   "why_wrong": [
+    "",
+    "msg is only a local variable; it is never returned, so the caller does not get \"Hello\".",
+    "The default return value in JavaScript is undefined, not null.",
+    "There is no numeric default return value in JavaScript; a missing return gives undefined."
+   ],
+   "key": "CSE326-U4-021"
+  },
+  {
+   "topic": "Functions and Objects",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "const square = x => x * x;\nconsole.log(square(5));",
+   "options": [
+    "10",
+    "5",
+    "undefined",
+    "25"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "An arrow function whose body is a single expression without braces returns that expression automatically. square(5) evaluates 5 * 5 = 25.",
+   "why_wrong": [
+    "Computes x + x (or x * 2) instead of x * x.",
+    "Returns the argument unchanged, ignoring the x * x body.",
+    "Assumes an arrow function always needs the return keyword; a concise body without braces returns its value implicitly.",
+    ""
+   ],
+   "key": "CSE326-U4-022"
+  },
+  {
+   "topic": "Functions and Objects",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "const car = { brand: \"Tata\", year: 2024 };\nconsole.log(car[\"brand\"]);",
+   "options": [
+    "Tata",
+    "brand",
+    "undefined",
+    "2024"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Bracket notation car[\"brand\"] reads the property whose key is the string \"brand\", exactly like car.brand. Its value is \"Tata\".",
+   "why_wrong": [
+    "",
+    "Prints the key instead of the value stored under that key.",
+    "The key \"brand\" exists on car, so the lookup finds a value; undefined appears only for a missing property.",
+    "That is the value of the year property, not brand."
+   ],
+   "key": "CSE326-U4-023"
+  },
+  {
+   "topic": "Functions and Objects",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The code below runs in a classic (non-module) <script>. What does it print?",
+   "code": "const student = {\n  marks: 90,\n  getA() { return this.marks; },\n  getB: () => this.marks\n};\nconsole.log(student.getA(), student.getB());",
+   "options": [
+    "90 90",
+    "90 undefined",
+    "undefined 90",
+    "undefined undefined"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "getA is a regular method called as student.getA(), so this is student and this.marks is 90. getB is an arrow function, which has no this of its own; it takes this from the surrounding scope, which is the top level of the script (window), not the object literal. window.marks does not exist, so getB returns undefined.",
+   "why_wrong": [
+    "Assumes an arrow function written inside an object gets that object as this; arrows take this from the enclosing scope instead.",
+    "",
+    "Swaps the two rules: the regular method is the one that receives student as this.",
+    "The regular method called as student.getA() does get student as this, so getA returns 90."
+   ],
+   "key": "CSE326-U4-024"
+  },
+  {
+   "topic": "Functions and Objects",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "const a = { count: 1 };\nconst b = a;\nb.count = 5;\nconsole.log(a.count);",
+   "options": [
+    "1",
+    "undefined",
+    "TypeError",
+    "5"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Assigning an object to another variable copies the reference, not the object, so a and b point to the same object. Changing b.count therefore changes what a.count reads. const only stops a and b from being reassigned; it does not freeze the object's properties.",
+   "why_wrong": [
+    "Assumes b = a makes an independent copy; both names refer to one shared object.",
+    "count is still a property of the object, so reading it gives a value, not undefined.",
+    "const blocks reassigning the variable (such as b = {}), not changing a property of the object it points to.",
+    ""
+   ],
+   "key": "CSE326-U4-025"
+  },
+  {
+   "topic": "Variables and Scope",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student wants getGrade() to return a value decided inside an if/else, so the code below declares result in each branch. What is printed or thrown when it runs?",
+   "code": "function getGrade(marks) {\n  if (marks >= 40) {\n    let result = \"Pass\";\n  } else {\n    let result = \"Fail\";\n  }\n  return result;\n}\nconsole.log(getGrade(75));",
+   "options": [
+    "Pass",
+    "undefined",
+    "SyntaxError: Identifier 'result' has already been declared",
+    "ReferenceError: result is not defined"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "let is block-scoped: each result exists only inside the { } of its own branch and is gone once that block ends. The return statement is outside both blocks, where no variable named result exists, so the lookup throws ReferenceError: result is not defined. Declaring let result; once before the if, and only assigning it inside the branches, fixes the function.",
+   "why_wrong": [
+    "Pass would come back only if result were visible outside the if block, as it would be with var. let keeps it inside the block.",
+    "undefined is what you get from a variable that is in scope but has no value. Here no result is in scope at the return line, so the lookup throws.",
+    "The two let declarations are in different blocks, so they are two separate variables, not a redeclaration.",
+    ""
+   ],
+   "key": "CSE326-U4-026"
+  },
+  {
+   "topic": "Variables and Scope",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "var a = 1;\nlet b = 1;\nif (true) {\n  var a = 2;\n  let b = 2;\n}\nconsole.log(a, b);",
+   "options": [
+    "1 1",
+    "2 1",
+    "2 2",
+    "SyntaxError: Identifier 'a' has already been declared"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "var ignores blocks, so the var a = 2 inside the if is the same variable as the outer a, and it overwrites it with 2. let b = 2 creates a new b that lives only inside the block and hides the outer b there. When the block ends, the outer b, still 1, is visible again. Printed: 2 1.",
+   "why_wrong": [
+    "Treats var as block-scoped like let. var belongs to the enclosing function or script, so the inner var a is the same variable.",
+    "",
+    "Assumes the inner let b changes the outer b. It is a separate variable that exists only inside the block.",
+    "var allows the same name to be declared again. Only let and const forbid a second declaration in the same scope."
+   ],
+   "key": "CSE326-U4-027"
+  },
+  {
+   "topic": "Data Types",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student writes the function below to label a value as a list, a record or something else, then tests it with an array and with null. What does it print?",
+   "code": "function describe(value) {\n  if (typeof value === \"array\") {\n    return \"list\";\n  } else if (typeof value === \"object\") {\n    return \"record\";\n  }\n  return \"other\";\n}\nconsole.log(describe([1, 2]), describe(null));",
+   "options": [
+    "list record",
+    "list other",
+    "record record",
+    "record other"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "typeof never returns \"array\". For an array it returns \"object\", so the first test is never true and [1, 2] falls through to \"record\". typeof null is also \"object\" (a long-standing quirk of the language), so null gets \"record\" too. Use Array.isArray(value) to detect arrays and value === null to detect null.",
+   "why_wrong": [
+    "Assumes typeof [1, 2] is \"array\". typeof reports arrays as \"object\".",
+    "Assumes typeof [1, 2] is \"array\" and typeof null is \"null\". Both are \"object\".",
+    "",
+    "Gets the array right but assumes typeof null is \"null\". It is \"object\", so null also becomes \"record\"."
+   ],
+   "key": "CSE326-U4-028"
+  },
+  {
+   "topic": "Data Types",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "console.log(Number(\"\"), Number(\"12px\"), parseInt(\"12px\"));",
+   "options": [
+    "0 NaN 12",
+    "NaN NaN 12",
+    "0 12 12",
+    "0 NaN NaN"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Number() converts the whole string or fails. An empty string converts to 0, but \"12px\" contains characters that are not part of a number, so the result is NaN. parseInt() reads digits from the start and stops at the first character that cannot be part of a number, so parseInt(\"12px\") is 12. Printed: 0 NaN 12.",
+   "why_wrong": [
+    "",
+    "Assumes an empty string cannot become a number. Number(\"\") is 0.",
+    "Treats Number() like parseInt(). Number() gives NaN if any part of the string is not numeric.",
+    "Treats parseInt() like Number(). parseInt() keeps the leading digits and stops at the first non-digit."
+   ],
+   "key": "CSE326-U4-029"
+  },
+  {
+   "topic": "Operators and Conditionals",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "On a shopping page, price is read from a text box, so it holds a string. What does the code below print?",
+   "code": "let price = \"250\";\nlet qty = 2;\nlet total = price * qty + 50;\nlet label = \"Total: \" + total + 10;\nconsole.log(label);",
+   "options": [
+    "Total: 560",
+    "Total: 55010",
+    "Total: NaN10",
+    "Total: 5005010"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "* has no string meaning, so \"250\" * 2 converts the string to a number and gives 500. Then 500 + 50 is 550, still a number. The next line runs left to right: \"Total: \" + 550 is the string \"Total: 550\", and adding 10 to a string concatenates, giving \"Total: 55010\". Writing \"Total: \" + (total + 10) would print Total: 560.",
+   "why_wrong": [
+    "Assumes total + 10 is added first. + runs left to right, and once the left side is a string, + concatenates.",
+    "",
+    "Assumes multiplying a numeric string gives NaN. * converts \"250\" to the number 250.",
+    "Assumes \"250\" * 2 stays a string (\"500\"), so + 50 concatenates. * always produces a number."
+   ],
+   "key": "CSE326-U4-030"
+  },
+  {
+   "topic": "Operators and Conditionals",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A day number is read from a form field, so day holds the string \"2\". What does the code below print?",
+   "code": "let day = \"2\";\nswitch (day) {\n  case 1:\n    console.log(\"Mon\");\n    break;\n  case 2:\n    console.log(\"Tue\");\n    break;\n  default:\n    console.log(\"Unknown\");\n}",
+   "options": [
+    "Tue",
+    "Tue, then Unknown",
+    "Unknown",
+    "Nothing is printed"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "switch compares its value with each case using strict equality (===), with no type conversion. \"2\" === 2 is false because one is a string and the other is a number, so no case matches and default runs. Converting first, as in switch (Number(day)), would print Tue.",
+   "why_wrong": [
+    "Assumes switch uses loose == comparison. It uses ===, so the string \"2\" does not match the number 2.",
+    "Treats this as falling through from case 2. case 2 never matched, and if it had, its break would stop before default.",
+    "",
+    "default runs whenever no case matches, so this switch always prints something."
+   ],
+   "key": "CSE326-U4-031"
+  },
+  {
+   "topic": "Strings and Arrays",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student wants the lowest and highest marks, so the code below sorts the array and reads its first and last elements. What does it print?",
+   "code": "let scores = [85, 9, 100, 42, 5];\nscores.sort();\nconsole.log(scores[0], scores[scores.length - 1]);",
+   "options": [
+    "5 100",
+    "100 9",
+    "100 5",
+    "85 5"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "With no comparator, sort() converts the elements to strings and compares them character by character. \"100\" < \"42\" < \"5\" < \"85\" < \"9\" because \"1\" < \"4\" < \"5\" < \"8\" < \"9\". sort() also changes the array in place, so scores becomes [100, 42, 5, 85, 9], and its first and last elements are 100 and 9. scores.sort((a, b) => a - b) sorts the numbers numerically.",
+   "why_wrong": [
+    "Assumes sort() orders numbers numerically. Without a comparator it compares their string forms.",
+    "",
+    "Assumes sort() puts numbers from largest to smallest. The default order is ascending by string form.",
+    "Assumes sort() returns a sorted copy and leaves scores unchanged. sort() rearranges the original array."
+   ],
+   "key": "CSE326-U4-032"
+  },
+  {
+   "topic": "Strings and Arrays",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "let fruits = [\"apple\", \"banana\", \"cherry\", \"date\"];\nlet a = fruits.slice(1, 3);\nlet b = fruits.splice(1, 3);\nconsole.log(a.length, b.length, fruits.length);",
+   "options": [
+    "3 3 1",
+    "2 2 2",
+    "2 3 1",
+    "2 3 4"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "slice(1, 3) copies indices 1 and 2 (the end index is not included), so a has 2 elements and fruits is left unchanged. splice(1, 3) means start at index 1 and remove 3 elements. It removes banana, cherry and date and returns them, so b has 3 elements and fruits is left as [\"apple\"]. Printed: 2 3 1.",
+   "why_wrong": [
+    "Treats slice's end index as included. slice(1, 3) stops before index 3.",
+    "Treats splice's second argument as an end index, like slice's. For splice it is the number of elements to remove.",
+    "",
+    "Assumes splice leaves the original array alone, like slice. splice removes the elements from fruits."
+   ],
+   "key": "CSE326-U4-033"
+  },
+  {
+   "topic": "Functions and Objects",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "function area(length, breadth) {\n  return length * breadth;\n}\nconsole.log(area(5), area(5, 2, 10));",
+   "options": [
+    "NaN 10",
+    "0 10",
+    "NaN 100",
+    "A TypeError is thrown for the wrong number of arguments"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "JavaScript does not check how many arguments a function receives. In area(5), breadth gets no value and is undefined, and 5 * undefined is NaN. In area(5, 2, 10) the extra 10 has no parameter to go into, so it is ignored and the result is 5 * 2 = 10.",
+   "why_wrong": [
+    "",
+    "Assumes a missing argument defaults to 0. It is undefined, and a number times undefined is NaN.",
+    "Assumes the extra argument joins the calculation. Only length and breadth are used, so 10 is ignored.",
+    "JavaScript never checks the argument count. Missing arguments become undefined, and extra ones are ignored."
+   ],
+   "key": "CSE326-U4-034"
+  },
+  {
+   "topic": "Functions and Objects",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student keeps the name of the property to look up in a variable called key, then reads the object in two ways. What does the code below print?",
+   "code": "let key = \"age\";\nlet person = { name: \"Kabir\", age: 19, key: \"CSE\" };\nconsole.log(person[key], person.key);",
+   "options": [
+    "19 CSE",
+    "CSE 19",
+    "19 19",
+    "CSE CSE"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Bracket notation evaluates the expression inside the brackets, so person[key] becomes person[\"age\"], which is 19. Dot notation always uses the name written after the dot, so person.key reads the property actually named key, which is \"CSE\". Use brackets whenever the property name is stored in a variable.",
+   "why_wrong": [
+    "",
+    "Swaps the two rules. Brackets use the variable's value, while the dot uses the name as written.",
+    "Assumes person.key also looks up the variable key. The dot reads a property named key.",
+    "Assumes person[key] reads a property named key. Without quotes, key inside the brackets is the variable, which holds \"age\"."
+   ],
+   "key": "CSE326-U4-035"
+  },
+  {
+   "topic": "Variables and Scope",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What is printed or thrown when show() is called in the code below?",
+   "code": "let x = 10;\nfunction show() {\n  console.log(x);\n  let x = 20;\n}\nshow();",
+   "options": [
+    "10",
+    "undefined",
+    "20",
+    "ReferenceError: Cannot access 'x' before initialization"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The let x inside show() is hoisted to the top of the function's scope, so every x in the function means the inner x, from the first line on. Until the line let x = 20 runs, that inner x is in the temporal dead zone, and reading it throws a ReferenceError. The inner x hides the outer x = 10 for the whole function body, not only after its declaration.",
+   "why_wrong": [
+    "Assumes the global x is used until the inner let line runs. The inner declaration hides the outer x for the entire function body.",
+    "That is how var behaves (hoisted and set to undefined). let is hoisted but left uninitialised, so reading it early throws.",
+    "Hoisting moves only the declaration, never the assignment. The value 20 is not stored until that line runs.",
+    ""
+   ],
+   "key": "CSE326-U4-036"
+  },
+  {
+   "topic": "Variables and Scope",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "var n = 5;\nfunction test() {\n  if (false) {\n    var n = 10;\n  }\n  return n;\n}\nconsole.log(test());",
+   "options": [
+    "5",
+    "10",
+    "undefined",
+    "ReferenceError: n is not defined"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "var declarations are hoisted to the top of the whole function, whether or not the block that contains them ever runs. So test() has its own local n from the start, and it hides the global n. The if (false) block never assigns 10, so the local n stays undefined, and that is what the function returns.",
+   "why_wrong": [
+    "Assumes the inner var n does not exist because its block never runs. The declaration is hoisted anyway and hides the global n.",
+    "The if (false) block never runs, so the assignment n = 10 never happens.",
+    "",
+    "A hoisted var starts out as undefined, so reading it before assignment gives undefined, not an error."
+   ],
+   "key": "CSE326-U4-037"
+  },
+  {
+   "topic": "Variables and Scope",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What happens when the code below is run as a whole?",
+   "code": "const student = { name: \"Asha\", marks: 70 };\nstudent.marks = 85;\nconsole.log(student.marks);\nstudent = { name: \"Ravi\", marks: 90 };\nconsole.log(student.marks);",
+   "options": [
+    "It prints 85, then throws a TypeError at student = { ... }",
+    "It prints 85, then 90",
+    "It throws a TypeError at student.marks = 85, so nothing is printed",
+    "It prints 70, then throws a TypeError at student = { ... }"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "const fixes the binding, not the object the variable points to. Changing a property with student.marks = 85 is allowed, so the first console.log prints 85. The line student = { ... } tries to point the constant at a new object, which throws TypeError: Assignment to constant variable, so the second console.log never runs.",
+   "why_wrong": [
+    "",
+    "Treats const like let. A const variable cannot be reassigned to a new object.",
+    "Assumes const makes the object immutable. Only the variable binding is locked, so the object's properties can still change.",
+    "Assumes property changes on a const object are silently ignored. The change to 85 really happens."
+   ],
+   "key": "CSE326-U4-038"
+  },
+  {
+   "topic": "Data Types",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "For which value of v do both Boolean(v) and v == false evaluate to true?",
+   "code": "",
+   "options": [
+    "\"\"",
+    "null",
+    "\"0\"",
+    "\"false\""
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Boolean(\"0\") is true because every non-empty string is truthy. But when == compares with a boolean, both sides are converted to numbers: false becomes 0 and \"0\" becomes 0, so \"0\" == false is also true. Truthiness (what if checks) and loose equality with false are two different questions.",
+   "why_wrong": [
+    "The empty string is falsy, so Boolean(\"\") is false, even though \"\" == false is true.",
+    "null is falsy, so Boolean(null) is false. null == false is also false, because null is loosely equal only to null and undefined.",
+    "",
+    "\"false\" is a non-empty string, so it is truthy. But \"false\" == false becomes NaN == 0, which is false."
+   ],
+   "key": "CSE326-U4-039"
+  },
+  {
+   "topic": "Operators and Conditionals",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "let a = 0;\nlet b = \"0\";\nconsole.log(a || \"none\", b || \"none\", a && \"yes\", b && \"yes\");",
+   "options": [
+    "none none 0 0",
+    "none 0 0 yes",
+    "none 0 false yes",
+    "true true false true"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "|| returns the first truthy operand (or the last one if neither is truthy), and && returns the first falsy operand (or the last one if both are truthy). Both give back one of the actual values, not true or false. 0 is falsy, so a || \"none\" is \"none\" and a && \"yes\" is 0. \"0\" is a non-empty string and therefore truthy, so b || \"none\" is \"0\" and b && \"yes\" is \"yes\".",
+   "why_wrong": [
+    "Treats the string \"0\" as falsy. Any non-empty string is truthy, so b || \"none\" returns \"0\" and b && \"yes\" returns \"yes\".",
+    "",
+    "Assumes && returns false when the left side is falsy. It returns the falsy operand itself, here 0.",
+    "Assumes || and && always produce booleans. They return one of the operand values."
+   ],
+   "key": "CSE326-U4-040"
+  },
+  {
+   "topic": "Operators and Conditionals",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "let list = [];\nlet r1 = list ? \"truthy\" : \"falsy\";\nlet r2 = list == false ? \"equal\" : \"not equal\";\nconsole.log(r1, r2);",
+   "options": [
+    "truthy not equal",
+    "falsy equal",
+    "falsy not equal",
+    "truthy equal"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Truthiness and loose equality follow different rules. As a condition, every object is truthy, including an empty array, so r1 is \"truthy\". But [] == false converts both sides toward numbers: false becomes 0, and [] becomes the string \"\" and then 0. 0 == 0 is true, so r2 is \"equal\".",
+   "why_wrong": [
+    "Assumes a truthy value cannot be loosely equal to false. == turns [] into \"\" and then 0, which equals false converted to 0.",
+    "Treats [] as falsy. Every object, even an empty array, is truthy.",
+    "Treats [] as falsy and also misses the conversion that makes [] == false true.",
+    ""
+   ],
+   "key": "CSE326-U4-041"
+  },
+  {
+   "topic": "Operators and Conditionals",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "console.log(\"10\" < \"9\", \"10\" < 9, \"apple\" > \"Banana\");",
+   "options": [
+    "false false false",
+    "true true false",
+    "false false true",
+    "true false true"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "When both operands are strings, < and > compare them character by character by character code. \"1\" comes before \"9\", so \"10\" < \"9\" is true. When one operand is a number, the string is converted to a number, so \"10\" < 9 becomes 10 < 9, which is false. Uppercase letters have smaller codes than lowercase ones (\"B\" is 66, \"a\" is 97), so \"apple\" > \"Banana\" is true.",
+   "why_wrong": [
+    "Compares \"10\" with \"9\" as numbers and compares the words alphabetically, ignoring case. Two strings are compared character by character, and case matters.",
+    "Compares \"10\" < 9 as strings too, but a number operand makes the string convert to a number. Also misses that \"B\" (66) comes before \"a\" (97).",
+    "Converts \"10\" and \"9\" to numbers. When both operands are strings, no numeric conversion happens.",
+    ""
+   ],
+   "key": "CSE326-U4-042"
+  },
+  {
+   "topic": "Strings and Arrays",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "let a = [1, 2, 3];\nlet b = a;\nlet c = a.slice();\nb.push(4);\nconsole.log(a.length, c.length, a === b, a === c);",
+   "options": [
+    "3 3 false false",
+    "4 4 true true",
+    "4 3 true true",
+    "4 3 true false"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "let b = a copies only the reference, so a and b are the same array, and b.push(4) shows up through a (a.length is 4). a.slice() builds a new array holding the old elements, so c keeps 3 elements. === on arrays checks whether both sides are the same array, not whether they hold the same elements: a === b is true and a === c is false.",
+   "why_wrong": [
+    "Assumes let b = a makes a separate copy. It copies the reference, so pushing through b changes a.",
+    "Assumes slice() returns the same array. It returns a new array, so c is not affected by the push and is not === a.",
+    "Gets the lengths right but assumes a copy made with slice() is === to the original. === on arrays checks whether both sides are the very same array, and c is a separate array.",
+    ""
+   ],
+   "key": "CSE326-U4-043"
+  },
+  {
+   "topic": "Functions and Objects",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What is printed or thrown when the code below runs?",
+   "code": "console.log(square(4));\nconsole.log(cube(2));\n\nfunction square(n) {\n  return n * n;\n}\n\nvar cube = function (n) {\n  return n * n * n;\n};",
+   "options": [
+    "16, then TypeError: cube is not a function",
+    "16, then 8",
+    "ReferenceError before anything is printed",
+    "16, then undefined"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A function declaration is hoisted together with its body, so square can be called before the line that defines it, and it prints 16. For var cube = function ..., only the var cube declaration is hoisted, with the value undefined. The function is assigned only when that line runs, so cube(2) tries to call undefined and throws TypeError: cube is not a function.",
+   "why_wrong": [
+    "",
+    "Assumes a function expression stored in a var is hoisted like a declaration. Only the variable is hoisted, not the function.",
+    "Function declarations can be called before their line, so square(4) works. var cube also exists (as undefined), so there is no ReferenceError.",
+    "Knows cube is undefined but assumes calling it returns undefined. Calling something that is not a function throws a TypeError."
+   ],
+   "key": "CSE326-U4-044"
+  },
+  {
+   "topic": "Functions and Objects",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "function addBonus(emp) {\n  emp.salary = emp.salary + 1000;\n  emp = { salary: 0 };\n  return emp.salary;\n}\nlet staff = { salary: 5000 };\nlet r = addBonus(staff);\nconsole.log(staff.salary, r);",
+   "options": [
+    "5000 0",
+    "6000 0",
+    "0 0",
+    "6000 6000"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "An object argument is passed as a copy of its reference, so emp and staff point to the same object, and emp.salary = ... raises staff.salary to 6000. emp = { salary: 0 } then points only the local parameter at a new object and leaves staff untouched. The function returns the new object's salary, which is 0.",
+   "why_wrong": [
+    "Assumes the function works on a copy of the object. emp refers to the same object as staff, so the first change is shared.",
+    "",
+    "Assumes reassigning the parameter replaces the caller's object. It only points the local variable emp at a new object.",
+    "Ignores the reassignment. After emp = { salary: 0 }, emp.salary reads the new object, which is 0."
+   ],
+   "key": "CSE326-U4-045"
+  }
+ ]
+}

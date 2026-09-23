@@ -1,0 +1,1042 @@
+{
+ "subject_code": "MEC103",
+ "unit": 4,
+ "unit_label": "Sectional Views",
+ "questions": [
+  {
+   "topic": "Cutting Plane",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which line is used to draw a cutting-plane line?",
+   "code": "",
+   "options": [
+    "A long-dash dotted (chain) thin line, made thick at the ends and at changes of direction",
+    "A continuous thick line along its whole length",
+    "A thin dashed line, the same as a hidden edge",
+    "A continuous thin line, the same as a dimension line"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The cutting plane is drawn as a thin long-dash dotted (chain) line. It is made thick at its two ends and at every change of direction so its path can be traced. It also carries arrows and capital letters at the ends.",
+   "why_wrong": [
+    "",
+    "A continuous thick line reads as a visible outline. The cutting plane is a thin chain line, thickened only at its ends and bends.",
+    "Thin dashed lines show hidden edges. The cutting plane uses the long-dash dotted (chain) pattern.",
+    "Continuous thin lines are used for dimension, extension and section lines. The cutting plane must be a chain line."
+   ],
+   "key": "MEC103-U4-001"
+  },
+  {
+   "topic": "Section Lines",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "At what angle to the principal outline are section lines normally drawn?",
+   "code": "",
+   "options": [
+    "45°",
+    "30°",
+    "60°",
+    "90°"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Section lines are normally drawn at 45° to the principal outline of the cut part, evenly spaced. 30° or 60° is used only where a 45° line would run parallel to the outline and be confused with it.",
+   "why_wrong": [
+    "",
+    "30° is only the fallback for when a 45° line would run parallel to the outline.",
+    "60° is only the fallback for when a 45° line would run parallel to the outline.",
+    "90° is not the hatching convention. The normal angle is 45°."
+   ],
+   "key": "MEC103-U4-002"
+  },
+  {
+   "topic": "Section Lines",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What type of line is used for section (hatching) lines?",
+   "code": "",
+   "options": [
+    "Continuous thin",
+    "Continuous thick",
+    "Thin dashed",
+    "Thin long-dash dotted (chain)"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Section lines are continuous thin lines. Keeping them thin lets the thick visible outlines of the cut part stand out, while the hatching simply marks the cut surface.",
+   "why_wrong": [
+    "",
+    "Thick lines are for visible outlines. Hatching drawn thick would swamp the edges of the part.",
+    "Dashed lines mean hidden edges, and hidden lines are normally left out of a sectional view.",
+    "Chain lines are for centre lines and the cutting plane, not for hatching."
+   ],
+   "key": "MEC103-U4-003"
+  },
+  {
+   "topic": "Section Lines",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "How are two adjacent parts hatched in a sectional assembly?",
+   "code": "",
+   "options": [
+    "In opposite directions, or at a different spacing",
+    "In the same direction and at the same spacing",
+    "One part hatched, the other left blank",
+    "One part in thin lines, the other in thick lines"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Where two separate parts meet in a section, their section lines are reversed in direction or drawn at a different spacing. This keeps the joint between them readable. Identical hatching would make them look like one piece.",
+   "why_wrong": [
+    "",
+    "Identical hatching makes two parts read as one piece, so the joint is lost.",
+    "Both parts are cut by the plane, so both are hatched. Leaving one blank suggests it was not cut.",
+    "Section lines are always thin. Parts are told apart by direction or spacing, not by line thickness."
+   ],
+   "key": "MEC103-U4-004"
+  },
+  {
+   "topic": "Types of Sections",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In a half section of a symmetrical object, what fraction of the object is imagined removed?",
+   "code": "",
+   "options": [
+    "One quarter",
+    "One half",
+    "Three quarters",
+    "One eighth"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A half section uses two cutting planes at right angles that meet on the axis. Only the quarter between them nearest the observer is imagined removed. Half of the VIEW then appears in section and half as an outside view, which is where the name comes from.",
+   "why_wrong": [
+    "",
+    "This confuses the view with the removal. Half the view is in section, but only a quarter of the object is removed.",
+    "Removing three quarters would leave no outside-view half to draw.",
+    "An eighth does not match two perpendicular planes meeting on the axis, which cut away exactly one quarter."
+   ],
+   "key": "MEC103-U4-005"
+  },
+  {
+   "topic": "Types of Sections",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which type of section uses a stepped cutting plane?",
+   "code": "",
+   "options": [
+    "Offset section",
+    "Full section",
+    "Revolved section",
+    "Removed section"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "An offset section uses a stepped cutting plane. This catches features that do not lie in one straight line, such as holes out of line, all in a single sectional view.",
+   "why_wrong": [
+    "",
+    "In a full section the plane passes straight through the object with no steps.",
+    "A revolved section is drawn in place on the view. Its defining feature is where it is drawn, not a stepped plane.",
+    "A removed section is drawn away from the view. Its defining feature is where it is drawn, not a stepped plane."
+   ],
+   "key": "MEC103-U4-006"
+  },
+  {
+   "topic": "Types of Sections",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In a full section, how does the cutting plane pass through the object?",
+   "code": "",
+   "options": [
+    "Straight through the whole object",
+    "Only up to the axis, where a second plane at right angles meets it",
+    "Along a stepped path to catch features not in one straight line",
+    "Through a thin slice that is then drawn in place on the view"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "In a full section the cutting plane passes right through the object, so the whole view is drawn in section. The other options describe a half section, an offset section and a revolved section.",
+   "why_wrong": [
+    "",
+    "Two planes meeting at right angles on the axis give a half section, which removes one quarter.",
+    "A stepped plane gives an offset section.",
+    "A section drawn in place on the view is a revolved section."
+   ],
+   "key": "MEC103-U4-007"
+  },
+  {
+   "topic": "Features Not Hatched",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which of these features is shown unhatched in a sectional view when the cutting plane passes along its length?",
+   "code": "",
+   "options": [
+    "A rib",
+    "A pulley rim",
+    "A pulley hub",
+    "The main body of a casting"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Ribs, webs, spokes, shafts, bolts, nuts, screws, keys, pins and rivets are left unhatched when the cutting plane passes along their length, and are drawn in outside view. Rims, hubs and the body of a casting are ordinary material and are hatched wherever the plane cuts them.",
+   "why_wrong": [
+    "",
+    "The rim is not an exempt feature. Wherever the plane cuts it, it is hatched normally.",
+    "The hub is not an exempt feature. Wherever the plane cuts it, it is hatched normally.",
+    "The body of a casting is hatched wherever the plane cuts it. Only ribs, webs, spokes, shafts and fasteners are exempt."
+   ],
+   "key": "MEC103-U4-008"
+  },
+  {
+   "topic": "Features Not Hatched",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "How is a spoke drawn when the cutting plane passes ACROSS it, at right angles to its length?",
+   "code": "",
+   "options": [
+    "Hatched normally with thin section lines",
+    "Left unhatched, as when it is cut lengthwise",
+    "Shown only by hidden lines",
+    "Hatched with thick lines to mark it as a spoke"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Spokes, ribs, webs, shafts and fasteners are exempt from hatching only when the plane runs ALONG their length. A plane cutting across a spoke exposes a real cut surface, so it is hatched normally with continuous thin lines at 45°.",
+   "why_wrong": [
+    "",
+    "The no-hatching rule applies only when the plane runs along the spoke's length. Cut across, it is hatched.",
+    "Hidden lines are normally omitted in a sectional view, and a cut spoke is visible cut material anyway.",
+    "Section lines are always thin. A spoke gets no special thick hatching."
+   ],
+   "key": "MEC103-U4-009"
+  },
+  {
+   "topic": "Sectional View Rules",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "How are hidden lines treated in a sectional view?",
+   "code": "",
+   "options": [
+    "They are normally omitted",
+    "They must all be shown as thin dashed lines",
+    "They are shown as thick dashed lines",
+    "They are replaced by section lines"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The section already exposes the interior, so hidden lines behind the cutting plane are normally omitted to keep the view clear. The other, unsectioned views of the object are still drawn complete.",
+   "why_wrong": [
+    "",
+    "Showing every hidden line clutters the sectional view. The normal practice is to leave them out.",
+    "Hidden lines are never thick, and in a sectional view they are normally omitted anyway.",
+    "Hatching goes only where the plane cuts material. It does not stand in for hidden edges."
+   ],
+   "key": "MEC103-U4-010"
+  },
+  {
+   "topic": "Sectional View Rules",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "The true shape of a section appears in a view projected on which plane?",
+   "code": "",
+   "options": [
+    "A plane parallel to the cutting plane",
+    "A plane perpendicular to the cutting plane",
+    "A plane inclined at 45° to the cutting plane",
+    "Any plane, since a section always shows true shape"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The section lies in the cutting plane, so it is seen in true shape only when projected on a plane parallel to that cutting plane. On a perpendicular plane it appears edge-on as a line, and on an inclined plane it is foreshortened.",
+   "why_wrong": [
+    "",
+    "On a plane perpendicular to the cutting plane, the section is seen edge-on as a straight line.",
+    "On an inclined plane the section is foreshortened. The 45° is borrowed from the hatching angle.",
+    "A section shows its true shape only on a plane parallel to the cutting plane, not on any plane."
+   ],
+   "key": "MEC103-U4-011"
+  },
+  {
+   "topic": "Sectional View Rules",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In a sectional view, which portion of the object is imagined removed?",
+   "code": "",
+   "options": [
+    "The material between the observer and the cutting plane",
+    "The material beyond the cutting plane, away from the observer",
+    "Exactly one half of the object, whatever the section type",
+    "Only the holes and hollow spaces inside the object"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The observer imagines the material between themselves and the cutting plane taken away, then looks in the direction of the arrows at what remains. Only the cut surface of the remaining part is hatched.",
+   "why_wrong": [
+    "",
+    "The material beyond the plane is the part that is kept and drawn. The observer's side is what gets removed.",
+    "How much is removed depends on the section type. A half section, for example, removes only a quarter.",
+    "Holes are empty space and cannot be removed. It is the solid material in front of the plane that is imagined taken away."
+   ],
+   "key": "MEC103-U4-012"
+  },
+  {
+   "topic": "Cutting Plane",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "An offset section uses a stepped cutting plane. Which description of its cutting-plane line is complete and correct?",
+   "code": "",
+   "options": [
+    "Thin chain line, thickened at both ends and at every step, with arrows at the ends and capital letters",
+    "Thin chain line, thickened only at its two ends, with arrows at the ends and capital letters",
+    "Continuous thick line along the whole path, with arrows at the ends and capital letters",
+    "Thin chain line throughout, with an arrow at every step to show each change of direction"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A cutting-plane line is always a thin chain line, thickened at its ends and at every change of direction. For an offset section, the thickening at each bend is what shows the steps. Arrows at the two ends give the direction of sight, and capital letters name the section.",
+   "why_wrong": [
+    "",
+    "This leaves out the thickening at every change of direction, which is what makes the steps of an offset plane visible.",
+    "A continuous thick line reads as a visible edge. The cutting plane stays a thin chain line, thick only at its ends and bends.",
+    "Arrows go only at the two ends to show the direction of sight. The bends are marked by thickening, not by arrows."
+   ],
+   "key": "MEC103-U4-013"
+  },
+  {
+   "topic": "Cutting Plane",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about the arrows on a cutting-plane line is correct?",
+   "code": "",
+   "options": [
+    "They show the direction of sight and point toward the portion that is kept and drawn in section",
+    "They point away from the retained portion, toward the part that is removed",
+    "They point back toward the observer, marking where the viewer stands",
+    "They are placed at every change of direction to show which way the plane turns"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The arrows give the direction of sight. Everything between the observer and the cutting plane is imagined removed, so looking along the arrows means looking from the removed side toward the portion that is kept and drawn in section.",
+   "why_wrong": [
+    "",
+    "This reverses the convention. The removed material lies between the observer and the plane, so the arrows face the retained portion, not the removed part.",
+    "The direction of sight runs from the observer toward the object, not back toward the observer.",
+    "Arrows appear only at the two ends. Changes of direction are shown by thickening the chain line."
+   ],
+   "key": "MEC103-U4-014"
+  },
+  {
+   "topic": "Section Lines",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about section lines is NOT correct?",
+   "code": "",
+   "options": [
+    "They are continuous thin lines",
+    "They are evenly spaced",
+    "They are normally drawn at 45° to the principal outline",
+    "Adjacent parts are hatched identically so the assembly reads as one unit"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Section lines are continuous thin, evenly spaced and normally at 45° to the principal outline. Adjacent parts must be hatched in opposite directions or at a different spacing so the joint between them stays visible. The last statement is therefore the incorrect one.",
+   "why_wrong": [
+    "This is true. Section lines are continuous thin lines, so it is not the incorrect statement.",
+    "This is true. Section lines must be uniformly spaced.",
+    "This is true. 45° to the principal outline is the normal angle.",
+    ""
+   ],
+   "key": "MEC103-U4-015"
+  },
+  {
+   "topic": "Section Lines",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement correctly gives the rule for the angle of section lines?",
+   "code": "",
+   "options": [
+    "45° to the principal outline; 30° or 60° where a 45° line would run parallel to the outline",
+    "30° to the principal outline; 45° where a 30° line would run parallel to the outline",
+    "Any angle may be chosen, provided the lines are evenly spaced",
+    "Always 45°, even where the lines would run parallel to the outline"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The normal angle is 45° to the principal outline, with even spacing. Where a 45° line would run parallel to an outline and be mistaken for it, 30° or 60° is used instead.",
+   "why_wrong": [
+    "",
+    "This swaps the normal angle and the fallback. 45° is normal and 30°/60° is the exception.",
+    "Even spacing is required, but the angle is not free. 45° is the standard.",
+    "This ignores the exception. Hatching that runs parallel to an outline gets confused with the edge, so 30° or 60° is used there."
+   ],
+   "key": "MEC103-U4-016"
+  },
+  {
+   "topic": "Section Lines",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which area of a sectional view can receive section lines?",
+   "code": "",
+   "options": [
+    "Only areas where the cutting plane actually passes through solid material",
+    "The whole outline of the view, including holes inside it",
+    "The solid material cut by the plane, together with any drilled holes it passes through",
+    "Every surface visible beyond the cutting plane"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Hatching marks only the cut surface, where the plane actually passes through material. Holes, voids and the surfaces seen beyond the cut are left clear, which is how the reader tells solid from empty space.",
+   "why_wrong": [
+    "",
+    "Hatching the whole outline would fill holes and voids, which must stay clear.",
+    "A hole is empty space. The plane cuts no material there, so a hole stays unhatched.",
+    "Surfaces beyond the cut are seen but not cut, so they are drawn in outline without hatching."
+   ],
+   "key": "MEC103-U4-017"
+  },
+  {
+   "topic": "Types of Sections",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement correctly distinguishes a revolved section from a removed section?",
+   "code": "",
+   "options": [
+    "A revolved section is drawn in place on the view; a removed section is drawn away from it",
+    "A removed section is drawn in place on the view; a revolved section is drawn away from it",
+    "A revolved section uses a stepped cutting plane; a removed section uses a straight one",
+    "A revolved section removes one quarter of the object; a removed section removes one half"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The two differ in where the section is drawn. A revolved section is drawn in place, on the view itself. A removed section is drawn away from the view, as its name suggests.",
+   "why_wrong": [
+    "",
+    "This swaps the two. 'Removed' means drawn away from the view, while a revolved section stays in place on it.",
+    "A stepped cutting plane belongs to an offset section, not to either of these.",
+    "Removing a quarter defines a half section. Revolved and removed sections differ only in where they are drawn."
+   ],
+   "key": "MEC103-U4-018"
+  },
+  {
+   "topic": "Types of Sections",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "How are the cutting planes arranged to produce a half section?",
+   "code": "",
+   "options": [
+    "Two planes at right angles, meeting on the axis",
+    "One plane passing straight through the whole object",
+    "One stepped plane passing through features that are not in line",
+    "Two parallel planes close together, cutting out a thin slice"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A half section is produced by two cutting planes meeting at right angles on the axis. The quarter between them nearest the observer is imagined removed, so half the view shows in section and half as an outside view.",
+   "why_wrong": [
+    "",
+    "A single plane straight through the object gives a full section, with the whole view in section.",
+    "A stepped plane gives an offset section.",
+    "Two parallel planes cutting out a slice do not remove the single quarter that a half section needs. Only two planes at right angles on the axis do that."
+   ],
+   "key": "MEC103-U4-019"
+  },
+  {
+   "topic": "Features Not Hatched",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which group consists entirely of parts that are left unhatched when the cutting plane passes along their length?",
+   "code": "",
+   "options": [
+    "Shafts, keys, pins, rivets",
+    "Ribs, webs, spokes, pulley rims",
+    "Bolts, nuts, screws, pulley hubs",
+    "Webs, bolts, pins, cast bodies"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Shafts, keys, pins and rivets are left unhatched when the plane passes along their length, and so are bolts, nuts, screws, ribs, webs and spokes. Rims, hubs and the main body of a casting are ordinary material and are hatched wherever the plane cuts them.",
+   "why_wrong": [
+    "",
+    "Pulley rims are hatched where they are cut. Ribs, webs and spokes on their own would be correct.",
+    "Pulley hubs are hatched where they are cut. The fasteners on their own would be correct.",
+    "A cast body is hatched wherever the plane cuts it, so this group is not entirely unhatched."
+   ],
+   "key": "MEC103-U4-020"
+  },
+  {
+   "topic": "Features Not Hatched",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "In a sectional view, which of the following is left unhatched?",
+   "code": "",
+   "options": [
+    "A rivet cut along its axis",
+    "A rivet cut across its axis",
+    "A web cut across its length",
+    "A pulley hub cut by a plane through its axis"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Rivets, like shafts, bolts, keys and pins, are left unhatched only when the plane runs along their axis. Cut across, a rivet or a web shows a real cut face and is hatched. A hub is body material, so it is hatched whenever the plane cuts it.",
+   "why_wrong": [
+    "",
+    "A rivet cut across is hatched normally. The exemption applies only when it is cut lengthwise.",
+    "A web is left clear only when the plane runs along it. Cut across, it is hatched.",
+    "The hub is not an exempt feature. Even with the plane along the pulley's axis, its cut surface is hatched."
+   ],
+   "key": "MEC103-U4-021"
+  },
+  {
+   "topic": "Sectional View Rules",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A cutting plane is perpendicular to the HP and inclined at 30° to the VP. On which plane will the section be seen in its true shape?",
+   "code": "",
+   "options": [
+    "An auxiliary plane parallel to the cutting plane",
+    "The VP, since the front view always shows the true shape of a section",
+    "The HP, since the cutting plane is perpendicular to it",
+    "An auxiliary plane perpendicular to the cutting plane"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The section lies in the cutting plane, so its true shape needs a projection plane PARALLEL to the cutting plane. The VP is at 30° to the cutting plane, so the front view is foreshortened. The HP is perpendicular to it, so the top view shows the section as a line. An auxiliary plane parallel to the cutting plane is therefore required.",
+   "why_wrong": [
+    "",
+    "The cutting plane is inclined at 30° to the VP, so the front view of the section is foreshortened and not true shape.",
+    "Being perpendicular is the wrong relationship. On the HP the section is seen edge-on, as a line along the cutting plane.",
+    "A plane perpendicular to the cutting plane shows the section edge-on, as a line."
+   ],
+   "key": "MEC103-U4-022"
+  },
+  {
+   "topic": "Sectional View Rules",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "An object is shown by a sectional front view and an ordinary top view. Which description of the two views is correct?",
+   "code": "",
+   "options": [
+    "Front view hatched only where the plane cuts material, hidden lines normally omitted; top view drawn complete",
+    "Front view hatched where the plane cuts material, all hidden lines shown; top view drawn complete",
+    "Front view hatched where the plane cuts material, hidden lines omitted; top view drawn with the removed portion missing",
+    "Front view hatched over its whole outline, hidden lines omitted; top view drawn complete"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "In the sectional front view, only material that is actually cut is hatched, and hidden lines are normally omitted. The material is imagined removed for that view alone. The top view is still drawn complete, and it is the adjacent view on which the cutting-plane line is shown.",
+   "why_wrong": [
+    "",
+    "Hidden lines are normally omitted in the sectional view. Showing them all clutters it.",
+    "The material is imagined removed only for the sectional view. The other views are still drawn complete.",
+    "Hatching goes only where the plane cuts material. Holes and space beyond the cut stay clear."
+   ],
+   "key": "MEC103-U4-023"
+  },
+  {
+   "topic": "Cutting Plane",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "An offset section of a plate needs a cutting plane that changes direction twice, so its line on the adjacent view has three straight legs. At how many places is this cutting-plane line drawn thick?",
+   "code": "",
+   "options": [
+    "2",
+    "3",
+    "6",
+    "4"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "A cutting-plane line is a thin long-dash dotted (chain) line made thick at its two ends and at every change of direction. Here that is 2 ends + 2 bends = 4 thick portions. The rest of the line stays thin chain.",
+   "why_wrong": [
+    "Counts only the two ends and forgets that the line is also thickened at every change of direction.",
+    "Counts one thick portion per leg. Thickening goes with the ends and the bends, not with the number of legs.",
+    "Treats each of the three legs as a separate line with two thick ends, so the bends shared between legs get counted twice.",
+    ""
+   ],
+   "key": "MEC103-U4-024"
+  },
+  {
+   "topic": "Cutting Plane",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "In the front view of a casting, a horizontal cutting-plane line crosses the object, and the arrows at its ends point downward. What does the resulting sectional view show?",
+   "code": "",
+   "options": [
+    "The portion above the plane is removed, and the lower portion is seen from above as a sectional top view",
+    "The portion below the plane is removed, since the arrows point at the material that is taken away",
+    "The portion in front of the plane is removed, giving a sectional front view, since the line is drawn on the front view",
+    "The portion above the plane is removed, and the cut face is shown in the front view as a hatched strip along the line"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The arrows give the direction of sight. Pointing downward, they mean the observer looks down from above. The material between the observer and the plane (everything above it) is imagined removed, and the cut face of the lower portion is seen from above as a sectional top view. Because the plane is parallel to the HP, that top view shows the section's true shape.",
+   "why_wrong": [
+    "",
+    "Reads the arrows as pointing at the material that is thrown away. They give the direction of sight, so they point toward the portion that is kept.",
+    "Assumes the view carrying the cutting-plane line is the one that becomes sectional. A horizontal plane is seen edge-on in the front view and is looked at from above.",
+    "Puts the cut face in the view where the plane is only an edge. There it has no area; its shape appears in the top view."
+   ],
+   "key": "MEC103-U4-025"
+  },
+  {
+   "topic": "Cutting Plane",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A sectional front view is needed of a cylinder standing with its axis vertical. The vertical cutting plane contains the axis and is parallel to the VP. Where is the cutting-plane line drawn?",
+   "code": "",
+   "options": [
+    "On the front view, along the vertical axis of the cylinder",
+    "On the top view, as a line through the centre of the circle, perpendicular to XY",
+    "On the top view, as a line through the centre of the circle, parallel to XY",
+    "On the front view, as a horizontal line across the cylinder"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The cutting plane is drawn on the adjacent view, where it is seen edge-on as a line. A vertical plane parallel to the VP appears edge-on in the top view as a line parallel to XY, here through the centre of the circle. The front view is the sectional view itself, and there the plane appears as the whole cut face.",
+   "why_wrong": [
+    "The plane is parallel to the VP, so in the front view it appears as the whole cut face, not as a line. The axis there is only a centre line.",
+    "In the top view, a line perpendicular to XY is the edge of a plane parallel to the profile plane, which would give a sectional side view.",
+    "",
+    "On the front view, a horizontal line is the edge of a horizontal plane, which would give a sectional top view."
+   ],
+   "key": "MEC103-U4-026"
+  },
+  {
+   "topic": "Section Lines",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "In a sectional assembly, three parts P, Q and R each touch the other two. P is hatched at 45° sloping one way and Q at 45° sloping the other way, both at the same spacing. How should R be hatched?",
+   "code": "",
+   "options": [
+    "At 45° in the same direction and at the same spacing as P",
+    "Left unhatched, since both 45° directions are already in use",
+    "At 45° in the direction of P or Q, but at a clearly different spacing from that part",
+    "At 45° with continuous thick lines, so it stands out from P and Q"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Adjacent parts are told apart by reversing the direction of the hatching or by changing its spacing. Only two 45° directions exist and R touches both P and Q, so R shares a direction with one of them and gets a noticeably different spacing. The lines stay continuous thin.",
+   "why_wrong": [
+    "If R is hatched exactly like P, the boundary between them cannot be read. Adjacent parts must differ in direction or in spacing.",
+    "R is cut material and must be hatched. Only voids, and features such as ribs, shafts and bolts cut along their length, are left clear.",
+    "",
+    "Section lines are always thin. Line thickness is never used to tell parts apart."
+   ],
+   "key": "MEC103-U4-027"
+  },
+  {
+   "topic": "Section Lines",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A sectioned lever arm has its principal outline running at 45° to the horizontal, so hatching at the usual 45° would run parallel to those edges. How should its section lines be drawn?",
+   "code": "",
+   "options": [
+    "At 30° or 60° instead, still thin, continuous and evenly spaced",
+    "At 45° regardless, since 45° is the only angle permitted for hatching",
+    "At 45° but in thick lines, so they cannot be confused with the outline",
+    "Not at all; the area is left blank with a note that it is sectioned"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Section lines are normally continuous thin lines at 45°, evenly spaced. When 45° lines would run parallel to the principal outline they could be mistaken for it, so 30° or 60° is used instead. The lines stay thin and evenly spaced.",
+   "why_wrong": [
+    "",
+    "Ignores the exception. 45° is the normal angle, but it is changed when the lines would run parallel to the outline.",
+    "Section lines are always thin, and making them thick does not fix hatching that runs parallel to an edge.",
+    "Every area where the plane cuts material must be hatched. A note does not replace hatching."
+   ],
+   "key": "MEC103-U4-028"
+  },
+  {
+   "topic": "Types of Sections",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A rectangular plate has three holes of different sizes, and their centres do not lie on one straight line. A single sectional view must show all three holes cut through. Which section is used?",
+   "code": "",
+   "options": [
+    "Full section with one straight cutting plane through the plate",
+    "Offset section, with the cutting plane stepped to pass through each hole",
+    "Half section, removing one quarter of the plate",
+    "Revolved section drawn in place on the view"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "When the features to be shown do not lie in one straight line, the cutting plane is stepped (offset) so that each leg passes through one of them. This gives an offset section. Its cutting-plane line is thick at the ends and at each change of direction.",
+   "why_wrong": [
+    "One straight plane can only pass through holes that lie on one line, so at least one hole would be missed.",
+    "",
+    "A half section shows a symmetrical object half in section and half as an outside view. Its planes are still straight, so it cannot catch holes that are not in one line.",
+    "A revolved section shows the cross-section of an arm, spoke or rib drawn in place. It does not expose features spread across the object."
+   ],
+   "key": "MEC103-U4-029"
+  },
+  {
+   "topic": "Types of Sections",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "The cross-section of a lever's tapering handle must be shown. The draughtsman imagines a cutting plane across the handle, turns the cross-section through 90° into the plane of the paper, and draws it directly on the handle in the same view. What kind of section is this?",
+   "code": "",
+   "options": [
+    "Removed section",
+    "Offset section",
+    "Full section",
+    "Revolved section"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A revolved section is drawn in place: the cross-section is turned into the plane of the drawing and drawn on top of the part it belongs to. It suits arms, spokes, ribs and handles, whose cross-section would otherwise need a separate view.",
+   "why_wrong": [
+    "A removed section is drawn away from the view, not on top of the handle.",
+    "An offset section uses a stepped cutting plane to catch features that are not in one line. Nothing is stepped here.",
+    "A full section cuts right through the whole object and replaces the view. Here a cross-section is only added onto the existing view.",
+    ""
+   ],
+   "key": "MEC103-U4-030"
+  },
+  {
+   "topic": "Types of Sections",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A symmetrical cast valve body must show both its internal passages and its external shape in a single front view. Which section suits it, and what does the view show?",
+   "code": "",
+   "options": [
+    "Full section; the view is sectioned across its whole width",
+    "Half section; half of the object is removed, so the whole view is sectioned",
+    "Half section; one half of the view is in section and the other half is an outside view",
+    "Offset section; the stepped plane leaves the outside visible on one side"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "For a symmetrical object, a half section imagines one quarter removed by two planes meeting at right angles on the axis. One half of the view then shows the interior in section and the other half shows the exterior, with a centre line between them, so both appear in one view.",
+   "why_wrong": [
+    "A full section removes the whole front portion, so the external features are lost from that view.",
+    "A half section removes one quarter, not half, and only half of the view appears in section.",
+    "",
+    "An offset section steps the plane to catch features that are not in one line. It still shows the whole view in section."
+   ],
+   "key": "MEC103-U4-031"
+  },
+  {
+   "topic": "Features Not Hatched",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Two flanges are held together by a hexagonal-head bolt and nut. The cutting plane passes along the axis of the bolt. How are the parts shown in the sectional view?",
+   "code": "",
+   "options": [
+    "Flanges hatched in opposite directions; bolt and nut left unhatched",
+    "Flanges, bolt and nut all hatched, each part differing from its neighbour",
+    "Flanges hatched in the same direction; bolt and nut left unhatched",
+    "Flanges hatched in opposite directions and the nut hatched; only the bolt left unhatched"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Bolts, nuts, screws, pins, keys and rivets are not hatched when the cutting plane passes along their length; they are drawn as an outside view. The flanges are cut material and are separate parts that touch, so they are hatched in opposite directions (or at a different spacing).",
+   "why_wrong": [
+    "",
+    "Bolts and nuts cut along their length are not hatched, even though the plane passes through them.",
+    "The two flanges are separate parts that touch, so their hatching must be reversed or respaced.",
+    "The nut is also cut along the bolt's axis. A nut cut lengthwise is left unhatched, just like the bolt."
+   ],
+   "key": "MEC103-U4-032"
+  },
+  {
+   "topic": "Features Not Hatched",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A cast bracket has a base plate, a vertical plate and a thin triangular web joining them. A vertical cutting plane passes along the length of the web, through the middle of its thickness. In the sectional front view, what is hatched?",
+   "code": "",
+   "options": [
+    "The base plate, the vertical plate and the web",
+    "Nothing, since the bracket is a single casting",
+    "The web only, since it is the feature the plane runs along",
+    "The base plate and the vertical plate; the web is left unhatched"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Ribs and webs are left unhatched when the cutting plane passes along their length, so the part does not look like a solid mass. The base plate and vertical plate are cut by the same plane and are hatched. Because they belong to one part, they get the same hatching.",
+   "why_wrong": [
+    "A web cut along its length is not hatched. Hatching it would make the bracket look like a solid block.",
+    "Being one casting does not exempt it. Every area the plane cuts is hatched, apart from features such as a web cut along its length.",
+    "This reverses the rule. The feature the plane runs along is the one left unhatched.",
+    ""
+   ],
+   "key": "MEC103-U4-033"
+  },
+  {
+   "topic": "Sectional View Rules",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A hexagonal prism stands on its base on the HP. A horizontal section plane, parallel to the HP, cuts it halfway up its axis, and the upper part is removed. In which view is the true shape of the section seen?",
+   "code": "",
+   "options": [
+    "The front view, since the cutting plane is drawn there",
+    "The top view, where it appears as a hexagon",
+    "The side view, since the section is seen beside the retained part",
+    "Only an auxiliary view projected on a plane inclined to the HP"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The true shape of a section appears in the view projected on a plane parallel to the cutting plane. A horizontal plane is parallel to the HP, so the top view shows the section in true shape, here a hexagon the same as the base. In the front and side views the plane is only an edge.",
+   "why_wrong": [
+    "In the front view the plane is seen edge-on, so the section shows only as a line.",
+    "",
+    "The plane is also edge-on in the side view. A view shows true shape only when its plane is parallel to the cutting plane.",
+    "An auxiliary view is needed only when the cutting plane is inclined. This plane is already parallel to the HP."
+   ],
+   "key": "MEC103-U4-034"
+  },
+  {
+   "topic": "Sectional View Rules",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student draws the sectional front view of a machined block. Behind the cutting plane, some edges are visible to the observer and others are hidden behind material. What should the sectional view contain?",
+   "code": "",
+   "options": [
+    "Hatching on the cut faces only; nothing behind the plane is drawn",
+    "Hatching on the cut faces, the visible edges beyond the plane, and no hidden lines",
+    "Hatching on the cut faces, the visible edges, and every hidden edge as a dashed line",
+    "Hatching over the whole outline of the view, with the visible edges drawn on top"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A sectional view shows the cut faces hatched, plus everything visible beyond the plane in the portion that is kept, drawn as ordinary visible lines. Hidden lines are normally left out because the section already shows the interior. Hatching is limited to where material is actually cut.",
+   "why_wrong": [
+    "The portion kept beyond the plane can still be seen, so its visible edges are drawn, without hatching.",
+    "",
+    "Hidden lines are normally left out of a sectional view, since the section already shows the interior.",
+    "Hatching goes only where the plane actually cuts material, not over the whole view."
+   ],
+   "key": "MEC103-U4-035"
+  },
+  {
+   "topic": "Cutting Plane",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A drawing is in first-angle projection. In the top view, a cutting-plane line runs parallel to XY through the centre of the object, and its arrows point upward on the sheet, towards the XY line. Which portion is imagined removed, and which view is drawn in section?",
+   "code": "",
+   "options": [
+    "The rear portion (nearer the VP) is removed, since the arrows point at it; the front view is sectioned",
+    "The front portion is removed; the top view is drawn in section",
+    "The front portion (nearer the observer) is removed; the front view is drawn in section",
+    "The rear portion is removed and the object is viewed from behind, giving a sectional rear view"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "In first-angle projection the top view lies below XY, and the object's rear (the side nearer the VP) is closest to XY. Arrows pointing toward XY therefore point from front to back, which is the direction of sight of an observer standing in front. The material between that observer and the plane, the front portion, is removed, and the rear portion is seen as a sectional front view.",
+   "why_wrong": [
+    "Reads the arrows as pointing at the part that is thrown away. They show the direction of sight and point toward the portion that is kept.",
+    "The top view only carries the cutting-plane line. A plane parallel to the VP is seen in section in the front view.",
+    "",
+    "Reverses the direction of sight. In first angle the rear of the object lies nearest XY in the top view, so arrows pointing toward XY look from front to back."
+   ],
+   "key": "MEC103-U4-036"
+  },
+  {
+   "topic": "Cutting Plane",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "On the top view of a symmetrical part, a thin long-dash dotted line runs straight across the object through its centre. It is the same thickness along its whole length and has no arrows and no letters. A student says it is the cutting plane for the sectional front view. What is the line, and why?",
+   "code": "",
+   "options": [
+    "A cutting-plane line, since any thin long-dash dotted line across a view marks where it was cut",
+    "A centre line; a cutting-plane line is also thin chain but is thick at its ends and carries arrows and capital letters",
+    "A hidden edge, since thin broken lines through a view represent edges behind material",
+    "A cutting-plane line with its arrows left out, since the direction of sight is always taken from the front"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Centre lines and cutting-plane lines are both thin long-dash dotted (chain) lines. A cutting-plane line is recognised because it is thick at its ends (and at any change of direction), has arrows showing the direction of sight, and is lettered with capitals such as A-A. A thin chain line of even thickness through the centre with none of these is a centre line.",
+   "why_wrong": [
+    "Confuses the two chain lines. Thin long-dash dotted is also the centre-line type, and only the thick ends, arrows and letters make it a cutting plane.",
+    "",
+    "Hidden edges are drawn as short dashed lines, not long-dash dotted ones.",
+    "Even without arrows, the line lacks the thick ends every cutting-plane line has. Arrows are also needed, because the direction of sight is not fixed."
+   ],
+   "key": "MEC103-U4-037"
+  },
+  {
+   "topic": "Section Lines",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A hollow steel sleeve (one part) stands with its axis vertical and is cut by a vertical plane containing the axis. In the sectional front view, the cut material appears as two separate strips, one on each side of the bore. How are they hatched?",
+   "code": "",
+   "options": [
+    "The two strips in opposite directions, since separate hatched areas must be told apart",
+    "Both strips and the bore as one continuous hatched area, since the sleeve is a single part",
+    "Only one strip; the other is the far wall, seen beyond the cut",
+    "Both strips in the same direction and at the same spacing, with the bore left clear"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The plane through the axis cuts both walls of the sleeve, so both strips are hatched. The bore is a void, so it stays clear. The reverse-or-respace rule is for telling different parts apart where they touch; separate cut areas of one part get identical hatching so they read as the same component.",
+   "why_wrong": [
+    "Reversing or respacing separates different parts that touch. Separate areas of the same part are hatched identically so they read as one component.",
+    "The bore is a void, and hatching goes only where the plane cuts material.",
+    "The plane passes through the axis, so it cuts both walls, and each wall shows a cut face.",
+    ""
+   ],
+   "key": "MEC103-U4-038"
+  },
+  {
+   "topic": "Section Lines",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A solid steel shaft runs through a bronze bush that is pressed into a cast-iron housing. The assembly is cut by a plane containing the shaft's axis. Which hatching scheme is correct?",
+   "code": "",
+   "options": [
+    "Shaft left unhatched; bush and housing hatched, differing from each other in direction or spacing",
+    "Shaft, bush and housing all hatched, each differing from its neighbour in direction or spacing",
+    "Shaft left unhatched; bush and housing hatched identically, since the bush is pressed in and acts as part of the housing",
+    "Shaft and bush both left unhatched as round parts cut along their length; only the housing hatched"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A shaft cut along its axis is drawn unhatched, as an outside view. The bush and housing are both cut and are separate parts that touch, so their hatching must differ in direction or spacing. A press fit joins them physically but does not make them one part.",
+   "why_wrong": [
+    "",
+    "A solid shaft cut along its length is not hatched, whatever is hatched around it.",
+    "The bush and housing are separate parts that touch. A press fit does not make them one part, so their hatching must differ.",
+    "The rule covers listed items such as shafts, bolts, nuts, pins, keys and rivets. A bush is a hollow sleeve, not one of them, so it is hatched when cut."
+   ],
+   "key": "MEC103-U4-039"
+  },
+  {
+   "topic": "Types of Sections",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "The cross-section of a curved arm of a handwheel must be shown. Drawn on the arm itself it would overlap the arm's outlines, so the draughtsman turns the cross-section into the plane of the paper and draws it beside the view, clear of the arm. What section is this?",
+   "code": "",
+   "options": [
+    "Revolved section, since the cross-section is turned through 90° into the plane of the paper",
+    "Offset section, since the section is moved off the view",
+    "Removed section",
+    "Half section, since only part of the handwheel is cut"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Revolved and removed sections both show a cross-section turned into the plane of the drawing; what decides between them is where it is drawn. Drawn in place on the view, it is a revolved section. Drawn away from the view, as here to keep the arm's outlines clear, it is a removed section.",
+   "why_wrong": [
+    "The cross-section is turned in both revolved and removed sections. A revolved section is drawn in place on the view, not beside it.",
+    "'Offset' refers to a stepped cutting plane that catches features not in one line, not to where the section is drawn.",
+    "",
+    "A half section removes one quarter of a symmetrical object so half the view is in section. It is not a single cross-section of an arm."
+   ],
+   "key": "MEC103-U4-040"
+  },
+  {
+   "topic": "Types of Sections",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A student draws a half section of a symmetrical bearing housing: (1) two cutting planes at right angles meet on the axis, and one quarter of the object is imagined removed; (2) the cut half of the front view is hatched; (3) a continuous thick line is drawn along the axis between the sectioned half and the outside half; (4) hidden lines are left out of the sectioned half. Which step is wrong?",
+   "code": "",
+   "options": [
+    "Step 1: a half section removes half of the object, not a quarter",
+    "Step 2: the whole front view should be hatched once the object is sectioned",
+    "Step 3: the two halves are separated by a thin chain centre line, not a continuous thick line",
+    "Step 4: hidden lines must be shown in the sectioned half"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "In a half section, two planes at right angles meeting on the axis remove one quarter, so half the view is in section and half is an outside view. There is no real edge along the join, so the halves are separated by a thin chain centre line; a continuous thick line would wrongly read as an edge. Leaving hidden lines out of the sectioned half is correct.",
+   "why_wrong": [
+    "Confuses 'half of the view in section' with 'half of the object removed'. Only the quarter nearest the observer is removed.",
+    "In a half section only half the view is sectioned. The other half is an ordinary outside view and is not hatched.",
+    "",
+    "Hidden lines are normally left out of a sectional view, and the sectioned half is exactly where the interior is already shown."
+   ],
+   "key": "MEC103-U4-041"
+  },
+  {
+   "topic": "Features Not Hatched",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A key sits in the keyway of a solid shaft. A removed section is taken with a cutting plane at right angles to the shaft's axis, passing through the key. How are the shaft and key shown in that section?",
+   "code": "",
+   "options": [
+    "Neither is hatched, since shafts and keys are never hatched",
+    "The shaft is hatched but the key is left clear, since keys are never hatched",
+    "Both are hatched identically, since the key locks into the shaft and acts as one piece",
+    "Both are hatched, the key in the opposite direction or at a different spacing from the shaft"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Shafts, keys, bolts and similar parts are left unhatched only when the cutting plane passes along their length. A plane at right angles to the axis cuts across both, so both show a true cross-section and are hatched. They are separate parts that touch, so the key is hatched in the opposite direction or at a different spacing from the shaft.",
+   "why_wrong": [
+    "Shafts and keys are left unhatched only when the plane runs along their length. This plane cuts across them.",
+    "The key is cut across here just like the shaft, so it is hatched too. 'Not hatched' applies only to a lengthwise cut.",
+    "The shaft and key are separate parts that touch, so their hatching must be reversed or respaced.",
+    ""
+   ],
+   "key": "MEC103-U4-042"
+  },
+  {
+   "topic": "Features Not Hatched",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A bracket has a thin vertical rib standing on its base plate. Two sectional views are drawn. For the sectional front view, the vertical cutting plane runs along the rib's length, parallel to its flat faces. For the sectional top view, the horizontal cutting plane cuts across the rib at right angles to its flat faces. How does the rib appear?",
+   "code": "",
+   "options": [
+    "Unhatched in the sectional front view; hatched in the sectional top view",
+    "Unhatched in both views, since ribs are never hatched",
+    "Hatched in both views, since the cutting plane passes through rib material each time",
+    "Hatched in the sectional front view; unhatched in the sectional top view"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Whether a rib is hatched depends on the direction of the cut, not on whether the plane touches it. Cut along its length (the front view here), the rib is left unhatched so the part does not look like a solid block. Cut across (the top view here), it shows its true thin cross-section and is hatched normally.",
+   "why_wrong": [
+    "",
+    "Ribs are left clear only when the plane runs along their length. In the top view the plane cuts across the rib.",
+    "Passing through the rib is not enough. A rib cut along its length is left unhatched so the part does not falsely look solid.",
+    "This reverses the rule. The lengthwise cut (front view) is the unhatched one, and the cut across (top view) is hatched."
+   ],
+   "key": "MEC103-U4-043"
+  },
+  {
+   "topic": "Sectional View Rules",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A cutting plane is perpendicular to both the HP and the VP. In which view is the section seen in its true shape?",
+   "code": "",
+   "options": [
+    "The top view, since the plane is perpendicular to the HP",
+    "The side view, projected on the profile plane",
+    "The front view, since the plane is perpendicular to the VP",
+    "Only an auxiliary view, since the plane is not parallel to the HP or the VP"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The true shape of a section appears on a plane parallel to the cutting plane. A plane perpendicular to both the HP and the VP is parallel to the profile plane. It appears as a line in the front and top views and in true shape in the side view.",
+   "why_wrong": [
+    "A plane perpendicular to the HP is seen edge-on in the top view, as a line. True shape needs a view on a plane parallel to the cutting plane.",
+    "",
+    "A plane perpendicular to the VP is seen edge-on in the front view, as a line, so its shape cannot appear there.",
+    "An auxiliary plane is needed only for an inclined cutting plane. This one is parallel to the profile plane, so the side view already shows true shape."
+   ],
+   "key": "MEC103-U4-044"
+  },
+  {
+   "topic": "Sectional View Rules",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A base plate carries a lug that rises above its rear edge. A vertical cutting plane parallel to the VP cuts through the middle of the plate, but the lug lies wholly behind the plane and is not touched by it. In the sectional front view, how is the lug shown?",
+   "code": "",
+   "options": [
+    "Hatched, like everything else in the sectional view",
+    "Left out, since a sectional view shows only the cut faces",
+    "In hidden lines, since it lies behind the cutting plane",
+    "In visible outline without hatching, since the plane does not cut it"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A sectional view shows the cut faces hatched, together with whatever can be seen beyond the plane in the portion that is kept. The lug is not cut, so it gets no hatching. It rises above the plate where the observer can see it, so it is drawn as an ordinary visible outline.",
+   "why_wrong": [
+    "Hatching goes only where the plane actually cuts material. The lug is beyond the cut, so it stays unhatched.",
+    "The portion kept beyond the plane can still be seen, so visible features such as the lug are drawn.",
+    "Once the front portion is removed, the lug stands above the cut plate in full view of the observer. It is visible, not hidden.",
+    ""
+   ],
+   "key": "MEC103-U4-045"
+  }
+ ]
+}

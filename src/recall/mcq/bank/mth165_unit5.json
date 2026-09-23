@@ -1,0 +1,1111 @@
+{
+ "subject_code": "MTH165",
+ "unit": 5,
+ "unit_label": "Multivariable Integration and Applications",
+ "questions": [
+  {
+   "topic": "Double Integrals",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate ∫₀¹ ∫₀² xy dy dx.",
+   "code": "",
+   "options": [
+    "2",
+    "1",
+    "2x",
+    "1/4"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Inner: ∫₀² xy dy = x·[y²/2]₀² = 2x. Outer: ∫₀¹ 2x dx = [x²]₀¹ = 1. A definite double integral is a pure number, so no x can survive.",
+   "why_wrong": [
+    "Dropped the 1/2 in ∫y dy = y²/2, so the inner integral became 4x and ∫₀¹ 4x dx = 2.",
+    "",
+    "Stopped after the inner integration. 2x still contains x, but a definite double integral must be a pure number.",
+    "Used 0 to 1 for y as well, which integrates over the unit square, not over 0 ≤ y ≤ 2."
+   ],
+   "key": "MTH165-U5-001"
+  },
+  {
+   "topic": "Double Integrals",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate ∫₀¹ ∫₀ˣ (x + y) dy dx, where the inner integral runs over y from 0 to x.",
+   "code": "",
+   "options": [
+    "3x²/2",
+    "2/3",
+    "1",
+    "1/2"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Inner: ∫₀ˣ (x + y) dy = [xy + y²/2]₀ˣ = x² + x²/2 = 3x²/2. Outer: ∫₀¹ 3x²/2 dx = [x³/2]₀¹ = 1/2.",
+   "why_wrong": [
+    "Stopped after the inner integral. 3x²/2 still contains x, so the outer integration over x is missing.",
+    "Dropped the 1/2 in ∫y dy, which makes the inner result 2x² and ∫₀¹ 2x² dx = 2/3.",
+    "Used y from 0 to 1 instead of 0 to x, which is the unit square: ∫₀¹ (x + 1/2) dx = 1.",
+    ""
+   ],
+   "key": "MTH165-U5-002"
+  },
+  {
+   "topic": "Double Integrals",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate ∫₀¹ ∫₀¹ e^(x + y) dx dy.",
+   "code": "",
+   "options": [
+    "(e − 1)²",
+    "e² − 1",
+    "2(e − 1)",
+    "e − 1"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "e^(x + y) = eˣ·eʸ and both pairs of limits are constants, so the integral splits into a product: (∫₀¹ eˣ dx)(∫₀¹ eʸ dy) = (e − 1)(e − 1) = (e − 1)².",
+   "why_wrong": [
+    "",
+    "Treated x + y as a single variable t running from 0 to 2 and computed ∫₀² eᵗ dt = e² − 1. There are two independent integrations, not one.",
+    "Added the two single integrals, (e − 1) + (e − 1), instead of multiplying them.",
+    "Did only one of the two integrations."
+   ],
+   "key": "MTH165-U5-003"
+  },
+  {
+   "topic": "Change of Order",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "The region 0 ≤ x ≤ 2, 0 ≤ y ≤ 3 is a rectangle. Which expression is ∫₀² ∫₀³ f(x, y) dy dx with the order of integration reversed?",
+   "code": "",
+   "options": [
+    "∫₀² ∫₀³ f(x, y) dx dy",
+    "−∫₀³ ∫₀² f(x, y) dx dy",
+    "∫₀³ ∫₀² f(x, y) dx dy",
+    "(∫₀² dx)·(∫₀³ f(x, y) dy)"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "For a rectangle every limit is a constant, so each variable keeps its own limits when the order is reversed: x still runs 0 to 2 and y still runs 0 to 3. So ∫₀² ∫₀³ f dy dx = ∫₀³ ∫₀² f dx dy, with dx now on the inside, paired with 0 to 2.",
+   "why_wrong": [
+    "Swapped only the differentials. x now runs 0 to 3 and y runs 0 to 2, which is a different rectangle.",
+    "Reversing the order of integration does not change the sign. Only swapping the two limits of a single integral does that.",
+    "",
+    "A double integral splits into a product only when f(x, y) = g(x)h(y). For a general f, the y-integral still depends on x."
+   ],
+   "key": "MTH165-U5-004"
+  },
+  {
+   "topic": "Change of Order",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which region is the iterated integral ∫₀¹ ∫₀ˣ f(x, y) dy dx taken over? (Inner: y from 0 to x. Outer: x from 0 to 1.)",
+   "code": "",
+   "options": [
+    "The triangle with vertices (0, 0), (0, 1), (1, 1)",
+    "The triangle with vertices (0, 0), (1, 0), (1, 1)",
+    "The square 0 ≤ x ≤ 1, 0 ≤ y ≤ 1",
+    "The triangle with vertices (0, 0), (1, 0), (0, 1)"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "For each x in [0, 1], y runs from the x-axis (y = 0) up to the line y = x. Those vertical strips fill the triangle with vertices (0, 0), (1, 0) and (1, 1), which lies below the diagonal y = x.",
+   "why_wrong": [
+    "This is 0 ≤ x ≤ y ≤ 1, the part above y = x. The limits 0 ≤ y ≤ x put the region below that line.",
+    "",
+    "The inner upper limit is x, not 1, so each strip stops at the line y = x.",
+    "Took the slanted edge to be x + y = 1. The edge here is y = x."
+   ],
+   "key": "MTH165-U5-005"
+  },
+  {
+   "topic": "Change of Variables",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In plane polar coordinates x = r cos θ, y = r sin θ, the area element dx dy becomes which of these?",
+   "code": "",
+   "options": [
+    "dr dθ",
+    "r² dr dθ",
+    "(1/r) dr dθ",
+    "r dr dθ"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "∂(x, y)/∂(r, θ) = (cos θ)(r cos θ) − (−r sin θ)(sin θ) = r(cos²θ + sin²θ) = r. Since r ≥ 0, dx dy = r dr dθ.",
+   "why_wrong": [
+    "Dropped the Jacobian r. dx dy is never just dr dθ.",
+    "Borrowed the r² from the spherical element. In the plane the factor is r.",
+    "Used the reciprocal Jacobian ∂(r, θ)/∂(x, y) = 1/r instead of ∂(x, y)/∂(r, θ) = r.",
+    ""
+   ],
+   "key": "MTH165-U5-006"
+  },
+  {
+   "topic": "Change of Variables",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In spherical coordinates x = r sin θ cos φ, y = r sin θ sin φ, z = r cos θ (θ measured from the positive z-axis, φ the azimuthal angle), the volume element dx dy dz becomes which of these?",
+   "code": "",
+   "options": [
+    "r² sin θ dr dθ dφ",
+    "r² sin φ dr dθ dφ",
+    "r sin θ dr dθ dφ",
+    "dr dθ dφ"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "For these formulas the Jacobian ∂(x, y, z)/∂(r, θ, φ) is r² sin θ, and sin θ ≥ 0 for 0 ≤ θ ≤ π, so dV = r² sin θ dr dθ dφ. You get the same result from a thin spherical box with sides dr, r dθ and r sin θ dφ.",
+   "why_wrong": [
+    "",
+    "Put the sine of the azimuthal angle φ in the element. The sine belongs to the polar angle θ, which is measured from the z-axis.",
+    "Kept only one factor of r, as in plane polars. The spherical Jacobian has r².",
+    "Dropped the Jacobian entirely."
+   ],
+   "key": "MTH165-U5-007"
+  },
+  {
+   "topic": "Change of Variables",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In spherical coordinates x = r sin θ cos φ, y = r sin θ sin φ, z = r cos θ, with φ running from 0 to 2π, what range of θ covers the whole sphere r ≤ a exactly once?",
+   "code": "",
+   "options": [
+    "0 ≤ θ ≤ 2π",
+    "0 ≤ θ ≤ π/2",
+    "0 ≤ θ ≤ π",
+    "−π/2 ≤ θ ≤ π/2"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "With z = r cos θ, θ is measured down from the positive z-axis: θ = 0 is the top of the sphere and θ = π is the bottom. So 0 ≤ θ ≤ π together with 0 ≤ φ ≤ 2π reaches every point once, and sin θ ≥ 0 throughout.",
+   "why_wrong": [
+    "The polar angle only has to swing from the positive z-axis to the negative z-axis. Running it 0 to 2π covers the sphere twice, and with sin θ in the element the volume integral comes out 0.",
+    "This covers only the upper hemisphere, where z = r cos θ ≥ 0.",
+    "",
+    "This is the latitude convention. With z = r cos θ it gives cos θ ≥ 0, which is only the upper hemisphere."
+   ],
+   "key": "MTH165-U5-008"
+  },
+  {
+   "topic": "Change of Variables",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In plane polar coordinates x = r cos θ, y = r sin θ, what is the equation of the circle x² + y² = 2x?",
+   "code": "",
+   "options": [
+    "r = 2 sin θ",
+    "r = 1",
+    "r² = 2 cos θ",
+    "r = 2 cos θ"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Substitute x² + y² = r² and x = r cos θ to get r² = 2r cos θ. Dividing by r gives r = 2 cos θ. The pole r = 0 already lies on this curve, at θ = π/2.",
+   "why_wrong": [
+    "Substituted y where x belongs. r = 2 sin θ is the circle x² + y² = 2y.",
+    "Used the radius 1 of (x − 1)² + y² = 1, but r = constant describes only circles centred at the origin.",
+    "Replaced x by cos θ instead of r cos θ, which loses a factor of r on the right.",
+    ""
+   ],
+   "key": "MTH165-U5-009"
+  },
+  {
+   "topic": "Triple Integrals",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate ∫₀¹ ∫₀¹ ∫₀¹ (x + y + z) dx dy dz.",
+   "code": "",
+   "options": [
+    "1/8",
+    "3/2",
+    "3",
+    "1/2"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Over the unit cube, ∭ x dV = (∫₀¹ x dx)·1·1 = 1/2, and the same holds for y and z. The integrand is a sum, so the three contributions add: 1/2 + 1/2 + 1/2 = 3/2.",
+   "why_wrong": [
+    "Multiplied the three 1/2's together. The integrand is a sum, so the three contributions add.",
+    "",
+    "Took each ∫₀¹ x dx as 1 instead of 1/2.",
+    "Integrated only the x term and lost the y and z terms."
+   ],
+   "key": "MTH165-U5-010"
+  },
+  {
+   "topic": "Triple Integrals",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate ∫₀¹ ∫₀² ∫₀³ xyz dz dy dx.",
+   "code": "",
+   "options": [
+    "6",
+    "36",
+    "7",
+    "9/2"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The integrand is the product xyz and every limit is a constant, so the integral splits: (∫₀¹ x dx)(∫₀² y dy)(∫₀³ z dz) = (1/2)(2)(9/2) = 9/2.",
+   "why_wrong": [
+    "Integrated 1 instead of xyz. 6 = 1·2·3 is just the volume of the box.",
+    "Dropped every 1/2 by taking ∫x dx as x², which gives 1·4·9 = 36.",
+    "Added the three single integrals, 1/2 + 2 + 9/2, instead of multiplying them.",
+    ""
+   ],
+   "key": "MTH165-U5-011"
+  },
+  {
+   "topic": "Area and Volume",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate ∫₀³ ∫₀^(2x) dy dx, the area of the triangle bounded by y = 0, y = 2x and x = 3.",
+   "code": "",
+   "options": [
+    "9",
+    "18",
+    "6",
+    "3"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Inner: ∫₀^(2x) dy = 2x, the height of a vertical strip. Outer: ∫₀³ 2x dx = [x²]₀³ = 9. This matches (1/2)·base·height = (1/2)·3·6.",
+   "why_wrong": [
+    "",
+    "Took y from 0 to 6 for every x. That is the 3 × 6 rectangle, not the triangle under y = 2x.",
+    "Stopped after the inner integral and put x = 3 into 2x. That is only the height of the last strip.",
+    "Dropped the inner integral and integrated dx alone. 3 is only the length of the base."
+   ],
+   "key": "MTH165-U5-012"
+  },
+  {
+   "topic": "Area and Volume",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate the area integral ∬ dy dx in which y runs from x² up to x (inner) and x runs from 0 to 1 (outer).",
+   "code": "",
+   "options": [
+    "−1/6",
+    "5/6",
+    "1/6",
+    "1/2"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Inner: ∫ dy from y = x² to y = x gives x − x². Outer: ∫₀¹ (x − x²) dx = 1/2 − 1/3 = 1/6. This is the area between the line y = x and the parabola y = x².",
+   "why_wrong": [
+    "Subtracted the wrong way round, x² − x. On [0, 1] the line y = x lies above y = x², so upper minus lower is x − x².",
+    "Added the two areas, 1/2 + 1/3, instead of subtracting them.",
+    "",
+    "Used only the upper curve y = x, which is the area under the line, and ignored the lower boundary y = x²."
+   ],
+   "key": "MTH165-U5-013"
+  },
+  {
+   "topic": "Area and Volume",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate ∫₀^(2π) ∫₀ᵃ r dr dθ, where a > 0.",
+   "code": "",
+   "options": [
+    "2πa",
+    "πa²",
+    "a²/2",
+    "2πa²"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Inner: ∫₀ᵃ r dr = a²/2. Outer: ∫₀^(2π) (a²/2) dθ = πa², the area of a disc of radius a. The r in r dr dθ is what makes the result an area.",
+   "why_wrong": [
+    "Dropped the r in r dr dθ and integrated dr dθ. The result 2πa has the value of the circumference, not the area.",
+    "",
+    "Stopped after the inner integral and never integrated over θ.",
+    "Dropped the 1/2 in ∫ r dr = r²/2."
+   ],
+   "key": "MTH165-U5-014"
+  },
+  {
+   "topic": "Change of Order",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Reverse the order of integration in ∫₀¹ ∫ₓ¹ f(x, y) dy dx, where y runs from x to 1 (inner) and x runs from 0 to 1 (outer). Which limits are correct for the order dx dy?",
+   "code": "",
+   "options": [
+    "x from 0 to y, then y from 0 to 1",
+    "x from y to 1, then y from 0 to 1",
+    "x from x to 1, then y from 0 to 1",
+    "x from 0 to 1, then y from 0 to 1"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The limits describe 0 ≤ x ≤ y ≤ 1, the triangle with vertices (0, 0), (0, 1) and (1, 1), above the line y = x. A horizontal strip at height y runs from the y-axis (x = 0) to the line x = y, and y takes every value from 0 to 1. So the reversed integral is ∫₀¹ ∫₀ʸ f(x, y) dx dy.",
+   "why_wrong": [
+    "",
+    "Swapped the symbols mechanically. x from y to 1 describes the triangle below y = x, not the given one above it.",
+    "Kept x in the limits of the x-integral, so the result cannot be a pure number. The limits have to be re-derived from the region.",
+    "Replaced the triangle by the whole unit square. Each strip must stop at the line x = y."
+   ],
+   "key": "MTH165-U5-015"
+  },
+  {
+   "topic": "Change of Order",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "An integral has y running from x² to x (inner) and x running from 0 to 1 (outer). Which limits describe the same region in the order dx dy?",
+   "code": "",
+   "options": [
+    "x from y² to y, then y from 0 to 1",
+    "x from √y to y, then y from 0 to 1",
+    "x from y to √y, then y from 0 to 1",
+    "x from y to √y, then y from x² to x"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The region is x² ≤ y ≤ x for 0 ≤ x ≤ 1. It lies between the line y = x and the parabola y = x², which meet at (0, 0) and (1, 1). A horizontal strip at height y starts on the line (x = y) and ends on the parabola (x = √y), and y ≤ √y on [0, 1]. So the reversed form is one integral: x from y to √y, then y from 0 to 1.",
+   "why_wrong": [
+    "Swapped the symbols mechanically. The limits must come from solving y = x and y = x² for x.",
+    "Right curves, wrong order. For 0 < y < 1 we have y < √y, so the left edge is x = y. Running x from √y down to y gives the negative of the correct value.",
+    "",
+    "Left x in the outer limits. After the inner integration, the outer limits must be the constants 0 and 1."
+   ],
+   "key": "MTH165-U5-016"
+  },
+  {
+   "topic": "Change of Order",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "In the order dx dy, the triangle with vertices (0, 0), (2, 0), (1, 1) is covered by: x from y to 2 − y, then y from 0 to 1. How is the same region written in the order dy dx?",
+   "code": "",
+   "options": [
+    "One integral: y from 0 to x, then x from 0 to 2",
+    "One integral: y from x to 2 − x, then x from 0 to 1",
+    "Two integrals: y from x to 1 for 0 ≤ x ≤ 1, plus y from 2 − x to 1 for 1 ≤ x ≤ 2",
+    "Two integrals: y from 0 to x for 0 ≤ x ≤ 1, plus y from 0 to 2 − x for 1 ≤ x ≤ 2"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A vertical strip at x starts at y = 0, but its top changes: it is the edge y = x for 0 ≤ x ≤ 1 and the edge y = 2 − x for 1 ≤ x ≤ 2. Because the upper boundary switches formula at x = 1, the dy dx form has to be split: ∫₀¹ ∫₀ˣ f dy dx + ∫₁² ∫₀^(2 − x) f dy dx. The same triangle needs only one integral in the order dx dy.",
+   "why_wrong": [
+    "Used the left edge y = x across the whole base. For 1 < x ≤ 2 the top is y = 2 − x, so this covers the wrong triangle, (0, 0), (2, 0), (2, 2).",
+    "Swapped x and y symbol by symbol. This describes the triangle (0, 0), (0, 2), (1, 1).",
+    "Took each strip from the slanted edge up to y = 1. That is the part of the rectangle outside the triangle.",
+    ""
+   ],
+   "key": "MTH165-U5-017"
+  },
+  {
+   "topic": "Change of Order",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "By changing the order of integration, evaluate I = ∫₀¹ ∫ e^(x²) dx dy, where the inner integral runs from x = y to x = 1 and the outer from y = 0 to y = 1.",
+   "code": "",
+   "options": [
+    "e − 1",
+    "(e − 1)/2",
+    "e/2",
+    "(1 − e)/2"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The region is 0 ≤ y ≤ x ≤ 1, so in the order dy dx it becomes y from 0 to x, then x from 0 to 1. Then I = ∫₀¹ e^(x²)·(x − 0) dx = ∫₀¹ x e^(x²) dx. With u = x², du = 2x dx: I = [e^(x²)/2]₀¹ = (e − 1)/2.",
+   "why_wrong": [
+    "Lost the 1/2 that comes from the substitution u = x², du = 2x dx.",
+    "",
+    "Evaluated e^(x²)/2 only at x = 1 and forgot to subtract its value, 1/2, at x = 0.",
+    "Took the new inner strip as y from x down to 0, which flips the sign."
+   ],
+   "key": "MTH165-U5-018"
+  },
+  {
+   "topic": "Double Integrals",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Evaluate ∫₀^(π/2) ∫₀^(π/2) sin(x + y) dx dy.",
+   "code": "",
+   "options": [
+    "π",
+    "1",
+    "2",
+    "−2"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Inner: ∫₀^(π/2) sin(x + y) dx = [−cos(x + y)]₀^(π/2) = −cos(π/2 + y) + cos y = sin y + cos y. Outer: ∫₀^(π/2) (sin y + cos y) dy = 1 + 1 = 2.",
+   "why_wrong": [
+    "Split sin(x + y) as sin x + sin y, which is false. That split gives π/2 + π/2 = π.",
+    "Treated sin(x + y) as sin x · sin y and multiplied the two integrals, 1·1.",
+    "",
+    "Used +cos as the antiderivative of sin, which flips the sign of the inner result."
+   ],
+   "key": "MTH165-U5-019"
+  },
+  {
+   "topic": "Double Integrals",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these double integrals can NOT be split, as written, into a product (∫ g(x) dx)·(∫ h(y) dy) in which f(x, y) = g(x)h(y) and each single integral keeps its own limits?",
+   "code": "",
+   "options": [
+    "∫₀¹ ∫₀ˣ xy dy dx",
+    "∫₀¹ ∫₀² x²y dy dx",
+    "∫₀² ∫₀¹ e^(x + y) dy dx",
+    "∫₁² ∫₁³ 1/(xy) dy dx"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A double integral splits into a product only when both conditions hold: the integrand has the form g(x)h(y), and every limit is a constant (the region is a rectangle). In ∫₀¹ ∫₀ˣ xy dy dx the inner limit depends on x, so the y-integral cannot be pulled out by itself. e^(x + y) = eˣ·eʸ and 1/(xy) = (1/x)(1/y) both split, because their limits are constant.",
+   "why_wrong": [
+    "",
+    "This one does split. The limits are constant and x²y = x²·y, giving (∫₀¹ x² dx)(∫₀² y dy) = (1/3)(2) = 2/3.",
+    "This one does split. e^(x + y) = eˣ·eʸ and the limits are constant, giving (e² − 1)(e − 1).",
+    "This one does split. 1/(xy) = (1/x)(1/y) on a rectangle, giving (ln 2)(ln 3)."
+   ],
+   "key": "MTH165-U5-020"
+  },
+  {
+   "topic": "Change of Variables",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Under the substitution x = u + v, y = u − v, the area element dx dy becomes which of these?",
+   "code": "",
+   "options": [
+    "−2 du dv",
+    "(1/2) du dv",
+    "du dv",
+    "2 du dv"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "∂(x, y)/∂(u, v) = (∂x/∂u)(∂y/∂v) − (∂x/∂v)(∂y/∂u) = (1)(−1) − (1)(1) = −2. The area element uses the modulus: dx dy = |−2| du dv = 2 du dv.",
+   "why_wrong": [
+    "Used the signed determinant. The area element needs its absolute value, |−2| = 2.",
+    "Used ∂(u, v)/∂(x, y), which is the reciprocal direction. Rewriting in u and v needs ∂(x, y)/∂(u, v).",
+    "Forgot the Jacobian factor altogether.",
+    ""
+   ],
+   "key": "MTH165-U5-021"
+  },
+  {
+   "topic": "Change of Variables",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Using plane polar coordinates, evaluate ∬ (x² + y²) dx dy over the disc x² + y² ≤ 1.",
+   "code": "",
+   "options": [
+    "2π/3",
+    "π/2",
+    "π/4",
+    "2π"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Here x² + y² = r² and dx dy = r dr dθ, and the disc is 0 ≤ r ≤ 1, 0 ≤ θ ≤ 2π. So I = ∫₀^(2π) ∫₀¹ r²·r dr dθ = 2π·[r⁴/4]₀¹ = 2π·(1/4) = π/2.",
+   "why_wrong": [
+    "Dropped the r in r dr dθ: ∫₀¹ r² dr = 1/3, and 2π·(1/3) = 2π/3.",
+    "",
+    "Let θ run only from 0 to π, which covers just half the disc.",
+    "Forgot the 1/4 in ∫₀¹ r³ dr = r⁴/4."
+   ],
+   "key": "MTH165-U5-022"
+  },
+  {
+   "topic": "Triple Integrals",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "In each iterated integral below, the differentials are listed innermost first. Which one is set up incorrectly, so that its value could not be a pure number?",
+   "code": "",
+   "options": [
+    "∫₀¹ ∫₀ˣ ∫₀^(x + y) f dz dy dx",
+    "∫₀¹ ∫₀ʸ ∫₀¹ f dz dy dx",
+    "∫₀¹ ∫₀ᶻ ∫₀ʸ f dx dy dz",
+    "∫₀² ∫₀^(2 − x) ∫₀^(2 − x − y) f dz dy dx"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "A limit may involve only variables whose integrals sit further out, and the outermost limits must be constants. In ∫₀¹ ∫₀ʸ ∫₀¹ f dz dy dx, the middle integral is over y but has y as its upper limit, its own variable. So y never disappears and the result is not a number.",
+   "why_wrong": [
+    "Valid. The dz limits use x and y, the dy limit uses x, both are integrated further out, and the outer limits are constants.",
+    "",
+    "Valid. x runs 0 to y, y runs 0 to z, z runs 0 to 1, so each limit uses only variables integrated further out.",
+    "Valid. This is the standard set-up for the tetrahedron under x + y + z = 2, and its outer limits are constants."
+   ],
+   "key": "MTH165-U5-023"
+  },
+  {
+   "topic": "Triple Integrals",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Take x = r sin θ cos φ, y = r sin θ sin φ, z = r cos θ, with θ measured from the positive z-axis. Which of these does NOT give the volume 4πa³/3 of the sphere r ≤ a?",
+   "code": "",
+   "options": [
+    "∫₀^(2π) ∫₀^π ∫₀ᵃ r² sin θ dr dθ dφ",
+    "8 ∫₀^(π/2) ∫₀^(π/2) ∫₀ᵃ r² sin θ dr dθ dφ",
+    "2 ∫₀^(2π) ∫₀^(π/2) ∫₀ᵃ r² sin θ dr dθ dφ",
+    "∫₀^π ∫₀^(2π) ∫₀ᵃ r² sin θ dr dθ dφ"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "In this option the θ-integral (the middle one) runs from 0 to 2π, and ∫₀^(2π) sin θ dθ = [−cos θ]₀^(2π) = 0, so the whole integral is 0. The polar angle, measured from the z-axis, must run only from 0 to π. It is φ that goes all the way round, 0 to 2π.",
+   "why_wrong": [
+    "Valid. This is the whole sphere: (a³/3)·[−cos θ]₀^π·2π = (a³/3)(2)(2π) = 4πa³/3.",
+    "Valid. This is 8 times the first-octant piece: 8·(a³/3)(1)(π/2) = 4πa³/3.",
+    "Valid. This is twice the upper hemisphere: 2·(a³/3)(1)(2π) = 4πa³/3.",
+    ""
+   ],
+   "key": "MTH165-U5-024"
+  },
+  {
+   "topic": "Area and Volume",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Find the area of the region enclosed between the parabolas y² = 4x and x² = 4y.",
+   "code": "",
+   "options": [
+    "16/3",
+    "32/3",
+    "−16/3",
+    "16"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The curves meet where (x²/4)² = 4x, i.e. x⁴ = 64x, so at x = 0 and x = 4. Between those points y = 2√x lies above y = x²/4, so Area = ∫₀⁴ (2√x − x²/4) dx = 32/3 − 16/3 = 16/3.",
+   "why_wrong": [
+    "",
+    "Found only the area under the upper curve y = 2√x and forgot to subtract the area under y = x²/4.",
+    "Subtracted the wrong way round, x²/4 − 2√x. On 0 < x < 4 the upper curve is y = 2√x.",
+    "Added the areas under the two curves, 32/3 + 16/3, instead of subtracting them."
+   ],
+   "key": "MTH165-U5-025"
+  },
+  {
+   "topic": "Area and Volume",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The volume of the tetrahedron bounded by the coordinate planes and the plane x + y + z = 2 is ∫₀² ∫₀^(2 − x) ∫₀^(2 − x − y) dz dy dx. What is its value?",
+   "code": "",
+   "options": [
+    "8/3",
+    "4",
+    "4/3",
+    "8"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Inner: ∫₀^(2 − x − y) dz = 2 − x − y. Middle: ∫₀^(2 − x) (2 − x − y) dy = (2 − x)²/2. Outer: ∫₀² (2 − x)²/2 dx = (1/2)(8/3) = 4/3, which agrees with (1/3)·base·height = (1/3)·2·2.",
+   "why_wrong": [
+    "Dropped the 1/2 in the middle integral, which gives (2 − x)² and ∫₀² (2 − x)² dx = 8/3.",
+    "Treated the solid as a prism of height 2 over the base triangle of area 2. The top actually slopes down to zero.",
+    "",
+    "Used 0 to 2 for all three variables, which gives the whole cube, not the tetrahedron."
+   ],
+   "key": "MTH165-U5-026"
+  },
+  {
+   "topic": "Double Integrals",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A thin metal plate occupies the triangle x ≥ 0, y ≥ 0, x + y ≤ 1 (lengths in metres). Its surface density is ρ(x, y) = x + y kg/m², and its mass is M = ∬ ρ dA over the plate. What is M?",
+   "code": "",
+   "options": [
+    "1/2 kg",
+    "1 kg",
+    "1/3 kg",
+    "(1 − x²)/2 kg"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Take y from 0 to 1 − x inside and x from 0 to 1 outside. Inner: ∫₀^(1 − x) (x + y) dy = x(1 − x) + (1 − x)²/2 = (1 − x²)/2. Outer: ∫₀¹ (1 − x²)/2 dx = (1/2)(1 − 1/3) = 1/3 kg.",
+   "why_wrong": [
+    "This is the area of the triangle, so the density was dropped (ρ taken as 1). Forgetting the 1/2 in ∫ y dy = y²/2 also gives 1/2.",
+    "Integrated over the whole unit square 0 ≤ x ≤ 1, 0 ≤ y ≤ 1 instead of the triangle: ∫₀¹ ∫₀¹ (x + y) dy dx = 1.",
+    "",
+    "Stopped after the inner integral. A definite double integral is a number, so x must still be integrated from 0 to 1."
+   ],
+   "key": "MTH165-U5-027"
+  },
+  {
+   "topic": "Double Integrals",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Evaluate ∫₀¹ ∫₀ˣ e^(y/x) dy dx, where the inner integral runs over y from 0 to x.",
+   "code": "",
+   "options": [
+    "(e − 1)/2",
+    "e − 1",
+    "e/2",
+    "∞ (the integral diverges)"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "In the inner integral x is a constant, so ∫ e^(y/x) dy = x·e^(y/x). Then ∫₀ˣ e^(y/x) dy = x(e¹ − e⁰) = x(e − 1). Outer: ∫₀¹ x(e − 1) dx = (e − 1)/2.",
+   "why_wrong": [
+    "",
+    "Wrote ∫ e^(y/x) dy = e^(y/x) and dropped the factor x that comes from integrating e^(y/x) with respect to y.",
+    "Forgot the lower limit. At y = 0 the value is e⁰ = 1, not 0, so the inner result is x(e − 1), not x·e.",
+    "Divided by x instead of multiplying (antiderivative written as e^(y/x)/x). That gives (e − 1)/x and a false divergence at x = 0."
+   ],
+   "key": "MTH165-U5-028"
+  },
+  {
+   "topic": "Double Integrals",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Evaluate ∫₀¹ ∫₀ʸ x²y dx dy, where the inner integral is in x from 0 to y and the outer is in y from 0 to 1.",
+   "code": "",
+   "options": [
+    "1/10",
+    "1/15",
+    "1/6",
+    "1/5"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The inner variable is x, so y is held constant: ∫₀ʸ x²y dx = y·y³/3 = y⁴/3. Then ∫₀¹ y⁴/3 dy = 1/15. The region is the triangle 0 ≤ x ≤ y ≤ 1, above the line y = x.",
+   "why_wrong": [
+    "Integrated over the other triangle, 0 ≤ y ≤ x ≤ 1, by attaching the limit 0 to y to the wrong variable: ∫₀¹ ∫₀ˣ x²y dy dx = 1/10.",
+    "",
+    "Ignored the variable upper limit and integrated over the whole unit square: (1/3)(1/2) = 1/6.",
+    "Dropped the 1/3 from ∫ x² dx = x³/3, leaving ∫₀¹ y⁴ dy = 1/5."
+   ],
+   "key": "MTH165-U5-029"
+  },
+  {
+   "topic": "Double Integrals",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Evaluate ∫₀² ∫₀² |x − y| dy dx.",
+   "code": "",
+   "options": [
+    "−8/3",
+    "0",
+    "4/3",
+    "8/3"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "|x − y| changes form on the line y = x, so split the square there. By symmetry the two triangles contribute equally: ∫₀² ∫₀ˣ (x − y) dy dx = ∫₀² x²/2 dx = 4/3. Total = 2·(4/3) = 8/3. An integrand that is never negative cannot give 0 or a negative value.",
+   "why_wrong": [
+    "Split at y = x but used y − x where y < x and x − y where y > x. The signs are swapped, so every piece comes out negative.",
+    "Dropped the modulus and integrated x − y, so the two triangles cancel.",
+    "Computed only the triangle below y = x and forgot the equal contribution from the triangle above it.",
+    ""
+   ],
+   "key": "MTH165-U5-030"
+  },
+  {
+   "topic": "Change of Order",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Change the order of integration in ∫₀² ∫ f(x, y) dy dx, where y runs from x²/2 to 4 − x (inner) and x from 0 to 2 (outer). Which gives the same region in the order dx dy?",
+   "code": "",
+   "options": [
+    "x from 0 to √(2y) for 0 ≤ y ≤ 2, plus x from 0 to 4 − y for 2 ≤ y ≤ 4",
+    "x from √(2y) to 4 − y, then y from 0 to 4 (one integral)",
+    "x from 0 to 4 − y for 0 ≤ y ≤ 2, plus x from 0 to √(2y) for 2 ≤ y ≤ 4",
+    "x from 0 to √(2y), then y from 0 to 4 (one integral)"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Sketch it. The region is bounded by x = 0, the parabola x² = 2y and the line x + y = 4, which meet at (2, 2), so its corners are (0, 0), (0, 4) and (2, 2). A horizontal strip starts at x = 0 and ends on the parabola x = √(2y) while y ≤ 2, and on the line x = 4 − y once y ≥ 2. The right wall changes at y = 2, so the reversed form needs two integrals.",
+   "why_wrong": [
+    "",
+    "This strip runs from the parabola to the line, which is outside the region. The left wall is x = 0, and in this order the region does not fit one integral.",
+    "Splitting at y = 2 is right, but the boundaries are on the wrong pieces. The parabola bounds the lower part and the line bounds the upper part.",
+    "Used only the parabola as the right wall. Above y = 2 the parabola lies outside the region, so the line x = 4 − y takes over."
+   ],
+   "key": "MTH165-U5-031"
+  },
+  {
+   "topic": "Change of Order",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Reverse the order of integration in ∫₀¹ ∫ f(x, y) dy dx, where y runs from eˣ to e (inner) and x from 0 to 1 (outer). Which limits describe the same region in the order dx dy?",
+   "code": "",
+   "options": [
+    "x from ln y to 1, then y from 1 to e",
+    "x from 0 to ln y, then y from 0 to e",
+    "x from 0 to ln y, then y from 1 to e",
+    "x from 0 to ln y, then y from 0 to 1"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The region lies above y = eˣ and below y = e for 0 ≤ x ≤ 1. It is a curved triangle with corners (0, 1), (0, e) and (1, e). Since eˣ ≥ 1 there, y runs from 1 to e. For a fixed y, a horizontal strip goes from x = 0 to the curve y = eˣ, i.e. x = ln y.",
+   "why_wrong": [
+    "This strip runs from the curve across to x = 1, which is the region below y = eˣ, not above it.",
+    "y never drops below e⁰ = 1 in this region. For 0 < y < 1, ln y is negative and there is no strip.",
+    "",
+    "Kept the old x-limits 0 and 1 as the y-limits instead of reading the y-range off the region."
+   ],
+   "key": "MTH165-U5-032"
+  },
+  {
+   "topic": "Change of Order",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Evaluate I = ∫₀¹ ∫ x²e^(xy) dx dy, where x runs from y to 1 (inner) and y from 0 to 1 (outer), by first changing the order of integration.",
+   "code": "",
+   "options": [
+    "(3 − e)/2",
+    "(e − 2)/2",
+    "(e − 1)/2",
+    "e − 2"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The region is 0 ≤ y ≤ x ≤ 1, below the line y = x. Reversed, y runs from 0 to x and then x from 0 to 1. Inner: ∫₀ˣ x²e^(xy) dy = x²·[e^(xy)/x]₀ˣ = x(e^(x²) − 1). Outer: ∫₀¹ x e^(x²) dx − ∫₀¹ x dx = (e − 1)/2 − 1/2 = (e − 2)/2.",
+   "why_wrong": [
+    "Swapped the limits mechanically to y from x to 1. That is the triangle above y = x, the wrong region.",
+    "",
+    "Dropped the lower-limit term e⁰ = 1 in the inner integral, and with it the −∫₀¹ x dx = −1/2.",
+    "Lost the factor 1/2 in both ∫ x e^(x²) dx = e^(x²)/2 and ∫ x dx = x²/2."
+   ],
+   "key": "MTH165-U5-033"
+  },
+  {
+   "topic": "Change of Order",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The sum ∫₀¹ ∫₀^(x²) f dy dx + ∫₁² ∫₀¹ f dy dx covers one connected region (dy is the inner integral in both). Which single integral in the order dx dy covers the same region?",
+   "code": "",
+   "options": [
+    "x from 0 to √y, then y from 0 to 1",
+    "x from y² to 2, then y from 0 to 1",
+    "x from √y to 1, then y from 0 to 1",
+    "x from √y to 2, then y from 0 to 1"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The first piece lies under y = x² for 0 ≤ x ≤ 1. The second is the square 1 ≤ x ≤ 2, 0 ≤ y ≤ 1. Together they form the region under y = x² up to x = 1 and under y = 1 from there to x = 2. For a fixed y between 0 and 1, a horizontal strip starts on the parabola x = √y and runs right to x = 2, so one integral is enough.",
+   "why_wrong": [
+    "Took the strip on the wrong side of the parabola. 0 ≤ x ≤ √y is the region above y = x², which neither piece contains.",
+    "Inverted y = x² as x = y² by swapping symbols. Solving y = x² for x gives x = √y.",
+    "Covers only the first piece. The strip carries on through the square 1 ≤ x ≤ 2 to x = 2.",
+    ""
+   ],
+   "key": "MTH165-U5-034"
+  },
+  {
+   "topic": "Change of Order",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "In ∫₀² ∫ f dy dx, y runs from √(2x − x²) to √(2x) (inner) and x from 0 to 2 (outer). The region lies between the upper half of the circle (x − 1)² + y² = 1 and the parabola y² = 2x. When the order is reversed to dx dy, how many integrals are needed?",
+   "code": "",
+   "options": [
+    "Two: split at y = 1, where the semicircle reaches its highest point",
+    "One: x from y²/2 to 2, then y from 0 to 2",
+    "Three: for 0 ≤ y ≤ 1 a horizontal line crosses the region in two separate pieces, one on each side of the semicircle, and 1 ≤ y ≤ 2 needs a third",
+    "Two: one integral left of the semicircle and one right of it, each with y from 0 to 2"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "For 0 ≤ y ≤ 1, a horizontal line enters at the parabola x = y²/2 and leaves at the left arc x = 1 − √(1 − y²). It skips the semicircle, then runs from the right arc x = 1 + √(1 − y²) to x = 2. That is two x-intervals, so two integrals. For 1 ≤ y ≤ 2 the circle is out of the way and x runs from y²/2 to 2, which gives a third integral.",
+   "why_wrong": [
+    "Splitting at y = 1 is right, but below y = 1 each horizontal line meets the region in two separate intervals, so that band alone needs two integrals.",
+    "Ignores the semicircular hole. Points under the semicircle are not in the region, so for y < 1, x cannot run straight from the parabola to 2.",
+    "",
+    "The circle only reaches y = 1, so 1 − √(1 − y²) is undefined for y > 1. The band 1 ≤ y ≤ 2 needs an integral of its own."
+   ],
+   "key": "MTH165-U5-035"
+  },
+  {
+   "topic": "Change of Variables",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Evaluate ∫₀^∞ ∫₀^∞ e^(−(x² + y²)) dx dy by changing to plane polar coordinates.",
+   "code": "",
+   "options": [
+    "π",
+    "π/4",
+    "π/2",
+    "π√π/4"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The region x ≥ 0, y ≥ 0 is the first quadrant, so r runs from 0 to ∞ and θ from 0 to π/2, with dx dy = r dr dθ. The r-integral is ∫₀^∞ e^(−r²) r dr = [−e^(−r²)/2]₀^∞ = 1/2. So I = (π/2)·(1/2) = π/4.",
+   "why_wrong": [
+    "Let θ run from 0 to 2π, which covers the whole plane rather than the first quadrant.",
+    "",
+    "Dropped the 1/2 in ∫₀^∞ r e^(−r²) dr = 1/2.",
+    "Dropped the factor r from the area element (dx dy = dr dθ), leaving ∫₀^∞ e^(−r²) dr = √π/2."
+   ],
+   "key": "MTH165-U5-036"
+  },
+  {
+   "topic": "Change of Variables",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Change to polar coordinates and evaluate ∫₀ᵃ ∫ x/(x² + y²) dx dy, where x runs from y to a (inner) and y from 0 to a (outer), with a > 0.",
+   "code": "",
+   "options": [
+    "πa/4",
+    "πa/2",
+    "a/√2",
+    "(a²/2) ln(1 + √2)"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The region is the triangle 0 ≤ y ≤ x ≤ a, between the x-axis and y = x and closed off by the line x = a. In polars θ runs from 0 to π/4, and r runs from 0 to the line x = a, i.e. r = a sec θ. The integrand becomes r cos θ/r² and dx dy = r dr dθ, so I = ∫₀^(π/4) ∫₀^(a sec θ) cos θ dr dθ = ∫₀^(π/4) a dθ = πa/4.",
+   "why_wrong": [
+    "",
+    "Let θ run over the whole first quadrant (0 to π/2). The line y = x stops the region at θ = π/4.",
+    "Took r from 0 to a, which is a circular arc. The outer edge is the straight line x = a, which is r = a sec θ.",
+    "Simplified x² + y² to r instead of r², so the integrand became cos θ instead of cos θ/r."
+   ],
+   "key": "MTH165-U5-037"
+  },
+  {
+   "topic": "Change of Variables",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "R is the square |x + y| ≤ 1, |x − y| ≤ 1. Using the substitution u = x + y, v = x − y, evaluate ∬ (x + y)² dx dy over R.",
+   "code": "",
+   "options": [
+    "4/3",
+    "8/3",
+    "−2/3",
+    "2/3"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Here u and v are given in terms of x and y, so ∂(u, v)/∂(x, y) = (1)(−1) − (1)(1) = −2. The integral needs the other direction: |∂(x, y)/∂(u, v)| = 1/|−2| = 1/2, so dx dy = (1/2) du dv. R becomes −1 ≤ u ≤ 1, −1 ≤ v ≤ 1, and I = (1/2)·∫₋₁¹ u² du·∫₋₁¹ dv = (1/2)(2/3)(2) = 2/3.",
+   "why_wrong": [
+    "Replaced dx dy by du dv with no Jacobian at all.",
+    "Used |∂(u, v)/∂(x, y)| = 2 as the scale factor. That Jacobian goes the wrong way; you need its reciprocal.",
+    "Used the signed Jacobian −1/2 without the modulus. The area scale factor is always an absolute value.",
+    ""
+   ],
+   "key": "MTH165-U5-038"
+  },
+  {
+   "topic": "Change of Variables",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Find the area of the first-quadrant region bounded by the curves xy = 1, xy = 2, y = x and y = 4x, using the substitution u = xy, v = y/x.",
+   "code": "",
+   "options": [
+    "3",
+    "2 ln 2",
+    "ln 2",
+    "15"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The region becomes the rectangle 1 ≤ u ≤ 2, 1 ≤ v ≤ 4. ∂(u, v)/∂(x, y) = (y)(1/x) − (x)(−y/x²) = 2y/x = 2v, so dx dy = du dv/(2v). Area = ∫₁² ∫₁⁴ 1/(2v) dv du = (1/2) ln 4 = ln 2.",
+   "why_wrong": [
+    "Took the area of the u–v rectangle, 1 × 3, with no Jacobian.",
+    "Got ∂(u, v)/∂(x, y) = v by dropping one of its two equal terms y/x, which gives ∫∫ dv/v = ln 4.",
+    "",
+    "Multiplied by 2v instead of dividing by it. That uses ∂(u, v)/∂(x, y) where ∂(x, y)/∂(u, v) = 1/(2v) is needed: ∫₁² ∫₁⁴ 2v dv du = 15."
+   ],
+   "key": "MTH165-U5-039"
+  },
+  {
+   "topic": "Change of Variables",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Using spherical coordinates x = r sin θ cos φ, y = r sin θ sin φ, z = r cos θ (θ measured from the positive z-axis), evaluate ∭ (x² + y² + z²) dV over the ball x² + y² + z² ≤ 1.",
+   "code": "",
+   "options": [
+    "4π/3",
+    "4π/5",
+    "2π²/5",
+    "0"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The integrand is r², and dV = r² sin θ dr dθ dφ with r from 0 to 1, θ from 0 to π and φ from 0 to 2π. I = ∫₀¹ r⁴ dr · ∫₀^π sin θ dθ · ∫₀^(2π) dφ = (1/5)(2)(2π) = 4π/5.",
+   "why_wrong": [
+    "Dropped r² from the volume element, leaving ∫₀¹ r² dr = 1/3. That is just the volume of the ball, not the requested integral.",
+    "",
+    "Dropped sin θ from the volume element, so ∫₀^π dθ = π replaced ∫₀^π sin θ dθ = 2.",
+    "Let θ run from 0 to 2π. θ is measured from the z-axis and only runs from 0 to π, and ∫₀^(2π) sin θ dθ = 0."
+   ],
+   "key": "MTH165-U5-040"
+  },
+  {
+   "topic": "Triple Integrals",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A solid tetrahedron is bounded by the coordinate planes and the plane x + y + z = 1 (lengths in metres). Its density is ρ = x kg/m³, so its mass is ∭ x dV over the solid. What is the mass?",
+   "code": "",
+   "options": [
+    "1/24 kg",
+    "1/6 kg",
+    "1/12 kg",
+    "1/2 kg"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Limits: z from 0 to 1 − x − y, y from 0 to 1 − x, x from 0 to 1. ∫₀^(1 − x − y) x dz = x(1 − x − y). ∫₀^(1 − x) x(1 − x − y) dy = x(1 − x)²/2. ∫₀¹ x(1 − x)²/2 dx = (1/2)(1/12) = 1/24 kg.",
+   "why_wrong": [
+    "",
+    "This is the volume of the tetrahedron, so the density x was dropped.",
+    "Dropped the 1/2 in ∫₀^(1 − x) (1 − x − y) dy = (1 − x)²/2.",
+    "Integrated over the unit cube 0 ≤ x, y, z ≤ 1 instead of the tetrahedron."
+   ],
+   "key": "MTH165-U5-041"
+  },
+  {
+   "topic": "Triple Integrals",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Using cylindrical coordinates (x = r cos θ, y = r sin θ, z = z), evaluate ∭ √(x² + y²) dV over the solid bounded below by the cone z = √(x² + y²) and above by the plane z = 1.",
+   "code": "",
+   "options": [
+    "π/12",
+    "π/3",
+    "π/2",
+    "π/6"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The integrand is r and dV = r dr dθ dz. The solid lies above the cone, so z runs from r to 1, with r from 0 to 1 and θ from 0 to 2π. I = ∫₀^(2π) ∫₀¹ ∫ᵣ¹ r·r dz dr dθ = 2π ∫₀¹ r²(1 − r) dr = 2π(1/3 − 1/4) = π/6.",
+   "why_wrong": [
+    "Let θ run only from 0 to π, which covers half the solid.",
+    "Dropped the r in dV = r dr dθ dz, giving 2π ∫₀¹ r(1 − r) dr = π/3.",
+    "Took z from 0 to r. That is the region under the cone, not the solid between the cone and the plane.",
+    ""
+   ],
+   "key": "MTH165-U5-042"
+  },
+  {
+   "topic": "Triple Integrals",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Evaluate ∫₀¹ ∫₀^(√(1 − x²)) ∫₀^(√(1 − x² − y²)) xyz dz dy dx.",
+   "code": "",
+   "options": [
+    "1/8",
+    "1/24",
+    "1/48",
+    "1/30"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The region is the part of the unit ball in the first octant. Inner: ∫ z dz from 0 to √(1 − x² − y²) = (1 − x² − y²)/2. Over the quarter disc in polars, with xy = r² cos θ sin θ and dA = r dr dθ: (1/2) ∫₀^(π/2) cos θ sin θ dθ · ∫₀¹ r³(1 − r²) dr = (1/2)(1/2)(1/4 − 1/6) = 1/48.",
+   "why_wrong": [
+    "Replaced every curved upper limit by 1 and integrated over the unit cube: (1/2)³ = 1/8.",
+    "Dropped the 1/2 from ∫ z dz = z²/2.",
+    "",
+    "Dropped the factor r when switching the xy-integral to polars, giving (1/4) ∫₀¹ r²(1 − r²) dr = 1/30."
+   ],
+   "key": "MTH165-U5-043"
+  },
+  {
+   "topic": "Triple Integrals",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Find the volume V = ∭ dV of the solid bounded below by the paraboloid z = x² + y² and above by the plane z = 2y.",
+   "code": "",
+   "options": [
+    "π",
+    "π/2",
+    "16/9",
+    "2π"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The surfaces meet where x² + y² = 2y, the circle x² + (y − 1)² = 1, which is r = 2 sin θ in polars. The range 0 ≤ θ ≤ π traces it once. V = ∫₀^π ∫₀^(2 sin θ) (2r sin θ − r²) r dr dθ = ∫₀^π (4/3) sin⁴θ dθ = (4/3)(3π/8) = π/2. As a check, in polars centred at (0, 1) the height is 1 − s², and 2π ∫₀¹ (1 − s²) s ds = π/2.",
+   "why_wrong": [
+    "Let θ run from 0 to 2π. r = 2 sin θ is negative for π < θ < 2π, and running θ over that range counts the disc a second time.",
+    "",
+    "Dropped the r in dA = r dr dθ, giving (4/3) ∫₀^π sin³θ dθ = 16/9.",
+    "Integrated only the top surface, ∬ 2y dA = 2π, and forgot to subtract the paraboloid underneath."
+   ],
+   "key": "MTH165-U5-044"
+  },
+  {
+   "topic": "Area and Volume",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Using A = ∬ r dr dθ, find the area enclosed by the cardioid r = a(1 + cos θ), where a > 0.",
+   "code": "",
+   "options": [
+    "2πa",
+    "3πa²/4",
+    "3πa²",
+    "3πa²/2"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "r runs from 0 to a(1 + cos θ) and θ from 0 to 2π. A = ∫₀^(2π) a²(1 + cos θ)²/2 dθ = (a²/2) ∫₀^(2π) (1 + 2 cos θ + cos²θ) dθ = (a²/2)(2π + 0 + π) = 3πa²/2.",
+   "why_wrong": [
+    "Dropped the r from the area element. The result is a length, not an area.",
+    "Let θ run only from 0 to π, which covers only the half above the x-axis.",
+    "Dropped the 1/2 from ∫ r dr = r²/2.",
+    ""
+   ],
+   "key": "MTH165-U5-045"
+  },
+  {
+   "topic": "Area and Volume",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A vertical cylindrical tank x² + y² ≤ 9 (in metres) stands on the floor z = 0. It is closed by a slanted lid lying in the plane y + z = 5. What volume does the tank enclose between the floor and the lid?",
+   "code": "",
+   "options": [
+    "45π m³",
+    "30π m³",
+    "(45π − 36) m³",
+    "72π m³"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The height above the point (x, y) is 5 − y, so V = ∬ (5 − y) dA over the disc r ≤ 3. In polars, ∫₀^(2π) ∫₀³ (5 − r sin θ) r dr dθ = 5·9π − 9·∫₀^(2π) sin θ dθ = 45π − 0 = 45π m³. The tilt adds as much height where y < 0 as it removes where y > 0.",
+   "why_wrong": [
+    "",
+    "Dropped the r from dA = r dr dθ: ∫₀^(2π) ∫₀³ 5 dr dθ = 30π.",
+    "Worked out the half-disc y ≥ 0 and doubled it. The lid is not symmetric about y = 0, so the y-term does not double. Over the full disc it cancels.",
+    "Used the greatest height, 8 m at y = −3, everywhere instead of integrating the varying height."
+   ],
+   "key": "MTH165-U5-046"
+  },
+  {
+   "topic": "Area and Volume",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Find the area of the region that lies inside the circle r = 2 cos θ and outside the circle r = 1.",
+   "code": "",
+   "options": [
+    "2π/3 + √3",
+    "π/2",
+    "π/3 + √3/2",
+    "0"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The circles meet where 2 cos θ = 1, i.e. θ = ±π/3, and only between these angles is 2 cos θ ≥ 1. A = ∫ from −π/3 to π/3 of ∫₁^(2 cos θ) r dr dθ = (1/2) ∫ (4 cos²θ − 1) dθ = ∫₀^(π/3) (1 + 2 cos 2θ) dθ = π/3 + √3/2.",
+   "why_wrong": [
+    "Dropped the 1/2 from ∫ r dr = r²/2.",
+    "Let θ run over −π/2 to π/2, the full range of r = 2 cos θ. Where |θ| > π/3 the unit circle lies outside r = 2 cos θ, so those parts subtract.",
+    "",
+    "Subtracted the two full circle areas (π − π). The unit circle is not inside r = 2 cos θ, so the areas do not simply subtract."
+   ],
+   "key": "MTH165-U5-047"
+  },
+  {
+   "topic": "Area and Volume",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Find the area of the region bounded by the curve y = √x, the line y = 2 − x and the x-axis.",
+   "code": "",
+   "options": [
+    "5/6",
+    "7/6",
+    "2/3",
+    "4√2/3"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The curves meet at (1, 1), so the region has corners (0, 0), (1, 1) and (2, 0). In the order dx dy it is one integral: for 0 ≤ y ≤ 1, x runs from y² to 2 − y, so A = ∫₀¹ (2 − y − y²) dy = 2 − 1/2 − 1/3 = 7/6. In the order dy dx the top boundary changes at x = 1: ∫₀¹ √x dx + ∫₁² (2 − x) dx = 2/3 + 1/2 = 7/6.",
+   "why_wrong": [
+    "This is the region between the two curves and the y-axis: ∫₀¹ (2 − x − √x) dx = 5/6.",
+    "",
+    "Integrated only under y = √x from 0 to 1 and forgot the triangle under the line from x = 1 to 2.",
+    "Integrated √x all the way from 0 to 2 without switching to the line at x = 1."
+   ],
+   "key": "MTH165-U5-048"
+  }
+ ]
+}

@@ -1,0 +1,1088 @@
+{
+ "subject_code": "CSE326",
+ "unit": 6,
+ "unit_label": "Web Application Development and Deployment",
+ "questions": [
+  {
+   "topic": "Git and GitHub",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which Git command turns the current folder into a new, empty Git repository?",
+   "code": "",
+   "options": [
+    "git clone",
+    "git init",
+    "git add .",
+    "git status"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "git init creates a hidden .git folder in the current directory, where Git keeps the repository's history and settings. Once it has run, the folder is a repository with no commits yet, ready for git add and git commit.",
+   "why_wrong": [
+    "git clone copies an existing remote repository along with its history. It does not start an empty repository in the current folder.",
+    "",
+    "git add . stages files, and it only works inside a folder that is already a repository.",
+    "git status only reports the state of an existing repository. In a plain folder it fails with \"not a git repository\"."
+   ],
+   "key": "CSE326-U6-001"
+  },
+  {
+   "topic": "Git and GitHub",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "The two files were staged with the code below. Which command now saves the staged changes as a commit with the message \"Add navbar\"?",
+   "code": "git add index.html style.css",
+   "options": [
+    "git commit -m \"Add navbar\"",
+    "git push -m \"Add navbar\"",
+    "git add -m \"Add navbar\"",
+    "git status -m \"Add navbar\""
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "git commit records a snapshot of everything that is staged, and the -m flag gives the commit message inline. A commit is local: nothing reaches GitHub until a later git push.",
+   "why_wrong": [
+    "",
+    "git push uploads commits that already exist to a remote. It does not create a commit and takes no commit message.",
+    "git add only stages changes. The message belongs to the commit step, not the staging step.",
+    "git status only reports which files are staged, modified or untracked. It never records anything."
+   ],
+   "key": "CSE326-U6-002"
+  },
+  {
+   "topic": "Git and GitHub",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the purpose of a .gitignore file in a repository?",
+   "code": "",
+   "options": [
+    "It lists files that git add must always stage first",
+    "It deletes the listed files from your computer after each commit",
+    "It lists file patterns that Git should leave untracked, so they are not added to commits",
+    "It makes the listed files private inside an otherwise public GitHub repository"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Each line in .gitignore is a file name or pattern, such as *.log or a folder name, that Git skips when it looks for untracked files. That means git add . will not pick them up. You use it to keep things like editor settings or files holding passwords out of the repository.",
+   "why_wrong": [
+    "It does the opposite: git add skips the listed files instead of staging them first.",
+    "Git never deletes ignored files. They stay on disk and are simply not tracked.",
+    "",
+    "Ignored files are never uploaded in the first place. .gitignore cannot make a committed file private."
+   ],
+   "key": "CSE326-U6-003"
+  },
+  {
+   "topic": "Git and GitHub",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the git status command show?",
+   "code": "",
+   "options": [
+    "The full history of past commits with their messages",
+    "The URL of the remote repository named origin",
+    "It uploads your latest commits to GitHub",
+    "Which files are modified, which are staged for the next commit, and which are untracked"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "git status compares the working folder, the staging area and the last commit, then lists modified, staged and untracked files. It changes nothing, so you can safely run it before git add or git commit to check what will be included.",
+   "why_wrong": [
+    "The commit history is shown by git log, not git status.",
+    "Remote URLs are listed by git remote -v.",
+    "Uploading commits is what git push does. git status only reads and reports.",
+    ""
+   ],
+   "key": "CSE326-U6-004"
+  },
+  {
+   "topic": "GitHub Pages Hosting",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What kind of website can GitHub Pages host?",
+   "code": "",
+   "options": [
+    "PHP pages that read and write a MySQL database",
+    "Static files only: HTML, CSS, client-side JavaScript and images",
+    "A Node.js server that handles requests on the server",
+    "Python scripts that process form submissions on the server"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "GitHub Pages is a static host. It sends the files in your repository to the browser exactly as they are and runs no code on the server. JavaScript still works because it runs in the visitor's browser, but server-side code such as PHP, Node, Python or a database cannot run there.",
+   "why_wrong": [
+    "PHP and MySQL both need a server that runs code. GitHub Pages only serves files.",
+    "",
+    "A Node.js server is server-side code, and GitHub Pages cannot run it.",
+    "Processing a form on the server needs server-side code, which GitHub Pages never runs."
+   ],
+   "key": "CSE326-U6-005"
+  },
+  {
+   "topic": "GitHub Pages Hosting",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "When a visitor opens the root URL of a GitHub Pages site, which file is served as the home page?",
+   "code": "",
+   "options": [
+    "index.html",
+    "home.html",
+    "main.html",
+    "default.html"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "GitHub Pages looks for index.html at the top of the publishing source and serves it at the site's root URL. A page saved as home.html, main.html or default.html is not treated as the home page. It only loads when someone links to it by its full name.",
+   "why_wrong": [
+    "",
+    "home.html is an ordinary page. GitHub Pages does not treat it as the entry file.",
+    "main.html is not an entry-file name. It would only load if linked to directly.",
+    "GitHub Pages does not look for default.html. It would only load if linked to directly."
+   ],
+   "key": "CSE326-U6-006"
+  },
+  {
+   "topic": "GitHub Pages Hosting",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "GitHub user asha publishes her repository named portfolio as a GitHub Pages project site. At which URL does it appear?",
+   "code": "",
+   "options": [
+    "https://portfolio.github.io/asha/",
+    "https://github.com/asha/portfolio",
+    "https://asha.github.io/portfolio/",
+    "https://asha.github.io/"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "A project site is served at https://<username>.github.io/<repository>/, so the repository name becomes a folder under the user's github.io address. The bare https://asha.github.io/ is the user site, which comes from a separate repository named asha.github.io.",
+   "why_wrong": [
+    "The username and repository are swapped. The username is the subdomain and the repository is the path.",
+    "That is the repository's page on github.com, which shows its code, not the hosted website.",
+    "",
+    "That is the user-site root, served from a repository named asha.github.io, not from portfolio."
+   ],
+   "key": "CSE326-U6-007"
+  },
+  {
+   "topic": "Debugging and DevTools",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which browser DevTools panel lists every request the page made, along with each request's HTTP status code?",
+   "code": "",
+   "options": [
+    "Elements",
+    "Console",
+    "Sources",
+    "Network"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The Network panel records every request (HTML, CSS, JavaScript, images and fetch calls) with its status code, type, size and timing. Clicking a row shows its headers and response. Check it first when a file fails to load, for example when a stylesheet returns 404.",
+   "why_wrong": [
+    "Elements shows the live DOM tree and the CSS applied to each element, not network requests.",
+    "Console shows logs and error messages. A failed load may appear there, but it does not list every request with its status.",
+    "Sources shows the page's files for reading and debugging JavaScript, not requests and their status codes.",
+    ""
+   ],
+   "key": "CSE326-U6-008"
+  },
+  {
+   "topic": "Debugging and DevTools",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In which DevTools panel do you set a breakpoint on a line of JavaScript and then step through the code line by line?",
+   "code": "",
+   "options": [
+    "Network",
+    "Sources",
+    "Elements",
+    "Application"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The Sources panel shows the page's JavaScript files. Clicking a line number sets a breakpoint, and execution pauses there so you can inspect variables and step forward one line at a time. Putting the statement debugger; in the code also pauses execution at that line while DevTools is open.",
+   "why_wrong": [
+    "Network lists requests and their status codes. It cannot pause JavaScript.",
+    "",
+    "Elements is for inspecting and editing the DOM and CSS, not for stepping through scripts.",
+    "Application shows stored data such as localStorage, sessionStorage and cookies. It has no line-by-line debugger."
+   ],
+   "key": "CSE326-U6-009"
+  },
+  {
+   "topic": "Debugging and DevTools",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which error does the code below throw?",
+   "code": "let total = 100;\nconsole.log(totl);",
+   "options": [
+    "ReferenceError",
+    "TypeError",
+    "SyntaxError",
+    "RangeError"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "totl was never declared (the variable is named total), so looking it up fails at run time with ReferenceError: totl is not defined. A misspelt variable name is one of the most common causes of a ReferenceError.",
+   "why_wrong": [
+    "",
+    "TypeError means a value was used the wrong way, such as calling something that is not a function. Here the name does not exist at all.",
+    "The code is valid JavaScript, so it parses without trouble. The problem only appears when the second line runs.",
+    "RangeError is for a number outside an allowed range, such as new Array(-1). No such number is involved here."
+   ],
+   "key": "CSE326-U6-010"
+  },
+  {
+   "topic": "Error Handling and Fetch",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the HTTP status code 404 mean?",
+   "code": "",
+   "options": [
+    "Internal Server Error: the server failed while handling the request",
+    "Forbidden: the server refuses to give access to the resource",
+    "Not Found: the server has nothing at the requested URL",
+    "Not Modified: the browser's cached copy is still valid"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "404 Not Found means the server was reached but has no resource at that URL. The usual cause is a wrong or misspelt path. Codes in the 400s are client errors (the request was at fault), and codes in the 500s are server errors.",
+   "why_wrong": [
+    "Internal Server Error is 500, which is a failure on the server.",
+    "Forbidden is 403: the resource exists, but access to it is refused.",
+    "",
+    "Not Modified is 304, a caching response, not an error."
+   ],
+   "key": "CSE326-U6-011"
+  },
+  {
+   "topic": "Error Handling and Fetch",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "When does the finally block in the code below run?",
+   "code": "try {\n  loadSettings();\n} catch (err) {\n  console.log(\"failed\");\n} finally {\n  console.log(\"done\");\n}",
+   "options": [
+    "Only when loadSettings() throws an error",
+    "Only when loadSettings() finishes without an error",
+    "Only when the catch block itself throws",
+    "Every time: whether loadSettings() succeeds or throws"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "finally runs after the try block, and after catch if an error was caught, however those blocks ended. So \"done\" is logged whether or not an error was thrown. It even runs when the try block returns, which makes it the right place for clean-up such as hiding a loading spinner.",
+   "why_wrong": [
+    "That describes catch, which runs only when an error is thrown. finally runs either way.",
+    "finally is not limited to success. It also runs after an error has been caught.",
+    "finally does not wait for catch to fail. It runs every time, after catch finishes.",
+    ""
+   ],
+   "key": "CSE326-U6-012"
+  },
+  {
+   "topic": "Web Performance",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does CLS (Cumulative Layout Shift) measure?",
+   "code": "",
+   "options": [
+    "How long the largest image or text block takes to appear",
+    "How much visible content shifts position unexpectedly on the page",
+    "How quickly the page updates after a click or key press",
+    "How many kilobytes of CSS the page downloads"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "CLS measures visual stability. It scores unexpected shifts of visible content, such as text jumping down when an image with no reserved space finishes loading. It is a unitless score, and lower is better.",
+   "why_wrong": [
+    "That is LCP (Largest Contentful Paint), the loading metric.",
+    "",
+    "That is INP (Interaction to Next Paint), the responsiveness metric.",
+    "CLS does not measure download size. It scores how much the layout moves."
+   ],
+   "key": "CSE326-U6-013"
+  },
+  {
+   "topic": "Web Performance",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which Core Web Vital measures loading performance as the time until the largest image or text block in the viewport is rendered?",
+   "code": "",
+   "options": [
+    "INP",
+    "CLS",
+    "LCP",
+    "FID"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "LCP stands for Largest Contentful Paint: the moment the biggest image or text block visible in the viewport finishes rendering. It is the Core Web Vital for loading. INP covers responsiveness and CLS covers visual stability.",
+   "why_wrong": [
+    "INP (Interaction to Next Paint) measures how fast the page responds to clicks, taps and key presses.",
+    "CLS (Cumulative Layout Shift) measures unexpected movement of content, not loading time.",
+    "",
+    "FID (First Input Delay) measured input delay, not loading, and INP has replaced it as a Core Web Vital."
+   ],
+   "key": "CSE326-U6-014"
+  },
+  {
+   "topic": "Git and GitHub",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Assume Git's default branch is named main. Which sequence correctly publishes a brand-new local project to an empty GitHub repository for the first time?",
+   "code": "",
+   "options": [
+    "git init → git commit -m \"first\" → git add . → git remote add origin URL → git push -u origin main",
+    "git add . → git init → git commit -m \"first\" → git remote add origin URL → git push -u origin main",
+    "git init → git add . → git commit -m \"first\" → git remote add origin URL → git push -u origin main",
+    "git init → git remote add origin URL → git push -u origin main → git add . → git commit -m \"first\""
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "First the folder must become a repository (init). Then files are staged (add) and recorded (commit), and only after that is there anything to upload. remote add origin tells Git where the GitHub repository is, and push -u origin main uploads the commit and links local main to origin/main.",
+   "why_wrong": [
+    "Committing before git add finds nothing staged, so no commit is made and the later push has nothing to send.",
+    "git add fails before git init because the folder is not a Git repository yet.",
+    "",
+    "Pushing before any commit exists fails, because main has no commits to upload yet."
+   ],
+   "key": "CSE326-U6-015"
+  },
+  {
+   "topic": "Git and GitHub",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the -u flag add to the command below?",
+   "code": "git push -u origin main",
+   "options": [
+    "It sets origin/main as the upstream of the local main branch, so a later plain git push or git pull knows where to go",
+    "It forces the push and overwrites whatever history is on the remote",
+    "It uploads only the files that changed since the last push",
+    "It creates the repository on GitHub if it does not exist yet"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "-u is short for --set-upstream. Besides pushing, it records origin/main as the branch that local main tracks. After that, git push and git pull with no arguments use that link, which is why -u is normally needed only on the first push.",
+   "why_wrong": [
+    "",
+    "Forcing a push is --force (-f), not -u.",
+    "Git always sends only the commits the remote is missing. -u does not mean \"update\" and does not change what is sent.",
+    "git push cannot create a GitHub repository. The repository must already exist, and origin must point to it."
+   ],
+   "key": "CSE326-U6-016"
+  },
+  {
+   "topic": "GitHub Pages Hosting",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The code below is in the page https://asha.github.io/portfolio/index.html, which is a GitHub Pages project site. style.css sits next to index.html in the repository. Which URL does the browser request for the stylesheet?",
+   "code": "<link rel=\"stylesheet\" href=\"/style.css\">",
+   "options": [
+    "https://asha.github.io/portfolio/style.css",
+    "https://asha.github.io/style.css",
+    "https://github.com/asha/portfolio/style.css",
+    "https://asha.github.io/portfolio/index.html/style.css"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "A path that starts with / is root-absolute. It keeps the scheme and host (https://asha.github.io) and replaces the whole path, so the portfolio/ folder is dropped. The stylesheet is not at that address, so the request fails with 404 and the deployed page appears unstyled. The fix is the relative path href=\"style.css\" (or ./style.css).",
+   "why_wrong": [
+    "That is where the file actually is, but a leading / never keeps the current folder. The relative path style.css would produce this URL.",
+    "",
+    "The browser never switches to github.com. A root-absolute path keeps the page's own host, asha.github.io.",
+    "A path is resolved against the page's folder or the site root. It is never appended after a file name like index.html."
+   ],
+   "key": "CSE326-U6-017"
+  },
+  {
+   "topic": "GitHub Pages Hosting",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The code below is in the page https://asha.github.io/portfolio/blog/post.html. Which URL does the browser request for the image?",
+   "code": "<img src=\"../images/logo.png\" alt=\"Logo\">",
+   "options": [
+    "https://asha.github.io/images/logo.png",
+    "https://asha.github.io/portfolio/blog/images/logo.png",
+    "https://asha.github.io/blog/images/logo.png",
+    "https://asha.github.io/portfolio/images/logo.png"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "A relative path starts from the current page's folder, here /portfolio/blog/. The ../ moves up one folder to /portfolio/, and images/logo.png is added after it, giving https://asha.github.io/portfolio/images/logo.png. Relative paths stay inside the project folder, which is why they keep working on a project site.",
+   "why_wrong": [
+    "../ climbs only one folder (from blog/ to portfolio/), not all the way to the account root.",
+    "This ignores the ../ and looks inside the blog/ folder itself.",
+    "This removes portfolio/ instead of blog/. ../ always removes the folder the page is in, which is the last folder in the path.",
+    ""
+   ],
+   "key": "CSE326-U6-018"
+  },
+  {
+   "topic": "Debugging and DevTools",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The page has no element with id=\"save\", and saveForm is a function defined elsewhere. What happens when the code below runs?",
+   "code": "const btn = document.querySelector(\"#save\");\nbtn.addEventListener(\"click\", saveForm);",
+   "options": [
+    "It throws a TypeError",
+    "It throws a ReferenceError",
+    "It throws a SyntaxError",
+    "No error: the listener is silently skipped"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "querySelector returns null when nothing matches, so btn holds null. Reading a property of null (here addEventListener) throws TypeError: Cannot read properties of null. To fix it, correct the selector or the id, or check that btn is not null before using it.",
+   "why_wrong": [
+    "",
+    "btn is declared, so the name exists. The problem is the null value it holds, and that gives a TypeError.",
+    "Both lines are valid JavaScript and parse without trouble. The error only happens when the second line runs.",
+    "A null result does not turn later calls into no-ops. Calling a method on null throws an error and stops the script."
+   ],
+   "key": "CSE326-U6-019"
+  },
+  {
+   "topic": "Debugging and DevTools",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The code below prints 7 instead of the expected 5. Which kind of error is this?",
+   "code": "function average(a, b) {\n  return a + b / 2;\n}\nconsole.log(average(4, 6)); // expected 5",
+   "options": [
+    "Syntax error: the code cannot be parsed",
+    "Runtime error: an exception is thrown while it runs",
+    "Logic error: it runs without any error message but gives the wrong result",
+    "No error: 7 is the correct average of 4 and 6"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Division binds tighter than addition, so a + b / 2 = 4 + (6 / 2) = 4 + 3 = 7. The code parses and runs without throwing, so neither the Console nor a try...catch will report it. The fix is (a + b) / 2 = 10 / 2 = 5. A wrong result with no error message is what defines a logic error.",
+   "why_wrong": [
+    "The function is valid JavaScript and parses without trouble. A syntax error would stop the script before it printed anything.",
+    "Nothing is thrown. The function returns a number normally.",
+    "",
+    "The average of 4 and 6 is (4 + 6) / 2 = 5, so 7 is wrong."
+   ],
+   "key": "CSE326-U6-020"
+  },
+  {
+   "topic": "Error Handling and Fetch",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The server answers the request in the code below with 404 Not Found. What does the code log?",
+   "code": "fetch(\"data.json\")\n  .then(res => console.log(\"then\", res.ok))\n  .catch(err => console.log(\"catch\"));",
+   "options": [
+    "catch",
+    "then false",
+    "then true",
+    "then 404"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "fetch() rejects only when no usable response arrives, for example on a network failure or a request blocked by CORS. An HTTP error status is still a response, so the promise resolves and .then runs. res.ok is true only for statuses 200–299, so for 404 it is false and the code logs \"then false\". This is why code should check res.ok before using the data.",
+   "why_wrong": [
+    "fetch does not reject on a 404. .catch only runs for failures such as a network error.",
+    "",
+    "res.ok is false for a 404, because it is true only for statuses 200 to 299.",
+    "res.ok is a boolean. The number 404 is in res.status, not res.ok."
+   ],
+   "key": "CSE326-U6-021"
+  },
+  {
+   "topic": "Error Handling and Fetch",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below log?",
+   "code": "Promise.allSettled([\n  Promise.resolve(1),\n  Promise.reject(new Error(\"x\"))\n]).then(results => {\n  console.log(results.map(r => r.status));\n});",
+   "options": [
+    "[\"resolved\", \"rejected\"]",
+    "Nothing is logged: the promise rejects with Error(\"x\")",
+    "[\"fulfilled\"]",
+    "[\"fulfilled\", \"rejected\"]"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Promise.allSettled waits for every promise to finish and never rejects. It fulfils with one object per input, in order, each with status \"fulfilled\" (plus value) or \"rejected\" (plus reason). Mapping the statuses gives [\"fulfilled\", \"rejected\"]. Promise.all would instead reject as soon as the second promise rejected.",
+   "why_wrong": [
+    "A successful promise's status is the string \"fulfilled\", not \"resolved\".",
+    "Rejecting on the first failure is how Promise.all behaves. allSettled always fulfils with every result.",
+    "allSettled keeps an entry for every input promise, including the rejected one.",
+    ""
+   ],
+   "key": "CSE326-U6-022"
+  },
+  {
+   "topic": "Error Handling and Fetch",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which pairing of HTTP status code and meaning is INCORRECT?",
+   "code": "",
+   "options": [
+    "301: the resource has moved permanently to a new URL",
+    "401: the request lacks valid authentication credentials",
+    "304: the response body carries a fresh copy of the file",
+    "500: the server hit an internal error while handling the request"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "304 Not Modified has no body. It tells the browser that its cached copy is still valid, so the browser reuses that copy instead of downloading the file again. The other three pairings are right: 301 is a permanent redirect, 401 means authentication is missing or was not accepted, and 500 is a failure on the server.",
+   "why_wrong": [
+    "This pairing is correct, so it is not the answer: 301 Moved Permanently sends the client to a new URL for good.",
+    "This pairing is correct, so it is not the answer: 401 Unauthorized means authentication is required or the credentials were rejected.",
+    "",
+    "This pairing is correct, so it is not the answer: 500 Internal Server Error is a general failure on the server."
+   ],
+   "key": "CSE326-U6-023"
+  },
+  {
+   "topic": "Error Handling and Fetch",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about the CORS header Access-Control-Allow-Origin is correct?",
+   "code": "",
+   "options": [
+    "The server sends it in its response to say which origins may read that response",
+    "The page's fetch() call must send it as a request header to be let through",
+    "Adding mode: \"no-cors\" to fetch() lets JavaScript read the response body even without it",
+    "Browsers require it on same-origin requests too"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The server decides CORS. Its response carries Access-Control-Allow-Origin naming the origin allowed to read it (or * for any origin), and the browser checks that header before it hands the body to JavaScript. The client cannot grant itself access, and same-origin requests need no CORS headers at all.",
+   "why_wrong": [
+    "",
+    "Access-Control-Allow-Origin is a response header set by the server. A client that sends it gains nothing.",
+    "mode: \"no-cors\" returns an opaque response whose body JavaScript cannot read. It hides the error rather than fixing it.",
+    "Same-origin requests are never subject to CORS, so they do not need the header."
+   ],
+   "key": "CSE326-U6-024"
+  },
+  {
+   "topic": "Web Performance",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these changes does NOT help reduce CLS (Cumulative Layout Shift)?",
+   "code": "",
+   "options": [
+    "Adding width and height attributes to every <img>",
+    "Giving a late-loading ad slot a fixed min-height",
+    "Not inserting a banner above content that is already visible",
+    "Compressing images so they download faster"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "CLS counts content moving unexpectedly, so the fixes either reserve space in advance or avoid inserting content above what is already on screen. Compressing an image makes it arrive sooner, which helps LCP. But if no space was reserved, the image still pushes the text down when it appears.",
+   "why_wrong": [
+    "This does help: width and height let the browser reserve the image's box before it loads, so nothing jumps.",
+    "This does help: with the slot's height reserved, the ad fills space that already exists instead of pushing content down.",
+    "This does help: inserting content above what the user is reading pushes it down, which is exactly a layout shift.",
+    ""
+   ],
+   "key": "CSE326-U6-025"
+  },
+  {
+   "topic": "Web Performance",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these problems does INP (Interaction to Next Paint) report?",
+   "code": "",
+   "options": [
+    "The hero image takes several seconds to appear",
+    "A click handler runs a long JavaScript loop before the page repaints",
+    "A banner loads late and pushes the text down",
+    "The favicon request returns 404"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "INP measures responsiveness: the delay from a click, tap or key press until the next frame is painted. A long-running handler blocks the main thread, so the screen cannot update until it finishes, and INP is poor. Splitting the work into smaller pieces lets the page respond sooner.",
+   "why_wrong": [
+    "A slow largest image is a loading problem, which LCP measures.",
+    "",
+    "Content being pushed down is a layout shift, which CLS measures.",
+    "A 404 is an HTTP error status that shows up in the Network panel. No Core Web Vital measures it."
+   ],
+   "key": "CSE326-U6-026"
+  },
+  {
+   "topic": "Git and GitHub",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Running git status in Dev's project prints the output below. He then runs git commit -m \"Update\". Which changes does the new commit record?",
+   "code": "On branch main\nChanges to be committed:\n        modified:   index.html\n\nChanges not staged for commit:\n        modified:   style.css\n\nUntracked files:\n        script.js",
+   "options": [
+    "The changes to index.html and style.css",
+    "The changes to index.html and style.css, plus the new file script.js",
+    "Only the change to index.html",
+    "Nothing, because script.js must be added before any commit can be made"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "git commit records exactly what is in the staging area, which git status lists under \"Changes to be committed\". style.css was modified but never staged with git add, and script.js is untracked, so both are left out. They stay in the working folder until they are added and committed later.",
+   "why_wrong": [
+    "Assumes commit picks up every modified tracked file; style.css is listed under \"not staged\", so it needs git add first.",
+    "Assumes commit saves the whole folder; unstaged and untracked files are never included without git add.",
+    "",
+    "Untracked files never block a commit; Git simply leaves script.js out and commits what is staged."
+   ],
+   "key": "CSE326-U6-027"
+  },
+  {
+   "topic": "Git and GitHub",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Meera ran git add . and git status now lists notes-private.txt under \"Changes to be committed\". She wants it left out of the next commit, but the file and its contents must stay on her disk. What should she do?",
+   "code": "",
+   "options": [
+    "Run git rm notes-private.txt",
+    "Run git restore --staged notes-private.txt",
+    "Add notes-private.txt to .gitignore, which takes it out of the staging area",
+    "Run git init again, which resets the staging area"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "git restore --staged <file> moves a file out of the staging area and leaves the copy in the working folder untouched; it is the same hint git status prints for staged files. The file then shows as untracked, and she can add it to .gitignore afterwards so git add . does not pick it up again.",
+   "why_wrong": [
+    "git rm is for deleting a file from the repository and the working folder, not for unstaging it; Git even refuses here unless --cached or -f is added.",
+    "",
+    ".gitignore only stops untracked files from being added; a file that is already staged stays staged.",
+    "Running git init in an existing repository only re-initialises it; the staging area and history are left as they were."
+   ],
+   "key": "CSE326-U6-028"
+  },
+  {
+   "topic": "Git and GitHub",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "Aman edits style.css so the heading is red and runs git add style.css. He then changes the same line to blue, saves the file, and runs git commit -m \"Heading colour\" without running git add again. What does the new commit contain for style.css?",
+   "code": "",
+   "options": [
+    "The blue version, as the file is now saved on disk",
+    "No change to style.css, because the file was edited after it was staged",
+    "Both versions, recorded as two separate commits",
+    "The red version, as it was when git add ran"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "git add stores a snapshot of the file's content at that moment; it does not just mark the file name to be read later. The commit records that staged snapshot, so the heading is red in the commit. The blue edit stays in the working folder, and git status lists style.css under \"Changes not staged for commit\" until it is added again.",
+   "why_wrong": [
+    "Treats git add as marking the file name; the commit uses the snapshot taken by git add, not the current file on disk.",
+    "A later edit does not cancel the staged snapshot; that snapshot is still what gets committed.",
+    "One git commit makes exactly one commit; the blue edit is not committed at all until it is staged.",
+    ""
+   ],
+   "key": "CSE326-U6-029"
+  },
+  {
+   "topic": "Git and GitHub",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "config.js has been in Ravi's repository since the first commit. Today he adds the line config.js to .gitignore, commits that change, and then edits config.js. What does git status show about config.js?",
+   "code": "",
+   "options": [
+    "It is listed as modified, under \"Changes not staged for commit\"",
+    "Nothing, because an ignored file never appears in git status",
+    "It is listed under \"Untracked files\", because .gitignore stopped tracking it",
+    "It is listed as deleted, because ignoring a file removes it at the next commit"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": ".gitignore only stops untracked files from being added; it has no effect on a file Git is already tracking. config.js was committed earlier, so Git keeps tracking it and reports the edit as a normal modification. To stop tracking it while keeping it on disk, it has to be removed from the index with git rm --cached config.js and that removal committed.",
+   "why_wrong": [
+    "",
+    "True only for files that were never tracked; config.js was already committed, so the ignore rule does not apply to it.",
+    "Adding a pattern to .gitignore never un-tracks a file; that needs git rm --cached.",
+    ".gitignore never deletes or removes anything from the repository; it only affects which untracked files git add picks up."
+   ],
+   "key": "CSE326-U6-030"
+  },
+  {
+   "topic": "GitHub Pages Hosting",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Kabir's portfolio is hosted on GitHub Pages. The form in the code below is in index.html, and contact.php is committed in the same repository. Why will the form never save a visitor's message?",
+   "code": "<form action=\"contact.php\" method=\"post\">\n  <input type=\"email\" name=\"email\" required>\n  <textarea name=\"message\"></textarea>\n  <button type=\"submit\">Send</button>\n</form>",
+   "options": [
+    "Pages runs PHP only for method=\"get\" forms, so switching the form to GET would fix it",
+    "The action must be an absolute https:// URL before Pages will run the PHP file",
+    "Pages serves static files only, so contact.php is never run as a program",
+    "The textarea needs the required attribute before Pages will process the form"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "GitHub Pages is static hosting: it sends files to the browser exactly as they are stored and has no PHP, Node, Python or database behind it. Saving a form submission needs server-side code to receive and store the data, and Pages cannot run contact.php. The form would have to post to a separate service that accepts submissions, or be handled in the browser.",
+   "why_wrong": [
+    "Pages never runs PHP, whatever the method. A GET request would just return the contact.php file itself, unexecuted.",
+    "How the URL is written makes no difference; any path still points at a file Pages will not execute.",
+    "",
+    "required only adds client-side validation before submit; it cannot make Pages run server code."
+   ],
+   "key": "CSE326-U6-031"
+  },
+  {
+   "topic": "GitHub Pages Hosting",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Tanvi's repository has README.md at the top level, and all her site files (index.html, css/, js/) are inside a folder named website/. She enables GitHub Pages with \"Deploy from a branch\" on main. What must she change so that her index.html becomes the site's home page?",
+   "code": "",
+   "options": [
+    "Nothing: Pages searches every folder of the branch for an index.html",
+    "Move the site files to the repository root, or rename website/ to docs/, and select that folder as the publishing source",
+    "Select website/ in the Pages folder drop-down",
+    "Rename the repository to website so the folder name matches the URL"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "With \"Deploy from a branch\", GitHub Pages publishes from only two places on the chosen branch: the root (/) or a folder named /docs. Files inside website/ are never used as the site's entry point, so Tanvi must move them to the root or rename the folder to docs and select /docs in the Pages settings. index.html must then sit directly inside the publishing folder.",
+   "why_wrong": [
+    "Pages does not search subfolders for an entry file; it only looks in the selected publishing folder.",
+    "",
+    "The folder drop-down offers only / (root) and /docs; an arbitrary folder such as website/ cannot be selected.",
+    "Renaming the repository only changes the site's URL path; the publishing folder is still limited to root or /docs."
+   ],
+   "key": "CSE326-U6-032"
+  },
+  {
+   "topic": "GitHub Pages Hosting",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Arjun's project site https://arjun.github.io/shop/ has index.html and a data folder at the repository root, with data/products.json committed. script.js, loaded by index.html, runs the code below. What happens on the deployed site?",
+   "code": "fetch(\"data/products.json\")\n  .then(res => res.json())\n  .then(products => showProducts(products));",
+   "options": [
+    "It fails: fetch needs a backend server to answer it, and Pages has none",
+    "It fails: Pages serves only .html, .css and .js files, so the request gets 404",
+    "It works only after products.json is renamed to products.php so Pages can generate the data",
+    "It works: Pages serves products.json as a static file, and the browser's JavaScript fetches and parses it"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Fetching a JSON file is just requesting another static file, which is exactly what GitHub Pages serves. The relative URL resolves against the page, giving https://arjun.github.io/shop/data/products.json, and the parsing happens in the visitor's browser. What Pages cannot do is run code on the server, such as storing data sent from a form.",
+   "why_wrong": [
+    "Confuses reading a static file with running server code; the browser fetches the file and JavaScript does the work.",
+    "Pages serves any static file type, including .json, images and fonts.",
+    "Pages cannot run PHP at all; renaming would only serve the file's text, and plain JSON already works.",
+    ""
+   ],
+   "key": "CSE326-U6-033"
+  },
+  {
+   "topic": "GitHub Pages Hosting",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "Asha has one GitHub Pages site, the project site https://asha.github.io/portfolio/ (she has no asha.github.io repository). index.html sits at the repository root next to a css folder. She tests locally with VS Code Live Server, which serves the portfolio folder at http://127.0.0.1:5500/. Which link loads css/style.css both locally and on the deployed site?",
+   "code": "",
+   "options": [
+    "<link rel=\"stylesheet\" href=\"/css/style.css\">",
+    "<link rel=\"stylesheet\" href=\"/portfolio/css/style.css\">",
+    "<link rel=\"stylesheet\" href=\"css/style.css\">",
+    "<link rel=\"stylesheet\" href=\"file:///C:/Users/asha/portfolio/css/style.css\">"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "A relative path resolves against the page's own folder: http://127.0.0.1:5500/css/style.css locally and https://asha.github.io/portfolio/css/style.css when deployed, both correct. A path starting with / resolves from the host's root, and the two roots differ. /css/style.css works locally but becomes https://asha.github.io/css/style.css online, while /portfolio/css/style.css works online but not under Live Server.",
+   "why_wrong": [
+    "Works under Live Server, but on a project site it points to https://asha.github.io/css/style.css, outside /portfolio/, so the deployed page is unstyled.",
+    "Works on GitHub Pages, but locally it requests http://127.0.0.1:5500/portfolio/css/style.css, which does not exist.",
+    "",
+    "A path on Asha's own disk does not exist for visitors, and a page served over http is not allowed to load file:/// resources anyway."
+   ],
+   "key": "CSE326-U6-034"
+  },
+  {
+   "topic": "Debugging and DevTools",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Isha expected the button in the code below to have white text, but it stays black. Where in DevTools can she see which color declaration lost, and why?",
+   "code": "<button id=\"buy\" class=\"btn\">Buy</button>\n\n/* style.css */\n#buy { color: black; }\n.btn { color: white; }",
+   "options": [
+    "Elements panel, Styles pane: color: black under #buy is struck through, because .btn comes later in the file",
+    "Console panel: it prints a CSS warning that .btn was overridden",
+    "Network panel: style.css shows status 304, meaning the .btn rule was skipped",
+    "Elements panel, Styles pane: color: white under .btn is struck through, because #buy is more specific"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Selecting the element in the Elements panel lists every matching rule in the Styles pane, and declarations that lost the cascade are drawn with a line through them. #buy is an id selector, which is more specific than the .btn class selector, so color: black wins and .btn's color: white is struck through. Source order only decides between rules of equal specificity.",
+   "why_wrong": [
+    "Reverses the cascade: coming later only wins when specificity is equal, and an id beats a class.",
+    "The Console shows JavaScript messages and errors; a declaration losing the cascade is not an error and prints nothing there.",
+    "The Network panel only shows how style.css was transferred; a 304 means the cached copy was still valid, not that a rule was skipped.",
+    ""
+   ],
+   "key": "CSE326-U6-035"
+  },
+  {
+   "topic": "Debugging and DevTools",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Rohan added the debugger; line in the code below so he could pause inside applyDiscount. He reloads the page with DevTools closed, and the page runs straight through without pausing. What explains this?",
+   "code": "function applyDiscount(price) {\n  debugger;\n  return price * 0.9;\n}\napplyDiscount(500);",
+   "options": [
+    "debugger; pauses only when developer tools are open; with them closed it has no effect",
+    "debugger; is a syntax error in browsers, so the script never ran at all",
+    "debugger; pauses only when it is placed inside a try block",
+    "debugger; works only on a line that also has a breakpoint set in the Sources panel"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The debugger statement is a breakpoint written into the code: when DevTools is open, execution pauses on it in the Sources panel with the current variables visible. When no debugger is attached, the statement does nothing and the code simply continues. Rohan must open DevTools first and then reload.",
+   "why_wrong": [
+    "",
+    "debugger is a valid JavaScript statement; the rest of the script runs normally.",
+    "Its effect has nothing to do with try blocks; it can appear anywhere a statement is allowed.",
+    "The statement is itself a breakpoint, so no separate breakpoint on that line is needed; and with DevTools closed neither would pause."
+   ],
+   "key": "CSE326-U6-036"
+  },
+  {
+   "topic": "Debugging and DevTools",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A breakpoint is set on line 4 of the code below and the page is reloaded with DevTools open. Execution pauses on line 4, the student clicks Resume once, and it pauses on line 4 again. At this second pause, what value of total does the Scope pane show?",
+   "code": "let total = 0;\nconst prices = [40, 60];\nfor (const p of prices) {\n  total = total + p;\n}\nconsole.log(total);",
+   "options": [
+    "100",
+    "40",
+    "60",
+    "0"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "A line breakpoint pauses before that line runs. At the first pause total is 0 and p is 40; Resume runs line 4 (total = 0 + 40 = 40), the loop moves on to p = 60, and execution stops before line 4 again. So the second pause shows total = 40, and it only becomes 100 after the line runs once more.",
+   "why_wrong": [
+    "Assumes the paused line has already run; 40 + 60 = 100 only after line 4 executes on the second pass.",
+    "",
+    "60 is the value of p at the second pause, not total.",
+    "0 is total at the first pause; Resume ran line 4 once, so total has already changed."
+   ],
+   "key": "CSE326-U6-037"
+  },
+  {
+   "topic": "Debugging and DevTools",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "app.js contains the code below and is loaded by a page. What appears in the Console?",
+   "code": "console.log(\"start\");\nlet x = 5;\nif (x > 3 {\n  console.log(\"big\");\n}\nconsole.log(\"end\");",
+   "options": [
+    "\"start\", then a SyntaxError, and the script stops there",
+    "\"start\", \"big\", \"end\", because the browser fills in the missing bracket",
+    "Only a SyntaxError; nothing is logged, not even \"start\"",
+    "\"start\", a SyntaxError, then \"end\""
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The browser parses the whole script before running any of it. The missing ) in if (x > 3 { makes parsing fail, so no statement runs, not even the console.log on line 1. Runtime errors such as ReferenceError or TypeError behave differently: they stop the script at the failing line, after the earlier lines have already run.",
+   "why_wrong": [
+    "Treats the syntax error like a runtime error; line 1 would only run if the whole file parsed successfully.",
+    "JavaScript does not repair syntax errors; the missing bracket makes the whole script invalid.",
+    "",
+    "A script never continues past code it cannot parse; nothing in this file runs at all."
+   ],
+   "key": "CSE326-U6-038"
+  },
+  {
+   "topic": "Debugging and DevTools",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "The page in the code below does contain an input with id=\"name\", yet the Console shows: Uncaught TypeError: Cannot read properties of null (reading 'value'). What is the cause?",
+   "code": "<!-- index.html -->\n<head>\n  <script src=\"app.js\"></script>\n</head>\n<body>\n  <input id=\"name\" value=\"Asha\">\n</body>\n\n// app.js\nconsole.log(document.getElementById(\"name\").value);",
+   "options": [
+    "getElementById needs \"#name\"; without the # it matches nothing",
+    "An <input> placed outside a <form> has no value property",
+    "getElementById returns a list of elements, and a list has no value property",
+    "app.js runs while <head> is being parsed, before the <input> exists, so getElementById returns null"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A plain <script> in <head> runs as soon as it loads, before the parser has reached <body>, so no element with id=\"name\" exists yet and getElementById returns null. Reading .value from null throws the TypeError. Adding defer to the script tag, or moving the script to the end of <body>, makes it run after the input exists.",
+   "why_wrong": [
+    "The # is CSS selector syntax used by querySelector; getElementById takes the bare id, so \"name\" is correct.",
+    "Every input element has a value property, whether or not it is inside a form.",
+    "getElementById returns a single element or null; reading .value from a list would give undefined, not an error about null.",
+    ""
+   ],
+   "key": "CSE326-U6-039"
+  },
+  {
+   "topic": "Error Handling and Fetch",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Fetching https://api.example.org/data from a page on another origin fails with a CORS error, because the API sends no Access-Control-Allow-Origin header. A classmate adds mode: \"no-cors\" as in the code below. What does the code log now?",
+   "code": "fetch(\"https://api.example.org/data\", { mode: \"no-cors\" })\n  .then(res => res.json())\n  .then(data => console.log(data))\n  .catch(err => console.log(\"failed\"));",
+   "options": [
+    "It logs the API's data, because no-cors switches the CORS check off",
+    "It logs \"failed\": the response is opaque, so its body cannot be read and res.json() rejects",
+    "It logs undefined: the request succeeds but the parsed JSON is empty",
+    "It logs nothing: the browser refuses to send any request in no-cors mode"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "mode: \"no-cors\" does not switch CORS off; it lets the request go out but hands JavaScript an opaque response whose status reads 0 and whose body cannot be read. res.json() therefore rejects, and the .catch logs \"failed\". Only the server can allow cross-origin reading, by sending Access-Control-Allow-Origin on its response.",
+   "why_wrong": [
+    "Believes no-cors bypasses CORS; the browser still hides the response body from JavaScript.",
+    "",
+    "The body is unreadable, so res.json() rejects instead of producing a value; the second .then never runs.",
+    "The GET is still sent in no-cors mode, and even a refused request would reject and log \"failed\", not nothing."
+   ],
+   "key": "CSE326-U6-040"
+  },
+  {
+   "topic": "Error Handling and Fetch",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "try {\n  setTimeout(() => {\n    throw new Error(\"late\");\n  }, 0);\n  console.log(\"scheduled\");\n} catch (e) {\n  console.log(\"caught: \" + e.message);\n}",
+   "options": [
+    "scheduled, then caught: late",
+    "caught: late only",
+    "caught: late, then scheduled",
+    "scheduled, then an uncaught Error: late in the Console"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "try...catch only catches errors thrown while the try block itself is running. setTimeout merely schedules the callback, so the try block finishes, logs \"scheduled\", and the catch is skipped. When the callback runs later the try...catch is long gone, so the Error is reported as uncaught; it would need its own try...catch inside the callback.",
+   "why_wrong": [
+    "Assumes the surrounding try...catch still guards the callback; by the time it runs, the try block has already finished.",
+    "The throw does not happen during the try block, so control never jumps to catch, and \"scheduled\" is logged.",
+    "The catch never runs, and the throw only happens after all the synchronous code, including \"scheduled\", has finished.",
+    ""
+   ],
+   "key": "CSE326-U6-041"
+  },
+  {
+   "topic": "Error Handling and Fetch",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print, in order?",
+   "code": "function f() {\n  try {\n    throw new Error(\"A\");\n  } catch (e) {\n    console.log(\"catch \" + e.message);\n    throw new Error(\"B\");\n  } finally {\n    console.log(\"finally\");\n  }\n}\n\ntry {\n  f();\n} catch (e) {\n  console.log(\"outer \" + e.message);\n}",
+   "options": [
+    "catch A, outer B, finally",
+    "catch A, outer B",
+    "catch A, finally, outer B",
+    "catch A, finally, outer A"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "f throws A, so its catch logs \"catch A\" and then throws a new Error B. Before B can leave f, f's finally block runs and logs \"finally\"; finally runs whether try or catch ends normally, returns or throws. B then reaches the outer catch, which logs \"outer B\".",
+   "why_wrong": [
+    "finally belongs to f and runs before the error leaves f, so it cannot come after the outer catch.",
+    "Assumes finally is skipped when catch throws; it runs on every way out of the try statement.",
+    "",
+    "The outer catch receives the error that actually left f, which is B; A was already handled by the inner catch."
+   ],
+   "key": "CSE326-U6-042"
+  },
+  {
+   "topic": "Error Handling and Fetch",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A page on https://shop.example.com calls the API in the code below. Which of these fetch calls is sent WITHOUT a preflight OPTIONS request?",
+   "code": "// page: https://shop.example.com\nconst API = \"https://api.example.org/items\";",
+   "options": [
+    "fetch(API, { method: \"POST\", headers: { \"Content-Type\": \"text/plain\" }, body: \"hi\" })",
+    "fetch(API, { method: \"POST\", headers: { \"Content-Type\": \"application/json\" }, body: \"{}\" })",
+    "fetch(API, { headers: { \"X-Api-Key\": \"abc123\" } })",
+    "fetch(API, { method: \"PUT\", body: \"hi\" })"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A cross-origin request skips the preflight only when it is simple: the method is GET, HEAD or POST, and every header set is CORS-safelisted, with Content-Type limited to application/x-www-form-urlencoded, multipart/form-data or text/plain. The text/plain POST meets both conditions. The JSON Content-Type, the custom X-Api-Key header and the PUT method each force an OPTIONS request first.",
+   "why_wrong": [
+    "",
+    "Being a POST is not enough; application/json is not one of the three safelisted Content-Type values, so it is preflighted.",
+    "Being a GET does not help; any custom request header such as X-Api-Key makes the request non-simple.",
+    "PUT is not GET, HEAD or POST, so the method alone triggers a preflight."
+   ],
+   "key": "CSE326-U6-043"
+  },
+  {
+   "topic": "Web Performance",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A page's field data shows LCP 2.1 s, INP 350 ms and CLS 0.05. Which Core Web Vital is outside the \"good\" range?",
+   "code": "",
+   "options": [
+    "LCP",
+    "INP",
+    "CLS",
+    "LCP and INP"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The \"good\" thresholds are LCP ≤ 2.5 s, INP ≤ 200 ms and CLS ≤ 0.1. LCP (2.1 s) and CLS (0.05) pass, but INP at 350 ms is above 200 ms, so it falls in \"needs improvement\". The fix is on the interaction side, such as shortening long JavaScript tasks run by event handlers.",
+   "why_wrong": [
+    "2.1 s is under the 2.5 s good threshold for LCP.",
+    "",
+    "0.05 is below the 0.1 good threshold; a small amount of layout shift is allowed.",
+    "Only INP fails; LCP at 2.1 s is within the 2.5 s threshold."
+   ],
+   "key": "CSE326-U6-044"
+  },
+  {
+   "topic": "Web Performance",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "app.js is linked in <head> and reads elements in <body>. First paint is delayed because the browser stops parsing HTML while app.js downloads and runs. Which tag lets parsing continue during the download and still runs app.js only after the whole document has been parsed?",
+   "code": "",
+   "options": [
+    "<script src=\"app.js\"></script>",
+    "<script src=\"app.js\" async></script>",
+    "<script src=\"app.js\" defer></script>",
+    "<script src=\"app.js\" loading=\"lazy\"></script>"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "defer downloads the script in parallel with parsing and runs it once the HTML has been fully parsed, keeping the order of deferred scripts. async also downloads in parallel but runs the script the moment it arrives, which can be before <body> is parsed, so element lookups may return null. A plain script in <head> blocks parsing until it has downloaded and run.",
+   "why_wrong": [
+    "A plain script in <head> is exactly what blocks parsing while it downloads and runs.",
+    "async does not wait for parsing to finish; it runs as soon as the file arrives, possibly before the body elements exist.",
+    "",
+    "loading=\"lazy\" is an attribute for img and iframe, not script; the browser ignores it and the script still blocks parsing."
+   ],
+   "key": "CSE326-U6-045"
+  },
+  {
+   "topic": "Web Performance",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A gallery page shows a 4000×3000 photo (3 MB) inside a 400×300 box. Which change reduces the bytes the browser downloads for that photo?",
+   "code": "",
+   "options": [
+    "Add width=\"400\" height=\"300\" to the <img> tag",
+    "Add the CSS rule img { max-width: 400px; }",
+    "Wrap the <img> in a 400×300 <div> with overflow: hidden",
+    "Resize the image file itself to about the displayed size and compress it"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The browser downloads the whole file named in src, whatever size it is drawn at. Attributes and CSS only change how large the image is displayed, so the full 3 MB is still transferred. Serving a file resized to roughly the display size, and compressed, is what cuts the bytes, and it also speeds up LCP when the photo is the largest element.",
+   "why_wrong": [
+    "width and height set the displayed size and reserve space (good for CLS), but the full 3 MB file is still downloaded.",
+    "CSS only scales how the image is drawn; the download is the same 3 MB file.",
+    "Clipping hides part of the image, but the entire file is still downloaded.",
+    ""
+   ],
+   "key": "CSE326-U6-046"
+  },
+  {
+   "topic": "Web Performance",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "The image in the code below is the largest element on the first screen and is the page's LCP element, but it appears late. Which change most directly improves LCP?",
+   "code": "<img src=\"hero.jpg\" alt=\"Campus at sunset\"\n     width=\"1200\" height=\"600\" loading=\"lazy\">",
+   "options": [
+    "Remove loading=\"lazy\" so the browser requests hero.jpg as soon as it reads the tag",
+    "Remove the width and height attributes so the image can load at its natural size",
+    "Insert the <img> with JavaScript after the load event so the text renders first",
+    "Move the image into a CSS background-image in style.css"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "loading=\"lazy\" makes the browser hold the request until layout shows the image is near the viewport, which delays the very element LCP is timing. Lazy-loading suits images further down the page, not the hero. Removing it lets the download start as soon as the parser meets the tag.",
+   "why_wrong": [
+    "",
+    "The dimensions do not change the download; removing them only makes the layout jump when the image arrives, which hurts CLS.",
+    "Waiting for the load event delays the image request even further, pushing LCP later.",
+    "A CSS background image is only discovered after style.css downloads and is applied, so its request starts later, not sooner."
+   ],
+   "key": "CSE326-U6-047"
+  }
+ ]
+}

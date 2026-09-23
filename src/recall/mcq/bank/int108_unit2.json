@@ -1,0 +1,1065 @@
+{
+ "subject_code": "INT108",
+ "unit": 2,
+ "unit_label": "Conditional and Iterative Statements",
+ "questions": [
+  {
+   "topic": "Boolean Logic and Modulus",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the value of 23 % 4 in Python?",
+   "code": "",
+   "options": [
+    "5",
+    "3",
+    "5.75",
+    "20"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "% gives the remainder after division. 4 goes into 23 five times (4 × 5 = 20), and 23 − 20 = 3, so 23 % 4 is 3.",
+   "why_wrong": [
+    "5 is 23 // 4, the quotient, not the remainder.",
+    "",
+    "5.75 is 23 / 4, true division. % of two ints never has a fractional part.",
+    "20 is the part of 23 that 4 divides evenly (4 × 5), but % returns what is left over."
+   ],
+   "key": "INT108-U2-001"
+  },
+  {
+   "topic": "Boolean Logic and Modulus",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "x = 10\nprint(x > 5 and x < 8)",
+   "options": [
+    "True",
+    "0",
+    "False",
+    "None"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "x > 5 is True, so and moves on and returns the value of x < 8. With x = 10, x < 8 is False, so the whole expression is False and print shows False.",
+   "why_wrong": [
+    "Checks only the first comparison. and needs both sides to be true.",
+    "Python prints the bool False as False, not as the number 0.",
+    "",
+    "Both operands are comparisons, which always give True or False, so the result cannot be None."
+   ],
+   "key": "INT108-U2-002"
+  },
+  {
+   "topic": "Boolean Logic and Modulus",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which expression is True exactly when the integer n is even?",
+   "code": "",
+   "options": [
+    "n % 2 == 1",
+    "n / 2 == 0",
+    "n // 2 == 0",
+    "n % 2 == 0"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "An even number leaves remainder 0 when divided by 2, and % gives that remainder. So n % 2 == 0 is True for 0, 2, 4, 8, … and False for every odd n.",
+   "why_wrong": [
+    "A remainder of 1 means n is odd, so this is the test for odd numbers.",
+    "n / 2 is 0 only when n itself is 0. For n = 4 it is 2.0, so this is not an even test.",
+    "n // 2 == 0 is True only for n = 0 and n = 1, so it rejects 4 and accepts 1.",
+    ""
+   ],
+   "key": "INT108-U2-003"
+  },
+  {
+   "topic": "Boolean Logic and Modulus",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these expressions evaluates to False?",
+   "code": "",
+   "options": [
+    "not 4 > 9",
+    "17 % 5 == 2",
+    "0 or 5 > 1",
+    "3 > 2 and 2 > 5"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "3 > 2 is True, so and returns the right side, 2 > 5, which is False. The others are all True: not binds more loosely than >, so not 4 > 9 is not False, which is True; 17 % 5 is 2; and 0 or 5 > 1 returns 5 > 1, which is True.",
+   "why_wrong": [
+    "Applies not to 4 alone. not binds more loosely than >, so it negates 4 > 9 (False) and gives True.",
+    "Confuses % with //. 17 // 5 is 3, but 17 % 5 is the remainder 2, so the comparison is True.",
+    "Assumes the 0 makes the result False. or needs only one truthy side and returns 5 > 1, which is True.",
+    ""
+   ],
+   "key": "INT108-U2-004"
+  },
+  {
+   "topic": "Boolean Logic and Modulus",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What happens when the code below runs?",
+   "code": "x = 0\nprint(x != 0 and 10 / x > 1)",
+   "options": [
+    "It raises ZeroDivisionError",
+    "It prints False",
+    "It prints True",
+    "It prints 0"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "x != 0 is False, and and short-circuits: once the left side is false, it returns that value without evaluating the right side. So 10 / x is never computed, no error occurs, and print shows False.",
+   "why_wrong": [
+    "Assumes both sides of and are always evaluated. The division is skipped because the left side is already False.",
+    "",
+    "The left operand is False, and a false left side can never make and produce True.",
+    "and returns the left operand itself, which is the bool False (the result of x != 0), not the value of x."
+   ],
+   "key": "INT108-U2-005"
+  },
+  {
+   "topic": "Conditional Statements",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which keyword adds an extra condition to an if statement that is checked only when the conditions above it were False?",
+   "code": "",
+   "options": [
+    "else",
+    "elif",
+    "else if",
+    "elseif"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Python spells 'else if' as the single keyword elif. An if/elif/else chain tests its conditions from top to bottom and runs only the first block whose condition is True.",
+   "why_wrong": [
+    "else takes no condition. It runs only when every condition above it was False.",
+    "",
+    "else if is the C/Java spelling. In Python, else must be followed directly by a colon, so else if x: is a SyntaxError.",
+    "elseif is not a Python keyword, so a line like elseif x > 3: is a SyntaxError."
+   ],
+   "key": "INT108-U2-006"
+  },
+  {
+   "topic": "Conditional Statements",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the value of y after the code below runs?",
+   "code": "x = 7\ny = 0\nif x > 5:\n    y += 1\nelif x > 3:\n    y += 10\nelse:\n    y += 100",
+   "options": [
+    "1",
+    "11",
+    "10",
+    "111"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "An if/elif/else chain runs only the first block whose condition is True. x > 5 is True, so y += 1 runs and the elif and else are skipped, even though x > 3 is also True. y ends as 1.",
+   "why_wrong": [
+    "",
+    "Runs both the if and the elif because both conditions are True. Once one branch of a chain runs, the rest is skipped.",
+    "Picks the elif branch, but the if condition x > 5 is checked first and is already True.",
+    "Runs every branch, including else, but exactly one block of an if/elif/else chain runs."
+   ],
+   "key": "INT108-U2-007"
+  },
+  {
+   "topic": "Conditional Statements",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What happens when the code below is run?",
+   "code": "x = 5\nif x = 5:\n    print(\"five\")",
+   "options": [
+    "It prints five",
+    "Nothing is printed, because the condition is False",
+    "It raises a NameError",
+    "It raises a SyntaxError before anything runs"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "= is assignment and == is comparison. An if condition must be an expression, and x = 5 is an assignment, so Python rejects the line with a SyntaxError while reading the program, before any line runs. The correct test is if x == 5:.",
+   "why_wrong": [
+    "Treats = as a comparison. Comparing x with 5 needs ==.",
+    "The condition is never evaluated. The line is invalid syntax, so the program never starts.",
+    "x is defined on the first line, and the error is caught while the code is being read, before any name is looked up.",
+    ""
+   ],
+   "key": "INT108-U2-008"
+  },
+  {
+   "topic": "Conditional Statements",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "x = 15\nif x % 3 == 0:\n    print(\"A\", end=\"\")\nif x % 5 == 0:\n    print(\"B\", end=\"\")\nelif x > 10:\n    print(\"C\", end=\"\")",
+   "options": [
+    "A",
+    "ABC",
+    "AB",
+    "B"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "This is two separate statements: a lone if, then a new if/elif chain. 15 % 3 == 0 is True, so A is printed. The second chain starts fresh: 15 % 5 == 0 is True, so B is printed and its elif is skipped. The output is AB.",
+   "why_wrong": [
+    "Treats the second if as part of the first chain. A new if starts a new chain, so it is always tested.",
+    "Also runs the elif. An elif is skipped once an earlier branch of its own chain has run.",
+    "",
+    "Skips the first if. 15 % 3 is 0, so A is printed before the second if is reached."
+   ],
+   "key": "INT108-U2-009"
+  },
+  {
+   "topic": "Conditional Statements",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which single if line prints \"both\" for exactly the same integer values of a and b as the nested code below?",
+   "code": "if a > 0:\n    if b > 0:\n        print(\"both\")",
+   "options": [
+    "if a > 0 or b > 0:",
+    "if a and b > 0:",
+    "if a > 0 and b > 0:",
+    "if a > b > 0:"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The inner if is reached only when a > 0 is True, and it prints only when b > 0 is also True, so the nested pair means a > 0 and b > 0. Each comparison has to be written out in full on both sides of and.",
+   "why_wrong": [
+    "or needs only one positive value, so a = -6, b = 1 would print \"both\".",
+    "a on its own is only a truthiness test (non-zero), so a = -6, b = 1 would print \"both\".",
+    "",
+    "A chained comparison means a > b and b > 0, so a = 1, b = 1 would not print, but the nested code does print."
+   ],
+   "key": "INT108-U2-010"
+  },
+  {
+   "topic": "For Loops and Range",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "print(list(range(4)))",
+   "options": [
+    "[1, 2, 3, 4]",
+    "[0, 1, 2, 3, 4]",
+    "[1, 2, 3]",
+    "[0, 1, 2, 3]"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "With one argument, range(n) starts at 0 and stops before n. So range(4) gives 0, 1, 2, 3: four values, the last being 4 − 1 = 3.",
+   "why_wrong": [
+    "Starts at 1 and includes 4, but range starts at 0 by default and stops before the stop value.",
+    "Includes the stop value 4, but range always stops before it.",
+    "Starts at 1, but with one argument range starts at 0.",
+    ""
+   ],
+   "key": "INT108-U2-011"
+  },
+  {
+   "topic": "For Loops and Range",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "How many lines does the code below print?",
+   "code": "for i in range(3, 8):\n    print(i)",
+   "options": [
+    "5",
+    "8",
+    "6",
+    "4"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "range(3, 8) starts at 3 and stops before 8, giving 3, 4, 5, 6, 7. That is 8 − 3 = 5 values, so print runs 5 times.",
+   "why_wrong": [
+    "",
+    "Reads the stop value 8 as a count, but range(3, 8) runs from 3 up to 7.",
+    "Includes 8 as well, but the stop value is excluded.",
+    "Also drops the start value 3, but range includes its start."
+   ],
+   "key": "INT108-U2-012"
+  },
+  {
+   "topic": "For Loops and Range",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "total = 0\nfor i in range(1, 5):\n    total += i\nprint(total)",
+   "options": [
+    "15",
+    "10",
+    "6",
+    "4"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "range(1, 5) gives 1, 2, 3, 4 because it stops before 5. Adding them: 1 + 2 + 3 + 4 = 10.",
+   "why_wrong": [
+    "Also adds 5, but range(1, 5) stops before 5.",
+    "",
+    "Adds 0 + 1 + 2 + 3, treating range(1, 5) as if it were range(4).",
+    "Counts the iterations (4) instead of adding the values of i."
+   ],
+   "key": "INT108-U2-013"
+  },
+  {
+   "topic": "For Loops and Range",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "print(list(range(6, 0, -2)))",
+   "options": [
+    "[6, 4, 2, 0]",
+    "[]",
+    "[6, 4, 2]",
+    "[5, 3, 1]"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "A negative step counts down from the start and stops before reaching the stop value. From 6 in steps of −2 it gives 6, 4, 2. The next value would be 0, which is the stop value, so it is excluded.",
+   "why_wrong": [
+    "Includes the stop value 0, but range stops before it even when counting down.",
+    "Assumes range cannot count down. That is only true with the default step of +1, and here the step is −2.",
+    "",
+    "Starts at 5, but the start value 6 is included. Only the stop value is excluded."
+   ],
+   "key": "INT108-U2-014"
+  },
+  {
+   "topic": "For Loops and Range",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these could be the output of the code below?",
+   "code": "import random\nfor i in range(3):\n    print(random.randint(1, 6), end=\" \")",
+   "options": [
+    "0 3 5",
+    "2 5",
+    "6 1 3",
+    "1 4 3 6"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "range(3) runs the body 3 times, and end=\" \" keeps the three numbers on one line. Unlike range, random.randint(a, b) includes both ends, so each number is a whole number from 1 to 6, and 6 is possible.",
+   "why_wrong": [
+    "Contains 0, but randint(1, 6) starts at 1. It does not start at 0 the way range does.",
+    "Has only two numbers, but range(3) gives i = 0, 1, 2, so three are printed.",
+    "",
+    "Has four numbers, but range(3) stops before 3, so the loop runs three times, not four."
+   ],
+   "key": "INT108-U2-015"
+  },
+  {
+   "topic": "For Loops and Range",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "count = 0\nfor i in range(3):\n    for j in range(i):\n        count += 1\nprint(count)",
+   "options": [
+    "9",
+    "6",
+    "2",
+    "3"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The inner range depends on i. When i = 0, range(0) is empty, so the inner loop runs 0 times. When i = 1 it runs once, and when i = 2 it runs twice. Total: 0 + 1 + 2 = 3.",
+   "why_wrong": [
+    "Assumes the inner loop runs 3 times on every pass (3 × 3), but its length is i, which changes each pass.",
+    "Treats range(i) as including i, which gives 1 + 2 + 3.",
+    "Counts the outer passes where the inner loop ran (i = 1 and i = 2) instead of the total inner iterations.",
+    ""
+   ],
+   "key": "INT108-U2-016"
+  },
+  {
+   "topic": "While Loops",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "n = 1\nwhile n < 20:\n    n = n * 2\nprint(n)",
+   "options": [
+    "16",
+    "20",
+    "32",
+    "64"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "n doubles as long as n < 20: 1 → 2 → 4 → 8 → 16 → 32. At 16 the condition is still True, so it doubles once more to 32. Then 32 < 20 is False and the loop ends.",
+   "why_wrong": [
+    "Stops too early. At n = 16 the test 16 < 20 is still True, so the body runs once more.",
+    "The loop never sets n to the limit. n only takes the doubled values 1, 2, 4, 8, 16, 32.",
+    "",
+    "Doubles once too often. At n = 32 the condition is False, so the loop stops."
+   ],
+   "key": "INT108-U2-017"
+  },
+  {
+   "topic": "While Loops",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "How many times does the code below print Hi?",
+   "code": "i = 0\nwhile i < 3:\n    print(\"Hi\")\n    i += 1",
+   "options": [
+    "2",
+    "3",
+    "4",
+    "It never stops"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The body runs for i = 0, 1 and 2. After the third pass i becomes 3, 3 < 3 is False, and the loop ends. That is 3 prints.",
+   "why_wrong": [
+    "Misses the first pass at i = 0. The condition 0 < 3 is True, so Hi prints then too.",
+    "",
+    "Adds a pass for i = 3, as if the test were i <= 3.",
+    "i += 1 is indented inside the loop, so i grows on every pass and the condition eventually becomes False."
+   ],
+   "key": "INT108-U2-018"
+  },
+  {
+   "topic": "While Loops",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What is the value of count after the code below runs?",
+   "code": "x = 10\ncount = 0\nwhile x != 1:\n    if x % 2 == 0:\n        x = x // 2\n    else:\n        x = 3 * x + 1\n    count += 1",
+   "options": [
+    "6",
+    "7",
+    "5",
+    "1"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Each pass changes x once and adds 1 to count. From 10 the values go 10 → 5 → 16 → 8 → 4 → 2 → 1, which is 6 changes. When x reaches 1, x != 1 is False and the loop stops, so count is 6.",
+   "why_wrong": [
+    "",
+    "Counts every value in the sequence 10, 5, 16, 8, 4, 2, 1 (7 values) instead of the steps between them.",
+    "Counts only the halving steps (10→5, 16→8, 8→4, 4→2, 2→1) and misses the 3x + 1 step.",
+    "Counts only the 3x + 1 step (5→16), but count goes up on every pass whichever branch runs."
+   ],
+   "key": "INT108-U2-019"
+  },
+  {
+   "topic": "Loop Control Statements",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the pass statement do when Python executes it?",
+   "code": "",
+   "options": [
+    "Nothing; it is a placeholder where a statement is required",
+    "Skips the rest of the current loop iteration",
+    "Exits the loop immediately",
+    "Stops the whole program"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "pass does nothing at all. Python needs at least one statement in every block, so pass fills an if, loop or function body you have not written yet, and execution carries on with the next line.",
+   "why_wrong": [
+    "",
+    "That describes continue, which jumps to the next iteration. pass does not skip anything.",
+    "That describes break, which leaves the innermost loop.",
+    "pass has no effect on program flow. The next statement runs as normal."
+   ],
+   "key": "INT108-U2-020"
+  },
+  {
+   "topic": "Loop Control Statements",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "for i in range(1, 6):\n    if i == 4:\n        break\n    print(i, end=\" \")",
+   "options": [
+    "1 2 3 4",
+    "1 2 3",
+    "1 2 3 5",
+    "1 2 3 4 5"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "break leaves the loop the moment it runs. When i is 4, the if fires before print is reached, so the loop ends after printing only 1 2 3.",
+   "why_wrong": [
+    "Prints 4 before breaking, but the if test comes before print, so 4 is never printed.",
+    "",
+    "That is what continue would do (skip 4 and carry on to 5). break ends the loop completely.",
+    "Ignores the break. The loop stops at i = 4."
+   ],
+   "key": "INT108-U2-021"
+  },
+  {
+   "topic": "Loop Control Statements",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "for i in range(5):\n    if i % 2 == 0:\n        continue\n    print(i, end=\" \")",
+   "options": [
+    "0 2 4",
+    "1 3 5",
+    "0 1 2 3 4",
+    "1 3"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "continue skips the rest of the current iteration and moves on to the next value. For even i (0, 2, 4) the print is skipped, so only the odd values 1 and 3 are printed.",
+   "why_wrong": [
+    "Gets continue backwards. It skips the even numbers instead of selecting them.",
+    "range(5) stops before 5, so i never reaches 5.",
+    "Treats continue like pass, but continue really does skip the print when i is even.",
+    ""
+   ],
+   "key": "INT108-U2-022"
+  },
+  {
+   "topic": "Loop Control Statements",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What happens when the code below runs?",
+   "code": "i = 0\nwhile i < 5:\n    if i == 2:\n        continue\n    print(i)\n    i += 1",
+   "options": [
+    "It prints 0, 1, 3 and 4, then stops",
+    "It prints 0 and 1, then stops",
+    "It prints 0 and 1, then runs forever without printing anything else",
+    "It prints 0, 1, 2, 3 and 4, then stops"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "continue jumps straight back to the while test and skips everything after it in the body, including i += 1. Once i is 2, continue fires, i stays 2, i < 5 stays True, and the same thing repeats forever.",
+   "why_wrong": [
+    "That is what a for loop over range(5) would do. In this while loop the increment is skipped too, so i never gets past 2.",
+    "Treats continue like break, but continue does not leave the loop. It starts the next pass.",
+    "",
+    "Treats continue like pass, but continue skips both the print and the increment when i is 2."
+   ],
+   "key": "INT108-U2-023"
+  },
+  {
+   "topic": "Loop Control Statements",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "s = 0\nfor i in range(1, 4):\n    s += i\n    if s > 10:\n        break\nelse:\n    s = s * 10\nprint(s)",
+   "options": [
+    "6",
+    "12",
+    "100",
+    "60"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The else is aligned with for, so it is a loop-else: it runs only if the loop finishes without a break. s goes 1, 3, 6 and never goes above 10, so there is no break. The else runs and s = 6 × 10 = 60.",
+   "why_wrong": [
+    "Gets loop-else backwards, as if it ran only after a break. It runs here precisely because no break happened.",
+    "Pairs the else with the inner if, so it would run on each pass where s ≤ 10. The else is aligned with for, not with if.",
+    "Includes i = 4, so s reaches 10 before the else. range(1, 4) stops at 3.",
+    ""
+   ],
+   "key": "INT108-U2-024"
+  },
+  {
+   "topic": "Boolean Logic and Modulus",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "a = 0\nb = \"hi\"\nc = 7\nprint(a or b, a and b, b and c)",
+   "options": [
+    "hi 0 7",
+    "True False True",
+    "hi 0 hi",
+    "hi False 7"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The operators and and or return one of their operands, not a new True or False. a or b: a is 0 (falsy), so or returns b, which is hi. a and b: a is falsy, so and stops there and returns a itself, 0. b and c: b is truthy, so and returns its second operand, 7.",
+   "why_wrong": [
+    "",
+    "Assumes and/or always produce booleans; they return one of their operands, so the values hi, 0 and 7 are printed.",
+    "Treats and like or, returning the first truthy operand; when the first operand is truthy, and returns the second one, so b and c gives 7.",
+    "Turns the falsy result of a and b into False; and returns the falsy operand itself, which is 0."
+   ],
+   "key": "INT108-U2-025"
+  },
+  {
+   "topic": "Boolean Logic and Modulus",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "In a lab, seats are numbered 1 to 40 and every row has 4 seats: seats 1-4 are row 1, seats 5-8 are row 2, and so on. Which expression gives the position of seat s inside its row (1, 2, 3 or 4)?",
+   "code": "",
+   "options": [
+    "s % 4",
+    "s % 4 + 1",
+    "(s - 1) % 4 + 1",
+    "(s + 1) % 4"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "s % 4 cycles 1, 2, 3, 0, so the last seat of every row lands on 0. Subtracting 1 first makes (s - 1) % 4 cycle 0, 1, 2, 3, and adding 1 turns that into 1, 2, 3, 4. Check: seat 4 gives 3 % 4 + 1 = 4, and seat 5 gives 4 % 4 + 1 = 1.",
+   "why_wrong": [
+    "Gives 0 for seats 4, 8, 12 and so on, because a multiple of 4 leaves remainder 0.",
+    "Shifts every seat up by one: seat 1 gives 2 and seat 4 gives 1.",
+    "",
+    "Adding before taking % moves the cycle the wrong way: seat 1 gives 2 and seat 3 gives 0."
+   ],
+   "key": "INT108-U2-026"
+  },
+  {
+   "topic": "Boolean Logic and Modulus",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "x = 10\nprint(x > 5 or x / 0, x < 5 and x / 0, x > 5 and x // 3)",
+   "options": [
+    "True False 3",
+    "True False True",
+    "True False 3.3333333333333335",
+    "ZeroDivisionError: division by zero"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "or stops at the first truthy operand: x > 5 is True, so x / 0 is never evaluated and True is returned. and stops at the first falsy operand: x < 5 is False, so x / 0 again never runs and False is returned. In the last expression x > 5 is True, so and returns its second operand, x // 3 = 3, an int because // is floor division.",
+   "why_wrong": [
+    "",
+    "Assumes and returns True or False; when its first operand is truthy it returns the second operand itself, x // 3 = 3.",
+    "Treats // as true division; 10 // 3 is the int 3, while only 10 / 3 would give 3.3333333333333335.",
+    "Assumes both sides of and/or are always evaluated; short-circuiting means x / 0 is never reached in either expression."
+   ],
+   "key": "INT108-U2-027"
+  },
+  {
+   "topic": "Boolean Logic and Modulus",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A year is a leap year if it is divisible by 4 but not by 100, or if it is divisible by 400. So 2000 and 2024 are leap years, while 1900 and 2023 are not. Which condition is True exactly for the leap years y?",
+   "code": "",
+   "options": [
+    "y % 4 == 0 and (y % 100 != 0 or y % 400 != 0)",
+    "y % 4 == 0 or y % 100 != 0 and y % 400 == 0",
+    "y % 4 == 0 and y % 100 != 0 or y % 400 == 0",
+    "(y % 4 == 0 or y % 400 == 0) and y % 100 != 0"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "and binds tighter than or, so the correct condition already groups as (y % 4 == 0 and y % 100 != 0) or y % 400 == 0 without brackets. For 1900: (True and False) or False = False. For 2000: (True and False) or True = True, and for 2024: (True and True) or False = True.",
+   "why_wrong": [
+    "For 2000, y % 100 != 0 and y % 400 != 0 are both False, so 2000 is rejected; it also accepts 1900, since 1900 % 400 != 0 is True.",
+    "and is evaluated before or, so this means y % 4 == 0 or (...); 1900 % 4 == 0 is True, so 1900 is wrongly accepted.",
+    "",
+    "Requiring y % 100 != 0 for every year cancels the divisible-by-400 exception, so 2000 is rejected."
+   ],
+   "key": "INT108-U2-028"
+  },
+  {
+   "topic": "Conditional Statements",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A shop's billing code below is meant to give 10% off bills of ₹1000 or more and 20% off bills of ₹5000 or more. What does it print for a ₹6000 bill?",
+   "code": "amount = 6000\nif amount >= 1000:\n    discount = 10\nelif amount >= 5000:\n    discount = 20\nelse:\n    discount = 0\nprint(amount - amount * discount // 100)",
+   "options": [
+    "4800",
+    "5400",
+    "5400.0",
+    "4800.0"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Only the first True branch of an if/elif chain runs. 6000 >= 1000 is True, so discount = 10 and the elif is never checked, even though it is also True. Then 6000 * 10 // 100 = 600 and 6000 - 600 = 5400, an int because // on two ints gives an int. Testing the 5000 condition first would fix the bug.",
+   "why_wrong": [
+    "Assumes the more specific 20% branch wins; the chain stops at the first True condition, which is the 10% one.",
+    "",
+    "Treats // like /; floor division of two ints gives an int, so there is no .0.",
+    "Combines both mistakes: the 20% branch never runs, and // on ints does not produce a float."
+   ],
+   "key": "INT108-U2-029"
+  },
+  {
+   "topic": "Conditional Statements",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "x = 12\nif x % 2 == 0:\n    if x % 3 == 0:\n        x = x // 3\n    else:\n        x = x * 2\n    x += 1\nelse:\n    x -= 1\nprint(x)",
+   "options": [
+    "4",
+    "11",
+    "5",
+    "25"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Indentation decides which block a line belongs to. 12 % 2 == 0 is True, so the outer if runs, and inside it 12 % 3 == 0 is True, so x = 12 // 3 = 4. The line x += 1 sits at the outer if's level, so it runs after the inner if/else whichever branch was taken, making x = 5.",
+   "why_wrong": [
+    "Reads x += 1 as part of the inner else; it is indented at the outer-if level, so it also runs after x = 12 // 3.",
+    "Takes the outer else branch; 12 is even, so the outer if runs instead.",
+    "",
+    "Follows the inner else (12 * 2 + 1); 12 % 3 == 0 is True, so the inner if runs."
+   ],
+   "key": "INT108-U2-030"
+  },
+  {
+   "topic": "Conditional Statements",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What happens when the code below is run as a script?",
+   "code": "x = 5\nif x == 5:\n    print(\"five\")\nelif x = 6:\n    print(\"six\")",
+   "options": [
+    "\"five\" is printed, then a SyntaxError is reported at the elif line",
+    "\"five\" is printed; the elif line is never reached, so there is no error",
+    "A SyntaxError is reported and nothing is printed",
+    "Nothing is printed, because elif x = 6 assigns 6 to x and no branch matches"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Python parses the whole file before executing any of it. = is assignment and cannot be used as a condition, so elif x = 6: is invalid syntax and the program is rejected before print(\"five\") ever runs. The fix is to write == instead of =.",
+   "why_wrong": [
+    "Assumes Python checks syntax line by line as it runs; the whole script is parsed first, so the print never executes.",
+    "Syntax is checked for every line, including branches that would never be taken at run time.",
+    "",
+    "= cannot appear in a condition at all; it does not assign there, it makes the whole program invalid."
+   ],
+   "key": "INT108-U2-031"
+  },
+  {
+   "topic": "Conditional Statements",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "x = 9\ns = \"\"\nif x % 3 == 0:\n    s += \"Fizz\"\nif x % 5 == 0:\n    s += \"Buzz\"\nelif x % 3 == 0:\n    s += \"Fizz\"\nelse:\n    s += str(x)\nprint(s)",
+   "options": [
+    "Fizz",
+    "FizzFizz",
+    "Fizz9",
+    "FizzFizz9"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "A new if starts a new, independent chain. The first if (9 % 3 == 0) adds Fizz. In the second chain, 9 % 5 == 0 is False, so Python tries the elif; 9 % 3 == 0 is True, so it adds another Fizz and the else is skipped.",
+   "why_wrong": [
+    "Treats the elif as part of the first if's chain; the second if begins a separate chain whose elif is tested on its own.",
+    "",
+    "Assumes a condition already True in an earlier if cannot fire again; the elif is tested afresh, adds Fizz, and so the else is skipped.",
+    "Runs the else as well; in an if/elif/else chain only one branch runs, and the elif already did."
+   ],
+   "key": "INT108-U2-032"
+  },
+  {
+   "topic": "Conditional Statements",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "In the code below, which value placed in the blank makes the program print empty?",
+   "code": "v = ____\nif v:\n    print(\"has value\")\nelse:\n    print(\"empty\")",
+   "options": [
+    "\"0\"",
+    "\" \"",
+    "0.0",
+    "\"False\""
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "An if tests truthiness: zero of any number type (0, 0.0) and the empty string are falsy. Any non-empty string is truthy whatever it contains, and \"0\", \" \" and \"False\" each have at least one character. So only 0.0 sends control to the else.",
+   "why_wrong": [
+    "\"0\" is a one-character string, and any non-empty string is truthy; only the number 0 is falsy.",
+    "\" \" contains a space, so it is not empty and is truthy.",
+    "",
+    "\"False\" is text, not the bool False; as a non-empty string it is truthy."
+   ],
+   "key": "INT108-U2-033"
+  },
+  {
+   "topic": "For Loops and Range",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "count = 0\nfor i in range(1, 5):\n    for j in range(i, 5):\n        count += 1\nprint(count)",
+   "options": [
+    "16",
+    "6",
+    "10",
+    "15"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "range(1, 5) gives i = 1, 2, 3, 4. For each i, range(i, 5) holds 5 - i values, so the inner loop runs 4, 3, 2 and 1 times. count = 4 + 3 + 2 + 1 = 10.",
+   "why_wrong": [
+    "Uses 4 inner passes every time; the inner range starts at i, so it shrinks as i grows.",
+    "Treats range(i, 5) as excluding its start i as well; that would give 3 + 2 + 1 + 0.",
+    "",
+    "Includes the stop value 5 in both ranges, giving 5 + 4 + 3 + 2 + 1; range always stops before its stop."
+   ],
+   "key": "INT108-U2-034"
+  },
+  {
+   "topic": "For Loops and Range",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student wants the code below to print \"PYTHON\" reversed. What does it actually print?",
+   "code": "s = \"PYTHON\"\nout = \"\"\nfor i in range(len(s) - 1, 0, -1):\n    out += s[i]\nprint(out)",
+   "options": [
+    "NOHTYP",
+    "NOHTY",
+    "YTHON",
+    "OHTY"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "len(s) - 1 = 5, so the loop is range(5, 0, -1), which gives 5, 4, 3, 2, 1: the stop 0 is excluded even when counting down. Index 0 (the P) is never visited, so the output is NOHTY. range(len(s) - 1, -1, -1) would include index 0.",
+   "why_wrong": [
+    "Includes the stop value 0; range always stops before its stop, so s[0] is never added.",
+    "",
+    "Visits the right indices 1 to 5 but in increasing order; a step of -1 walks downward from 5.",
+    "Excludes the start as well; range includes its start (index 5, the N) and only excludes its stop."
+   ],
+   "key": "INT108-U2-035"
+  },
+  {
+   "topic": "For Loops and Range",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "i = 100\ntotal = 0\nfor i in range(5, 0):\n    total += i\nprint(i, total)",
+   "options": [
+    "1 15",
+    "100 0",
+    "0 15",
+    "5 0"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "range(5, 0) uses the default step +1, and counting up from 5 never gets below 0, so the range is empty and the body never runs. Because the loop never assigns anything to i, it keeps its old value 100, and total stays 0. Counting down would need range(5, 0, -1).",
+   "why_wrong": [
+    "Assumes range counts down by itself when start > stop; with the default step +1 the range is empty.",
+    "",
+    "Counts down and also includes the stop 0; the range is empty, and a stop value is never included anyway.",
+    "Assumes i is set to the start 5 before the body runs; an empty range assigns nothing, so i keeps 100."
+   ],
+   "key": "INT108-U2-036"
+  },
+  {
+   "topic": "For Loops and Range",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A student wants the loop below to run once for each item in the first half of 8 items. What is the result of running it?",
+   "code": "n = 8\nhalf = n / 2\ncount = 0\nfor i in range(half):\n    count += 1\nprint(count)",
+   "options": [
+    "4",
+    "5",
+    "3",
+    "TypeError: 'float' object cannot be interpreted as an integer"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "/ is true division and always returns a float, so half = 8 / 2 = 4.0, not 4. range() accepts only integers and rejects a float even when it is a whole number, so range(half) raises a TypeError before any iteration. Writing half = n // 2 (the int 4) would make it print 4.",
+   "why_wrong": [
+    "Assumes 4.0 is accepted because it is a whole number; range() rejects every float, so the loop never starts.",
+    "Assumes 4.0 is accepted and then counts the stop value too; range(half) fails before counting anything.",
+    "Confuses the number of iterations with the last value of i; in any case range(4.0) raises an error.",
+    ""
+   ],
+   "key": "INT108-U2-037"
+  },
+  {
+   "topic": "For Loops and Range",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "total = 0\nfor i in range(4):\n    i = i * 2\n    total += i\nprint(total, i)",
+   "options": [
+    "12 3",
+    "6 3",
+    "12 6",
+    "8 6"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "At the start of every iteration the for loop takes the next value from range(4), ignoring whatever the body did to i. So i is 0, 1, 2, 3 in turn and is doubled to 0, 2, 4, 6, giving total = 0 + 2 + 4 + 6 = 12. After the loop, i still holds the last value it was given, the doubled 6.",
+   "why_wrong": [
+    "Assumes i ends as range's last value 3; the body reassigned it to 3 * 2 = 6 in the final iteration and nothing resets it.",
+    "Assumes i = i * 2 has no effect inside a for loop; it does change i for the rest of that iteration.",
+    "",
+    "Assumes the loop continues from the changed i (0, then 1 becomes 2, then 3 becomes 6); the next value always comes from range, not from i."
+   ],
+   "key": "INT108-U2-038"
+  },
+  {
+   "topic": "While Loops",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "The code below reverses the digits of a number. What does it print?",
+   "code": "n = 1230\nrev = 0\nwhile n > 0:\n    rev = rev * 10 + n % 10\n    n = n // 10\nprint(rev)",
+   "options": [
+    "0321",
+    "321",
+    "32",
+    "1230"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Each pass takes the last digit with n % 10, appends it with rev * 10 + digit, then drops it with n // 10. Trace: rev = 0 (n = 123), 3 (n = 12), 32 (n = 1), 321 (n = 0). rev is an int, and an int never keeps a leading zero, so 321 is printed.",
+   "why_wrong": [
+    "An int has no leading zeros; the first digit taken is 0, which just leaves rev = 0 * 10 + 0 = 0.",
+    "",
+    "Stops one pass early; the loop runs while n > 0, so n = 1 is still processed.",
+    "Assumes rev rebuilds the digits in their original order; rev * 10 + n % 10 appends each last digit, which reverses them."
+   ],
+   "key": "INT108-U2-039"
+  },
+  {
+   "topic": "While Loops",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A bacteria count starts at 1 and triples every hour. The code below finds the first count that reaches at least 100 and how many hours that takes. What does it print?",
+   "code": "n = 1\nhours = 0\nwhile n < 100:\n    n = n * 3\n    hours += 1\nprint(n, hours)",
+   "options": [
+    "81 4",
+    "243 4",
+    "81 5",
+    "243 5"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The condition is checked only at the top of each pass. n goes 3, 9, 27, 81 in hours 1 to 4, and 81 < 100 is still True, so a fifth pass runs and n = 243. Now 243 < 100 is False and the loop ends, printing 243 5.",
+   "why_wrong": [
+    "Assumes the loop stops before n passes 100; the test happens before multiplying, so 81 is tripled once more.",
+    "Miscounts the passes; 1 to 3, 3 to 9, 9 to 27, 27 to 81 and 81 to 243 are five multiplications.",
+    "Reports the last value that passed the test while counting the extra pass; n is updated to 243 in that same pass.",
+    ""
+   ],
+   "key": "INT108-U2-040"
+  },
+  {
+   "topic": "While Loops",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "n = 5\nsteps = 0\nwhile n != 1:\n    if n % 2 == 0:\n        n = n / 2\n    else:\n        n = 3 * n + 1\n    steps += 1\nprint(n, steps)",
+   "options": [
+    "1 5",
+    "1.0 5",
+    "1.0 4",
+    "The loop never ends"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "5 is odd, so n = 3 * 5 + 1 = 16, an int. Every later step uses /, which always returns a float: 8.0, 4.0, 2.0, 1.0, making five steps in all. The test 1.0 != 1 is False because comparisons check value and 1.0 equals 1, so the loop stops and prints 1.0 5.",
+   "why_wrong": [
+    "/ always returns a float, so after the first halving n is 8.0 and it ends as 1.0.",
+    "",
+    "Forgets to count the first step, 5 to 16; there are four halvings plus that step.",
+    "Assumes 1.0 != 1 is True because the types differ; comparisons check value, and 1.0 == 1."
+   ],
+   "key": "INT108-U2-041"
+  },
+  {
+   "topic": "While Loops",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A student's prime checker below has a bug. For which input does it wrongly print prime?",
+   "code": "n = int(input())\nd = 2\nwhile d * d < n:\n    if n % d == 0:\n        print(\"composite\")\n        break\n    d += 1\nelse:\n    print(\"prime\")",
+   "options": [
+    "15",
+    "9",
+    "21",
+    "27"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The condition should be d * d <= n. For n = 9 the loop tests d = 2 (4 < 9, 9 % 2 = 1), then for d = 3 the test 9 < 9 is False, so the loop ends without break and its else prints prime: the divisor 3 is never tried. For 15, 21 and 27, d = 3 passes the test (9 < n) and divides them, so break prints composite and skips the else.",
+   "why_wrong": [
+    "d = 3 is tested because 9 < 15, and 15 % 3 == 0, so it correctly prints composite.",
+    "",
+    "d = 3 is tested because 9 < 21, and 21 % 3 == 0, so it correctly prints composite.",
+    "d = 3 is tested because 9 < 27, and 27 % 3 == 0, so it correctly prints composite."
+   ],
+   "key": "INT108-U2-042"
+  },
+  {
+   "topic": "Loop Control Statements",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "count = 0\nfor i in range(3):\n    for j in range(3):\n        if j == i:\n            break\n        count += 1\nprint(count)",
+   "options": [
+    "9",
+    "0",
+    "3",
+    "6"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "break leaves only the innermost loop, so the outer loop always carries on. i = 0: j = 0 equals i, so it breaks at once and adds nothing; i = 1: j = 0 adds 1, then j = 1 breaks; i = 2: j = 0 and j = 1 add 2, then j = 2 breaks. count = 0 + 1 + 2 = 3.",
+   "why_wrong": [
+    "Ignores the break; it cuts each inner loop short as soon as j reaches i.",
+    "Assumes the break at i = 0 exits both loops; it only leaves the inner loop.",
+    "",
+    "Treats break like continue, skipping only j == i; break ends the inner loop, so j values after i are never counted."
+   ],
+   "key": "INT108-U2-043"
+  },
+  {
+   "topic": "Loop Control Statements",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "a = 0\nb = 0\nfor k in range(1, 6):\n    if k % 2 == 0:\n        pass\n    a += k\n    if k % 2 == 0:\n        continue\n    b += k\nprint(a, b)",
+   "options": [
+    "9 9",
+    "15 15",
+    "15 9",
+    "9 15"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "pass does nothing, so a += k runs for every k: a = 1 + 2 + 3 + 4 + 5 = 15. continue jumps straight to the next iteration, so for even k the line b += k is skipped: b = 1 + 3 + 5 = 9.",
+   "why_wrong": [
+    "Treats pass like continue; pass is an empty placeholder, so a += k still runs for 2 and 4.",
+    "Treats continue like pass; continue skips the rest of the body, so 2 and 4 are never added to b.",
+    "",
+    "Swaps the two: pass skips nothing, while continue skips the even values."
+   ],
+   "key": "INT108-U2-044"
+  },
+  {
+   "topic": "Loop Control Statements",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "s = \"\"\nfor n in range(1, 6):\n    if n % 2 == 0:\n        continue\n    if n > 4:\n        break\n    s += str(n)\nelse:\n    s += \"E\"\nprint(s)",
+   "options": [
+    "13E",
+    "13",
+    "1",
+    "135"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "n = 2 and n = 4 hit continue and add nothing, while n = 1 and n = 3 are appended, giving s = \"13\". At n = 5 the test 5 > 4 is True, so break runs before the append. A for-else's else runs only when the loop ends without break, so even though 5 was the last value in the range, the else is skipped.",
+   "why_wrong": [
+    "Assumes the else runs because the loop reached its last value; the loop ended through break, which always skips the else.",
+    "",
+    "Treats continue like break, ending the loop at n = 2; continue only skips to the next value.",
+    "Adds 5 before breaking; the break test comes before s += str(n), so 5 is never appended."
+   ],
+   "key": "INT108-U2-045"
+  },
+  {
+   "topic": "Loop Control Statements",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "i = 0\ntotal = 0\nwhile i < 10:\n    i += 1\n    if i % 2 == 0:\n        continue\n    if i > 3:\n        break\n    total += i\nprint(i, total)",
+   "options": [
+    "4 4",
+    "5 4",
+    "5 9",
+    "The loop never ends"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Here i += 1 is the first line of the body, so continue cannot freeze the loop. i = 1 adds 1, i = 2 is even and continues, i = 3 adds 3 (total 4), and i = 4 is even, so continue fires before the i > 3 test is reached. At i = 5 the number is odd and 5 > 3, so break runs before total += i, and 5 4 is printed.",
+   "why_wrong": [
+    "Stops at i = 4 because 4 > 3; the continue for even i runs first, so the break test is never reached at 4.",
+    "",
+    "Adds 5 to total before breaking; the break comes before total += i.",
+    "Assumes continue skips the increment; here i += 1 comes before continue, so i grows on every pass."
+   ],
+   "key": "INT108-U2-046"
+  }
+ ]
+}

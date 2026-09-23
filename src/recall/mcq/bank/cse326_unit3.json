@@ -1,0 +1,1088 @@
+{
+ "subject_code": "CSE326",
+ "unit": 3,
+ "unit_label": "Cascading Style Sheets",
+ "questions": [
+  {
+   "topic": "Selectors and Specificity",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which selector matches only <input> elements whose type attribute is \"email\"?",
+   "code": "",
+   "options": [
+    "input[type=\"email\"]",
+    "input.email",
+    "input#email",
+    "input:email"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Attribute selectors use square brackets: [attr=\"value\"] matches elements whose attribute has exactly that value. Combined with the type selector input, input[type=\"email\"] picks out only the email fields, which is a common way to style form controls.",
+   "why_wrong": [
+    "",
+    "input.email matches inputs with class=\"email\", not type=\"email\".",
+    "input#email matches an input whose id is \"email\", not its type.",
+    "There is no :email pseudo-class. Attribute values are matched with square brackets."
+   ],
+   "key": "CSE326-U3-001"
+  },
+  {
+   "topic": "Selectors and Specificity",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which HTML element connects an external stylesheet file such as style.css to a page?",
+   "code": "",
+   "options": [
+    "<link>",
+    "<style>",
+    "<script>",
+    "<css>"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "An external stylesheet is attached with <link rel=\"stylesheet\" href=\"style.css\"> inside the <head>. The three ways to add CSS are external (<link>), internal (a <style> block) and inline (the style attribute).",
+   "why_wrong": [
+    "",
+    "<style> holds internal CSS written inside the page itself. It does not point to an external file.",
+    "<script> loads JavaScript, not CSS.",
+    "HTML has no <css> element."
+   ],
+   "key": "CSE326-U3-002"
+  },
+  {
+   "topic": "Selectors and Specificity",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the specificity of the selector .nav a, written as (id, class, type)?",
+   "code": "",
+   "options": [
+    "(0, 1, 1)",
+    "(0, 0, 2)",
+    "(1, 0, 1)",
+    "(0, 2, 0)"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": ".nav is a class selector, so it adds 1 to the class column. a is a type selector, so it adds 1 to the type column. The descendant combinator (the space) adds nothing, which gives (0, 1, 1).",
+   "why_wrong": [
+    "",
+    "Counts .nav as a type selector. A class selector belongs in the middle column.",
+    "Treats the class .nav as if it were an id (#nav).",
+    "Counts the type selector a as a class."
+   ],
+   "key": "CSE326-U3-003"
+  },
+  {
+   "topic": "Box Model and Units",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In the CSS box model, which area lies directly between an element's content and its border?",
+   "code": "",
+   "options": [
+    "padding",
+    "margin",
+    "outline",
+    "gap"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "From the inside out, the layers are content, padding, border and margin. Padding is the space inside the border around the content, and the element's background shows through it. Margin is transparent space outside the border.",
+   "why_wrong": [
+    "",
+    "margin lies outside the border and separates the box from its neighbours.",
+    "outline is drawn outside the border and takes up no layout space.",
+    "gap sets the spacing between flex or grid items. It is not a layer of a single box."
+   ],
+   "key": "CSE326-U3-004"
+  },
+  {
+   "topic": "Box Model and Units",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which box-sizing value makes the declared width include the element's padding and border?",
+   "code": "",
+   "options": [
+    "border-box",
+    "content-box",
+    "padding-box",
+    "margin-box"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "With box-sizing: border-box, the declared width runs from border edge to border edge. Padding and border are taken out of it, so the content area shrinks. The default, content-box, applies width to the content alone.",
+   "why_wrong": [
+    "",
+    "content-box is the default, and it applies width to the content only, so padding and border are added on top.",
+    "padding-box is not a box-sizing value in current CSS. The standard values are content-box and border-box.",
+    "margin-box is not a box-sizing value. Margin is never part of an element's width."
+   ],
+   "key": "CSE326-U3-005"
+  },
+  {
+   "topic": "Box Model and Units",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "The browser viewport is 1200px wide. What length does 50vw equal?",
+   "code": "",
+   "options": [
+    "600px",
+    "50px",
+    "24px",
+    "1150px"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "1vw is 1% of the viewport's width. Here 1vw = 1200 ÷ 100 = 12px, so 50vw = 50 × 12 = 600px.",
+   "why_wrong": [
+    "",
+    "Treats vw as if it were px. 1vw is 1% of the viewport width.",
+    "Divides 1200 by 50 instead of taking 50% of 1200.",
+    "Subtracts 50 from the width. vw is a percentage of the viewport, not an offset."
+   ],
+   "key": "CSE326-U3-006"
+  },
+  {
+   "topic": "Positioning Techniques",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the default value of the position property?",
+   "code": "",
+   "options": [
+    "static",
+    "relative",
+    "absolute",
+    "fixed"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Every element starts as position: static, which means it sits in the normal document flow. With static, offset properties such as top and left have no effect.",
+   "why_wrong": [
+    "",
+    "relative has to be declared. It is not the default.",
+    "absolute has to be declared, and it takes the element out of the normal flow.",
+    "fixed has to be declared, and it pins the element to the viewport."
+   ],
+   "key": "CSE326-U3-007"
+  },
+  {
+   "topic": "Positioning Techniques",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which position value keeps an element in the same place in the browser window even while the page scrolls?",
+   "code": "",
+   "options": [
+    "fixed",
+    "absolute",
+    "relative",
+    "static"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "position: fixed takes the element out of the normal flow and positions it against the viewport, so it stays in place when the page scrolls. It is often used for headers and back-to-top buttons.",
+   "why_wrong": [
+    "",
+    "absolute positions against the nearest positioned ancestor and scrolls away with the page.",
+    "relative only shifts the element from its normal position, and it scrolls with the page.",
+    "static follows the normal flow with no offsets, and it scrolls with the page."
+   ],
+   "key": "CSE326-U3-008"
+  },
+  {
+   "topic": "Flexbox and Grid",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which declaration makes an element a flex container, so that its direct children become flex items?",
+   "code": "",
+   "options": [
+    "display: flex;",
+    "flex: 1;",
+    "position: flex;",
+    "flex-direction: row;"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "display: flex turns the element into a flex container and makes each direct child a flex item laid out along the main axis. Container properties such as flex-direction and justify-content then act on it.",
+   "why_wrong": [
+    "",
+    "flex: 1 goes on flex items to size them. It does not create a container.",
+    "position has no flex value. Its values are static, relative, absolute, fixed and sticky.",
+    "flex-direction only has an effect on an element that is already a flex container."
+   ],
+   "key": "CSE326-U3-009"
+  },
+  {
+   "topic": "Flexbox and Grid",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the default value of flex-direction on a flex container?",
+   "code": "",
+   "options": [
+    "row",
+    "column",
+    "row-reverse",
+    "wrap"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "flex-direction defaults to row. Flex items therefore line up horizontally in the text direction (left to right in English), and the main axis is horizontal.",
+   "why_wrong": [
+    "",
+    "column has to be set explicitly to stack items vertically.",
+    "row-reverse has to be set explicitly. It runs the items from the end of the row.",
+    "wrap is a value of flex-wrap, not flex-direction."
+   ],
+   "key": "CSE326-U3-010"
+  },
+  {
+   "topic": "Flexbox and Grid",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "How many columns does the grid in the code below create?",
+   "code": ".grid {\n  display: grid;\n  grid-template-columns: 1fr 2fr 1fr;\n}",
+   "options": [
+    "3",
+    "4",
+    "2",
+    "1"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "grid-template-columns gives one size per column, separated by spaces, so three values make three columns. The fr sizes decide how the width is shared: the middle column gets twice the width of each side column.",
+   "why_wrong": [
+    "",
+    "Adds up the fr values (1 + 2 + 1). Each value in the list is one track, not a count.",
+    "Counts only the distinct sizes (1fr and 2fr) instead of every track listed.",
+    "Treats the whole declaration as one track. Each space-separated value defines a column."
+   ],
+   "key": "CSE326-U3-011"
+  },
+  {
+   "topic": "Responsive Design and Animation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which at-rule applies a block of styles only when a condition, such as the viewport being narrower than 600px, is true?",
+   "code": "",
+   "options": [
+    "@media",
+    "@import",
+    "@keyframes",
+    "@font-face"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A media query such as @media (max-width: 600px) { ... } applies the rules inside it only while the condition holds. It is the core tool of responsive web design.",
+   "why_wrong": [
+    "",
+    "@import pulls another stylesheet into this one. It does not test a condition.",
+    "@keyframes defines the steps of a CSS animation.",
+    "@font-face loads a custom font."
+   ],
+   "key": "CSE326-U3-012"
+  },
+  {
+   "topic": "Responsive Design and Animation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What happens when the pointer moves onto the button styled by the code below?",
+   "code": ".btn {\n  background-color: blue;\n  transition: background-color 0.5s;\n}\n.btn:hover {\n  background-color: red;\n}",
+   "options": [
+    "The background fades from blue to red over 0.5 seconds",
+    "The background turns red instantly, then fades back to blue after 0.5 seconds",
+    "The background turns red after a 0.5-second pause, with no fade",
+    "Nothing changes, because a transition needs @keyframes to run"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "transition: background-color 0.5s tells the browser to animate any change to background-color over half a second. When :hover changes the colour from blue to red, the colour blends smoothly. When the pointer leaves, it blends back the same way.",
+   "why_wrong": [
+    "",
+    "The transition works in both directions, so the change on hover also takes 0.5s instead of happening instantly.",
+    "0.5s here is the duration. A delay would be a second time value in the shorthand.",
+    "Transitions need no @keyframes. They run whenever the listed property's value changes."
+   ],
+   "key": "CSE326-U3-013"
+  },
+  {
+   "topic": "Selectors and Specificity",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What colour is the text in the code below, and why?",
+   "code": "<style>\n  #box { color: red; }\n  .a.b.c.d.e.f.g.h.i.j.k { color: green; }\n</style>\n<div id=\"box\" class=\"a b c d e f g h i j k\">Text</div>",
+   "options": [
+    "Red: the id column (1 against 0) is compared first, and eleven classes never carry over into it",
+    "Green: eleven classes score 110, which beats an id's 100",
+    "Green: both rules match the element, so the later one wins",
+    "Black: the two rules conflict, so both are discarded"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "#box has specificity (1, 0, 0), and the chained class selector has (0, 11, 0). The columns are compared from the left. One id beats zero ids, so the comparison ends there however many classes follow. The text is red.",
+   "why_wrong": [
+    "",
+    "Treats specificity as a base-10 number. (0, 11, 0) against (1, 0, 0) is decided in the id column, and classes never carry over.",
+    "Source order only breaks ties. The specificities differ, so the more specific rule wins.",
+    "Conflicts never cancel out. The cascade always chooses one winning declaration."
+   ],
+   "key": "CSE326-U3-014"
+  },
+  {
+   "topic": "Selectors and Specificity",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What colour is the paragraph in the code below?",
+   "code": "<style>\n  #note { color: green; }\n  p { color: red !important; }\n</style>\n<p id=\"note\" style=\"color: blue;\">Note</p>",
+   "options": [
+    "red",
+    "blue",
+    "green",
+    "black"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The cascade sorts by importance first. An author !important declaration beats every normal author declaration, and that includes an inline style attribute. Specificity is only compared between declarations of the same importance, so #note's (1, 0, 0) never comes into play. The paragraph is red.",
+   "why_wrong": [
+    "",
+    "An ordinary inline style beats normal author rules, but an author !important declaration outranks it.",
+    "The id selector only wins among normal declarations. !important is settled before specificity is compared.",
+    "Conflicting declarations never cancel. The cascade always picks one, and here it is the !important rule."
+   ],
+   "key": "CSE326-U3-015"
+  },
+  {
+   "topic": "Selectors and Specificity",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these is a pseudo-element rather than a pseudo-class?",
+   "code": "",
+   "options": [
+    "::first-line",
+    ":first-child",
+    ":hover",
+    ":checked"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A pseudo-class (single colon) selects an existing element when it is in a certain state or position. A pseudo-element (double colon) styles a part of an element that is not a separate element in the HTML, such as ::first-line, ::first-letter, ::before and ::after.",
+   "why_wrong": [
+    "",
+    ":first-child is a pseudo-class. It selects an element by its position among its siblings.",
+    ":hover is a pseudo-class. It matches an element while the user is pointing at it.",
+    ":checked is a pseudo-class. It matches a ticked checkbox or a selected radio button."
+   ],
+   "key": "CSE326-U3-016"
+  },
+  {
+   "topic": "Box Model and Units",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "How wide is the box in the code below, measured from its left border edge to its right border edge?",
+   "code": ".box {\n  box-sizing: content-box;\n  width: 200px;\n  padding: 10px;\n  border: 5px solid black;\n  margin: 20px;\n}",
+   "options": [
+    "230px",
+    "200px",
+    "270px",
+    "215px"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "With content-box, width sets the content area only. The border-box width is content + left and right padding + left and right border = 200 + 2·10 + 2·5 = 230px. The 20px margins sit outside the border, so they add space around the box but nothing to its border-box width.",
+   "why_wrong": [
+    "",
+    "200px is only the content width. With content-box, padding and border are added outside it.",
+    "Adds the margins as well. Margin lies outside the border and is not part of the border-box width.",
+    "Counts padding and border on one side only. Each applies on both the left and the right."
+   ],
+   "key": "CSE326-U3-017"
+  },
+  {
+   "topic": "Box Model and Units",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The two divs in the code below are ordinary block elements stacked in normal flow. How much vertical space separates them?",
+   "code": "<style>\n  .first  { margin-bottom: 30px; }\n  .second { margin-top: 20px; }\n</style>\n<div class=\"first\">One</div>\n<div class=\"second\">Two</div>",
+   "options": [
+    "30px",
+    "50px",
+    "20px",
+    "10px"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "When one block's bottom margin meets the next block's top margin in normal flow, the two collapse into a single margin equal to the larger one. The gap is max(30, 20) = 30px. Only vertical margins between blocks collapse. Horizontal margins, and margins between flex or grid items, never do.",
+   "why_wrong": [
+    "",
+    "Adds the two margins. Adjacent vertical margins collapse instead of adding up.",
+    "Takes the smaller margin. A collapsed margin keeps the larger one.",
+    "Subtracts one margin from the other. A collapsed margin equals the larger value."
+   ],
+   "key": "CSE326-U3-018"
+  },
+  {
+   "topic": "Box Model and Units",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What are the computed font-size and padding of .child in the code below?",
+   "code": "<style>\n  html    { font-size: 16px; }\n  .parent { font-size: 20px; }\n  .child  { font-size: 1.5em; padding: 1rem; }\n</style>\n<div class=\"parent\">\n  <p class=\"child\">Hi</p>\n</div>",
+   "options": [
+    "font-size 30px, padding 16px",
+    "font-size 24px, padding 16px",
+    "font-size 30px, padding 20px",
+    "font-size 30px, padding 30px"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "For font-size, em is relative to the parent's font-size, so 1.5 × 20px = 30px. rem is always relative to the root <html> font-size, so padding: 1rem = 16px wherever the element sits.",
+   "why_wrong": [
+    "",
+    "Resolves em against the root's 16px. For font-size, em is relative to the parent's font-size (20px).",
+    "Resolves rem against the parent. rem always uses the root <html> font-size.",
+    "Treats rem like em. 1em of padding would use the element's own 30px font-size, but 1rem uses the root's 16px."
+   ],
+   "key": "CSE326-U3-019"
+  },
+  {
+   "topic": "Positioning Techniques",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "In the code below, top: 0 and right: 0 on .badge are measured from the edges of which box?",
+   "code": "<style>\n  .outer  { position: relative; }\n  .middle { position: static; }\n  .badge  { position: absolute; top: 0; right: 0; }\n</style>\n<body>\n  <div class=\"outer\">\n    <div class=\"middle\">\n      <span class=\"badge\">New</span>\n    </div>\n  </div>\n</body>",
+   "options": [
+    "The .outer div",
+    "The .middle div",
+    "The <body> element",
+    "The browser viewport"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "An absolutely positioned element is placed against its nearest ancestor whose position is anything other than static. .middle is static, so the browser skips it and uses .outer, which is position: relative. The badge sits in the top-right corner of .outer.",
+   "why_wrong": [
+    "",
+    ".middle is position: static, so it is not a positioned ancestor and is skipped.",
+    "Absolute positioning uses the nearest positioned ancestor, which is .outer here. Even with no positioned ancestor, the fallback is the initial containing block, not <body>.",
+    "Positioning against the viewport is what position: fixed does, not absolute."
+   ],
+   "key": "CSE326-U3-020"
+  },
+  {
+   "topic": "Positioning Techniques",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "An ordinary block element has position: static and is not a flex or grid item. Which declaration has NO effect on it?",
+   "code": "",
+   "options": [
+    "z-index: 10;",
+    "margin-top: 10px;",
+    "padding: 10px;",
+    "width: 50%;"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "z-index controls stacking only for positioned elements (relative, absolute, fixed or sticky) and for flex and grid items. On a plain static block it is ignored. To make it work you would add something like position: relative.",
+   "why_wrong": [
+    "",
+    "Margins apply to static blocks. margin-top pushes the element away from whatever is above it.",
+    "Padding applies to any box, whatever its position value.",
+    "width applies to block boxes in normal flow. Here it makes the box half as wide as its containing block."
+   ],
+   "key": "CSE326-U3-021"
+  },
+  {
+   "topic": "Flexbox and Grid",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "In the code below, in which direction does justify-content: center centre the flex items?",
+   "code": ".box {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  height: 400px;\n}",
+   "options": [
+    "Vertically, because flex-direction: column makes the main axis run top to bottom",
+    "Horizontally, because justify-content always works left to right",
+    "Horizontally, because justify-content controls the cross axis",
+    "In neither direction, because justify-content only works when flex-direction is row"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "justify-content always distributes items along the main axis, and align-items works along the cross axis. flex-direction: column turns the main axis vertical, so the items are centred vertically within the 400px height. With the default row, the same declaration would centre them horizontally.",
+   "why_wrong": [
+    "",
+    "justify-content follows the main axis, and flex-direction decides which way that runs. It is not fixed to horizontal.",
+    "justify-content controls the main axis. The cross axis is controlled by align-items.",
+    "justify-content works in row and column containers alike. It follows whichever way the main axis runs."
+   ],
+   "key": "CSE326-U3-022"
+  },
+  {
+   "topic": "Flexbox and Grid",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The grid in the code below has no gap, padding or border. How wide is its third column?",
+   "code": ".grid {\n  display: grid;\n  width: 700px;\n  grid-template-columns: 100px 1fr 2fr;\n}",
+   "options": [
+    "400px",
+    "466.67px",
+    "300px",
+    "200px"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Fixed tracks are sized first, which leaves 700 − 100 = 600px of free space. The fr units total 1 + 2 = 3, so 1fr = 600 ÷ 3 = 200px, and the third column (2fr) = 2 × 200 = 400px.",
+   "why_wrong": [
+    "",
+    "Gives the fr columns a share of all 700px (2/3 × 700). The fixed 100px column has to be subtracted first.",
+    "Splits the free space equally between the two fr columns. 2fr gets twice the share of 1fr.",
+    "200px is the width of the 1fr column, not the 2fr column."
+   ],
+   "key": "CSE326-U3-023"
+  },
+  {
+   "topic": "Responsive Design and Animation",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "At which viewport widths do paragraphs styled by the code below render at 14px?",
+   "code": "p { font-size: 16px; }\n\n@media (max-width: 900px) {\n  p { font-size: 18px; }\n}\n\n@media (max-width: 600px) {\n  p { font-size: 14px; }\n}",
+   "options": [
+    "600px wide and narrower",
+    "Narrower than 600px only, while exactly 600px gets 18px",
+    "Wider than 600px, up to 900px",
+    "Never, because later queries are skipped once the 900px query matches"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "max-width: 600px means the viewport width is ≤ 600px. At 600px and below both queries match, and both p rules have the same specificity, so the later one (14px) wins. Above 600px and up to 900px only the first query matches, giving 18px. Above 900px the base 16px applies.",
+   "why_wrong": [
+    "",
+    "max-width is inclusive, so a 600px viewport satisfies max-width: 600px.",
+    "Reads max-width as a lower limit. max-width: 600px matches widths up to 600px, not above it.",
+    "Every matching media query applies. With equal specificity, the later 14px rule wins."
+   ],
+   "key": "CSE326-U3-024"
+  },
+  {
+   "topic": "Responsive Design and Animation",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "No other CSS defines --brand. What text colour and background colour does .btn get from the code below?",
+   "code": ":root {\n  --accent: teal;\n}\n.btn {\n  color: var(--brand, orange);\n  background-color: var(--accent, gray);\n}",
+   "options": [
+    "orange text on a teal background",
+    "orange text on a gray background",
+    "inherited text colour on a teal background",
+    "teal text on a gray background"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "var(--name, fallback) uses the variable's value when it is defined and the fallback when it is not. --brand is never defined, so color falls back to orange. --accent is defined on :root and inherited by .btn, so background-color is teal.",
+   "why_wrong": [
+    "",
+    "The fallback is used only when the variable is undefined. --accent is defined on :root and inherited, so teal is used.",
+    "Because a fallback is given, the undefined --brand does not invalidate the declaration. orange is used.",
+    "Attaches the variables to the wrong properties. color reads --brand, which is undefined, so it falls back to orange. background-color reads --accent, which is defined, so it is teal, and gray would be used only if --accent were missing."
+   ],
+   "key": "CSE326-U3-025"
+  },
+  {
+   "topic": "Selectors and Specificity",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What colour does each link in the code below render?",
+   "code": "<style>\n  a[href^=\"https\"] { color: green; }\n  a[href$=\".pdf\"]  { color: red; }\n</style>\n<a href=\"https://lpu.in/notes.pdf\">Notes</a>\n<a href=\"http://lpu.in/syllabus.pdf\">Syllabus</a>\n<a href=\"https://lpu.in/\">Home</a>",
+   "options": [
+    "Notes red, Syllabus red, Home green",
+    "Notes green, Syllabus red, Home green",
+    "All three stay in the default link colour",
+    "Notes red, Syllabus red, Home in the default link colour"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "^= matches an attribute value that begins with the given text, and $= matches one that ends with it. Notes matches both rules, and both score (0,1,1): one attribute selector plus the type selector a. The tie goes to source order, so the later rule (red) wins. Syllabus begins with \"http:\", not \"https\", so only the .pdf rule applies (red). Home begins with https and does not end in .pdf, so it is green.",
+   "why_wrong": [
+    "",
+    "Assumes the first matching rule wins. When specificity ties, the rule written later in the stylesheet wins, so Notes is red.",
+    "Swaps the two operators, reading ^= as 'ends with' and $= as 'begins with', so nothing matches. In fact ^= means 'begins with' and $= means 'ends with'.",
+    "Treats ^= as if the whole href had to equal \"https\". ^= only needs the value to begin with those characters, and \"https://lpu.in/\" does."
+   ],
+   "key": "CSE326-U3-026"
+  },
+  {
+   "topic": "Selectors and Specificity",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student wants the Buy button to be red, so she adds an inline style. The stylesheet already contains the rules in the code below. What background does the button actually get?",
+   "code": "<style>\n  .btn     { background: blue !important; }\n  #buy.btn { background: green; }\n  button   { background: yellow !important; }\n</style>\n<button id=\"buy\" class=\"btn\" style=\"background: red;\">Buy</button>",
+   "options": [
+    "blue",
+    "red",
+    "green",
+    "yellow"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The cascade checks importance before specificity. Author !important declarations beat every normal author declaration, and an ordinary inline style is a normal declaration. That leaves blue (.btn) and yellow (button), which are both !important. .btn scores (0,1,0) and button scores (0,0,1), so blue wins. Source order would only matter if those two tied.",
+   "why_wrong": [
+    "",
+    "Assumes an inline style beats everything. An inline style without !important is a normal declaration, so it loses to any author !important rule.",
+    "Compares specificity before importance. #buy.btn is the most specific selector, but it is a normal declaration, so it loses to both !important rules.",
+    "Lets the later !important rule win on source order. Between two !important rules, specificity is compared first, and .btn (0,1,0) beats button (0,0,1)."
+   ],
+   "key": "CSE326-U3-027"
+  },
+  {
+   "topic": "Selectors and Specificity",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "All three rules in the code below match the Home link. What colour is the link?",
+   "code": "<style>\n  ul#menu li a            { color: red; }\n  #menu .link             { color: green; }\n  ul li.item a.link[href] { color: blue; }\n</style>\n<ul id=\"menu\">\n  <li class=\"item\"><a class=\"link\" href=\"#\">Home</a></li>\n</ul>",
+   "options": [
+    "Red: the two id rules tie on ids, and its three type selectors outweigh green's single class",
+    "Green: it ties red on ids and then wins on classes, and blue has no id at all",
+    "Blue: its specificity (0,3,3) adds up to 6, the largest total",
+    "Blue: all three rules match, so the one written last is applied"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Written as (id, class, type), ul#menu li a is (1,0,3), #menu .link is (1,1,0) and ul li.item a.link[href] is (0,3,3), because .item, .link and [href] each count as a class. Compare the columns from the left, with no carrying. Blue has 0 ids, so it is out. Red and green tie at 1 id, and green's 1 class beats red's 0. Type selectors are compared only when ids and classes both tie.",
+   "why_wrong": [
+    "Compares the type column before the class column. Classes are compared first, and 1 class beats 0 classes however many type selectors red has.",
+    "",
+    "Adds the columns into one number. Specificity is compared column by column, and one id outranks any number of classes.",
+    "Uses source order even though the specificities differ. Source order only breaks a tie, so here the most specific rule wins wherever it appears."
+   ],
+   "key": "CSE326-U3-028"
+  },
+  {
+   "topic": "Selectors and Specificity",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which paragraphs in the code below are bold, and which are red?",
+   "code": "<style>\n  .list p:first-child  { font-weight: bold; }\n  .list p:nth-child(2) { color: red; }\n</style>\n<div class=\"list\">\n  <h3>Menu</h3>\n  <p>Tea</p>\n  <p>Coffee</p>\n  <p>Juice</p>\n</div>",
+   "options": [
+    "Tea is red; no paragraph is bold",
+    "Tea is bold; Coffee is red",
+    "Tea is bold and red",
+    "Coffee is red; no paragraph is bold"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": ":first-child and :nth-child(n) count all element siblings, not only siblings of the same type. The selector then also checks that the element is a p. The children are h3 (1), Tea (2), Coffee (3) and Juice (4). No p is child 1, so the bold rule matches nothing. Tea is child 2, so Tea is red. To target the first or second paragraph whatever comes before it, use :first-of-type or :nth-of-type(2).",
+   "why_wrong": [
+    "",
+    "Counts only the <p> siblings, which is how :first-of-type and :nth-of-type work. :first-child and :nth-child count every sibling, including the <h3>.",
+    "Counts only paragraphs for :first-child but counts correctly for :nth-child(2). :first-child needs the p to be the very first child, and Tea comes after the <h3>.",
+    "Gets :first-child right but treats :nth-child(2) as 'the second p'. The h3 is child 1, so child 2 is Tea, not Coffee."
+   ],
+   "key": "CSE326-U3-029"
+  },
+  {
+   "topic": "Positioning Techniques",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below do to box B and its neighbours?",
+   "code": "<style>\n  div { height: 50px; }\n  .b  { position: relative; top: 20px; left: 30px; }\n</style>\n<div class=\"a\">A</div>\n<div class=\"b\">B</div>\n<div class=\"c\">C</div>",
+   "options": [
+    "B moves 20px down and 30px right; A and C stay where they were, so B covers the top of C",
+    "B moves 20px up and 30px left",
+    "B moves 20px down and 30px right, and C moves 20px down to make room",
+    "B moves to 20px from the top and 30px from the left of the page"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "position: relative moves a box visually from the place it would have had in normal flow. top: 20px moves it 20px down and left: 30px moves it 30px right. The space it originally took up is kept, so A and C are laid out exactly as if B had not moved. That is why B now covers the top 20px of C.",
+   "why_wrong": [
+    "",
+    "Reads top and left as the direction of travel. top: 20px pushes the box 20px away from its original top edge, which is downward, and left: 30px pushes it to the right.",
+    "Assumes the offset changes the flow. A relatively positioned box keeps its original space, so C does not move.",
+    "Describes an absolutely positioned box with no positioned ancestor. Relative offsets are measured from the box's own normal position."
+   ],
+   "key": "CSE326-U3-030"
+  },
+  {
+   "topic": "Positioning Techniques",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A designer wants to centre a 100px-wide tooltip horizontally inside a 400px-wide card. The card has no padding or border. She writes the code below. Where does the tooltip actually end up?",
+   "code": "<style>\n  .card { position: relative; width: 400px; height: 150px; }\n  .tip  { position: absolute; top: 10px; left: 50%; width: 100px; }\n</style>\n<div class=\"card\">\n  <div class=\"tip\">Hint</div>\n</div>",
+   "options": [
+    "Exactly centred, with a 150px gap on each side",
+    "Its left edge is 200px from the card's left edge, leaving 200px on the left and 100px on the right",
+    "Its left edge is at 50% of the browser window's width",
+    "Its left edge is 50px from the card's left edge"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "For an absolutely positioned box, left: 50% means 50% of the containing block's width. The containing block is .card, because it is the nearest positioned ancestor, so the left edge sits at 0.5 × 400 = 200px. The tooltip then spans 200px to 300px, which is off-centre to the right. To centre it, use left: 150px, which is (400 − 100) ÷ 2, or combine left: 50% with transform: translateX(-50%).",
+   "why_wrong": [
+    "Assumes left: 50% puts the tooltip's centre at the midpoint. It puts the tooltip's left edge there.",
+    "",
+    "Measures against the viewport. An absolute box resolves left against its containing block, the nearest positioned ancestor, which here is the relative .card.",
+    "Takes 50% of the tooltip's own 100px width. A percentage in left resolves against the containing block's width (400px)."
+   ],
+   "key": "CSE326-U3-031"
+  },
+  {
+   "topic": "Positioning Techniques",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Where does the Help button in the code below appear, and what happens to it as the long page is scrolled?",
+   "code": "<style>\n  .panel { position: relative; width: 300px; height: 200px; margin: 40px; }\n  .help  { position: fixed; bottom: 10px; right: 10px; }\n</style>\n<div class=\"panel\">\n  <button class=\"help\">Help</button>\n</div>\n<!-- long page content follows, so the page scrolls -->",
+   "options": [
+    "10px from the bottom-right corner of .panel, because .panel is its nearest positioned ancestor",
+    "10px from the bottom-right corner of the browser window, and it stays there while the page scrolls",
+    "10px from the bottom-right corner of the browser window at first, but it scrolls out of view with the page",
+    "In normal flow inside .panel, because a fixed element inside a positioned parent is treated as static"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "position: fixed positions a box against the viewport, not against any ancestor, so it makes no difference that .panel is position: relative. bottom: 10px and right: 10px place the button near the window's bottom-right corner. The viewport does not move when the page scrolls, so the button stays there. The nearest-positioned-ancestor rule belongs to position: absolute.",
+   "why_wrong": [
+    "Applies the rule for position: absolute. A fixed box ignores positioned ancestors and is placed against the viewport.",
+    "",
+    "Describes an absolutely positioned box with no positioned ancestor, which scrolls with the page. A fixed box stays in place.",
+    "No such rule exists. The button is taken out of flow and placed against the viewport whatever its parent's position is."
+   ],
+   "key": "CSE326-U3-032"
+  },
+  {
+   "topic": "Positioning Techniques",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A reader scrolls steadily down the page in the code below. What happens to the \"Chapter 1\" heading?",
+   "code": "<style>\n  h2 { position: sticky; top: 0; background: white; }\n</style>\n<section>\n  <h2>Chapter 1</h2>\n  <p>... several screens of text ...</p>\n</section>\n<section>\n  <h2>Chapter 2</h2>\n  <p>... several screens of text ...</p>\n</section>",
+   "options": [
+    "It sticks to the top of the window for the rest of the page, and Chapter 2's heading scrolls up underneath it",
+    "It sticks to the top of the window while Chapter 1's section is on screen, then is pushed up and scrolls away as that section ends",
+    "It never sticks, because its parent <section> has not been given position: relative",
+    "It never sticks, because top: 0 is simply an offset of zero from its normal position"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A sticky element behaves like a relative one until scrolling brings it to its threshold (top: 0). From then on it stays stuck to that edge of the viewport. It can never move outside its parent, though. When the end of Chapter 1's <section> reaches the heading, the heading is pushed up and scrolls away, and Chapter 2's heading takes over.",
+   "why_wrong": [
+    "Treats sticky as fixed. A sticky box stays inside its parent, so it leaves the screen with the first <section>.",
+    "",
+    "Sticky does not need a positioned parent. It sticks within the nearest scrolling area (here the page), and its parent only limits how far it can travel.",
+    "On a sticky box, top: 0 is a threshold, not an offset. The heading scrolls normally until its top edge reaches the top of the viewport, then stays there."
+   ],
+   "key": "CSE326-U3-033"
+  },
+  {
+   "topic": "Box Model and Units",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "How tall is the box in the code below, measured from the outer edge of its top border to the outer edge of its bottom border?",
+   "code": ".box {\n  box-sizing: content-box;\n  height: 100px;\n  padding: 10px 20px 30px;\n  border: 2px solid black;\n  margin: 15px;\n}",
+   "options": [
+    "144px",
+    "124px",
+    "174px",
+    "100px"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "With three values, padding: 10px 20px 30px means top 10px, left and right 20px, and bottom 30px. Under content-box the declared height covers the content only. So the border-box height = 2 + 10 + 100 + 30 + 2 = 144px. The 15px margins sit outside the border and are not counted.",
+   "why_wrong": [
+    "",
+    "Reads the three-value padding as if the bottom repeated the top (10px). With three values the order is top, left-and-right, bottom, so the bottom padding is 30px.",
+    "Adds the 15px top and bottom margins. Margin lies outside the border, so it is not part of the border-box height.",
+    "Treats the box as border-box. With content-box the declared height covers the content only, and padding and border are added on top."
+   ],
+   "key": "CSE326-U3-034"
+  },
+  {
+   "topic": "Box Model and Units",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student's 600px-wide .wrapper div sits against the left edge of the page. Adding text-align: center only moved the text inside it. Which declaration, added to .wrapper, centres the box itself horizontally?",
+   "code": "<style>\n  .wrapper { width: 600px; text-align: center; background: #eee; }\n</style>\n<div class=\"wrapper\">Welcome</div>",
+   "options": [
+    "margin: 0 auto;",
+    "margin: auto 0;",
+    "padding: 0 auto;",
+    "align-items: center;"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "text-align: center aligns inline content, such as text and images, inside a box. It does not move a block box. When a block has a set width, auto left and right margins share the leftover horizontal space equally, which centres the block. margin: 0 auto sets top and bottom margins to 0 and left and right margins to auto.",
+   "why_wrong": [
+    "",
+    "Sets the top and bottom margins to auto and the sides to 0. In normal flow, vertical auto margins compute to 0, so nothing moves.",
+    "auto is not a valid padding value, so the browser drops the whole declaration. Only margins can be auto.",
+    "align-items only aligns the children of a flex or grid container. It does not move .wrapper itself in normal flow."
+   ],
+   "key": "CSE326-U3-035"
+  },
+  {
+   "topic": "Box Model and Units",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student styles a <span> inside a paragraph with the code below. The span does not become 120px wide, and its margin-top does not push it away from the text above. Which declaration makes both the width and the vertical margin work while keeping the tag on the same line as the text?",
+   "code": "<style>\n  .tag { width: 120px; margin-top: 20px; padding: 4px; background: gold; }\n</style>\n<p>Status: <span class=\"tag\">New</span> in stock</p>",
+   "options": [
+    "display: inline-block;",
+    "display: block;",
+    "box-sizing: border-box;",
+    "position: relative;"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A <span> is display: inline by default. Inline boxes ignore width and height, and their top and bottom margins do not push surrounding lines apart. display: inline-block keeps the box flowing inside the line like a word, but it now accepts width, height and vertical margins as a block does.",
+   "why_wrong": [
+    "",
+    "block does make width and vertical margins work, but it also puts the span on its own line, which the student did not want.",
+    "box-sizing only changes what the width includes. An inline box still ignores width completely.",
+    "Relative positioning only shifts the box visually using offsets. The span stays inline, so width and margin-top are still ignored."
+   ],
+   "key": "CSE326-U3-036"
+  },
+  {
+   "topic": "Box Model and Units",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What are the top padding and the left padding of .inner in the code below?",
+   "code": "<style>\n  .outer { width: 500px; height: 300px; }\n  .inner { width: 200px; padding: 10% 5%; }\n</style>\n<div class=\"outer\">\n  <div class=\"inner\">Text</div>\n</div>",
+   "options": [
+    "top 50px, left 25px",
+    "top 30px, left 25px",
+    "top 20px, left 10px",
+    "top 25px, left 50px"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "In the shorthand padding: 10% 5%, the first value sets top and bottom and the second sets left and right. Percentage padding on every side, top and bottom included, resolves against the width of the containing block. Here that is .outer at 500px. So top = 10% × 500 = 50px and left = 5% × 500 = 25px, and the 300px height is never used.",
+   "why_wrong": [
+    "",
+    "Resolves the vertical percentage against the container's height (10% of 300px). Percentage padding on every side resolves against the containing block's width.",
+    "Resolves the percentages against .inner's own 200px width. They refer to the containing block, .outer, which is 500px wide.",
+    "Swaps the two-value shorthand. padding: 10% 5% means top and bottom 10%, left and right 5%."
+   ],
+   "key": "CSE326-U3-037"
+  },
+  {
+   "topic": "Box Model and Units",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "How much vertical space separates .a and .b in the code below?",
+   "code": "<style>\n  .stack { display: flex; flex-direction: column; }\n  .a { height: 40px; margin-bottom: 30px; }\n  .b { height: 40px; margin-top: 20px; }\n</style>\n<div class=\"stack\">\n  <div class=\"a\"></div>\n  <div class=\"b\"></div>\n</div>",
+   "options": [
+    "50px",
+    "30px",
+    "20px",
+    "10px"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Adjacent vertical margins collapse to the larger one only between block boxes in normal flow. .a and .b are flex items because their parent is display: flex, and the margins of flex items never collapse, even in a column. Both margins apply in full: 30 + 20 = 50px. Without display: flex on .stack, the gap would collapse to 30px.",
+   "why_wrong": [
+    "",
+    "Applies margin collapsing, which only happens between blocks in normal flow. The margins of flex items never collapse.",
+    "Keeps only the second box's margin-top, as if it replaced the first box's margin-bottom. Both margins exist, and here both apply.",
+    "Subtracts the smaller margin from the larger. Margins are never subtracted, and here they add together."
+   ],
+   "key": "CSE326-U3-038"
+  },
+  {
+   "topic": "Flexbox and Grid",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What width does each item in the code below get?",
+   "code": "<style>\n  .row { display: flex; width: 700px; }\n  .a { flex: 1 1 100px; }\n  .b { flex: 2 1 100px; }\n  .c { flex: 1 1 200px; }\n</style>\n<div class=\"row\">\n  <div class=\"a\"></div><div class=\"b\"></div><div class=\"c\"></div>\n</div>",
+   "options": [
+    ".a 175px, .b 250px, .c 275px",
+    ".a 200px, .b 200px, .c 300px",
+    ".a 175px, .b 350px, .c 175px",
+    ".a 175px, .b 175px, .c 350px"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The third value of flex is flex-basis, so the items start at 100 + 100 + 200 = 400px. That leaves 700 − 400 = 300px of free space. The flex-grow values 1, 2 and 1 total 4, so one share is 300 ÷ 4 = 75px. The widths are .a = 100 + 75 = 175px, .b = 100 + 150 = 250px and .c = 200 + 75 = 275px, which add up to 700px.",
+   "why_wrong": [
+    "",
+    "Splits the 300px of free space equally (100px each). flex-grow 2 takes twice the share of flex-grow 1.",
+    "Shares the whole 700px in the ratio 1 : 2 : 1 and ignores flex-basis. flex-grow shares only the space left over after the bases.",
+    "Sizes the items in proportion to their flex-basis (100 : 100 : 200). The bases are only starting sizes, and flex-grow decides how the extra space is shared."
+   ],
+   "key": "CSE326-U3-039"
+  },
+  {
+   "topic": "Flexbox and Grid",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "In what order do the items in the code below appear, from left to right?",
+   "code": "<style>\n  .nav { display: flex; }\n  .a { order: 2; }\n  .c { order: 1; }\n  .d { order: -1; }\n</style>\n<div class=\"nav\">\n  <div class=\"a\">A</div>\n  <div class=\"b\">B</div>\n  <div class=\"c\">C</div>\n  <div class=\"d\">D</div>\n</div>",
+   "options": [
+    "D B C A",
+    "A C B D",
+    "D C A B",
+    "B D C A"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Flex items are placed in ascending order of their order value, and items with equal values keep their source order. An item with no order set defaults to 0, and negative values are allowed. The values are D = −1, B = 0, C = 1 and A = 2, which gives D B C A.",
+   "why_wrong": [
+    "",
+    "Puts the highest order value first. Flex items are laid out in ascending order, lowest value first.",
+    "Assumes an item with no order goes last. The default order is 0, so B sits between D (−1) and C (1).",
+    "Treats the negative value as invalid and gives D a value of 0. Negative order values are allowed, and −1 comes before the default 0."
+   ],
+   "key": "CSE326-U3-040"
+  },
+  {
+   "topic": "Flexbox and Grid",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A dashboard uses a grid with four equal columns. The banner is the grid's first child and must cover the last three columns of the first row. Which declaration on .banner does this?",
+   "code": "<style>\n  .dash { display: grid; grid-template-columns: repeat(4, 1fr); }\n</style>\n<div class=\"dash\">\n  <div class=\"banner\">Welcome</div>\n  <div>Card 1</div>\n  <div>Card 2</div>\n</div>",
+   "options": [
+    "grid-column: 2 / 5;",
+    "grid-column: 2 / 4;",
+    "grid-column: span 3;",
+    "grid-column: 2 / span 4;"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Four columns are bounded by five grid lines, numbered 1 to 5. grid-column: start / end names lines, not columns. To cover columns 2, 3 and 4, the banner must start at line 2 and end at line 5, which is grid-column: 2 / 5. The end value is the line where the item stops, not the last column it fills.",
+   "why_wrong": [
+    "",
+    "Treats 4 as the last column to include. The numbers are grid lines, so 2 / 4 covers only columns 2 and 3.",
+    "span 3 sets only the size. With no start line, auto-placement puts the first child at column 1, so it covers columns 1 to 3.",
+    "span 4 makes the banner four columns wide, running from line 2 to line 6. That overflows the four-column grid and creates an extra implicit column."
+   ],
+   "key": "CSE326-U3-041"
+  },
+  {
+   "topic": "Flexbox and Grid",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The code below puts four 200px-wide items in a 600px-wide flex container. What happens?",
+   "code": "<style>\n  .row { display: flex; width: 600px; }\n  .row div { width: 200px; height: 50px; }\n</style>\n<div class=\"row\">\n  <div></div><div></div><div></div><div></div>\n</div>",
+   "options": [
+    "The fourth item wraps onto a second line",
+    "All four keep 200px and overflow the container by 200px",
+    "All four stay on one line, each shrunk to 150px",
+    "The first three keep 200px and the fourth is squeezed to 0px"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A flex container defaults to flex-wrap: nowrap. Each item defaults to flex-shrink: 1 and uses its width (200px) as its flex-basis. The items need 4 × 200 = 800px but only have 600px, so the 200px overflow is shared equally: 200 ÷ 4 = 50px each. Every item ends up 200 − 50 = 150px wide on one line. Adding flex-wrap: wrap would move the fourth item onto a new line instead.",
+   "why_wrong": [
+    "Assumes flex items wrap by default. The default flex-wrap is nowrap, so the items stay on one line.",
+    "Forgets that flex-shrink defaults to 1, so items give up space when they overflow. They would keep 200px and overflow only with flex-shrink: 0.",
+    "",
+    "Assumes shrinking starts from the last item. The 200px overflow is shared among all the items according to flex-shrink, and every item here has the same flex-shrink and the same 200px basis."
+   ],
+   "key": "CSE326-U3-042"
+  },
+  {
+   "topic": "Flexbox and Grid",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The three links in the code below have text of different lengths. How is the row's 600px shared among them?",
+   "code": "<style>\n  .bar { display: flex; width: 600px; }\n  .bar a { flex: 1; }\n</style>\n<nav class=\"bar\">\n  <a href=\"#\">Home</a>\n  <a href=\"#\">About</a>\n  <a href=\"#\">Contact the team</a>\n</nav>",
+   "options": [
+    "Each link is exactly 200px wide",
+    "Each link gets its text width plus an equal share of the space left over",
+    "Each link stays as wide as its text, and the leftover space sits empty at the right",
+    "The space is shared in proportion to text length, so 'Contact the team' is widest"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "flex: 1 is shorthand for flex: 1 1 0%, meaning grow 1, shrink 1 and a basis of 0. Every basis is 0, so the whole 600px counts as free space, and the equal grow factors split it evenly: 600 ÷ 3 = 200px each. The three texts are different lengths, but that does not change the widths here. A link would be wider because of longer text only with a basis of auto, as in flex: auto.",
+   "why_wrong": [
+    "",
+    "Describes flex: auto (1 1 auto), where the basis is the content size. flex: 1 expands to 1 1 0%, so every link starts from zero.",
+    "Reads flex: 1 as stopping the items from growing. Its first value is flex-grow: 1, so the links do expand to fill the row.",
+    "Assumes flex-grow shares free space by content size. It shares by the grow factors, and with a basis of 0 all 600px is free space, split 1 : 1 : 1."
+   ],
+   "key": "CSE326-U3-043"
+  },
+  {
+   "topic": "Responsive Design and Animation",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student's media query in the code below works when the laptop browser window is made narrow. On a real phone, though, the page shows as a tiny, zoomed-out desktop layout and the mobile styles never apply. What is missing?",
+   "code": "<!-- index.html -->\n<head>\n  <link rel=\"stylesheet\" href=\"style.css\">\n</head>\n\n/* style.css */\n@media (max-width: 600px) {\n  .sidebar { display: none; }\n  .content { width: 100%; }\n}",
+   "options": [
+    "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> in the <head>",
+    "<meta charset=\"UTF-8\"> in the <head>",
+    "Changing max-width: 600px to min-width: 600px",
+    "Adding !important to every declaration inside the media query"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Without a viewport meta tag, a mobile browser lays the page out on a virtual viewport as wide as a desktop and then zooms it out. max-width: 600px is therefore false, and the mobile rules never apply. width=device-width sets the layout viewport to the phone's real width, and initial-scale=1 stops the zoom, so the media query starts to match.",
+   "why_wrong": [
+    "",
+    "The charset tag only sets the text encoding. It has no effect on the width the phone reports to CSS.",
+    "Switching to min-width would apply the mobile styles on wide screens instead. The real problem is that the phone never reports a width of 600px or less.",
+    "The rules are not losing a cascade conflict. The media query never matches in the first place, so !important has nothing to act on."
+   ],
+   "key": "CSE326-U3-044"
+  },
+  {
+   "topic": "Responsive Design and Animation",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "The page loads at time 0. When does the animation in the code below finish?",
+   "code": "@keyframes slide {\n  from { transform: translateX(0); }\n  to   { transform: translateX(200px); }\n}\n.box { animation: slide 2s ease-in 1s 3; }",
+   "options": [
+    "7s",
+    "6s",
+    "9s",
+    "5s"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "In the animation shorthand, the first time value is animation-duration (2s), the second is animation-delay (1s), and the plain number 3 is the iteration count. The animation waits 1s and then runs three 2s iterations back to back. It finishes at 1 + 3 × 2 = 7s.",
+   "why_wrong": [
+    "",
+    "Counts the three 2s runs but forgets the 1s delay before the first one.",
+    "Applies the 1s delay before every iteration. The delay happens only once, before the first run.",
+    "Swaps the two times, reading 2s as the delay and 1s as the duration (2 + 3 × 1). In the shorthand the first time value is the duration."
+   ],
+   "key": "CSE326-U3-045"
+  },
+  {
+   "topic": "Responsive Design and Animation",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "With the code below, what font-size does .title get at viewport widths of 600px, 800px and 1200px?",
+   "code": "<style>\n  .title { font-size: 15px; }\n  @media (min-width: 1000px) { .title { font-size: 20px; } }\n  @media (min-width: 700px)  { .title { font-size: 17px; } }\n</style>",
+   "options": [
+    "15px, 17px, 17px",
+    "15px, 17px, 20px",
+    "17px, 20px, 15px",
+    "17px, 17px, 17px"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A media query adds no specificity. When its condition is true, its rules simply join the cascade. At 600px neither query matches, so 15px applies. At 800px only min-width: 700px matches, which gives 17px. At 1200px both queries match and all three selectors are .title, which is a tie, so the rule written last (17px) wins. This is why mobile-first stylesheets list min-width queries from smallest to largest.",
+   "why_wrong": [
+    "",
+    "Assumes the query with the larger breakpoint wins at 1200px. Both queries match there and the selectors tie, so the 700px rule wins because it comes later.",
+    "Reads min-width as 'up to this width'. min-width: 700px is true at 700px and wider, so it is false at 600px.",
+    "Ignores the media conditions and just uses the last rule. At 600px neither query is true, so the base 15px applies."
+   ],
+   "key": "CSE326-U3-046"
+  },
+  {
+   "topic": "Responsive Design and Animation",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The pointer rests on the button in the code below for a few seconds and then moves away. What does the user see?",
+   "code": "<style>\n  .btn       { background: blue; }\n  .btn:hover { background: red; transition: background 1s; }\n</style>\n<button class=\"btn\">Save</button>",
+   "options": [
+    "A 1s fade to red, then a 1s fade back to blue",
+    "A 1s fade to red, then an instant jump back to blue",
+    "An instant jump to red, then a 1s fade back to blue",
+    "Instant changes both ways, because a transition only works when it is declared on .btn"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "When a property changes, the browser uses the transition value of the style the element is changing to. On entering hover, the new style is .btn:hover, which has transition: background 1s, so the red fades in. On leaving hover, the new style is plain .btn, which has no transition, so the blue comes back instantly. Declaring the transition on .btn instead makes it animate both ways.",
+   "why_wrong": [
+    "Assumes a transition always runs both ways. The transition that applies is the one on the state being entered, and plain .btn has none.",
+    "",
+    "Has the logic backwards. On hover the :hover rule applies, including its transition, so the change to red is animated.",
+    "A transition declared in the :hover rule does work when entering the hover state. It is only missing when leaving it."
+   ],
+   "key": "CSE326-U3-047"
+  }
+ ]
+}

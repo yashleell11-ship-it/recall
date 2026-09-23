@@ -1,0 +1,1111 @@
+{
+ "subject_code": "MTH165",
+ "unit": 1,
+ "unit_label": "Matrix Methods and Linear Systems",
+ "questions": [
+  {
+   "topic": "Matrix Algebra",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the determinant |A| of A = [[2, 5], [1, 3]]?",
+   "code": "",
+   "options": [
+    "11",
+    "1",
+    "−1",
+    "6"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "For a 2 × 2 matrix [[a, b], [c, d]], |A| = ad − bc. Here |A| = 2·3 − 5·1 = 6 − 5 = 1. Since |A| ≠ 0, A is non-singular.",
+   "why_wrong": [
+    "Added the two products (2·3 + 5·1) instead of subtracting the off-diagonal product.",
+    "",
+    "Subtracted in the wrong order (5·1 − 2·3), which flips the sign.",
+    "Multiplied only the diagonal entries (2·3) and forgot to subtract bc = 5·1."
+   ],
+   "key": "MTH165-U1-001"
+  },
+  {
+   "topic": "Matrix Algebra",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which of these matrices is skew-symmetric?",
+   "code": "",
+   "options": [
+    "[[0, 3], [3, 0]]",
+    "[[2, 3], [−3, 2]]",
+    "[[1, 0], [0, −1]]",
+    "[[0, 3], [−3, 0]]"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "A square matrix is skew-symmetric when Aᵀ = −A, i.e. aⱼᵢ = −aᵢⱼ for every i and j. Putting i = j gives aᵢᵢ = −aᵢᵢ, so every diagonal entry must be 0. [[0, 3], [−3, 0]] has a zero diagonal and a₂₁ = −a₁₂, so Aᵀ = [[0, −3], [3, 0]] = −A.",
+   "why_wrong": [
+    "Here a₂₁ = a₁₂, so Aᵀ = A: this matrix is symmetric, not skew-symmetric.",
+    "The off-diagonal entries are negatives of each other, but the diagonal entries are 2, not 0; skew-symmetry forces every aᵢᵢ = 0.",
+    "Trace 0 is not the test: each diagonal entry must itself be 0. This diagonal matrix equals its own transpose, so it is symmetric.",
+    ""
+   ],
+   "key": "MTH165-U1-002"
+  },
+  {
+   "topic": "Matrix Algebra",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Find A⁻¹ for A = [[2, 1], [5, 3]].",
+   "code": "",
+   "options": [
+    "[[3, −1], [−5, 2]]",
+    "[[2, −1], [−5, 3]]",
+    "[[3, 1], [5, 2]]",
+    "[[−3, 1], [5, −2]]"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "|A| = 2·3 − 1·5 = 1, so A⁻¹ exists. For [[a, b], [c, d]], A⁻¹ = (1/|A|)·[[d, −b], [−c, a]]: swap the diagonal entries and negate the off-diagonal ones. Check: A·[[3, −1], [−5, 2]] = [[6 − 5, −2 + 2], [15 − 15, −5 + 6]] = I.",
+   "why_wrong": [
+    "",
+    "Negated the off-diagonal entries but forgot to swap the diagonal entries 2 and 3.",
+    "Swapped the diagonal entries but forgot to negate the off-diagonal entries.",
+    "Took |A| as bc − ad = −1 instead of ad − bc = 1, which flips every sign."
+   ],
+   "key": "MTH165-U1-003"
+  },
+  {
+   "topic": "Rank and Independence",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the rank of A = [[1, 2, 3], [2, 4, 6], [−1, −2, −3]]?",
+   "code": "",
+   "options": [
+    "2",
+    "3",
+    "1",
+    "0"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "R2 = 2·R1 and R3 = −1·R1, so R2 → R2 − 2R1 and R3 → R3 + R1 turn both into zero rows. One non-zero row remains, so rank A = 1.",
+   "why_wrong": [
+    "Spotted R2 = 2R1 but missed that R3 = −R1 is also a multiple of R1.",
+    "Took the order of the matrix as its rank; that holds only when |A| ≠ 0, and here |A| = 0.",
+    "",
+    "Read |A| = 0 as rank 0; only the zero matrix has rank 0, and A has non-zero entries."
+   ],
+   "key": "MTH165-U1-004"
+  },
+  {
+   "topic": "Rank and Independence",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A matrix has been reduced to the echelon form [[1, 0, 2], [0, 1, 3], [0, 0, 0]]. What is its rank?",
+   "code": "",
+   "options": [
+    "3",
+    "2",
+    "4",
+    "1"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "In echelon form the rank equals the number of non-zero rows. Rows 1 and 2 are non-zero and row 3 is zero, so the rank is 2. Elementary row operations do not change rank, so this is also the rank of the original matrix.",
+   "why_wrong": [
+    "Counted all three rows, including the zero row; only non-zero rows count.",
+    "",
+    "Counted the non-zero entries (1, 2, 1, 3) instead of the non-zero rows.",
+    "Ignored row 2 because it starts with 0; a row counts whenever it is non-zero, wherever its leading entry sits."
+   ],
+   "key": "MTH165-U1-005"
+  },
+  {
+   "topic": "Rank and Independence",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "For which value of k are the vectors (1, 2) and (3, k) in ℝ² linearly dependent?",
+   "code": "",
+   "options": [
+    "3/2",
+    "−6",
+    "2",
+    "6"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Two vectors in ℝ² are dependent exactly when the determinant of the matrix they form is 0. |[[1, 2], [3, k]]| = 1·k − 2·3 = k − 6 = 0 gives k = 6, and then (3, 6) = 3·(1, 2).",
+   "why_wrong": [
+    "Paired the wrong entries (1·3 − 2·k = 0); the determinant of [[1, 2], [3, k]] is 1·k − 2·3.",
+    "Sign error: wrote the determinant as k + 6 instead of k − 6.",
+    "Matched the second component, (3, 2), instead of scaling: dependence needs (3, k) = 3·(1, 2), so k = 3·2.",
+    ""
+   ],
+   "key": "MTH165-U1-006"
+  },
+  {
+   "topic": "Systems of Equations",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A non-homogeneous system AX = B has n unknowns. Exactly when does it have a unique solution?",
+   "code": "",
+   "options": [
+    "rank(A) = rank([A|B]) < n",
+    "rank(A) < rank([A|B])",
+    "rank(A) = rank([A|B]) = n",
+    "rank(A) = rank([A|B]), whatever n is"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "rank(A) = rank([A|B]) = r only says the system is consistent, i.e. a solution exists. Uniqueness also needs r = n, the number of unknowns; if r < n there are n − r free parameters and infinitely many solutions. If rank(A) < rank([A|B]), there is no solution.",
+   "why_wrong": [
+    "Equal ranks below n mean the system is consistent with n − r free parameters, so it has infinitely many solutions.",
+    "Unequal ranks mean the system is inconsistent: it has no solution.",
+    "",
+    "Equal ranks only guarantee that a solution exists; without comparing the common rank with n you cannot call it unique."
+   ],
+   "key": "MTH165-U1-007"
+  },
+  {
+   "topic": "Systems of Equations",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A homogeneous system AX = O has 3 equations in 3 unknowns, and |A| ≠ 0. What are its solutions?",
+   "code": "",
+   "options": [
+    "Only the trivial solution x = y = z = 0",
+    "Infinitely many solutions",
+    "No solution",
+    "Exactly one non-zero solution"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A homogeneous system is always consistent, because X = O satisfies it. With |A| ≠ 0, rank A = 3 = n, so the solution is unique, and that unique solution is the trivial one. Non-trivial solutions appear only when |A| = 0.",
+   "why_wrong": [
+    "",
+    "Infinitely many solutions need |A| = 0 (rank A < 3); here |A| ≠ 0.",
+    "A homogeneous system is never inconsistent: x = y = z = 0 always satisfies it.",
+    "The unique solution is X = O itself; if a non-zero X worked, every multiple tX would work too, contradicting uniqueness."
+   ],
+   "key": "MTH165-U1-008"
+  },
+  {
+   "topic": "Systems of Equations",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A consistent system AX = B has n = 5 unknowns and rank(A) = rank([A|B]) = 3. How many free parameters does its general solution have?",
+   "code": "",
+   "options": [
+    "3",
+    "2",
+    "5",
+    "0"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "When rank(A) = rank([A|B]) = r, the number of free parameters is n − r. Here 5 − 3 = 2, so the system has infinitely many solutions described by two arbitrary constants.",
+   "why_wrong": [
+    "Took the rank as the number of free parameters; the rank counts the pivot unknowns, and n − r counts the free ones.",
+    "",
+    "Used n, the number of unknowns, without subtracting the rank.",
+    "Assumed equal ranks mean a unique solution; that needs r = n, and here r = 3 < 5."
+   ],
+   "key": "MTH165-U1-009"
+  },
+  {
+   "topic": "Systems of Equations",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "For which value of k is the system x + 2y = 5, 3x + 6y = k consistent?",
+   "code": "",
+   "options": [
+    "5",
+    "3",
+    "Every k ≠ 15",
+    "15"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The left side of the second equation is 3 times the first, so rank A = 1. For rank [A|B] to stay 1, the right side must also be 3 times: k = 3·5 = 15. The system is then consistent with infinitely many solutions (both equations describe the same line).",
+   "why_wrong": [
+    "Copied the right-hand side 5 without multiplying it by the factor 3 that links the two left-hand sides.",
+    "Used the factor 3 itself as k instead of 3 times the right-hand side 5.",
+    "Reversed the condition: for k ≠ 15, rank [A|B] = 2 > rank A = 1, which makes the system inconsistent.",
+    ""
+   ],
+   "key": "MTH165-U1-010"
+  },
+  {
+   "topic": "Eigenvalues and Eigenvectors",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What are the eigenvalues of A = [[2, 5], [0, 3]]?",
+   "code": "",
+   "options": [
+    "2 and 5",
+    "0 and 5",
+    "2 and 3",
+    "−2 and −3"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "A is upper triangular, so |A − λI| = (2 − λ)(3 − λ) − 5·0 = (2 − λ)(3 − λ). Setting this to 0 gives λ = 2 and λ = 3: the eigenvalues of a triangular matrix are its diagonal entries.",
+   "why_wrong": [
+    "Read the first row instead of the diagonal; 5 is an off-diagonal entry.",
+    "Read the off-diagonal entries; for a triangular matrix the eigenvalues are the diagonal entries.",
+    "",
+    "Sign error in the characteristic equation, e.g. writing (2 + λ)(3 + λ) = 0 instead of (2 − λ)(3 − λ) = 0."
+   ],
+   "key": "MTH165-U1-011"
+  },
+  {
+   "topic": "Eigenvalues and Eigenvectors",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the sum of the eigenvalues (counted with multiplicity) of A = [[4, 1], [3, 2]]?",
+   "code": "",
+   "options": [
+    "6",
+    "5",
+    "10",
+    "8"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The sum of the eigenvalues equals the trace, the sum of the diagonal entries: 4 + 2 = 6. Check: |A − λI| = λ² − 6λ + 5 = (λ − 1)(λ − 5), so the eigenvalues are 1 and 5, and 1 + 5 = 6.",
+   "why_wrong": [
+    "",
+    "That is |A| = 4·2 − 1·3 = 5, which equals the product of the eigenvalues, not their sum.",
+    "Added all four entries; only the diagonal entries make up the trace.",
+    "Multiplied the diagonal entries (4·2) instead of adding them."
+   ],
+   "key": "MTH165-U1-012"
+  },
+  {
+   "topic": "Eigenvalues and Eigenvectors",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A 2 × 2 matrix A has eigenvalues 2 and −3. What are the eigenvalues of A²?",
+   "code": "",
+   "options": [
+    "4 and −9",
+    "4 and 9",
+    "2 and −3",
+    "1/2 and −1/3"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "If Ax = λx, then A²x = A(λx) = λ(Ax) = λ²x, so the eigenvalues of Aᵐ are λᵐ for every positive integer m. Here 2² = 4 and (−3)² = 9.",
+   "why_wrong": [
+    "Squared the size but kept the minus sign; (−3)² = +9.",
+    "",
+    "Assumed squaring the matrix leaves its eigenvalues unchanged; they are squared too.",
+    "These are the eigenvalues of A⁻¹ (the reciprocals 1/λ), not of A²."
+   ],
+   "key": "MTH165-U1-013"
+  },
+  {
+   "topic": "Cayley-Hamilton Theorem",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the characteristic equation of A = [[1, 2], [3, 4]]?",
+   "code": "",
+   "options": [
+    "λ² + 5λ − 2 = 0",
+    "λ² − 5λ + 10 = 0",
+    "λ² − 5λ + 2 = 0",
+    "λ² − 5λ − 2 = 0"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "For a 2 × 2 matrix, |A − λI| = 0 becomes λ² − (trace A)λ + |A| = 0. Here trace A = 1 + 4 = 5 and |A| = 1·4 − 2·3 = −2, giving λ² − 5λ − 2 = 0. By Cayley–Hamilton, A itself then satisfies A² − 5A − 2I = O.",
+   "why_wrong": [
+    "Flipped the sign of the trace term; the coefficient of λ is −(trace A) = −5.",
+    "Computed |A| as 1·4 + 2·3 = 10 instead of 1·4 − 2·3 = −2.",
+    "Computed |A| in the wrong order (2·3 − 1·4 = 2), flipping its sign.",
+    ""
+   ],
+   "key": "MTH165-U1-014"
+  },
+  {
+   "topic": "Matrix Algebra",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A = [[1, 4], [2, 3]] is written as A = P + Q, with P symmetric and Q skew-symmetric. What is Q?",
+   "code": "",
+   "options": [
+    "[[0, 2], [−2, 0]]",
+    "[[0, −1], [1, 0]]",
+    "[[0, 1], [−1, 0]]",
+    "[[1, 3], [3, 3]]"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Q = ½(A − Aᵀ). Aᵀ = [[1, 2], [4, 3]], so A − Aᵀ = [[0, 2], [−2, 0]] and Q = [[0, 1], [−1, 0]]. Then P = ½(A + Aᵀ) = [[1, 3], [3, 3]], and P + Q = [[1, 4], [2, 3]] = A.",
+   "why_wrong": [
+    "Forgot the factor ½: A − Aᵀ is skew-symmetric, but P + (A − Aᵀ) does not add back to A.",
+    "Computed ½(Aᵀ − A), with the order reversed, which gives −Q.",
+    "",
+    "This is ½(A + Aᵀ), the symmetric part P, not the skew-symmetric part."
+   ],
+   "key": "MTH165-U1-015"
+  },
+  {
+   "topic": "Matrix Algebra",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these matrices is nilpotent?",
+   "code": "",
+   "options": [
+    "[[2, −4], [1, −2]]",
+    "[[2, −2], [1, −1]]",
+    "[[0, 1], [1, 0]]",
+    "[[0, 2], [3, 0]]"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A square matrix is nilpotent if Aᵏ = O for some positive integer k. [[2, −4], [1, −2]]² = [[4 − 4, −8 + 8], [2 − 2, −4 + 4]] = O, so it is nilpotent of index 2. A zero diagonal is not the test; you have to compute the powers.",
+   "why_wrong": [
+    "",
+    "Its square is [[4 − 2, −4 + 2], [2 − 1, −2 + 1]] = [[2, −2], [1, −1]], the matrix itself: A² = A makes it idempotent, not nilpotent.",
+    "Its square is I, so it is involutory; its powers alternate between A and I and never reach O.",
+    "A zero diagonal is not enough: its square is [[6, 0], [0, 6]] = 6I, and every even power is a non-zero multiple of I."
+   ],
+   "key": "MTH165-U1-016"
+  },
+  {
+   "topic": "Matrix Algebra",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For which value of k is A = [[k, 2], [−1, −1]] idempotent?",
+   "code": "",
+   "options": [
+    "−1",
+    "2",
+    "2 or −1",
+    "1"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Idempotent means A² = A. A² = [[k² − 2, 2k − 2], [1 − k, −1]]. The (1,2) entries give 2k − 2 = 2, so k = 2, and the (2,1) entries give 1 − k = −1, again k = 2. The (1,1) equation k² − 2 = k has roots 2 and −1, but only k = 2 satisfies all four entries.",
+   "why_wrong": [
+    "Solved only the (1,1) entry, k² − k − 2 = 0, and took the other root; at k = −1 the (1,2) entry of A² is −4, not 2.",
+    "",
+    "Kept both roots of the (1,1) equation without checking the off-diagonal entries, which force k = 2.",
+    "Set the (1,2) entry 2k − 2 equal to 0, i.e. tested A² = O (nilpotent) instead of A² = A."
+   ],
+   "key": "MTH165-U1-017"
+  },
+  {
+   "topic": "Matrix Algebra",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A and B are non-singular square matrices of the same order. Which statement is NOT always true?",
+   "code": "",
+   "options": [
+    "(AB)ᵀ = BᵀAᵀ",
+    "(Aᵀ)⁻¹ = (A⁻¹)ᵀ",
+    "|AB| = |A|·|B|",
+    "(AB)⁻¹ = A⁻¹B⁻¹"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The inverse of a product reverses the order: (AB)⁻¹ = B⁻¹A⁻¹, because (AB)(B⁻¹A⁻¹) = A(BB⁻¹)A⁻¹ = AA⁻¹ = I. Matrix multiplication is not commutative, so A⁻¹B⁻¹ is in general a different matrix. The other three identities hold for all such A and B.",
+   "why_wrong": [
+    "This is always true: the transpose of a product reverses the order, just as the inverse does.",
+    "This is always true: transposing AA⁻¹ = I gives (A⁻¹)ᵀAᵀ = I, so (A⁻¹)ᵀ is the inverse of Aᵀ.",
+    "This is always true: the determinant of a product is the product of the determinants.",
+    ""
+   ],
+   "key": "MTH165-U1-018"
+  },
+  {
+   "topic": "Rank and Independence",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What is the rank of A = [[1, 1, 2], [2, 3, 5], [3, 4, 7]]?",
+   "code": "",
+   "options": [
+    "3",
+    "1",
+    "2",
+    "0"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "R3 = R1 + R2 (3 = 1 + 2, 4 = 1 + 3, 7 = 2 + 5), so R3 → R3 − R1 − R2 gives a zero row and the rank is less than 3. The 2 × 2 minor from rows 1–2 and columns 1–2 is 1·3 − 1·2 = 1 ≠ 0, so rank A = 2.",
+   "why_wrong": [
+    "No row is a multiple of another, so full rank was assumed; but R3 = R1 + R2, which makes |A| = 0.",
+    "Assumed |A| = 0 forces rank 1; it only forces rank < 3, and a non-zero 2 × 2 minor exists.",
+    "",
+    "Read |A| = 0 as rank 0; only the zero matrix has rank 0."
+   ],
+   "key": "MTH165-U1-019"
+  },
+  {
+   "topic": "Rank and Independence",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Three vectors in ℝ⁴ are written as the rows of a 3 × 4 matrix, and that matrix has rank 3. What can you conclude?",
+   "code": "",
+   "options": [
+    "They are linearly independent, because the rank equals the number of vectors.",
+    "They are linearly dependent, because the rank 3 is less than the dimension 4.",
+    "Nothing yet: the determinant of the 3 × 4 matrix must be checked first.",
+    "They are linearly dependent, because a non-square matrix has no inverse."
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Vectors are dependent exactly when the rank of their matrix is less than the number of vectors. Here the rank is 3 and there are 3 vectors, so they are independent. The determinant test works only for n vectors in ℝⁿ; for 3 vectors in ℝ⁴, rank is the tool.",
+   "why_wrong": [
+    "",
+    "Compared the rank with the dimension 4 instead of with the number of vectors, 3.",
+    "A 3 × 4 matrix has no determinant; the determinant test applies only to n vectors in ℝⁿ, and the rank already decides the question.",
+    "Every non-square matrix lacks an inverse, whatever its rows are, so that fact cannot decide dependence. The rank does: rank 3 equals the number of vectors, so they are independent."
+   ],
+   "key": "MTH165-U1-020"
+  },
+  {
+   "topic": "Systems of Equations",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Consider the system x + y + z = 3, x + 2y + 3z = 6, 2x + 3y + 4z = k. Which statement is correct?",
+   "code": "",
+   "options": [
+    "For k = 9 it has a unique solution; for k ≠ 9 it has no solution.",
+    "For k = 9 it has infinitely many solutions; for k ≠ 9 it has no solution.",
+    "For k = 9 it has infinitely many solutions; for k ≠ 9 it has a unique solution.",
+    "It has a unique solution for every k, because there are 3 equations in 3 unknowns."
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The third row of coefficients is row 1 + row 2, so |A| = 0 and rank A = 2 for every k. R3 → R3 − R1 − R2 turns the augmented row into [0, 0, 0 | k − 9]. If k = 9, rank A = rank [A|B] = 2 < 3 = n: infinitely many solutions with one free parameter. If k ≠ 9, rank [A|B] = 3 > 2 and the system is inconsistent.",
+   "why_wrong": [
+    "Stopped at rank A = rank [A|B] and called the solution unique; the common rank 2 is less than n = 3, so there are infinitely many.",
+    "",
+    "k appears only on the right-hand side, so it cannot make |A| non-zero; for k ≠ 9 the ranks differ and there is no solution.",
+    "Having as many equations as unknowns guarantees nothing; |A| = 0 here, so a unique solution is impossible for every k."
+   ],
+   "key": "MTH165-U1-021"
+  },
+  {
+   "topic": "Eigenvalues and Eigenvectors",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A = [[4, 1], [2, 3]] has eigenvalues 2 and 5. Which vector is an eigenvector of A for λ = 5? (An eigenvector is determined only up to a non-zero scalar multiple.)",
+   "code": "",
+   "options": [
+    "(1, −2)",
+    "(−1, 1)",
+    "(4, −1)",
+    "(1, 1)"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Solve (A − 5I)x = 0 with A − 5I = [[−1, 1], [2, −2]]. The first row gives −x + y = 0, so y = x and the eigenvector is (1, 1) up to a non-zero multiple. Check: A(1, 1) = (4 + 1, 2 + 3) = (5, 5) = 5·(1, 1).",
+   "why_wrong": [
+    "This is an eigenvector for the other eigenvalue, λ = 2: A(1, −2) = (2, −4) = 2·(1, −2).",
+    "Copied the first row of A − 5I as the vector; A(−1, 1) = (−3, 1), which is not a multiple of (−1, 1).",
+    "Subtracted 5 from every entry of A instead of only the diagonal; A(4, −1) = (15, 5), which is not a multiple of (4, −1).",
+    ""
+   ],
+   "key": "MTH165-U1-022"
+  },
+  {
+   "topic": "Eigenvalues and Eigenvectors",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A 3 × 3 matrix A has eigenvalues 1, 2 and 4. Which statement is NOT correct?",
+   "code": "",
+   "options": [
+    "|A| = 8.",
+    "trace A = 7.",
+    "The eigenvalues of A + 2I are 2, 4 and 8.",
+    "The eigenvalues of A⁻¹ are 1, 1/2 and 1/4."
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "If Ax = λx, then (A + 2I)x = Ax + 2x = (λ + 2)x, so adding 2I shifts each eigenvalue by 2: the eigenvalues of A + 2I are 3, 4 and 6, not 2, 4 and 8 (which would be the eigenvalues of 2A). The other statements hold: |A| = 1·2·4 = 8, trace A = 1 + 2 + 4 = 7, and A⁻¹ has eigenvalues 1/λ.",
+   "why_wrong": [
+    "This is correct: the determinant is the product of the eigenvalues, 1·2·4 = 8.",
+    "This is correct: the trace is the sum of the eigenvalues, 1 + 2 + 4 = 7.",
+    "",
+    "This is correct: |A| = 8 ≠ 0, so A⁻¹ exists, and its eigenvalues are the reciprocals 1/λ."
+   ],
+   "key": "MTH165-U1-023"
+  },
+  {
+   "topic": "Eigenvalues and Eigenvectors",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What are the eigenvalues of A = [[1, 2], [2, 1]]?",
+   "code": "",
+   "options": [
+    "3 and −1",
+    "−3 and 1",
+    "1 and 1",
+    "2 and −2"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "|A − λI| = (1 − λ)² − 4 = λ² − 2λ − 3 = (λ − 3)(λ + 1), so λ = 3 or λ = −1. Check: 3 + (−1) = 2 = trace A and 3·(−1) = −3 = |A|.",
+   "why_wrong": [
+    "",
+    "Flipped the sign of the trace term, solving λ² + 2λ − 3 = 0.",
+    "Read off the diagonal entries; that shortcut works only for triangular matrices, and A is not triangular.",
+    "From (1 − λ)² = 4 took λ = ±2, forgetting that 1 − λ = ±2 gives λ = 1 ∓ 2."
+   ],
+   "key": "MTH165-U1-024"
+  },
+  {
+   "topic": "Cayley-Hamilton Theorem",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Using the Cayley–Hamilton theorem, which expression equals A⁻¹ for A = [[2, 1], [1, 3]]?",
+   "code": "",
+   "options": [
+    "(1/5)(A − 5I)",
+    "(1/5)(5I − A)",
+    "5I − A",
+    "−(1/5)(A + 5I)"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "trace A = 5 and |A| = 2·3 − 1·1 = 5, so the characteristic equation is λ² − 5λ + 5 = 0 and Cayley–Hamilton gives A² − 5A + 5I = O. Since |A| ≠ 0, multiply by A⁻¹: A − 5I + 5A⁻¹ = O, so A⁻¹ = (1/5)(5I − A) = (1/5)·[[3, −1], [−1, 2]].",
+   "why_wrong": [
+    "Sign slip when moving terms across: A − 5I + 5A⁻¹ = O gives 5A⁻¹ = 5I − A, not A − 5I.",
+    "",
+    "Forgot to divide by the constant term 5 (which is |A|).",
+    "Used λ² + 5λ + 5 = 0, flipping the sign of the trace term, which leads to A + 5I + 5A⁻¹ = O."
+   ],
+   "key": "MTH165-U1-025"
+  },
+  {
+   "topic": "Cayley-Hamilton Theorem",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What is the characteristic equation of A = [[2, 1, 0], [1, 2, 0], [0, 0, 3]]?",
+   "code": "",
+   "options": [
+    "λ³ − 7λ² − 15λ + 9 = 0",
+    "λ³ − 7λ² − 9 = 0",
+    "λ³ − 7λ² + 3λ − 9 = 0",
+    "λ³ − 7λ² + 15λ − 9 = 0"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Use λ³ − S₁λ² + S₂λ − S₃ = 0. S₁ = trace A = 2 + 2 + 3 = 7; S₂ = sum of the three principal 2 × 2 minors = (2·2 − 1·1) + (2·3 − 0·0) + (2·3 − 0·0) = 3 + 6 + 6 = 15; S₃ = |A| = 3·(2·2 − 1·1) = 9. So λ³ − 7λ² + 15λ − 9 = 0, which factors as (λ − 1)(λ − 3)².",
+   "why_wrong": [
+    "Flipped the alternating signs of the S₂ and S₃ terms; the pattern is −S₁, +S₂, −S₃.",
+    "Dropped the S₂λ term altogether.",
+    "Used only one principal minor (2·2 − 1·1 = 3) for S₂ instead of adding all three.",
+    ""
+   ],
+   "key": "MTH165-U1-026"
+  },
+  {
+   "topic": "Matrix Algebra",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A stationery shop has two branches. In one week Branch 1 sells 4 pens, 2 notebooks and 5 files, and Branch 2 sells 3 pens, 6 notebooks and 1 file, so Q = [[4, 2, 5], [3, 6, 1]] (one row per branch; columns are pens, notebooks, files). Selling prices are P = [[10], [30], [20]] and unit costs are C = [[6], [20], [15]] (in ₹, same item order). What is each branch's gross profit for the week?",
+   "code": "",
+   "options": [
+    "Branch 1: ₹61, Branch 2: ₹77",
+    "Branch 1: ₹200, Branch 2: ₹230",
+    "Branch 1: ₹60, Branch 2: ₹79",
+    "Pens ₹28, notebooks ₹80, files ₹30"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Profit = QP − QC = Q(P − C), where P − C = [[4], [10], [5]] is the profit per unit. Q(P − C) is (2 × 3)(3 × 1) = 2 × 1, one entry per branch: Branch 1 = 4·4 + 2·10 + 5·5 = 61 and Branch 2 = 3·4 + 6·10 + 1·5 = 77. Check: revenue QP = [[200], [230]] minus cost QC = [[139], [153]] gives the same result.",
+   "why_wrong": [
+    "",
+    "This is only the revenue QP. The cost QC = [[139], [153]] was never subtracted.",
+    "The per-unit profits were paired with the items in reverse order, (5, 10, 4) instead of (4, 10, 5). Row-by-column multiplication needs the orders to match.",
+    "This totals each item over both branches first (7 pens, 8 notebooks, 6 files), which gives profit per item, not per branch. The question needs Q(P − C), one entry per row of Q."
+   ],
+   "key": "MTH165-U1-027"
+  },
+  {
+   "topic": "Matrix Algebra",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Let f(x) = x² − 3x + 2 and A = [[1, 2], [−1, 3]]. What is f(A)?",
+   "code": "",
+   "options": [
+    "[[−2, 2], [−1, 0]]",
+    "[[−2, 4], [1, 0]]",
+    "[[0, −2], [4, 2]]",
+    "[[4, −1], [8, 3]]"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "f(A) = A² − 3A + 2I, so the constant 2 becomes 2I. A² = A·A = [[1·1 + 2·(−1), 1·2 + 2·3], [−1·1 + 3·(−1), −1·2 + 3·3]] = [[−1, 8], [−4, 7]]. Then A² − 3A + 2I = [[−1 − 3 + 2, 8 − 6], [−4 + 3, 7 − 9 + 2]] = [[−2, 2], [−1, 0]].",
+   "why_wrong": [
+    "",
+    "The constant 2 was added to every entry. As 2I it adds 2 only on the diagonal.",
+    "A² was taken as the entrywise square [[1, 4], [1, 9]] instead of the matrix product A·A.",
+    "A² was computed as A·Aᵀ (row times row) = [[5, 5], [5, 10]] instead of A·A (row times column)."
+   ],
+   "key": "MTH165-U1-028"
+  },
+  {
+   "topic": "Matrix Algebra",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Let A = [[0, 1], [0, 0]] and let I be the 2 × 2 identity matrix. What is (2I + 3A)⁴?",
+   "code": "",
+   "options": [
+    "[[16, 96], [0, 16]]",
+    "[[16, 81], [0, 16]]",
+    "[[16, 24], [0, 16]]",
+    "[[16, 192], [0, 16]]"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A² = O (A is nilpotent of index 2), and I commutes with A, so the binomial expansion stops after two terms: (aI + bA)ⁿ = aⁿI + n·aⁿ⁻¹·bA. With a = 2, b = 3 and n = 4 this is 16I + 4·8·3A = 16I + 96A = [[16, 96], [0, 16]].",
+   "why_wrong": [
+    "",
+    "Each entry of [[2, 3], [0, 2]] was raised to the 4th power. Matrix powers are not taken entry by entry.",
+    "The factor n = 4 in n·aⁿ⁻¹·b was dropped, which gives 2³·3 = 24.",
+    "aⁿ was used instead of aⁿ⁻¹ in the second term, which gives 4·2⁴·3 = 192."
+   ],
+   "key": "MTH165-U1-029"
+  },
+  {
+   "topic": "Matrix Algebra",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Let A = [[1, 1], [0, 1]] and B = [[1, 0], [1, 1]]. What is (A + B)² − (A² + 2AB + B²)?",
+   "code": "",
+   "options": [
+    "O, the zero matrix",
+    "[[−1, 0], [0, 1]]",
+    "[[1, 0], [0, −1]]",
+    "[[3, 2], [2, 3]]"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "(A + B)² = A² + AB + BA + B², so the difference is BA − AB. It vanishes only when A and B commute. Here AB = [[2, 1], [1, 1]] and BA = [[1, 1], [1, 2]], so BA − AB = [[−1, 0], [0, 1]] ≠ O.",
+   "why_wrong": [
+    "(A + B)² = A² + 2AB + B² holds only when AB = BA, and these two matrices do not commute.",
+    "",
+    "This is AB − BA, with the sign reversed. The expansion leaves AB + BA − 2AB = BA − AB.",
+    "This is AB + BA, i.e. (A + B)² − A² − B². The 2AB term was never subtracted."
+   ],
+   "key": "MTH165-U1-030"
+  },
+  {
+   "topic": "Matrix Algebra",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A is a 3 × 3 matrix with A² = A (idempotent) and |A| ≠ 0. Which statement is correct?",
+   "code": "",
+   "options": [
+    "A must be I",
+    "A can be I or O",
+    "A can be I or −I",
+    "A can be any idempotent matrix, for example [[1, 0, 0], [0, 1, 0], [0, 0, 0]]"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Since |A| ≠ 0, A⁻¹ exists. Multiplying A² = A on the left by A⁻¹ gives (A⁻¹A)A = A⁻¹A, so A = I. The non-singularity condition rules out every other idempotent matrix, because all of them have |A| = 0.",
+   "why_wrong": [
+    "",
+    "O is idempotent, but |O| = 0, which breaks the given condition |A| ≠ 0.",
+    "This confuses idempotent (A² = A) with involutory (A² = I). (−I)² = I ≠ −I, so −I is not idempotent.",
+    "That matrix is idempotent, but it has a zero row, so |A| = 0 and it breaks |A| ≠ 0. Once A⁻¹ exists, A² = A forces A = I."
+   ],
+   "key": "MTH165-U1-031"
+  },
+  {
+   "topic": "Rank and Independence",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "For which value of k are the vectors (1, 2, 1), (2, 1, 3) and (3, 3, k) in ℝ³ linearly dependent?",
+   "code": "",
+   "options": [
+    "k = 4",
+    "k = 2",
+    "k = 24/5",
+    "Every k ≠ 4"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Three vectors in ℝ³ are dependent exactly when the 3 × 3 determinant with them as rows is 0. |[[1, 2, 1], [2, 1, 3], [3, 3, k]]| = 1(k − 9) − 2(2k − 9) + 1(6 − 3) = 12 − 3k, which is 0 at k = 4. Check: (3, 3, 4) = (1, 2, 1) + (2, 1, 3).",
+   "why_wrong": [
+    "",
+    "The last minor was taken as 3 − 6 instead of 2·3 − 1·3 = 3, which gives 6 − 3k = 0.",
+    "The alternating minus sign on the middle term was dropped: k − 9 + 2(2k − 9) + 3 = 5k − 24.",
+    "This is the condition for independence (determinant ≠ 0), the opposite of what was asked."
+   ],
+   "key": "MTH165-U1-032"
+  },
+  {
+   "topic": "Rank and Independence",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Let A = [[1, 2, 3], [2, k, 6], [3, 6, 9]], where k is real. Which statement describes rank(A) correctly?",
+   "code": "",
+   "options": [
+    "rank(A) = 1 when k = 4, and 2 for every other k",
+    "rank(A) = 2 when k = 4, and 3 for every other k",
+    "rank(A) = 1 for every k",
+    "rank(A) = 2 for every k"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Row 3 = 3 × Row 1 for every k, so |A| = 0 always and the rank is never 3. R2 → R2 − 2R1 gives (0, k − 4, 0). This row is non-zero when k ≠ 4 (rank 2) and zero when k = 4 (rank 1, since every row is then a multiple of Row 1).",
+   "why_wrong": [
+    "",
+    "This assumes |A| depends on k and vanishes only at k = 4. In fact R3 = 3R1 makes |A| = 0 for every k, so rank 3 never occurs.",
+    "Only R3 = 3R1 holds for every k. R2 = 2R1 needs k = 4, so for other values of k the rank is 2.",
+    "This misses the special case k = 4, where R2 − 2R1 becomes a zero row and the rank drops to 1."
+   ],
+   "key": "MTH165-U1-033"
+  },
+  {
+   "topic": "Rank and Independence",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "For which real value(s) of a does A = [[a, 1, 1], [1, a, 1], [1, 1, a]] have rank exactly 2?",
+   "code": "",
+   "options": [
+    "a = −2 only",
+    "a = 1 only",
+    "a = 1 or a = −2",
+    "a = 2 only"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "|A| = a³ − 3a + 2 = (a − 1)²(a + 2), so the rank is 3 unless a = 1 or a = −2. At a = 1 every row is (1, 1, 1), so the rank is only 1. At a = −2 the 2 × 2 minor (−2)(−2) − 1·1 = 3 ≠ 0, so the rank is exactly 2.",
+   "why_wrong": [
+    "",
+    "At a = 1 all three rows equal (1, 1, 1), so every 2 × 2 minor is 0 and the rank is 1, not 2. A double root of |A| does not mean rank 2.",
+    "|A| = 0 only says rank < 3. At a = 1 the rank falls all the way to 1, so only a = −2 gives exactly 2.",
+    "This comes from a sign slip in the factor (a + 2). At a = 2, |A| = 1²·4 = 4 ≠ 0 and the rank is 3."
+   ],
+   "key": "MTH165-U1-034"
+  },
+  {
+   "topic": "Rank and Independence",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Are the vectors v₁ = (1, 2, 0, 1), v₂ = (0, 1, 1, 2) and v₃ = (2, 5, 1, 4) in ℝ⁴ linearly dependent?",
+   "code": "",
+   "options": [
+    "Independent, because none of them is a scalar multiple of another",
+    "Dependent, because the 3 × 4 matrix with these rows has rank 2, which is less than the 3 vectors",
+    "Independent, because the 3 × 4 matrix with these rows has rank 3",
+    "Dependent, because any 3 vectors in ℝ⁴ are dependent"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A determinant test needs n vectors in ℝⁿ. Here there are 3 vectors in ℝ⁴, so use rank instead. In [[1, 2, 0, 1], [0, 1, 1, 2], [2, 5, 1, 4]], R3 − 2R1 = (0, 1, 1, 2) = R2, so R3 reduces to a zero row and the rank is 2 < 3. Indeed v₃ = 2v₁ + v₂.",
+   "why_wrong": [
+    "Checking pairs is not enough. A vector can be a combination of the others without being a multiple of any one of them; here v₃ = 2v₁ + v₂.",
+    "",
+    "This is an arithmetic slip. R3 − 2R1 equals R2, so the third row reduces to zero and the rank is 2, not 3.",
+    "This rule is false. Dependence is forced only when there are more vectors than the dimension (more than 4 in ℝ⁴). Three vectors in ℝ⁴ can be independent, e.g. (1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0)."
+   ],
+   "key": "MTH165-U1-035"
+  },
+  {
+   "topic": "Systems of Equations",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "For the system x + y + z = 4, x + 2y + 2z = 6, x + 2y + λz = μ, which values give infinitely many solutions?",
+   "code": "",
+   "options": [
+    "λ = 2 and μ = 6",
+    "λ = 2 and μ ≠ 6",
+    "λ = 2, with μ any value",
+    "λ ≠ 2 and μ = 6"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Row-reduce [A | B]: R2 − R1 gives (0, 1, 1 | 2), R3 − R1 gives (0, 1, λ − 1 | μ − 4), then R3 − R2 gives (0, 0, λ − 2 | μ − 6). Infinitely many solutions need rank(A) = rank([A|B]) < 3, the number of unknowns, so the whole last row must vanish: λ = 2 and μ = 6. Then r = 2, and there is n − r = 1 free parameter.",
+   "why_wrong": [
+    "",
+    "With λ = 2 and μ ≠ 6 the last row reads 0 = μ − 6 ≠ 0, so rank(A) = 2 < rank([A|B]) = 3 and there is no solution.",
+    "λ = 2 only makes |A| = 0. The value of μ still decides between no solution and infinitely many.",
+    "With λ ≠ 2, rank(A) = rank([A|B]) = 3 = n, so the solution is unique whatever μ is."
+   ],
+   "key": "MTH165-U1-036"
+  },
+  {
+   "topic": "Systems of Equations",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Four one-way streets form a loop through junctions P, Q, R and S. Balancing inflow and outflow at each junction gives x₁ − x₂ = 20, x₂ − x₃ = 30, x₃ − x₄ = −10 and x₄ − x₁ = −40, where x₁, …, x₄ are the flows in vehicles per hour. What can be said about this system?",
+   "code": "",
+   "options": [
+    "It has a unique solution, since there are 4 equations in 4 unknowns",
+    "It has no solution, since |A| = 0",
+    "It has infinitely many solutions with 1 free parameter, since rank(A) = rank([A|B]) = 3 < 4",
+    "It has infinitely many solutions with 3 free parameters, since rank(A) = 3"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Adding all four equations gives 0 = 20 + 30 − 10 − 40 = 0, so the fourth equation is the negative of the sum of the other three. That makes rank(A) = rank([A|B]) = 3, and the system is consistent. With n = 4 unknowns there is n − r = 4 − 3 = 1 free parameter; for example x₄ = t gives x₃ = t − 10, x₂ = t + 20, x₁ = t + 40.",
+   "why_wrong": [
+    "Having as many equations as unknowns does not guarantee uniqueness. The four equations sum to 0 = 0, so |A| = 0 and rank(A) = 3 < 4.",
+    "|A| = 0 rules out a unique solution, not every solution. Since rank(A) = rank([A|B]) = 3, the system is consistent.",
+    "",
+    "The number of free parameters is n − r = 4 − 3 = 1, not the rank itself."
+   ],
+   "key": "MTH165-U1-037"
+  },
+  {
+   "topic": "Systems of Equations",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "The homogeneous system x + y + z = 0, x + 2y + 4z = 0, x + 3y + kz = 0 has non-trivial solutions for which k, and how many free parameters does its general solution then have?",
+   "code": "",
+   "options": [
+    "k = 7; one free parameter",
+    "k = 7; two free parameters",
+    "k = 5; one free parameter",
+    "Every k ≠ 7; one free parameter"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A square homogeneous system has non-trivial solutions exactly when |A| = 0. |[[1, 1, 1], [1, 2, 4], [1, 3, k]]| = 1(2k − 12) − 1(k − 4) + 1(3 − 2) = k − 7, so k = 7. Then R2 − R1 = (0, 1, 3) and R3 − R2 = (0, 1, 3), so the rank is 2 and there is 3 − 2 = 1 free parameter.",
+   "why_wrong": [
+    "",
+    "At k = 7 the rank is 2, not 1, because rows 1 and 2 are not multiples of each other. So n − r = 3 − 2 = 1.",
+    "The alternating minus sign on the middle cofactor was dropped: (2k − 12) + (k − 4) + 1 = 3k − 15 gives k = 5, but there |A| = −2 ≠ 0.",
+    "This reverses the condition. When |A| ≠ 0 (k ≠ 7), a homogeneous system has only the trivial solution X = O."
+   ],
+   "key": "MTH165-U1-038"
+  },
+  {
+   "topic": "Systems of Equations",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Consider the system x + y = 3, 2x − y = 0, 3x + 2y = k (three equations in two unknowns). Which statement is correct?",
+   "code": "",
+   "options": [
+    "It is consistent only for k = 7, and then has a unique solution",
+    "It is consistent only for k = 7, and then has infinitely many solutions, because the common rank 2 is less than the 3 equations",
+    "It has no solution for any k, because there are more equations than unknowns",
+    "It is consistent for every k, because rank(A) = 2 equals the number of unknowns"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The first two equations give x = 1, y = 2, so the third equation needs 3 + 4 = k, i.e. k = 7. For any other k, rank([A|B]) = 3 > rank(A) = 2 and there is no solution. At k = 7, rank(A) = rank([A|B]) = 2 = n (the number of unknowns), so the solution x = 1, y = 2 is unique.",
+   "why_wrong": [
+    "",
+    "The common rank must be compared with n, the number of unknowns (2), not the number of equations. r = n = 2 gives a unique solution.",
+    "Extra equations do not force inconsistency. At k = 7, x = 1, y = 2 satisfies all three equations.",
+    "rank(A) = 2 = n says nothing about consistency. For k ≠ 7 the augmented matrix has rank 3 > 2, so there is no solution."
+   ],
+   "key": "MTH165-U1-039"
+  },
+  {
+   "topic": "Systems of Equations",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Consider the system x + y + z = 1, x + 2y + 3z = k, x + 4y + 7z = k². Which statement is correct?",
+   "code": "",
+   "options": [
+    "It is consistent only for k = 1 and k = 2, with infinitely many solutions in each case",
+    "It is consistent only for k = 1 and k = 2, with a unique solution in each case",
+    "It is inconsistent for every k, because |A| = 0",
+    "It is consistent for every k, with infinitely many solutions, because rank(A) = 2 < 3"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "R2 − R1 gives (0, 1, 2 | k − 1) and R3 − R1 gives (0, 3, 6 | k² − 1). Then R3 − 3R2 gives (0, 0, 0 | k² − 3k + 2) = (0, 0, 0 | (k − 1)(k − 2)). So rank(A) = 2 always, and rank([A|B]) = 2 only when k = 1 or k = 2. In those cases r = 2 < n = 3, so there are infinitely many solutions with one free parameter.",
+   "why_wrong": [
+    "",
+    "Consistency (rank(A) = rank([A|B])) only says a solution exists. With r = 2 < n = 3 there are infinitely many, not one.",
+    "|A| = 0 rules out a unique solution, not every solution. For k = 1 or 2 the last row reads 0 = 0 and the system is consistent.",
+    "This checks only rank(A). For k other than 1 and 2 the last augmented row reads 0 = (k − 1)(k − 2) ≠ 0, so rank([A|B]) = 3 and there is no solution."
+   ],
+   "key": "MTH165-U1-040"
+  },
+  {
+   "topic": "Eigenvalues and Eigenvectors",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "A 3 × 3 matrix A has eigenvalues 1, −1 and 3. What is |A² + 2A|?",
+   "code": "",
+   "options": [
+    "−45",
+    "3",
+    "17",
+    "−15"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "If λ is an eigenvalue of A, then λ² + 2λ is an eigenvalue of A² + 2A. So the eigenvalues of A² + 2A are 1 + 2 = 3, 1 − 2 = −1 and 9 + 6 = 15. The determinant is the product of the eigenvalues: 3·(−1)·15 = −45.",
+   "why_wrong": [
+    "",
+    "The determinant was treated as additive with |2A| = 2|A|, giving |A|² + 2|A| = 9 − 6 = 3. Neither step is valid.",
+    "The eigenvalues 3, −1 and 15 were added (which gives the trace, 17) instead of multiplied.",
+    "The determinant was split as |A²| + |2A| = 9 + 2³(−3) = −15, but |X + Y| ≠ |X| + |Y| in general."
+   ],
+   "key": "MTH165-U1-041"
+  },
+  {
+   "topic": "Eigenvalues and Eigenvectors",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "A = [[2, 0, 1], [0, 3, 0], [1, 0, 2]] has λ = 1 as an eigenvalue. Which vector is an eigenvector of A for λ = 1? (An eigenvector is determined only up to a non-zero scalar multiple.)",
+   "code": "",
+   "options": [
+    "(1, 0, −1)",
+    "(1, 0, 1)",
+    "(0, 1, 0)",
+    "(1, 1, −1)"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Solve (A − I)X = O with A − I = [[1, 0, 1], [0, 2, 0], [1, 0, 1]]. The rows give x + z = 0 and 2y = 0, so y = 0, z = −x, and X = (1, 0, −1) up to a non-zero multiple. Check: A(1, 0, −1) = (2 − 1, 0, 1 − 2) = (1, 0, −1) = 1·(1, 0, −1).",
+   "why_wrong": [
+    "",
+    "A(1, 0, 1) = (3, 0, 3), so this is an eigenvector for λ = 3. It comes from solving x − z = 0 instead of x + z = 0.",
+    "A(0, 1, 0) = (0, 3, 0), so this is an eigenvector for λ = 3, not λ = 1.",
+    "The middle equation 2y = 0 was ignored. A(1, 1, −1) = (1, 3, −1), which is not a multiple of (1, 1, −1)."
+   ],
+   "key": "MTH165-U1-042"
+  },
+  {
+   "topic": "Eigenvalues and Eigenvectors",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "How many linearly independent eigenvectors does A = [[2, 1, 0], [0, 2, 0], [0, 0, 3]] have in total?",
+   "code": "",
+   "options": [
+    "2: one for λ = 2 and one for λ = 3",
+    "3: two for the repeated eigenvalue λ = 2 and one for λ = 3",
+    "1: the repeated eigenvalue λ = 2 gives no eigenvector, and only λ = 3 does",
+    "Infinitely many, since every non-zero multiple of an eigenvector is again an eigenvector"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A is upper triangular, so its eigenvalues are 2, 2 and 3. For λ = 2, A − 2I = [[0, 1, 0], [0, 0, 0], [0, 0, 1]] has rank 2, which leaves only 3 − 2 = 1 independent eigenvector, (1, 0, 0). For λ = 3, A − 3I also has rank 2, which gives (0, 0, 1). The total is 2.",
+   "why_wrong": [
+    "",
+    "A repeated eigenvalue need not give as many independent eigenvectors as its multiplicity. Here A − 2I has rank 2, which leaves only one.",
+    "Every eigenvalue has at least one eigenvector, because |A − 2I| = 0 guarantees a non-zero solution. λ = 2 gives (1, 0, 0).",
+    "All multiples of one eigenvector depend on it. The question counts linearly independent eigenvectors, and there can be at most 3."
+   ],
+   "key": "MTH165-U1-043"
+  },
+  {
+   "topic": "Eigenvalues and Eigenvectors",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which statement about the eigenvalues of A = [[1, −1], [1, 1]] is correct?",
+   "code": "",
+   "options": [
+    "A has no eigenvalues at all, so the rules 'sum = trace' and 'product = |A|' do not apply to it",
+    "They are 1 + i and 1 − i; their sum 2 equals the trace and their product 2 equals |A|",
+    "They are 1 and 1, the diagonal entries of A",
+    "They are 0 and 2, the roots of λ² − 2λ = 0"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The characteristic equation is λ² − (trace)λ + |A| = 0, with trace = 2 and |A| = 1·1 − (−1)·1 = 2. So λ² − 2λ + 2 = 0 and λ = 1 ± i. A has no real eigenvalues, but the trace and determinant rules hold once complex eigenvalues are counted: (1 + i) + (1 − i) = 2 and (1 + i)(1 − i) = 2.",
+   "why_wrong": [
+    "A has no real eigenvalues, but it does have the complex pair 1 ± i. Sum = trace and product = |A| hold once complex eigenvalues are counted.",
+    "",
+    "Eigenvalues sit on the diagonal only for triangular (or diagonal) matrices. A has non-zero entries on both sides of the diagonal.",
+    "This comes from a sign error in the determinant: |A| = 1·1 − (−1)·1 = 2, not 1 − 1 = 0."
+   ],
+   "key": "MTH165-U1-044"
+  },
+  {
+   "topic": "Cayley-Hamilton Theorem",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "For A = [[1, 2], [3, 2]], use the Cayley–Hamilton theorem to express A⁴ in the form pA + qI.",
+   "code": "",
+   "options": [
+    "51A + 52I",
+    "13A + 12I",
+    "3A − 20I",
+    "−51A + 52I"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "trace A = 3 and |A| = 2 − 6 = −4, so the characteristic equation is λ² − 3λ − 4 = 0 and A² = 3A + 4I. Then A³ = 3A² + 4A = 13A + 12I, and A⁴ = 13A² + 12A = 13(3A + 4I) + 12A = 51A + 52I.",
+   "why_wrong": [
+    "",
+    "This is A³. The reduction stopped one step early.",
+    "|A| was taken as +4 (a sign error in 2 − 6), which gives λ² − 3λ + 4 = 0 and A² = 3A − 4I.",
+    "The sign of the trace term was flipped, which gives λ² + 3λ − 4 = 0 and A² = −3A + 4I."
+   ],
+   "key": "MTH165-U1-045"
+  },
+  {
+   "topic": "Cayley-Hamilton Theorem",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "For A = [[2, 1], [1, 2]], what is A⁵ − 4A⁴ + 3A³ + A − I?",
+   "code": "",
+   "options": [
+    "[[1, 1], [1, 1]]",
+    "O, the zero matrix",
+    "[[2, 1], [1, 2]]",
+    "[[3, 1], [1, 3]]"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The characteristic equation of A is λ² − 4λ + 3 = 0 (trace 4, |A| = 3), so A² − 4A + 3I = O by Cayley–Hamilton. The expression factors as A³(A² − 4A + 3I) + A − I = O + A − I = [[1, 1], [1, 1]].",
+   "why_wrong": [
+    "",
+    "Only the part A³(A² − 4A + 3I) vanishes. The leftover A − I is not zero.",
+    "This keeps A but drops the −I from the leftover A − I.",
+    "This is a sign slip: the leftover is A − I, not A + I."
+   ],
+   "key": "MTH165-U1-046"
+  },
+  {
+   "topic": "Cayley-Hamilton Theorem",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A student applies the Cayley–Hamilton theorem to A = [[2, 4], [1, 2]] in order to find A⁻¹. Which conclusion is correct?",
+   "code": "",
+   "options": [
+    "A² − 4A = O holds, but A⁻¹ does not exist, because the constant term of the characteristic polynomial, |A|, is 0",
+    "Multiplying A² − 4A = O by A⁻¹ gives A = 4I",
+    "A⁻¹ = (1/8)(4I − A)",
+    "The theorem cannot be applied, because Cayley–Hamilton needs A to be non-singular"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "trace A = 4 and |A| = 2·2 − 4·1 = 0, so the characteristic equation is λ² − 4λ = 0 and A² − 4A = O (check: A² = [[8, 16], [4, 8]] = 4A). Finding A⁻¹ requires dividing by the constant term, which is |A| = 0. So A is singular and A⁻¹ does not exist.",
+   "why_wrong": [
+    "",
+    "A⁻¹ does not exist because |A| = 0, so multiplying by it is invalid. And indeed A ≠ 4I.",
+    "|A| was computed as 2·2 + 4·1 = 8, a sign error. The true constant term is 0.",
+    "Cayley–Hamilton holds for every square matrix, singular or not. Only the inverse step needs |A| ≠ 0."
+   ],
+   "key": "MTH165-U1-047"
+  },
+  {
+   "topic": "Cayley-Hamilton Theorem",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "For A = [[1, 0, 2], [0, 2, 1], [2, 0, 3]], the Cayley–Hamilton theorem gives A³ as a combination of A², A and I. Which is correct?",
+   "code": "",
+   "options": [
+    "A³ = 6A² − 7A − 2I",
+    "A³ = −6A² + 7A + 2I",
+    "A³ = 6A² − 11A − 2I",
+    "A³ = 6A² − 7A + 2I"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "S₁ = trace = 6. S₂ = sum of the principal 2 × 2 minors = (2·3 − 1·0) + (1·3 − 2·2) + (1·2 − 0·0) = 6 − 1 + 2 = 7. S₃ = |A| = 1(6 − 0) + 2(0 − 4) = −2. So the characteristic equation is λ³ − 6λ² + 7λ + 2 = 0, and Cayley–Hamilton gives A³ − 6A² + 7A + 2I = O, i.e. A³ = 6A² − 7A − 2I.",
+   "why_wrong": [
+    "",
+    "The terms were moved across the equals sign without changing sign. From A³ − 6A² + 7A + 2I = O, A³ = 6A² − 7A − 2I.",
+    "S₂ was taken as the sum of products of diagonal pairs (1·2 + 2·3 + 1·3 = 11) instead of the principal 2 × 2 minors, which here total 7.",
+    "The constant term was written as +S₃ instead of −S₃. With S₃ = −2 the constant in the equation is +2, so moving it across gives −2I."
+   ],
+   "key": "MTH165-U1-048"
+  }
+ ]
+}

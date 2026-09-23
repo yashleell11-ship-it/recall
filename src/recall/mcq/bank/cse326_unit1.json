@@ -1,0 +1,1111 @@
+{
+ "subject_code": "CSE326",
+ "unit": 1,
+ "unit_label": "HTML Fundamentals",
+ "questions": [
+  {
+   "topic": "Internet and Web Basics",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In the client-server model of the web, which of these is the client when you open a web page?",
+   "code": "",
+   "options": [
+    "The web server that stores the page",
+    "The web browser on your device",
+    "The DNS server that looks up the domain",
+    "The HTML file that is sent back"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The client is the program that makes the request. Your browser sends an HTTP request for the page, the web server sends back a response containing the HTML, and the browser then renders it.",
+   "why_wrong": [
+    "The server receives the request and sends the response, so it is the other side, not the client.",
+    "",
+    "A DNS server only turns the domain name into an IP address before the page request is sent. It is not the client that requests the web page.",
+    "The HTML file is what gets delivered. It is not a program, so it cannot make requests."
+   ],
+   "key": "CSE326-U1-001"
+  },
+  {
+   "topic": "Internet and Web Basics",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does DNS do when you type a web address such as example.com into the browser?",
+   "code": "",
+   "options": [
+    "It renders the HTML of the page on the screen",
+    "It stores a permanent copy of every page you visit",
+    "It translates the domain name into the IP address of the server",
+    "It checks the HTML for syntax errors before display"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Computers on the internet reach each other by IP address, but people type names. DNS looks up example.com and returns the matching IP address, so the browser knows which server to send its request to.",
+   "why_wrong": [
+    "Rendering is done by the browser, not by DNS.",
+    "Keeping copies of pages is caching, which the browser does. DNS only deals with names and addresses.",
+    "",
+    "Nothing on the network checks your HTML. DNS only maps names to addresses, and the browser parses whatever HTML it receives."
+   ],
+   "key": "CSE326-U1-002"
+  },
+  {
+   "topic": "Internet and Web Basics",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For the URL https://example.com/notes/page.html?id=7#intro, which request target does the browser send to the server in the HTTP request line?",
+   "code": "",
+   "options": [
+    "/notes/page.html?id=7#intro",
+    "/notes/page.html",
+    "/notes/page.html#intro",
+    "/notes/page.html?id=7"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The path and the query string are part of the request, so the server receives /notes/page.html?id=7. The fragment #intro stays in the browser. It is used after the page loads to scroll to the element with id=\"intro\" and never appears in the HTTP request.",
+   "why_wrong": [
+    "This keeps the fragment, but the browser removes #intro before it builds the request.",
+    "This drops the query string, but ?id=7 is sent to the server as part of the request target.",
+    "This keeps the fragment and drops the query, which is exactly backwards.",
+    ""
+   ],
+   "key": "CSE326-U1-003"
+  },
+  {
+   "topic": "Internet and Web Basics",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Put these steps in the order they happen when you open https://example.com in a browser:\n(1) The browser renders the page\n(2) DNS resolves example.com to an IP address\n(3) The server sends back an HTTP response with the HTML\n(4) The browser sends an HTTP request to the server",
+   "code": "",
+   "options": [
+    "2 → 4 → 3 → 1",
+    "4 → 2 → 3 → 1",
+    "2 → 3 → 4 → 1",
+    "4 → 3 → 2 → 1"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The browser cannot contact the server until it knows the server's IP address, so the DNS lookup comes first. Next the browser sends its request and the server replies with the HTML. The browser can only render the page once that response arrives.",
+   "why_wrong": [
+    "",
+    "This sends the request before the DNS lookup. Without the IP address, the browser does not know where to send it.",
+    "This has the server responding before any request was sent. A server only responds to a request.",
+    "This does the DNS lookup only after the request and the response, but the browser needs the IP address from DNS before it can send the request at all."
+   ],
+   "key": "CSE326-U1-004"
+  },
+  {
+   "topic": "Internet and Web Basics",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement correctly distinguishes the Internet from the World Wide Web?",
+   "code": "",
+   "options": [
+    "They are two names for exactly the same thing",
+    "The Web is the physical network of cables and routers; the Internet is the collection of web pages",
+    "The Internet is the global network of connected computers; the Web is a service running on it, made of linked pages fetched over HTTP",
+    "The Internet carries only web pages, so email and file transfer are not part of it"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The Internet is the infrastructure: networks of computers exchanging data. The Web is one service built on top of it, made of documents linked by URLs and delivered over HTTP. Email is another service that runs on the Internet.",
+   "why_wrong": [
+    "This treats the network and one of its services as the same thing. Email uses the Internet but is not part of the Web.",
+    "This swaps the two definitions. The network is the Internet, and the linked pages are the Web.",
+    "",
+    "The Internet carries many services besides the Web, including email and file transfer."
+   ],
+   "key": "CSE326-U1-005"
+  },
+  {
+   "topic": "Document Structure",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the purpose of <!DOCTYPE html> at the very top of an HTML5 page?",
+   "code": "",
+   "options": [
+    "It is an element that displays the page title in the browser tab",
+    "It tells the browser the page is modern HTML, so it renders in standards mode",
+    "It links the page to its external stylesheet",
+    "It is the opening tag that must be closed with </DOCTYPE>"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "<!DOCTYPE html> is a declaration, not an element. When it is present, the browser renders in standards mode. When it is missing, the browser falls back to quirks mode, which copies old, non-standard rendering behaviour.",
+   "why_wrong": [
+    "The tab title comes from the <title> element inside <head>, not from the doctype.",
+    "",
+    "Stylesheets are linked with <link rel=\"stylesheet\">. The doctype does not load any file.",
+    "The doctype is a declaration with no closing tag. </DOCTYPE> does not exist."
+   ],
+   "key": "CSE326-U1-006"
+  },
+  {
+   "topic": "Document Structure",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which of these elements belongs inside <head> rather than <body>?",
+   "code": "",
+   "options": [
+    "<h1>",
+    "<p>",
+    "<img>",
+    "<title>"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "<head> holds information about the page, such as its title, character encoding, metadata and links to stylesheets. <title> belongs there and sets the text shown in the browser tab. Headings, paragraphs and images are visible content, so they go in <body>.",
+   "why_wrong": [
+    "<h1> is a visible main heading. It is page content, so it goes in <body>.",
+    "<p> is a paragraph of visible text, so it belongs in <body>.",
+    "<img> shows an image on the page, so it belongs in <body>.",
+    ""
+   ],
+   "key": "CSE326-U1-007"
+  },
+  {
+   "topic": "Document Structure",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which of these is a void element, one that has no content and no closing tag?",
+   "code": "",
+   "options": [
+    "<span>",
+    "<div>",
+    "<img>",
+    "<a>"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "A void element can never contain content, so it is written as a start tag only, like <img src=\"cat.jpg\" alt=\"Cat\">. Other void elements include <br>, <hr>, <meta>, <link> and <input>.",
+   "why_wrong": [
+    "<span> wraps inline content and needs a closing </span>.",
+    "<div> is a container for other content and needs a closing </div>.",
+    "",
+    "<a> wraps the link text and needs a closing </a>."
+   ],
+   "key": "CSE326-U1-008"
+  },
+  {
+   "topic": "Document Structure",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What happens when the browser renders the code below?",
+   "code": "<button disabled=\"false\">Save</button>",
+   "options": [
+    "The button is disabled, because the disabled attribute is present",
+    "The button is enabled, because its value is \"false\"",
+    "The whole element is ignored because \"false\" is not a valid value",
+    "The button looks greyed out but can still be clicked"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "disabled is a boolean attribute: if it is present, it counts as true, whatever value is written. So disabled=\"false\" still disables the button. The only way to enable it is to remove the attribute completely.",
+   "why_wrong": [
+    "",
+    "This reads the value as a true/false setting, but the browser only checks whether the attribute is there, not what it says.",
+    "An unexpected value does not make the browser drop the element. The button is still rendered.",
+    "A disabled button is greyed out and also cannot be clicked. The attribute does not separate how it looks from how it behaves."
+   ],
+   "key": "CSE326-U1-009"
+  },
+  {
+   "topic": "Document Structure",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about HTML is NOT correct?",
+   "code": "",
+   "options": [
+    "Tag names are case-insensitive, so <P> and <p> are the same element",
+    "The value of a class attribute is case-sensitive, so class=\"Note\" and class=\"note\" are different",
+    "An attribute is written inside the start tag in the form name=\"value\"",
+    "HTML is a programming language, because the browser executes its tags as instructions"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "HTML is a markup language: it labels the structure and meaning of content, and it has no variables, conditions or loops to run. The other three statements are true. Tag and attribute names ignore case, but attribute values such as class and id do not.",
+   "why_wrong": [
+    "This is true: <P> and <p> create the same paragraph element.",
+    "This is true: class values are matched with case, so Note and note are different classes.",
+    "This is true: attributes go in the start tag, for example <img src=\"a.png\">.",
+    ""
+   ],
+   "key": "CSE326-U1-010"
+  },
+  {
+   "topic": "Document Structure",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does an HTML5 browser do with the code below?",
+   "code": "<p>Line one<br />Line two<br>Line three</p>",
+   "options": [
+    "Breaks only after \"Line one\", because <br> without a slash is ignored",
+    "Shows three lines, because <br /> and <br> are the same void element and the slash is optional",
+    "Shows an error, because a page must use one form of <br> consistently",
+    "Shows four lines, because <br /> counts as both an opening and a closing tag"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "<br> is a void element, so it never takes a closing tag. In HTML5 the slash in <br /> is allowed but changes nothing when the page is parsed. Each tag gives one line break, so the paragraph shows three lines.",
+   "why_wrong": [
+    "This assumes HTML5 requires the slash. It is optional, and <br> on its own is a complete line break.",
+    "",
+    "Browsers do not require one style. Mixed forms are parsed the same way and no error is shown.",
+    "This treats <br /> as two tags. The slash is ignored, so it gives exactly one break."
+   ],
+   "key": "CSE326-U1-011"
+  },
+  {
+   "topic": "Text and Lists",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which element marks text as having strong importance, rather than just making it look bold?",
+   "code": "",
+   "options": [
+    "<b>",
+    "<em>",
+    "<strong>",
+    "<i>"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "<strong> carries meaning: it says the text is important, and screen readers and search engines can use that. <b> only draws attention to text without adding importance, even though both are bold by default.",
+   "why_wrong": [
+    "<b> is bold but only draws attention to the text. It does not mark importance.",
+    "<em> marks stressed emphasis, italic by default, not strong importance.",
+    "",
+    "<i> marks text in a different voice, such as a technical term or a foreign phrase. It does not mark importance."
+   ],
+   "key": "CSE326-U1-012"
+  },
+  {
+   "topic": "Text and Lists",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the browser show beside each item in the code below by default?",
+   "code": "<ul>\n  <li>Milk</li>\n  <li>Bread</li>\n</ul>",
+   "options": [
+    "A bullet point",
+    "The numbers 1 and 2",
+    "The letters a and b",
+    "No marker at all"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "<ul> is an unordered list, used when the order of the items does not matter. Each <li> gets a bullet, a filled disc, by default. Numbered markers come from <ol>, the ordered list.",
+   "why_wrong": [
+    "",
+    "Numbers come from an ordered list, <ol>, not from <ul>.",
+    "Letters need an ordered list with type=\"a\", not <ul>.",
+    "A <ul> shows bullets by default. Removing them takes CSS."
+   ],
+   "key": "CSE326-U1-013"
+  },
+  {
+   "topic": "Text and Lists",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In a description list, which element holds the term being defined?",
+   "code": "",
+   "options": [
+    "<dd>",
+    "<dt>",
+    "<dl>",
+    "<li>"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "A description list is wrapped in <dl>. Each term goes in <dt> and its description in <dd>, for example <dt>HTML</dt><dd>The markup language of the web</dd>.",
+   "why_wrong": [
+    "<dd> holds the description of the term, not the term itself.",
+    "",
+    "<dl> wraps the whole list, not a single term.",
+    "<li> is a list item inside <ul> or <ol>. It is not used for terms in a <dl>."
+   ],
+   "key": "CSE326-U1-014"
+  },
+  {
+   "topic": "Text and Lists",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which numbers does the browser show beside Red, Green and Blue in the code below, in that order?",
+   "code": "<ol reversed start=\"5\">\n  <li>Red</li>\n  <li>Green</li>\n  <li>Blue</li>\n</ol>",
+   "options": [
+    "3, 4, 5",
+    "5, 6, 7",
+    "3, 2, 1",
+    "5, 4, 3"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "start=\"5\" makes the first number 5, and reversed makes the count go down by 1 each time instead of up. So Red is 5, Green is 5 − 1 = 4 and Blue is 4 − 1 = 3. The items stay in the order they are written.",
+   "why_wrong": [
+    "This treats reversed as flipping the order of the items on screen. It only makes the numbers count down.",
+    "This ignores reversed and counts up from start=\"5\".",
+    "This ignores start=\"5\". reversed on its own would count down from the number of items (3), but start sets 5 as the first number.",
+    ""
+   ],
+   "key": "CSE326-U1-015"
+  },
+  {
+   "topic": "Text and Lists",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these elements is still valid in HTML5?",
+   "code": "",
+   "options": [
+    "<center>",
+    "<font>",
+    "<b>",
+    "<marquee>"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "<b> was kept in HTML5 with a new meaning: it draws attention to text without implying importance. <center>, <font> and <marquee> are obsolete because they only controlled appearance or movement, which is now CSS's job.",
+   "why_wrong": [
+    "<center> is obsolete. Centring is done with CSS, such as text-align: center.",
+    "<font> is obsolete. Fonts, sizes and colours are set with CSS.",
+    "",
+    "<marquee> is obsolete. Moving text is done with CSS animations."
+   ],
+   "key": "CSE326-U1-016"
+  },
+  {
+   "topic": "Links and Images",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which attribute fills the blank in the code below so that clicking the link opens https://example.com?",
+   "code": "<a ___=\"https://example.com\">Visit Example</a>",
+   "options": [
+    "src",
+    "link",
+    "target",
+    "href"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "href holds the destination of a hyperlink, so clicking the link goes to that URL. src is for elements that load a resource into the page, such as <img> and <video>, not for <a>.",
+   "why_wrong": [
+    "src loads a resource into the page for elements like <img>. A link uses href for its destination.",
+    "<a> has no link attribute. <link> is a separate element used in <head>.",
+    "target chooses where the link opens, such as a new tab, not which URL it goes to.",
+    ""
+   ],
+   "key": "CSE326-U1-017"
+  },
+  {
+   "topic": "Links and Images",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which attribute fills the blank in the code below to give the image a text alternative for screen readers and for when the image fails to load?",
+   "code": "<img src=\"dog.jpg\" ___=\"A brown dog catching a ball\">",
+   "options": [
+    "alt",
+    "title",
+    "name",
+    "caption"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "alt holds the text alternative for an image: screen readers read it aloud, and the browser shows it if the image cannot load. title only adds an optional tooltip and cannot replace alt.",
+   "why_wrong": [
+    "",
+    "title adds a tooltip on hover. It is not the attribute meant for the text alternative, so it cannot replace alt.",
+    "name does not describe what an image shows. It is not the text-alternative attribute.",
+    "<img> has no caption attribute. A visible caption uses the <figcaption> element inside <figure>."
+   ],
+   "key": "CSE326-U1-018"
+  },
+  {
+   "topic": "Links and Images",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which value of the target attribute on <a> opens the link in a new tab or window?",
+   "code": "",
+   "options": [
+    "_self",
+    "_blank",
+    "_parent",
+    "_top"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "target=\"_blank\" opens the link in a new tab or window. It is usually paired with rel=\"noopener noreferrer\", so the new page cannot reach back and control the original one.",
+   "why_wrong": [
+    "_self is the default and opens the link in the same tab.",
+    "",
+    "_parent opens the link in the parent frame, which matters with iframes. It does not open a new tab.",
+    "_top opens the link in the whole current window, replacing any frames. It does not open a new tab."
+   ],
+   "key": "CSE326-U1-019"
+  },
+  {
+   "topic": "Links and Images",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The code below is in the page https://example.com/site/blog/post.html. Which URL does the browser load the image from?",
+   "code": "<img src=\"../images/logo.png\" alt=\"Site logo\">",
+   "options": [
+    "https://example.com/images/logo.png",
+    "https://example.com/site/blog/images/logo.png",
+    "https://example.com/site/images/logo.png",
+    "https://example.com/blog/images/logo.png"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "A relative URL starts from the page's folder, not its file: https://example.com/site/blog/. The ../ goes up exactly one level to https://example.com/site/. Adding images/logo.png gives https://example.com/site/images/logo.png.",
+   "why_wrong": [
+    "This goes up two levels, as if the path were root-relative (/images/logo.png). ../ goes up only one folder.",
+    "This counts ../ from the file post.html instead of from its folder, so the path never leaves /blog/.",
+    "",
+    "This removes /site/ instead of /blog/. ../ removes the last folder in the path, which is blog."
+   ],
+   "key": "CSE326-U1-020"
+  },
+  {
+   "topic": "Links and Images",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For a purely decorative image that adds no information to the page, which markup is correct?",
+   "code": "",
+   "options": [
+    "<img src=\"swirl.png\">",
+    "<img src=\"swirl.png\" alt=\"\">",
+    "<img src=\"swirl.png\" alt=\"image\">",
+    "<img src=\"swirl.png\" title=\"decorative swirl\">"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "An empty alt=\"\" tells screen readers the image is decorative, so they skip it. Leaving alt out completely is different: the image is treated as missing its description, and some screen readers read the file name aloud instead.",
+   "why_wrong": [
+    "Leaving alt out is not the same as alt=\"\". The image is reported as having no text alternative, and the file name may be read aloud.",
+    "",
+    "A vague label like \"image\" is still read aloud, which adds noise and no information. Decorative images take alt=\"\".",
+    "title cannot replace alt. Without alt=\"\", the image is not marked as decorative."
+   ],
+   "key": "CSE326-U1-021"
+  },
+  {
+   "topic": "Multimedia, SVG and SEO",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the controls attribute do in the code below?",
+   "code": "<video src=\"intro.mp4\" controls></video>",
+   "options": [
+    "Starts playing the video as soon as the page loads",
+    "Plays the video again from the start when it ends",
+    "Shows a still image before the video starts",
+    "Shows the browser's play/pause, seek and volume controls"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "controls is a boolean attribute that tells the browser to show its built-in video controls. Without it, the browser shows no play button or volume slider on the video.",
+   "why_wrong": [
+    "Starting automatically is the job of autoplay, not controls.",
+    "Playing again after the end is the job of loop.",
+    "The still image shown before playback is set with poster.",
+    ""
+   ],
+   "key": "CSE326-U1-022"
+  },
+  {
+   "topic": "Multimedia, SVG and SEO",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which element name fills both blanks in the code below to embed another web page inside the current page?",
+   "code": "<___ src=\"https://example.com/map.html\" width=\"400\" height=\"300\"></___>",
+   "options": [
+    "iframe",
+    "frame",
+    "link",
+    "audio"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "<iframe> creates a box inside the page that loads and shows a separate HTML document from its src URL. The old <frame> element only worked inside <frameset> and is obsolete in HTML5.",
+   "why_wrong": [
+    "",
+    "<frame> is obsolete in HTML5 and only worked inside a <frameset>, not in normal page content.",
+    "<link> connects outside resources such as stylesheets from <head>. It shows nothing on the page.",
+    "<audio> plays sound files, not web pages."
+   ],
+   "key": "CSE326-U1-023"
+  },
+  {
+   "topic": "Multimedia, SVG and SEO",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which name value fills the blank in the code below so that search engines can use the content as the page's summary in results?",
+   "code": "<meta name=\"___\" content=\"Free notes and practice questions on HTML basics.\">",
+   "options": [
+    "keywords",
+    "author",
+    "description",
+    "viewport"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "<meta name=\"description\"> gives a short summary of the page. Search engines often show it as the snippet under the page title in results, so a clear description helps people decide whether to click.",
+   "why_wrong": [
+    "keywords lists search terms. It is not shown as the summary in results.",
+    "author names the person who wrote the page, not a summary of it.",
+    "",
+    "viewport controls how the page scales on mobile screens. It has nothing to do with search result summaries."
+   ],
+   "key": "CSE326-U1-024"
+  },
+  {
+   "topic": "Multimedia, SVG and SEO",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Across which horizontal range (x values) does the circle in the code below extend?",
+   "code": "<svg width=\"200\" height=\"100\">\n  <circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"red\" />\n</svg>",
+   "options": [
+    "x = 50 to 90",
+    "x = 10 to 90",
+    "x = 0 to 80",
+    "x = 50 to 130"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "cx and cy give the centre of the circle, and r is its radius. The circle reaches r on each side of the centre, so it runs from 50 − 40 = 10 to 50 + 40 = 90.",
+   "why_wrong": [
+    "This treats cx as the left edge and adds the radius once. cx is the centre.",
+    "",
+    "This ignores cx, puts the circle's left edge at x = 0 and spans the diameter of 80.",
+    "This treats cx as the left edge and adds the full diameter (2 × 40 = 80)."
+   ],
+   "key": "CSE326-U1-025"
+  },
+  {
+   "topic": "Multimedia, SVG and SEO",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these is NOT a valid attribute of the <video> element?",
+   "code": "",
+   "options": [
+    "poster",
+    "muted",
+    "controls",
+    "alt"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "poster sets the image shown before playback, muted starts the video with the sound off, and controls shows the playback controls. alt belongs to <img>. For a video, fallback content goes between <video> and </video> instead.",
+   "why_wrong": [
+    "poster is valid: it sets the image shown before the video plays.",
+    "muted is valid: it starts the video with the sound off.",
+    "controls is valid: it shows the browser's play, seek and volume controls.",
+    ""
+   ],
+   "key": "CSE326-U1-026"
+  },
+  {
+   "topic": "Internet and Web Basics",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A visitor opens https://news.example.com/today.html, which contains the tag in the code below. How does the logo end up on the visitor's screen?",
+   "code": "<img src=\"https://cdn.example.org/logo.png\" alt=\"Example News logo\">",
+   "options": [
+    "The news.example.com server fetches the logo from cdn.example.org and sends it inside its HTML response",
+    "The browser reads the src URL, sends its own request to cdn.example.org, then draws the image it receives",
+    "The browser gets the logo from news.example.com, because every file on a page comes from the server that sent the page",
+    "cdn.example.org sends the logo to the browser automatically, without being asked, once the HTML has loaded"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The HTML the browser gets from news.example.com is only text, including this <img> tag. The browser is the client. It parses the HTML, looks up cdn.example.org in DNS and sends a separate HTTP request for /logo.png to that server. Every file on a page is its own request and response, and the browser, not a server, puts the pieces together on screen.",
+   "why_wrong": [
+    "Servers do not fetch images for the browser. The HTML response holds only the text of the <img> tag, and the browser has to request the file itself.",
+    "",
+    "A page can load resources from any host. The full URL in src sends the browser straight to cdn.example.org, not back to news.example.com.",
+    "In the client-server model the server only answers requests. cdn.example.org sends nothing until the browser asks for logo.png."
+   ],
+   "key": "CSE326-U1-027"
+  },
+  {
+   "topic": "Internet and Web Basics",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student double-clicks index.html in their project folder. It opens at a file:/// address, and its headings, lists and images all display correctly, even though no web server is running. Why does this work?",
+   "code": "",
+   "options": [
+    "The operating system quietly starts a web server whenever an .html file is opened",
+    "The HTML file is compiled into a program the first time it is opened, so it runs without a server",
+    "The browser sends the file to a DNS server, which renders it and returns the finished page",
+    "The browser itself parses and renders HTML. A web server only delivers files over HTTP, and that is not needed when the file is read straight from disk"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Rendering is always the client's job: the browser parses the markup, builds the page and draws it. On a live site the server's only role is to send that same file over HTTP when asked. With a file:/// address the browser skips that step and reads the file from disk, so the page looks the same.",
+   "why_wrong": [
+    "No server is involved. A file:/// address means the browser read the file straight from the disk.",
+    "HTML is a markup language, not a programming language, so it is never compiled. The browser reads the tags and renders them each time.",
+    "DNS only turns host names into IP addresses. It never receives or renders pages, and a file:/// address has no host to look up.",
+    ""
+   ],
+   "key": "CSE326-U1-028"
+  },
+  {
+   "topic": "Internet and Web Basics",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "When the browser opens the URL in the code below, which name does it ask DNS to turn into an IP address?",
+   "code": "https://notes.example.com:8080/unit1/intro.html?print=yes#summary",
+   "options": [
+    "notes.example.com",
+    "example.com",
+    "notes.example.com:8080",
+    "notes.example.com/unit1/intro.html"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "DNS maps host names to IP addresses. It knows nothing about schemes, ports, paths, queries or fragments. The host in this URL is notes.example.com, so the browser resolves that full name. It then connects to the returned IP on port 8080 and requests /unit1/intro.html?print=yes, while #summary stays in the browser.",
+   "why_wrong": [
+    "",
+    "notes.example.com is its own DNS name under example.com and can point to a different machine. The browser resolves the full host name, not just the parent domain.",
+    "The port is not part of a DNS name. DNS returns only an IP address, and the browser then connects to port 8080 at that address.",
+    "The path is sent to the server inside the HTTP request, after the connection is made. DNS never sees it."
+   ],
+   "key": "CSE326-U1-029"
+  },
+  {
+   "topic": "Internet and Web Basics",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The page https://example.com/notes.html is open in the browser and contains <h2 id=\"unit2\">. Which link, when clicked, only scrolls that already-loaded page to the heading, without requesting anything from a server?",
+   "code": "",
+   "options": [
+    "<a href=\"?part=unit2\">",
+    "<a href=\"/notes/#unit2\">",
+    "<a href=\"#unit2\">",
+    "<a href=\"https://www.example.com/notes.html#unit2\">"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "href=\"#unit2\" resolves to https://example.com/notes.html#unit2, which differs from the current URL only in its fragment. When only the fragment differs, the browser does a fragment navigation: it scrolls to the element with id=\"unit2\" and sends no request. Changing the scheme, host, path or query makes it a request for a new document.",
+   "why_wrong": [
+    "Changing the query gives a different URL (notes.html?part=unit2). The query is part of the request, so the browser asks the server for that document.",
+    "/notes/ is a different path from /notes.html, so this is a different document that must be requested, even though the fragment matches.",
+    "",
+    "www.example.com is a different host from example.com. The browser loads a new document from that host before it looks for #unit2."
+   ],
+   "key": "CSE326-U1-030"
+  },
+  {
+   "topic": "Document Structure",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "The file in the code below is saved as UTF-8, but in a student's browser the ₹ sign shows up as â‚¹. Which line, added as the first thing inside <head>, fixes it?",
+   "code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <title>Hostel Fees</title>\n</head>\n<body>\n  <p>Mess fee: ₹4,500 per month</p>\n</body>\n</html>",
+   "options": [
+    "<meta name=\"charset\" content=\"utf-8\">",
+    "<!DOCTYPE html charset=\"utf-8\">",
+    "<meta lang=\"utf-8\">",
+    "<meta charset=\"utf-8\">"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "UTF-8 stores ₹ as three bytes. If the browser is not told the encoding, it may decode the file with an old single-byte encoding such as Windows-1252, which turns those three bytes into the three characters â‚¹. <meta charset=\"utf-8\"> declares the encoding. It goes first in <head> because it must appear within the first 1024 bytes of the file.",
+   "why_wrong": [
+    "The encoding is declared with the charset attribute itself. A meta tag with name=\"charset\" is not recognised as an encoding declaration.",
+    "The doctype takes no charset. <!DOCTYPE html> only tells the browser to use standards mode.",
+    "lang holds a language code such as en, not an encoding, and it does not change how the file's bytes are decoded into characters.",
+    ""
+   ],
+   "key": "CSE326-U1-031"
+  },
+  {
+   "topic": "Document Structure",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student's page looks fine on a laptop. On a phone, the whole page appears shrunk, like a desktop page zoomed out, and visitors must pinch-zoom to read it. Which line is missing from <head>?",
+   "code": "",
+   "options": [
+    "<meta charset=\"utf-8\">",
+    "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
+    "<meta name=\"viewport\" content=\"width=1024\">",
+    "<meta name=\"description\" content=\"mobile-friendly page\">"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Without a viewport meta tag, mobile browsers lay the page out at a desktop-like width (typically 980 CSS pixels) and then scale everything down to fit the screen. width=device-width sets the layout width to the device's own width. initial-scale=1 starts the page at 100% zoom, so text appears at a readable size.",
+   "why_wrong": [
+    "charset only tells the browser the text encoding. It has no effect on layout width or zoom.",
+    "",
+    "width=1024 fixes the layout at 1024 CSS pixels. The phone still lays out a desktop-width page and shrinks it to fit, which is exactly the problem described.",
+    "The description meta is a summary for search results. It does not change how the page is laid out."
+   ],
+   "key": "CSE326-U1-032"
+  },
+  {
+   "topic": "Document Structure",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A page is written entirely in Hindi, but a screen reader reads it aloud with English pronunciation. The page's <html> tag has no attributes. Which change fixes this?",
+   "code": "",
+   "options": [
+    "<html lang=\"hi\">",
+    "<html language=\"hindi\">",
+    "<meta charset=\"hi\">",
+    "<meta name=\"description\" content=\"Hindi\">"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The lang attribute on <html> declares the language of the whole page with a language code: hi for Hindi, en for English. Screen readers use it to choose the voice and pronunciation rules, and browsers and search engines use it for translation and search results. Any element can override it, for example <span lang=\"en\"> for a phrase in another language.",
+   "why_wrong": [
+    "",
+    "There is no language attribute. The global attribute is lang, and it takes a language code such as hi, not a word like hindi.",
+    "charset names a character encoding such as utf-8. hi is not an encoding, and the encoding does not decide pronunciation.",
+    "The description meta is a summary shown in search results. It does not declare the language of the page's text."
+   ],
+   "key": "CSE326-U1-033"
+  },
+  {
+   "topic": "Document Structure",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The complete file in the code below has no <html>, <head> or <body> tags and no </p>. What does an HTML5 browser do with it?",
+   "code": "<!DOCTYPE html>\n<title>Unit 1 notes</title>\n<p>Welcome to the notes.",
+   "options": [
+    "It renders nothing, because content that is not inside a <body> element is never displayed",
+    "It shows \"Unit 1 notes\" as visible text above the paragraph, because without <head> the title has nowhere else to go",
+    "It creates the html, head and body elements itself and puts the title in head and the paragraph in body. Leaving these tags out is allowed in HTML5",
+    "It renders the page in quirks mode, because the missing tags make the document invalid"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "In HTML5 the start and end tags of html, head and body are optional, and </p> may be left off at the end of the body. The parser fills them in: metadata such as <title> goes into an implied <head>, and the first visible content, the <p>, opens an implied <body>. The result is the same page you get when every tag is written. Writing them out is still clearer.",
+   "why_wrong": [
+    "The parser creates a body element automatically when it reaches <p>, so the paragraph is rendered normally.",
+    "The parser puts <title> in an implied head, so its text appears only in the browser tab, not on the page.",
+    "",
+    "Quirks mode comes from a missing or old doctype, not from omitted tags. This file starts with <!DOCTYPE html>, so it uses standards mode, and leaving these tags out is allowed anyway."
+   ],
+   "key": "CSE326-U1-034"
+  },
+  {
+   "topic": "Document Structure",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A student used XML-style self-closing syntax in the code below. How does an HTML5 browser build the page?",
+   "code": "<div class=\"note\" />\n<p>Remember to save your file.</p>",
+   "options": [
+    "An empty div followed by a separate paragraph, because /> closes the div",
+    "The paragraph ends up inside the div, because /> is ignored on a non-void element, so the div stays open",
+    "The div is dropped from the page, because a self-closed non-void element is invalid",
+    "Nothing after the div is displayed until a matching </div> appears"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The HTML5 parser ignores a trailing slash. On void elements such as <br /> or <img /> that does no harm, because they never have content. On an ordinary element like div, <div class=\"note\" /> is read as a plain start tag, so the div stays open and the paragraph becomes its child. Write <div class=\"note\"></div> to get an empty div.",
+   "why_wrong": [
+    "In HTML5 the /> has no effect on parsing. It does not close a non-void element, so the div is still open when the paragraph arrives.",
+    "",
+    "The browser does not drop the element. It ignores the slash and keeps the div as an ordinary open element.",
+    "An unclosed div does not hide anything. The browser closes it automatically when its parent ends, and the paragraph is displayed inside it."
+   ],
+   "key": "CSE326-U1-035"
+  },
+  {
+   "topic": "Text and Lists",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student types two lines of a poem as in the code below and expects them to appear on two lines. What does the browser actually display?",
+   "code": "<p>Roses are red,\n      Violets are blue.</p>",
+   "options": [
+    "Two lines, exactly as typed, including the indentation before \"Violets\"",
+    "Two lines, with the indentation removed",
+    "One line: Roses are red, Violets are blue.",
+    "One line with nothing between the two parts: Roses are red,Violets are blue."
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "In normal text, browsers collapse any run of whitespace (spaces, tabs and line breaks) into a single space. The newline plus six spaces becomes one space, so the text flows as one line and wraps only if it runs out of width. To break the line, put <br> after \"red,\". To keep the source spacing exactly, use <pre>.",
+   "why_wrong": [
+    "Only <pre> keeps line breaks and spaces as typed. Inside <p> they are collapsed.",
+    "A newline in the source is not a line break on screen. Breaking the line needs <br> or <pre>.",
+    "",
+    "The line break and spaces collapse to one space, not to nothing, so a space still separates \"red,\" from \"Violets\"."
+   ],
+   "key": "CSE326-U1-036"
+  },
+  {
+   "topic": "Text and Lists",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student writes the sentence in the code below. They want the words the lab closes at five marked as a short quotation inside the sentence, with the browser adding the quotation marks itself. Which element should wrap those words?",
+   "code": "<p>The teacher said the lab closes at five.</p>",
+   "options": [
+    "<blockquote>",
+    "<cite>",
+    "<em>",
+    "<q>"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "<q> is the inline quotation element. It sits inside running text, and browsers add quotation marks around its content by default. So <p>The teacher said <q>the lab closes at five</q>.</p> displays with the quote marks already in place. For a long quotation that stands as its own block, <blockquote> is the right element.",
+   "why_wrong": [
+    "<blockquote> is for a longer quotation that forms its own block. It displays as a separate, indented block and adds no quotation marks.",
+    "<cite> marks the title of a creative work, such as a book or film, not the words someone said.",
+    "<em> adds stress emphasis (italic by default). It does not mark a quotation or add quotation marks.",
+    ""
+   ],
+   "key": "CSE326-U1-037"
+  },
+  {
+   "topic": "Text and Lists",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which markup is valid HTML5 for showing Apple and Mango as a sub-list of the Fruits item?",
+   "code": "",
+   "options": [
+    "<ul><li>Fruits</li><ul><li>Apple</li><li>Mango</li></ul></ul>",
+    "<ul><li>Fruits<ul><li>Apple</li><li>Mango</li></ul></li></ul>",
+    "<ul><li>Fruits</li><li><li>Apple</li><li>Mango</li></li></ul>",
+    "<ul><li>Fruits</li><ul>Apple Mango</ul></ul>"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The only elements allowed as children of <ul> and <ol> are <li> (plus script-supporting elements such as <script>). A sub-list belongs to the item it expands, so it goes inside that item's <li>, after the item's text: <li>Fruits<ul>…</ul></li>. Browsers show the first option almost the same way, which is why the mistake is common, but there the sub-list is not part of the Fruits item at all.",
+   "why_wrong": [
+    "<ul> may contain only <li> elements (plus script-supporting elements), so a <ul> placed directly inside another <ul> is invalid, even though browsers still indent it.",
+    "",
+    "An <li> cannot directly contain another <li>. The parser closes each open <li> when the next one starts, which gives four flat items (Fruits, an empty item, Apple, Mango) and no sub-list.",
+    "Text cannot sit directly inside <ul>. Every entry needs its own <li>, and the sub-list itself must go inside an <li>."
+   ],
+   "key": "CSE326-U1-038"
+  },
+  {
+   "topic": "Text and Lists",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which statement about the code below is correct?",
+   "code": "<dl>\n  <dt>Colour</dt>\n  <dt>Color</dt>\n  <dd>The property of light we see as red, green, blue and so on.</dd>\n  <dt>Web</dt>\n  <dd>A system of linked documents on the Internet.</dd>\n  <dd>The net a spider spins.</dd>\n</dl>",
+   "options": [
+    "It is invalid: every <dt> must be followed by exactly one <dd> before the next <dt>",
+    "It is valid only if each term-and-description group is wrapped in an <li>",
+    "It is valid, but the browser shows only the first <dt> of a group, so \"Color\" is hidden",
+    "It is valid: several <dt> terms may share one <dd>, and one <dt> may have several <dd> descriptions"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A <dl> is made of groups. Each group is one or more <dt> terms followed by one or more <dd> descriptions. Here Colour and Color are two terms that share one description, and Web is one term with two descriptions, which the rules allow. The browser shows each term on its own line and indents each description below it.",
+   "why_wrong": [
+    "HTML allows a group of one or more <dt> followed by one or more <dd>. Strict one-to-one alternation is not required.",
+    "<li> is not allowed inside <dl> at all. The only wrapper allowed around a group is <div>, and even that is optional.",
+    "Every <dt> is displayed. Terms that come one after another simply appear one under the other, above their shared description.",
+    ""
+   ],
+   "key": "CSE326-U1-039"
+  },
+  {
+   "topic": "Links and Images",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "The link in the code below points to a PDF stored on the same website as the page. What happens when a visitor clicks it?",
+   "code": "<a href=\"files/n1.pdf\" download=\"unit1-notes.pdf\">Unit 1 notes</a>",
+   "options": [
+    "The browser downloads the PDF and suggests saving it as unit1-notes.pdf",
+    "The PDF opens in a new tab whose title is unit1-notes.pdf",
+    "The browser downloads the PDF but names it n1.pdf, because the value of download is ignored",
+    "The PDF opens in the same tab as usual, because download works only together with target=\"_blank\""
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The download attribute tells the browser to save the linked file instead of opening it. When download has a value, that value becomes the suggested file name, so the file is offered as unit1-notes.pdf even though it is stored as files/n1.pdf. Browsers honour download only for same-origin links, which is why it matters that the PDF is on the same site.",
+   "why_wrong": [
+    "",
+    "download stops the browser from opening the file at all. Its value is a file name, not a tab title.",
+    "The value of download is the suggested file name, so the browser offers unit1-notes.pdf, not the stored name n1.pdf.",
+    "download works on its own. target=\"_blank\" is not needed and only affects where a normal link opens."
+   ],
+   "key": "CSE326-U1-040"
+  },
+  {
+   "topic": "Links and Images",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "On a contact page, clicking a link should open the visitor's email app with a new message addressed to help@example.com. Which markup does this?",
+   "code": "",
+   "options": [
+    "<a href=\"help@example.com\">Email us</a>",
+    "<a mailto=\"help@example.com\">Email us</a>",
+    "<a href=\"mailto:help@example.com\">Email us</a>",
+    "<a href=\"email://help@example.com\">Email us</a>"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "href takes a URL, and the scheme at its start decides what the browser does. mailto: hands the address to the default email program, which opens a new message to help@example.com. tel: does the same for phone numbers. A bare address has no scheme, so the browser resolves it like any other relative URL.",
+   "why_wrong": [
+    "Without a scheme, help@example.com is treated as a relative path. The browser requests a file with that name from the current site and gets a Not Found error.",
+    "mailto is a URL scheme written inside href, not an attribute of <a>. An <a> with no href is not a link.",
+    "",
+    "email:// is not a recognised URL scheme, so the browser has no program to hand it to."
+   ],
+   "key": "CSE326-U1-041"
+  },
+  {
+   "topic": "Links and Images",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "The site's logo is the only content of the link in the code below, which takes visitors to the home page. Which attribute should fill the blank?",
+   "code": "<a href=\"index.html\">\n  <img src=\"logo.png\" ____>\n</a>",
+   "options": [
+    "alt=\"\"",
+    "alt=\"Home page\"",
+    "alt=\"logo.png\"",
+    "alt=\"Image of a round blue logo\""
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "When an image is the only content of a link, its alt text becomes the link's accessible name. That is what a screen reader announces and what shows if the image fails to load. So the alt text must describe what the link does (here, go to the home page), not what the picture looks like. Empty alt is only for images that carry no information and do no job.",
+   "why_wrong": [
+    "alt=\"\" marks an image as decorative. Here the image is the link's only content, so the link would have no name, and a screen reader may read out the URL instead.",
+    "",
+    "A file name tells the user nothing about where the link goes.",
+    "This describes how the image looks. For an image inside a link, the alt text must say what the link does."
+   ],
+   "key": "CSE326-U1-042"
+  },
+  {
+   "topic": "Links and Images",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "In the HTML5 page below, what happens when the visitor clicks the link?",
+   "code": "<a href=\"#Contact\">Contact us</a>\n<!-- ... rest of the page ... -->\n<SECTION ID=\"contact\">\n  <H2>Contact</H2>\n  <p>Email: help@example.com</p>\n</SECTION>",
+   "options": [
+    "The page does not scroll, because uppercase tag and attribute names such as SECTION and ID are invalid in HTML5",
+    "The page scrolls to the section, because HTML is not case-sensitive",
+    "The browser requests Contact from the server, which cannot find it, so an error page is shown",
+    "The page does not scroll, because the fragment Contact and the id value contact differ in case, and id values must match exactly"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The browser treats SECTION and ID exactly like section and id. When following #Contact, though, it looks for an element whose id is exactly Contact, character for character. No such element exists, so the address bar changes but the page does not scroll. Making the two match, for example href=\"#contact\", fixes it.",
+   "why_wrong": [
+    "Tag and attribute names are case-insensitive, so <SECTION ID=\"contact\"> is a valid section whose id is contact.",
+    "Only tag and attribute names ignore case. Attribute values such as id are compared exactly, so Contact does not match contact.",
+    "The fragment is never sent to the server. The browser searches the current page for the id itself and, finding no match, stays where it is.",
+    ""
+   ],
+   "key": "CSE326-U1-043"
+  },
+  {
+   "topic": "Links and Images",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A browser is showing a page at https://example.com/course/notes. The address has no trailing slash, and the server returns an HTML page for it. The page contains the link in the code below. Which URL does the link open?",
+   "code": "<a href=\"unit1.html\">Unit 1</a>",
+   "options": [
+    "https://example.com/course/notes/unit1.html",
+    "https://example.com/unit1.html",
+    "https://example.com/course/unit1.html",
+    "https://example.com/course/notesunit1.html"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "A relative URL is resolved by removing everything after the last / in the base URL's path and appending the new path. In /course/notes the last / comes before notes, so notes is removed: /course/ + unit1.html = /course/unit1.html. With a trailing slash (/course/notes/), the result would have been /course/notes/unit1.html.",
+   "why_wrong": [
+    "This treats notes as a folder. Without a trailing slash, notes is the last path segment, so it is dropped and resolution starts from /course/.",
+    "This is what the root-relative href=\"/unit1.html\" would give. A plain relative href keeps the /course/ folder.",
+    "",
+    "Resolution replaces the last path segment. It never joins the new name onto the old one as text."
+   ],
+   "key": "CSE326-U1-044"
+  },
+  {
+   "topic": "Multimedia, SVG and SEO",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A visitor's browser can play MP4 files but not WebM. What does it do with the code below?",
+   "code": "<video controls width=\"640\">\n  <source src=\"lecture.webm\" type=\"video/webm\">\n  <source src=\"lecture.mp4\" type=\"video/mp4\">\n  Sorry, your browser cannot play this video.\n</video>",
+   "options": [
+    "It uses lecture.mp4 and shows the video player. The \"Sorry…\" text is not displayed",
+    "It shows the \"Sorry…\" text, because the first source could not be played",
+    "It plays lecture.webm and then lecture.mp4, one after the other",
+    "It downloads lecture.webm so the visitor can open it in another app"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The browser checks the <source> children in order and uses the first one it can play. type=\"video/webm\" tells it in advance that it cannot handle the first file, so it moves on to lecture.mp4 and shows the player with controls. The text inside <video> appears only in a browser that has no <video> support at all.",
+   "why_wrong": [
+    "",
+    "The text inside <video> is fallback only for browsers that do not support the <video> element at all, not for a single unsupported format.",
+    "The browser picks one source, the first it can play. The sources are alternatives, not a playlist.",
+    "An unplayable source is simply skipped. The type attribute lets the browser skip lecture.webm without downloading it."
+   ],
+   "key": "CSE326-U1-045"
+  },
+  {
+   "topic": "Multimedia, SVG and SEO",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student's portfolio shows up in search results with the clickable headline \"Document\", although the grey summary under it is correct. Which change fixes the headline?",
+   "code": "",
+   "options": [
+    "Add <meta name=\"keywords\" content=\"portfolio, web design\"> to <head>",
+    "Replace <title>Document</title> in <head> with a descriptive title such as <title>Web Design Portfolio – Student Projects</title>",
+    "Rewrite <meta name=\"description\"> so that it contains the word \"portfolio\"",
+    "Rename the file from index.html to portfolio.html"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The <title> element in <head> sets the text in the browser tab. Search engines normally show it as the clickable headline of a result. \"Document\" is the placeholder title from VS Code's HTML boilerplate, which the student never changed. The meta description is separate: it feeds the grey snippet under the headline.",
+   "why_wrong": [
+    "The keywords meta tag does not set the result's headline, so the headline would still read \"Document\".",
+    "",
+    "The description feeds the grey snippet under the headline, which is already correct. It does not change the headline.",
+    "The headline comes from the page's <title>, not its file name. After renaming the file, the headline would still read \"Document\"."
+   ],
+   "key": "CSE326-U1-046"
+  },
+  {
+   "topic": "Multimedia, SVG and SEO",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the browser draw for the code below?",
+   "code": "<svg width=\"200\" height=\"200\">\n  <rect x=\"50\" y=\"50\" width=\"100\" height=\"100\" fill=\"yellow\" />\n  <circle cx=\"100\" cy=\"100\" r=\"80\" />\n</svg>",
+   "options": [
+    "A yellow square inside a thin black circle outline",
+    "A yellow square drawn on top of a black circle",
+    "Only the yellow square, because a circle with no fill attribute is transparent",
+    "A solid black circle, with the yellow square completely hidden behind it"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Two rules work together here. An SVG shape with no fill attribute is filled black by default. SVG also paints shapes in the order they appear, so the later circle covers the earlier square. The square's corners are √(50² + 50²) ≈ 70.7 units from the centre (100, 100), which is less than the radius 80, so no yellow shows at all.",
+   "why_wrong": [
+    "A shape with no fill is not hollow. The default fill is black and the default stroke is none, so an outline-only circle is never drawn.",
+    "SVG has no z-index. Shapes are painted in source order, so the circle, written after the rect, is drawn on top.",
+    "A missing fill does not mean transparent. The default fill in SVG is black.",
+    ""
+   ],
+   "key": "CSE326-U1-047"
+  },
+  {
+   "topic": "Multimedia, SVG and SEO",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What happens when a modern browser with default settings loads a page containing the code below?",
+   "code": "<video src=\"intro.mp4\" autoplay=\"false\" muted controls></video>",
+   "options": [
+    "It starts playing by itself with no sound, because autoplay is present and browsers allow muted videos to autoplay",
+    "It waits for the user to press play, because autoplay=\"false\" turns autoplay off",
+    "It starts playing by itself with sound, because controls overrides muted",
+    "Nothing is shown, because src must be given in a <source> child, not on <video> itself"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "autoplay, muted and controls are all boolean attributes, so the browser only checks whether each one is present. All three are present, so the video plays automatically, starts silent and shows controls. By default, browsers let muted videos start by themselves but usually block autoplay with sound.",
+   "why_wrong": [
+    "",
+    "autoplay is a boolean attribute: if it is present it is on, whatever its value. \"false\" does not turn it off; only removing the attribute does.",
+    "controls only shows the play and volume bar and does not unmute. muted still starts the video silent.",
+    "<video src=\"...\"> is valid for a single file. <source> children are needed only to offer alternative formats."
+   ],
+   "key": "CSE326-U1-048"
+  }
+ ]
+}

@@ -1,0 +1,1111 @@
+{
+ "subject_code": "MTH165",
+ "unit": 3,
+ "unit_label": "Fundamentals of Integral Calculus",
+ "questions": [
+  {
+   "topic": "Basic Integration Rules",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate ∫ (1/x + 1/x²) dx.",
+   "code": "",
+   "options": [
+    "ln|x| − 1/x + C",
+    "ln|x| + 1/x + C",
+    "ln|x| + ln(x²) + C",
+    "−1/x² − 2/x³ + C"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Integrate term by term. The power rule xⁿ⁺¹/(n + 1) fails at n = −1, so ∫ 1/x dx = ln|x|. At n = −2 it works: ∫ x⁻² dx = x⁻¹/(−1) = −1/x. The answer is ln|x| − 1/x + C.",
+   "why_wrong": [
+    "",
+    "Sign slip in the power rule: x⁻¹/(−1) is −1/x, not +1/x.",
+    "Treated 1/x² like 1/x and wrote a logarithm. Only the exponent −1 gives ln|x|.",
+    "Differentiated both terms instead of integrating them."
+   ],
+   "key": "MTH165-U3-001"
+  },
+  {
+   "topic": "Basic Integration Rules",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate ∫ dx/(9 + x²).",
+   "code": "",
+   "options": [
+    "(1/3) tan⁻¹(x/3) + C",
+    "tan⁻¹(x/3) + C",
+    "(1/9) tan⁻¹(x/3) + C",
+    "sin⁻¹(x/3) + C"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Use ∫ dx/(a² + x²) = (1/a) tan⁻¹(x/a) + C with a² = 9, so a = 3. The factor is 1/a = 1/3, which gives (1/3) tan⁻¹(x/3) + C. Check: its derivative is (1/3)·(1/3)/(1 + x²/9) = 1/(9 + x²).",
+   "why_wrong": [
+    "",
+    "Dropped the 1/a factor that this formula carries.",
+    "Used 1/a² = 1/9 instead of 1/a = 1/3.",
+    "Used the formula for ∫ dx/√(a² − x²). This integrand has no square root and has a plus sign."
+   ],
+   "key": "MTH165-U3-002"
+  },
+  {
+   "topic": "Basic Integration Rules",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate ∫ cos(3x + 2) dx.",
+   "code": "",
+   "options": [
+    "(1/3) sin(3x + 2) + C",
+    "sin(3x + 2) + C",
+    "3 sin(3x + 2) + C",
+    "−(1/3) sin(3x + 2) + C"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "For a linear inner function, ∫ f(ax + b) dx = (1/a) F(ax + b) + C, where F is an antiderivative of f. Here F = sin and a = 3, so the answer is (1/3) sin(3x + 2) + C. Differentiating it gives back cos(3x + 2), because the chain rule supplies a factor of 3 that cancels the 1/3.",
+   "why_wrong": [
+    "",
+    "Forgot the 1/a factor for the linear inner function. Differentiating this gives 3 cos(3x + 2).",
+    "Multiplied by a, as in differentiation, instead of dividing by a.",
+    "Sign error: the antiderivative of cos is +sin. The minus sign belongs to ∫ sin u du = −cos u."
+   ],
+   "key": "MTH165-U3-003"
+  },
+  {
+   "topic": "Integration by Substitution",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate ∫ 2x cos(x²) dx.",
+   "code": "",
+   "options": [
+    "sin(x²) + C",
+    "−sin(x²) + C",
+    "sin(x²)/(2x) + C",
+    "x² sin(x²) + C"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Put t = x². Then dt = 2x dx and the integral becomes ∫ cos t dt = sin t + C. Going back to x gives sin(x²) + C. The substitution works because the factor 2x is exactly dt/dx.",
+   "why_wrong": [
+    "",
+    "Sign error: ∫ cos t dt is +sin t.",
+    "Divided by the derivative of the inner function. The 1/a shortcut exists only for a linear inner function, not for x².",
+    "Integrated 2x and cos(x²) separately and multiplied the results. The integral of a product is not the product of the integrals."
+   ],
+   "key": "MTH165-U3-004"
+  },
+  {
+   "topic": "Integration by Substitution",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate ∫ (ln x)/x dx, for x > 0.",
+   "code": "",
+   "options": [
+    "(ln x)²/2 + C",
+    "ln|ln x| + C",
+    "(ln x)² + C",
+    "x ln x − x + C"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Put t = ln x. Then dt = dx/x and the integral is ∫ t dt = t²/2 + C. So the answer is (ln x)²/2 + C. Check: its derivative is 2 ln x·(1/x)/2 = (ln x)/x.",
+   "why_wrong": [
+    "",
+    "Treated it as f′/f. ln|ln x| is the integral of 1/(x ln x), where ln x is in the denominator.",
+    "Dropped the 1/2 in ∫ t dt = t²/2.",
+    "This is ∫ ln x dx. The 1/x factor in the integrand was ignored."
+   ],
+   "key": "MTH165-U3-005"
+  },
+  {
+   "topic": "Integration by Substitution",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate ∫ cot x dx.",
+   "code": "",
+   "options": [
+    "ln|sin x| + C",
+    "−ln|sin x| + C",
+    "ln|cos x| + C",
+    "−cosec²x + C"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Write cot x = cos x/sin x. The numerator is exactly the derivative of the denominator. With t = sin x and dt = cos x dx, the integral is ∫ dt/t = ln|t| + C = ln|sin x| + C.",
+   "why_wrong": [
+    "",
+    "Carried over the minus sign from ∫ tan x dx = −ln|cos x| + C. Here the numerator is +f′, not −f′.",
+    "Put the wrong function inside the log. cos x is the derivative of sin x, so sin x belongs inside ln.",
+    "Differentiated cot x instead of integrating it."
+   ],
+   "key": "MTH165-U3-006"
+  },
+  {
+   "topic": "Integration by Parts",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which is the integration-by-parts formula, with u as the first function and v as the second?",
+   "code": "",
+   "options": [
+    "∫ u·v dx = u∫v dx − ∫(u′·∫v dx) dx",
+    "∫ u·v dx = u∫v dx + ∫(u′·∫v dx) dx",
+    "∫ u·v dx = u∫v dx − ∫(u′·v) dx",
+    "∫ u·v dx = u′∫v dx − ∫(u·∫v dx) dx"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Integration by parts comes from the product rule. Keep the first function, integrate the second, then subtract the integral of (derivative of the first) × (integral of the second). Both the minus sign and the ∫v in the second term are essential. An equivalent form is ∫ u dv = uv − ∫ v du.",
+   "why_wrong": [
+    "",
+    "Dropped the minus sign in front of the second integral.",
+    "Used v instead of ∫v in the second term.",
+    "Swapped the roles. u stays as it is in the first term and is differentiated only in the second term."
+   ],
+   "key": "MTH165-U3-007"
+  },
+  {
+   "topic": "Integration by Parts",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate ∫ x eˣ dx.",
+   "code": "",
+   "options": [
+    "(x − 1)eˣ + C",
+    "(x + 1)eˣ + C",
+    "x eˣ + C",
+    "(x²/2)eˣ + C"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Take u = x and integrate eˣ: ∫ x eˣ dx = x eˣ − ∫ 1·eˣ dx = x eˣ − eˣ + C = (x − 1)eˣ + C. Check: d/dx[(x − 1)eˣ] = eˣ + (x − 1)eˣ = x eˣ.",
+   "why_wrong": [
+    "",
+    "Dropped the minus sign in the parts formula.",
+    "Stopped after the first term u∫v and forgot to subtract ∫ eˣ dx.",
+    "Integrated each factor separately and multiplied. ∫ uv dx is not (∫u dx)(∫v dx)."
+   ],
+   "key": "MTH165-U3-008"
+  },
+  {
+   "topic": "Integration by Parts",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate ∫ ln x dx, for x > 0.",
+   "code": "",
+   "options": [
+    "x ln x − x + C",
+    "x ln x + x + C",
+    "(ln x)²/2 + C",
+    "1/x + C"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Write the integrand as 1·ln x. Take u = ln x and integrate the 1. Then ∫ ln x dx = x ln x − ∫ (1/x)·x dx = x ln x − x + C.",
+   "why_wrong": [
+    "",
+    "Dropped the minus sign in front of the second integral.",
+    "That is ∫ (ln x)/x dx. This integrand has no 1/x factor to support the substitution t = ln x.",
+    "Differentiated ln x instead of integrating it."
+   ],
+   "key": "MTH165-U3-009"
+  },
+  {
+   "topic": "Partial Fractions",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Resolve 1/((x − 1)(x + 1)) into partial fractions.",
+   "code": "",
+   "options": [
+    "1/(2(x − 1)) − 1/(2(x + 1))",
+    "1/(x − 1) − 1/(x + 1)",
+    "1/(2(x − 1)) + 1/(2(x + 1))",
+    "1/(2(x + 1)) − 1/(2(x − 1))"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Write 1 = A(x + 1) + B(x − 1). Putting x = 1 gives A = 1/2, and putting x = −1 gives B = −1/2. So the fraction is 1/(2(x − 1)) − 1/(2(x + 1)). Check: recombining gives (x + 1 − x + 1)/(2(x² − 1)) = 1/(x² − 1).",
+   "why_wrong": [
+    "",
+    "Forgot the 1/2. This recombines to 2/(x² − 1).",
+    "Sign error on B. This recombines to x/(x² − 1).",
+    "Swapped A and B. This recombines to −1/(x² − 1)."
+   ],
+   "key": "MTH165-U3-010"
+  },
+  {
+   "topic": "Partial Fractions",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which fraction must be divided out (long division) before it is split into partial fractions?",
+   "code": "",
+   "options": [
+    "(x² + 1)/((x − 1)(x + 2))",
+    "(x + 1)/((x − 1)(x + 2))",
+    "(x² + 1)/(x(x − 1)(x + 2))",
+    "5/(x(x + 3))"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Partial fractions apply directly only to a proper fraction, where the degree of the numerator is less than the degree of the denominator. (x² + 1)/((x − 1)(x + 2)) has degree 2 over degree 2, so it is improper. Division first gives 1 plus a proper remainder fraction.",
+   "why_wrong": [
+    "",
+    "Degree 1 over degree 2 is already proper, so it can be split directly.",
+    "An x² numerator is fine here. The denominator has degree 3, so the fraction is proper.",
+    "Degree 0 over degree 2 is proper, so no division is needed."
+   ],
+   "key": "MTH165-U3-011"
+  },
+  {
+   "topic": "Definite Integral Properties",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate ∫₋π^π sin x dx.",
+   "code": "",
+   "options": [
+    "0",
+    "4",
+    "2",
+    "−2"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "sin(−x) = −sin x, so sin x is odd, and the interval [−π, π] is symmetric about 0. An odd function integrates to 0 on such an interval. Directly: [−cos x] from −π to π = (−cos π) − (−cos(−π)) = 1 − 1 = 0.",
+   "why_wrong": [
+    "",
+    "Doubled ∫₀^π sin x dx = 2 as if sin x were even. The doubling rule needs f(−x) = f(x).",
+    "Integrated only over [0, π]. The part over [−π, 0] equals −2 and cancels it.",
+    "Integrated only over [−π, 0]. The part over [0, π] equals +2 and cancels it."
+   ],
+   "key": "MTH165-U3-012"
+  },
+  {
+   "topic": "Definite Integral Properties",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "King's property: for any a < b, ∫ₐᵇ f(x) dx equals ∫ₐᵇ g(x) dx. Which of these is g(x)?",
+   "code": "",
+   "options": [
+    "f(a + b − x)",
+    "f(a − x)",
+    "f(b − x)",
+    "f(−x)"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The substitution t = a + b − x swaps the limits a and b and turns dx into −dt, so the value of the integral is unchanged: ∫ₐᵇ f(x) dx = ∫ₐᵇ f(a + b − x) dx. The familiar rule ∫₀ᵃ f(x) dx = ∫₀ᵃ f(a − x) dx is the special case where the lower limit is 0.",
+   "why_wrong": [
+    "",
+    "This copies the letter from the rule ∫₀ᵃ f(x) dx = ∫₀ᵃ f(a − x) dx, where a is the upper limit. Here a is the lower limit, and f(a − x) works only in the special case b = 0. In general x must be replaced by a + b − x.",
+    "This holds only when the lower limit is 0. In general the lower limit must be added in too.",
+    "x ↦ −x reflects [a, b] onto [−b, −a], which is a different interval, so the integral changes in general."
+   ],
+   "key": "MTH165-U3-013"
+  },
+  {
+   "topic": "Basic Integration Rules",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate ∫₁^e (1/x) dx.",
+   "code": "",
+   "options": [
+    "1",
+    "−1",
+    "1 + C",
+    "1 − 1/e²"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "An antiderivative of 1/x is ln|x|, so the integral is ln e − ln 1 = 1 − 0 = 1. A definite integral is a number, so it takes no + C.",
+   "why_wrong": [
+    "",
+    "Subtracted in the wrong order, F(1) − F(e). The value at the upper limit comes first.",
+    "+ C belongs only on indefinite integrals. The constant cancels once the limits are applied.",
+    "Used −1/x², the derivative of 1/x, as if it were the antiderivative."
+   ],
+   "key": "MTH165-U3-014"
+  },
+  {
+   "topic": "Basic Integration Rules",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these standard results is stated INCORRECTLY (a > 0)?",
+   "code": "",
+   "options": [
+    "∫ dx/(a² + x²) = (1/a) tan⁻¹(x/a) + C",
+    "∫ dx/√(a² − x²) = (1/a) sin⁻¹(x/a) + C",
+    "∫ e^(ax) dx = (1/a) e^(ax) + C",
+    "∫ tan x dx = −ln|cos x| + C"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "d/dx sin⁻¹(x/a) = (1/a)/√(1 − x²/a²) = 1/√(a² − x²). So ∫ dx/√(a² − x²) = sin⁻¹(x/a) + C, with no 1/a factor. The tan⁻¹ formula does carry 1/a, which is why the two are easy to mix up.",
+   "why_wrong": [
+    "This one is correct. Differentiating (1/a) tan⁻¹(x/a) gives 1/(a² + x²), so this result really does carry 1/a.",
+    "",
+    "This one is correct. e^(ax) has a linear inner function, so dividing by a is right.",
+    "This one is correct. tan x = −(−sin x)/cos x has the form −f′/f with f = cos x, so the minus sign belongs."
+   ],
+   "key": "MTH165-U3-015"
+  },
+  {
+   "topic": "Integration by Substitution",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Evaluate ∫₀² x e^(x²) dx.",
+   "code": "",
+   "options": [
+    "(e⁴ − 1)/2",
+    "(e² − 1)/2",
+    "e⁴ − 1",
+    "2(e⁴ − 1)"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Put t = x², so dt = 2x dx and x dx = dt/2. The limits x = 0 and x = 2 become t = 0 and t = 4. The integral is then (1/2)∫₀⁴ eᵗ dt = (1/2)(e⁴ − 1). Once the limits are converted, finish in t and do not go back to x.",
+   "why_wrong": [
+    "",
+    "Evaluated the t-antiderivative at the old x-limits 0 and 2. The limits must be converted using t = x².",
+    "Dropped the 1/2 that comes from x dx = dt/2.",
+    "Inverted the factor, writing x dx = 2 dt instead of dt/2."
+   ],
+   "key": "MTH165-U3-016"
+  },
+  {
+   "topic": "Integration by Substitution",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Evaluate ∫ sin x/(1 + cos²x) dx.",
+   "code": "",
+   "options": [
+    "−tan⁻¹(cos x) + C",
+    "tan⁻¹(cos x) + C",
+    "−ln(1 + cos²x) + C",
+    "−tan⁻¹(sin x) + C"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Put t = cos x, so dt = −sin x dx. The integral becomes −∫ dt/(1 + t²) = −tan⁻¹t + C = −tan⁻¹(cos x) + C. Check: its derivative is −(−sin x)/(1 + cos²x) = sin x/(1 + cos²x).",
+   "why_wrong": [
+    "",
+    "Lost the minus sign from dt = −sin x dx.",
+    "Treated it as f′/f, but the derivative of 1 + cos²x is −2 sin x cos x, not sin x.",
+    "Substituted the wrong function. The numerator sin x dx pairs with t = cos x, not t = sin x."
+   ],
+   "key": "MTH165-U3-017"
+  },
+  {
+   "topic": "Integration by Parts",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Evaluate ∫₀^(π/2) x cos x dx.",
+   "code": "",
+   "options": [
+    "π/2 − 1",
+    "π/2 + 1",
+    "π/2",
+    "1 − π/2"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "By parts with u = x: ∫ x cos x dx = x sin x − ∫ sin x dx = x sin x + cos x. At π/2 this is π/2 + 0, and at 0 it is 0 + 1. So the value is π/2 − 1.",
+   "why_wrong": [
+    "",
+    "Dropped the minus sign in the parts formula, which gives x sin x − cos x and so (π/2 − 0) − (0 − 1).",
+    "Kept only the first term [x sin x] and forgot the second integral.",
+    "Subtracted in the wrong order, F(0) − F(π/2)."
+   ],
+   "key": "MTH165-U3-018"
+  },
+  {
+   "topic": "Integration by Parts",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Evaluate ∫ x² ln x dx, for x > 0.",
+   "code": "",
+   "options": [
+    "(x³/3) ln x − x³/9 + C",
+    "(x³/3) ln x + x³/9 + C",
+    "(x³/3) ln x − x³/3 + C",
+    "x²(x ln x − x) + C"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "ILATE, a heuristic rather than a law, suggests u = ln x, because log comes before algebraic. x² is integrated to x³/3. Then ∫ x² ln x dx = (x³/3) ln x − ∫ (1/x)(x³/3) dx = (x³/3) ln x − ∫ x²/3 dx = (x³/3) ln x − x³/9 + C.",
+   "why_wrong": [
+    "",
+    "Dropped the minus sign in front of the second integral.",
+    "Lost the 1/3 in ∫v = x³/3 when forming the second integral.",
+    "Integrated ln x on its own and treated x² as a constant. x² varies with x, so it cannot be taken outside the integral."
+   ],
+   "key": "MTH165-U3-019"
+  },
+  {
+   "topic": "Partial Fractions",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which is the correct partial-fraction form of (2x + 3)/((x − 1)(x² + 4))?",
+   "code": "",
+   "options": [
+    "A/(x − 1) + (Bx + C)/(x² + 4)",
+    "A/(x − 1) + B/(x² + 4)",
+    "A/(x − 1) + B/(x − 2) + C/(x + 2)",
+    "(Ax + B)/(x − 1) + C/(x² + 4)"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "x² + 4 has discriminant 0 − 16 < 0, so it does not factor over the reals and needs a linear numerator Bx + C. The linear factor x − 1 takes a constant A. That gives three unknowns, which matches the degree 3 of the denominator.",
+   "why_wrong": [
+    "",
+    "A constant numerator over an irreducible quadratic is not enough. It needs Bx + C.",
+    "x² + 4 cannot be factored as (x − 2)(x + 2). That product is x² − 4.",
+    "The roles are reversed. The linear numerator belongs over the quadratic, and a linear factor takes only a constant."
+   ],
+   "key": "MTH165-U3-020"
+  },
+  {
+   "topic": "Partial Fractions",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Evaluate ∫ dx/((x + 1)(x + 2)).",
+   "code": "",
+   "options": [
+    "ln|(x + 1)/(x + 2)| + C",
+    "ln|(x + 2)/(x + 1)| + C",
+    "ln|(x + 1)(x + 2)| + C",
+    "ln|x² + 3x + 2|/(2x + 3) + C"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Write 1 = A(x + 2) + B(x + 1). Putting x = −1 gives A = 1, and putting x = −2 gives B = −1, so the integrand is 1/(x + 1) − 1/(x + 2). Integrating gives ln|x + 1| − ln|x + 2| + C = ln|(x + 1)/(x + 2)| + C.",
+   "why_wrong": [
+    "",
+    "Swapped the signs of A and B. This differentiates to −1/((x + 1)(x + 2)).",
+    "Took B = +1. This is the integral of (2x + 3)/((x + 1)(x + 2)).",
+    "Divided by the derivative of the denominator. There is no 1/g′(x) shortcut when the inner function is not linear."
+   ],
+   "key": "MTH165-U3-021"
+  },
+  {
+   "topic": "Partial Fractions",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Evaluate ∫ x²/(x² − 1) dx.",
+   "code": "",
+   "options": [
+    "x + (1/2) ln|(x − 1)/(x + 1)| + C",
+    "(1/2) ln|(x − 1)/(x + 1)| + C",
+    "x + ln|(x − 1)/(x + 1)| + C",
+    "x − (1/2) ln|(x − 1)/(x + 1)| + C"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The fraction is improper (degree 2 over degree 2), so divide first: x²/(x² − 1) = 1 + 1/(x² − 1). Then 1/(x² − 1) = (1/2)[1/(x − 1) − 1/(x + 1)]. The integral is x + (1/2) ln|(x − 1)/(x + 1)| + C.",
+   "why_wrong": [
+    "",
+    "Skipped the division and split the improper fraction directly, which loses the quotient 1 and with it the x term.",
+    "Dropped the 1/2 from 1/(x² − 1) = (1/2)[1/(x − 1) − 1/(x + 1)].",
+    "Sign error in the split. 1/(x − 1) carries +1/2 and 1/(x + 1) carries −1/2."
+   ],
+   "key": "MTH165-U3-022"
+  },
+  {
+   "topic": "Definite Integral Properties",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The rule ∫₀^(2a) f(x) dx = 2∫₀ᵃ f(x) dx holds under which condition?",
+   "code": "",
+   "options": [
+    "f(2a − x) = f(x)",
+    "f(−x) = f(x)",
+    "f(2a − x) = −f(x)",
+    "f(a − x) = f(x)"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Split the integral at a and substitute x = 2a − t in ∫ₐ^(2a) f(x) dx, which turns it into ∫₀ᵃ f(2a − t) dt. If f(2a − x) = f(x), the two halves are equal and the total is 2∫₀ᵃ f(x) dx. Evenness is a different condition, and it applies to the symmetric interval [−a, a].",
+   "why_wrong": [
+    "",
+    "Evenness gives ∫₋ₐᵃ f = 2∫₀ᵃ f, but it does not help on [0, 2a]. For example, x² on [0, 2] gives 8/3, while 2∫₀¹ x² dx = 2/3.",
+    "This condition makes the two halves cancel, so the integral is 0, not double.",
+    "This is a symmetry of [0, a] about a/2. It says nothing about the part from a to 2a."
+   ],
+   "key": "MTH165-U3-023"
+  },
+  {
+   "topic": "Definite Integral Properties",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Evaluate ∫₁³ √x/(√x + √(4 − x)) dx.",
+   "code": "",
+   "options": [
+    "1",
+    "2",
+    "3/2",
+    "π/4"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "King's property with a + b = 4 replaces x by 4 − x: I = ∫₁³ √(4 − x)/(√(4 − x) + √x) dx. Adding the two forms makes the integrands sum to 1, so 2I = ∫₁³ 1 dx = 2 and I = 1.",
+   "why_wrong": [
+    "",
+    "Stopped at 2I = 2 without dividing by 2.",
+    "Used the [0, a] version with a = 3, halving the upper limit and ignoring the lower limit 1. The result here is (b − a)/2.",
+    "Reused the memorised answer to ∫₀^(π/2) sin x/(sin x + cos x) dx. That π/4 is half the length of [0, π/2], not of [1, 3]."
+   ],
+   "key": "MTH165-U3-024"
+  },
+  {
+   "topic": "Definite Integral Properties",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Evaluate ∫₋₁² |x| dx.",
+   "code": "",
+   "options": [
+    "5/2",
+    "3/2",
+    "4",
+    "2"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "|x| has a kink at 0, so split the interval there: ∫₋₁⁰ (−x) dx + ∫₀² x dx = 1/2 + 2 = 5/2. |x| ≥ 0 on the whole interval, so both pieces are positive.",
+   "why_wrong": [
+    "",
+    "Integrated x across the kink without splitting: [x²/2] from −1 to 2 = 2 − 1/2.",
+    "Used 2∫₀² |x| dx as if the interval were symmetric. [−1, 2] is not symmetric about 0.",
+    "Dropped the piece over [−1, 0], which contributes 1/2."
+   ],
+   "key": "MTH165-U3-025"
+  },
+  {
+   "topic": "Definite Integral Properties",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Evaluate ∫₀^(3π) |sin x| dx.",
+   "code": "",
+   "options": [
+    "6",
+    "2",
+    "12",
+    "3"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "|sin x| has period π, and ∫₀^π |sin x| dx = [−cos x]₀^π = 1 + 1 = 2. By the periodic property ∫₀^(na) f = n∫₀^a f with n = 3 and a = π, the value is 3·2 = 6.",
+   "why_wrong": [
+    "",
+    "Dropped the modulus. ∫₀^(3π) sin x dx = 2 because the negative arch cancels one of the positive arches.",
+    "Took the period as 2π but still multiplied by 3. [0, 3π] holds only 1.5 periods of length 2π, and 1.5·4 = 6.",
+    "Took ∫₀^π sin x dx as 1 by forgetting to subtract the lower-limit value −cos 0 = −1."
+   ],
+   "key": "MTH165-U3-026"
+  },
+  {
+   "topic": "Basic Integration Rules",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Evaluate ∫ sin 3x cos x dx.",
+   "code": "",
+   "options": [
+    "−(1/4)cos 4x − (1/2)cos 2x + C",
+    "−(1/8)cos 4x − (1/4)cos 2x + C",
+    "(1/8)cos 4x + (1/4)cos 2x + C",
+    "−(1/3)cos 3x · sin x + C"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "First turn the product into a sum: 2 sin A cos B = sin(A + B) + sin(A − B), so sin 3x cos x = (1/2)(sin 4x + sin 2x). Then ∫ sin kx dx = −(1/k)cos kx + C gives (1/2)(−(1/4)cos 4x − (1/2)cos 2x) = −(1/8)cos 4x − (1/4)cos 2x + C. You cannot integrate a product one factor at a time.",
+   "why_wrong": [
+    "Uses sin 3x cos x = sin 4x + sin 2x and drops the 1/2 from the product-to-sum formula, so every coefficient is doubled.",
+    "",
+    "Takes ∫ sin kx dx = +(1/k)cos kx. The antiderivative of sin is −cos, so both signs are wrong.",
+    "Integrates each factor separately (∫ sin 3x = −(1/3)cos 3x, ∫ cos x = sin x) and multiplies the results. Differentiating this does not give back sin 3x cos x."
+   ],
+   "key": "MTH165-U3-027"
+  },
+  {
+   "topic": "Basic Integration Rules",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Evaluate ∫ (2ˣ + 3ˣ)/6ˣ dx.",
+   "code": "",
+   "options": [
+    "3^(−x)/ln 3 + 2^(−x)/ln 2 + C",
+    "(2ˣ/ln 2 + 3ˣ/ln 3)/(6ˣ/ln 6) + C",
+    "−3^(−x)/ln 3 − 2^(−x)/ln 2 + C",
+    "−3^(−x)·ln 3 − 2^(−x)·ln 2 + C"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Split the fraction first: 2ˣ/6ˣ = (1/3)ˣ = 3^(−x) and 3ˣ/6ˣ = (1/2)ˣ = 2^(−x). Since ∫ aˣ dx = aˣ/ln a + C, the inner function −x adds a factor −1, so ∫ 3^(−x) dx = −3^(−x)/ln 3. Adding the two pieces gives −3^(−x)/ln 3 − 2^(−x)/ln 2 + C.",
+   "why_wrong": [
+    "Forgets the factor −1 that comes from the inner function −x, so both signs are wrong.",
+    "Integrates the numerator and the denominator separately. A quotient cannot be integrated that way.",
+    "",
+    "Multiplies by ln a. That is the derivative rule, d/dx aˣ = aˣ ln a. Integrating divides by ln a."
+   ],
+   "key": "MTH165-U3-028"
+  },
+  {
+   "topic": "Integration by Substitution",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Evaluate ∫ √x/(1 + x) dx, for x > 0.",
+   "code": "",
+   "options": [
+    "√x − tan⁻¹(√x) + C",
+    "2√x + 2tan⁻¹(√x) + C",
+    "(1/2)tan⁻¹(√x) + C",
+    "2√x − 2tan⁻¹(√x) + C"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Put x = t², so t = √x and dx = 2t dt. The integral becomes ∫ 2t²/(1 + t²) dt. Divide: t²/(1 + t²) = 1 − 1/(1 + t²), so the result is 2(t − tan⁻¹t) = 2√x − 2tan⁻¹(√x) + C.",
+   "why_wrong": [
+    "Drops the factor 2 from dx = 2t dt.",
+    "Writes t²/(1 + t²) = 1 + 1/(1 + t²). The correct split has a minus sign.",
+    "Inverts the substitution and uses dx = dt/(2t) instead of dx = 2t dt.",
+    ""
+   ],
+   "key": "MTH165-U3-029"
+  },
+  {
+   "topic": "Integration by Substitution",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Evaluate ∫ sin³x dx.",
+   "code": "",
+   "options": [
+    "(1/4)sin⁴x + C",
+    "−cos x + (1/3)cos³x + C",
+    "cos x − (1/3)cos³x + C",
+    "−cos x − (1/3)cos³x + C"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Keep one sin x for the differential: sin³x = (1 − cos²x) sin x. With u = cos x, du = −sin x dx, so the integral is −∫(1 − u²) du = −u + u³/3. This gives −cos x + (1/3)cos³x + C.",
+   "why_wrong": [
+    "Applies the power rule as if sin x were the variable. That needs a factor cos x (du = cos x dx), and there is none here.",
+    "",
+    "Drops the minus sign from du = −sin x dx, so the whole answer has the wrong sign.",
+    "Sign slip when expanding −∫(1 − u²) du. The u³/3 term should be positive."
+   ],
+   "key": "MTH165-U3-030"
+  },
+  {
+   "topic": "Integration by Substitution",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Meera has to evaluate ∫₀^(√3) x/√(x² + 1) dx. She puts u = x² + 1. Which line of working is correct from start to finish?",
+   "code": "",
+   "options": [
+    "(1/2)∫₁⁴ u^(−1/2) du = [√(x² + 1)]₁⁴ = √17 − √2",
+    "(1/2)∫₀^(√3) u^(−1/2) du = [√u]₀^(√3) = ∜3",
+    "(1/2)∫₁⁴ u^(−1/2) du = [√u]₁⁴ = 1",
+    "∫₁⁴ u^(−1/2) du = [2√u]₁⁴ = 2"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "With u = x² + 1, du = 2x dx, so x dx = du/2. The limits change too: x = 0 gives u = 1 and x = √3 gives u = 4. Then (1/2)∫₁⁴ u^(−1/2) du = [√u]₁⁴ = 2 − 1 = 1. Once the limits are in u, finish in u, because the variable and the limits must match.",
+   "why_wrong": [
+    "Converts the limits to u = 1 and 4, goes back to x, and still puts in the u-limits.",
+    "Keeps the old x-limits 0 and √3 but evaluates the u-antiderivative √u at them.",
+    "",
+    "Drops the 1/2 from du = 2x dx, replacing x dx with du instead of du/2."
+   ],
+   "key": "MTH165-U3-031"
+  },
+  {
+   "topic": "Integration by Parts",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Evaluate ∫₀¹ tan⁻¹x dx.",
+   "code": "",
+   "options": [
+    "π/4 − (1/2)ln 2",
+    "π/4 + (1/2)ln 2",
+    "π/4 − ln 2",
+    "π/4"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Take u = tan⁻¹x and dv = dx, so v = x. Then ∫ tan⁻¹x dx = x tan⁻¹x − ∫ x/(1 + x²) dx = x tan⁻¹x − (1/2)ln(1 + x²). From 0 to 1 this is (π/4 − (1/2)ln 2) − 0 = π/4 − (1/2)ln 2, with no + C because the integral is definite.",
+   "why_wrong": [
+    "",
+    "Drops the minus sign in front of the second term ∫ v du.",
+    "Integrates x/(1 + x²) as ln(1 + x²) and misses the 1/2. The derivative of 1 + x² is 2x.",
+    "Keeps only the uv term x tan⁻¹x and forgets to subtract ∫ v du."
+   ],
+   "key": "MTH165-U3-032"
+  },
+  {
+   "topic": "Integration by Parts",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Evaluate ∫ eˣ sin x dx.",
+   "code": "",
+   "options": [
+    "eˣ(sin x − cos x) + C",
+    "(eˣ/2)(sin x + cos x) + C",
+    "−(eˣ/2)cos x + C",
+    "(eˣ/2)(sin x − cos x) + C"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Call the integral I and apply parts twice, with the trig function as u and dv = eˣ dx: I = eˣ sin x − ∫ eˣ cos x dx = eˣ sin x − (eˣ cos x + I). So 2I = eˣ(sin x − cos x), which gives I = (eˣ/2)(sin x − cos x) + C. Because the original integral comes back, you solve for I instead of applying parts forever.",
+   "why_wrong": [
+    "Gets as far as 2I = eˣ(sin x − cos x) and forgets to divide by 2.",
+    "Differentiating this gives eˣ cos x, so it is actually ∫ eˣ cos x dx. It comes from getting the signs of the trig derivatives wrong in the parts steps.",
+    "Takes u = eˣ and dv = sin x dx, then in the second term uses the original sin x where its integral v = −cos x belongs. That gives I = −eˣ cos x − ∫ eˣ sin x dx = −eˣ cos x − I.",
+    ""
+   ],
+   "key": "MTH165-U3-033"
+  },
+  {
+   "topic": "Partial Fractions",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Evaluate ∫ dx/(x³ − x).",
+   "code": "",
+   "options": [
+    "(1/2)ln|x² − 1| − ln|x| + C",
+    "ln|x| − (1/2)ln|x² − 1| + C",
+    "ln|x² − 1| − ln|x| + C",
+    "(1/2)ln|x² − 1| + ln|x| + C"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Factor first: x³ − x = x(x − 1)(x + 1). By cover-up, 1/(x(x − 1)(x + 1)) = −1/x + (1/2)/(x − 1) + (1/2)/(x + 1), because the other factors equal −1 at x = 0 and 2 at x = ±1. Integrating gives −ln|x| + (1/2)ln|x − 1| + (1/2)ln|x + 1| = (1/2)ln|x² − 1| − ln|x| + C.",
+   "why_wrong": [
+    "",
+    "Every constant has the wrong sign, so this is the negative of the correct antiderivative.",
+    "Takes the coefficients of 1/(x − 1) and 1/(x + 1) as 1 instead of 1/2. It forgets that x(x + 1) and x(x − 1) both equal 2 at x = 1 and x = −1.",
+    "Takes the coefficient of 1/x as +1. At x = 0, (x − 1)(x + 1) = −1, so the coefficient is −1."
+   ],
+   "key": "MTH165-U3-034"
+  },
+  {
+   "topic": "Partial Fractions",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Evaluate ∫ dx/(x(x² + 1)).",
+   "code": "",
+   "options": [
+    "ln|x| − tan⁻¹x + C",
+    "ln|x| − ln(x² + 1) + C",
+    "ln|x| − (1/2)ln(x² + 1) + C",
+    "ln|x| + (1/2)ln(x² + 1) + C"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "x² + 1 has no real factors, so its numerator must be linear: 1/(x(x² + 1)) = A/x + (Bx + D)/(x² + 1). From 1 = A(x² + 1) + (Bx + D)x, x = 0 gives A = 1, the x² terms give A + B = 0 so B = −1, and the x terms give D = 0. So the integral is ln|x| − ∫ x/(x² + 1) dx = ln|x| − (1/2)ln(x² + 1) + C.",
+   "why_wrong": [
+    "Puts a bare constant over x² + 1 instead of (Bx + D). This turns −x/(x² + 1) into −1/(x² + 1), which integrates to −tan⁻¹x.",
+    "Integrates x/(x² + 1) as ln(x² + 1) and misses the 1/2. The derivative of x² + 1 is 2x.",
+    "",
+    "Gets the sign of B wrong. The x² coefficients give A + B = 0, so B = −1, not +1."
+   ],
+   "key": "MTH165-U3-035"
+  },
+  {
+   "topic": "Partial Fractions",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Priya writes (x² + 1)/(x² − 3x + 2) = A/(x − 1) + B/(x − 2). She finds A = −2 and B = 5 by putting x = 1 and x = 2, then integrates to get −2 ln|x − 1| + 5 ln|x − 2| + C. What is the correct value of ∫ (x² + 1)/(x² − 3x + 2) dx?",
+   "code": "",
+   "options": [
+    "−2 ln|x − 1| + 5 ln|x − 2| + C",
+    "x − 3 ln|x − 2| + C",
+    "x + 2 ln|x − 1| − 5 ln|x − 2| + C",
+    "x − 2 ln|x − 1| + 5 ln|x − 2| + C"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The numerator and denominator both have degree 2, so the fraction is improper and must be divided first: (x² + 1)/(x² − 3x + 2) = 1 + (3x − 1)/((x − 1)(x − 2)). Cover-up on the remainder gives −2/(x − 1) + 5/(x − 2), the same constants Priya found. The only thing she lost is the quotient 1, which integrates to x, so the answer is x − 2 ln|x − 1| + 5 ln|x − 2| + C.",
+   "why_wrong": [
+    "This is Priya's answer. She split an improper fraction without dividing first, which loses the quotient 1, so the x term is missing.",
+    "Sign slip when subtracting the divisor. (x² + 1) − (x² − 3x + 2) is 3x − 1, not −3x + 3.",
+    "Divides correctly but gets the sign of each cover-up denominator wrong, which flips both constants.",
+    ""
+   ],
+   "key": "MTH165-U3-036"
+  },
+  {
+   "topic": "Definite Integral Properties",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A particle moves along a straight line with velocity v(t) = 3t² − 6t m/s. What total distance does it travel between t = 0 s and t = 3 s?",
+   "code": "",
+   "options": [
+    "0 m",
+    "4 m",
+    "8 m",
+    "54 m"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Distance is ∫₀³ |v| dt, so split the interval where v changes sign. v = 3t(t − 2) is negative on (0, 2) and positive on (2, 3). With F(t) = t³ − 3t², ∫₀² v dt = F(2) − F(0) = −4 and ∫₂³ v dt = F(3) − F(2) = 4, so the distance is |−4| + |4| = 8 m.",
+   "why_wrong": [
+    "Integrates v across [0, 3] in one piece. That gives the displacement, where the backward and forward motion cancel.",
+    "Splits at t = 1, where v′ = 0 and v is at its minimum. The particle turns at t = 2, where v = 0.",
+    "",
+    "Replaces |3t² − 6t| with 3t² + 6t. The modulus of a difference is not the sum of the moduli."
+   ],
+   "key": "MTH165-U3-037"
+  },
+  {
+   "topic": "Definite Integral Properties",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A machine draws power P(t) kW, and the pattern repeats every 2 hours, so P(t + 2) = P(t) for all t ≥ 0. The energy used in one cycle, ∫₀² P(t) dt, is 5 kWh. How much energy is used from t = 1 h to t = 11 h?",
+   "code": "",
+   "options": [
+    "25 kWh",
+    "20 kWh",
+    "27.5 kWh",
+    "50 kWh"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "For a function with period T, the integral over any interval of length T has the same value, wherever the interval starts: ∫ₐ^(a+T) f dt = ∫₀ᵀ f dt. The window from 1 to 11 has length 10 = 5 × 2, so it covers exactly 5 full periods. So ∫₁¹¹ P dt = 5 × 5 = 25 kWh.",
+   "why_wrong": [
+    "",
+    "Counts only the 4 whole cycles from t = 2 to t = 10 and drops the pieces [1, 2] and [10, 11]. Together those two pieces make one more full cycle.",
+    "Counts 11/2 = 5.5 cycles from t = 0 and ignores that the window starts at t = 1.",
+    "Multiplies by the length of the interval (10) instead of the number of periods (10/2 = 5)."
+   ],
+   "key": "MTH165-U3-038"
+  },
+  {
+   "topic": "Basic Integration Rules",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Evaluate I₁ = ∫ dx/(4x² + 9) and I₂ = ∫ dx/√(9 − 4x²).",
+   "code": "",
+   "options": [
+    "I₁ = (1/6)tan⁻¹(2x/3) + C, I₂ = (1/6)sin⁻¹(2x/3) + C",
+    "I₁ = (1/3)tan⁻¹(2x/3) + C, I₂ = (1/2)sin⁻¹(2x/3) + C",
+    "I₁ = (1/6)tan⁻¹(2x/3) + C, I₂ = (1/2)sin⁻¹(2x/3) + C",
+    "I₁ = (1/6)tan⁻¹(2x/3) + C, I₂ = sin⁻¹(2x/3) + C"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Put u = 2x, so dx = du/2, in both integrals. I₁ = (1/2)∫ du/(u² + 3²) = (1/2)(1/3)tan⁻¹(u/3) = (1/6)tan⁻¹(2x/3) + C, because the tan⁻¹ form carries 1/a. I₂ = (1/2)∫ du/√(3² − u²) = (1/2)sin⁻¹(2x/3) + C: the sin⁻¹ form has no 1/a, but the 1/2 from the linear substitution stays.",
+   "why_wrong": [
+    "Carries the 1/a from the tan⁻¹ formula into the sin⁻¹ one. ∫ du/√(a² − u²) = sin⁻¹(u/a) + C has no 1/a.",
+    "Forgets the factor 1/2 from dx = du/2 in I₁ and keeps only 1/a = 1/3.",
+    "",
+    "Drops the 1/2 from dx = du/2 in I₂. The sin⁻¹ formula having no 1/a does not mean the answer has no coefficient."
+   ],
+   "key": "MTH165-U3-039"
+  },
+  {
+   "topic": "Basic Integration Rules",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Evaluate ∫₋₃^(−1) dx/x.",
+   "code": "",
+   "options": [
+    "ln 3",
+    "−ln 3",
+    "0",
+    "It does not exist, because ln x is undefined for x < 0"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The antiderivative of 1/x is ln|x|, which is defined for negative x, and 1/x is continuous on [−3, −1] because 0 is not in that interval. So the integral is ln|−1| − ln|−3| = 0 − ln 3 = −ln 3. A negative answer makes sense, because 1/x < 0 on the whole interval.",
+   "why_wrong": [
+    "Subtracts in the wrong order, F(−3) − F(−1). The integral of a negative function over a forward interval must be negative.",
+    "",
+    "Uses 'odd function, so zero', but that rule needs an interval symmetric about 0, and [−3, −1] is not.",
+    "Writes the antiderivative as ln x without the modulus. ∫ dx/x = ln|x| + C also works for x < 0."
+   ],
+   "key": "MTH165-U3-040"
+  },
+  {
+   "topic": "Integration by Substitution",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A student argues: 'Since ∫ cos 3x dx = (1/3)sin 3x + C, dividing by the derivative of the inside function always works, so ∫ cos(x²) dx = sin(x²)/(2x) + C.' Which assessment is correct?",
+   "code": "",
+   "options": [
+    "The argument is correct, because dividing by the inner derivative exactly undoes the chain rule for any inner function.",
+    "The argument is correct wherever x ≠ 0, since that is where dividing by 2x is allowed.",
+    "The argument is wrong only in the coefficient: the coefficient of x² is 1, so the answer is sin(x²) + C.",
+    "The argument is wrong: the 1/k in ∫ f(kx + b) dx exists only because the inside function is linear, and differentiating sin(x²)/(2x) does not give cos(x²)."
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Check by differentiating. The quotient rule gives d/dx [sin(x²)/(2x)] = cos(x²) − sin(x²)/(2x²), which is not cos(x²), and the extra term appears because 2x is not a constant. Dividing by the inner derivative works for ∫ f(kx + b) dx only because k is a constant (in fact ∫ cos(x²) dx has no elementary antiderivative).",
+   "why_wrong": [
+    "The chain rule gives a constant factor you can divide out only when the inner function is linear. For x² the factor 2x is a variable, so it cannot be moved outside the integral.",
+    "Excluding x = 0 does not help. The derivative of sin(x²)/(2x) is cos(x²) − sin(x²)/(2x²) at every x ≠ 0.",
+    "d/dx sin(x²) = 2x cos(x²), not cos(x²). A coefficient of 1 on x² does not remove the chain-rule factor.",
+    ""
+   ],
+   "key": "MTH165-U3-041"
+  },
+  {
+   "topic": "Integration by Substitution",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Evaluate ∫ eˣ/((eˣ + 1)(eˣ + 2)) dx.",
+   "code": "",
+   "options": [
+    "ln((eˣ + 2)/(eˣ + 1)) + C",
+    "ln((eˣ + 2)²/(eˣ + 1)) + C",
+    "ln((eˣ + 1)/(eˣ + 2)) + C",
+    "ln((eˣ + 1)(eˣ + 2)) + C"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Put u = eˣ, so du = eˣ dx and the eˣ dx on top becomes exactly du: ∫ du/((u + 1)(u + 2)). By partial fractions, 1/((u + 1)(u + 2)) = 1/(u + 1) − 1/(u + 2), which integrates to ln|u + 1| − ln|u + 2|. Back in x, where both brackets are positive, this is ln((eˣ + 1)/(eˣ + 2)) + C.",
+   "why_wrong": [
+    "Swaps the signs of the partial-fraction constants. At u = −2 the cover-up gives 1/(−2 + 1) = −1, so the (u + 2) term is subtracted.",
+    "Replaces dx with du without using du = eˣ dx, which leaves an extra u on top. ∫ u du/((u + 1)(u + 2)) = −ln(u + 1) + 2 ln(u + 2).",
+    "",
+    "Takes both partial-fraction constants as +1, so it adds the logarithms instead of subtracting them."
+   ],
+   "key": "MTH165-U3-042"
+  },
+  {
+   "topic": "Integration by Parts",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "For ∫ x³ e^(x²) dx, the ILATE order suggests u = x³ and dv = e^(x²) dx. Which statement is correct?",
+   "code": "",
+   "options": [
+    "Keep u = x³ and dv = e^(x²) dx: algebraic comes before exponential in ILATE, so this choice is guaranteed to work.",
+    "Take u = x² and dv = x e^(x²) dx; the integral equals (1/2)e^(x²)(x² − 1) + C.",
+    "Take u = x² and dv = x e^(x²) dx; the integral equals (1/2)e^(x²)(x² + 1) + C.",
+    "Take u = x² and dv = x e^(x²) dx; the integral equals e^(x²)(x² − 1) + C."
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "ILATE is a rule of thumb, not a law. With dv = e^(x²) dx you would need ∫ e^(x²) dx, which has no elementary form. Instead write x³ = x² · x: with u = x² and dv = x e^(x²) dx, v = (1/2)e^(x²). Then the integral is (1/2)x²e^(x²) − ∫ x e^(x²) dx = (1/2)x²e^(x²) − (1/2)e^(x²) + C = (1/2)e^(x²)(x² − 1) + C.",
+   "why_wrong": [
+    "ILATE is only a rule of thumb. Here dv = e^(x²) dx cannot be integrated in elementary terms, so this choice gets stuck.",
+    "",
+    "Drops the minus sign before ∫ v du.",
+    "Takes v = e^(x²) instead of (1/2)e^(x²), forgetting that ∫ x e^(x²) dx has a factor 1/2."
+   ],
+   "key": "MTH165-U3-043"
+  },
+  {
+   "topic": "Integration by Parts",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Evaluate ∫ eˣ (x − 1)/x² dx, for x > 0.",
+   "code": "",
+   "options": [
+    "−eˣ/x² + C",
+    "eˣ ln x + C",
+    "eˣ(ln x + 1/x) + C",
+    "eˣ/x + C"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Rewrite the bracket: (x − 1)/x² = 1/x − 1/x², which is f(x) + f′(x) with f(x) = 1/x. Integration by parts gives the standard result ∫ eˣ[f(x) + f′(x)] dx = eˣ f(x) + C, so the answer is eˣ/x + C. Check: d/dx (eˣ/x) = eˣ/x − eˣ/x².",
+   "why_wrong": [
+    "Takes f = −1/x², but its derivative 2/x³ is not the other term. f must be the term whose derivative also appears in the bracket.",
+    "Treats 1/x as f′ and takes f = ln x. ln x does not appear in the bracket, so the bracket is not of the form f + f′.",
+    "Integrates each piece as a product of separate integrals, such as ∫ eˣ times ∫ (1/x). A product does not integrate that way.",
+    ""
+   ],
+   "key": "MTH165-U3-044"
+  },
+  {
+   "topic": "Partial Fractions",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Evaluate ∫ x/((x − 1)²(x + 1)) dx.",
+   "code": "",
+   "options": [
+    "(1/4)ln|(x − 1)/(x + 1)| − 1/(2(x − 1)) + C",
+    "(1/4)ln|(x − 1)/(x + 1)| + 1/(2(x − 1)) + C",
+    "−(1/4)ln|x + 1| − 1/(2(x − 1)) + C",
+    "(1/4)ln|(x + 1)/(x − 1)| − 1/(2(x − 1)) + C"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The repeated factor needs both powers: x/((x − 1)²(x + 1)) = A/(x − 1) + B/(x − 1)² + D/(x + 1). Cover-up gives B = 1/2 (at x = 1) and D = −1/4 (at x = −1), but it cannot give A, so compare the x² coefficients: A + D = 0, so A = 1/4. Integrating gives (1/4)ln|x − 1| − 1/(2(x − 1)) − (1/4)ln|x + 1| + C. The B term is a power, since ∫ (x − 1)⁻² dx = −(x − 1)⁻¹, so it does not become a log.",
+   "why_wrong": [
+    "",
+    "Sign slip when integrating (1/2)(x − 1)⁻². Its antiderivative is −1/(2(x − 1)), not +1/(2(x − 1)).",
+    "Writes only B/(x − 1)² for the repeated factor and leaves out A/(x − 1), so the (1/4)ln|x − 1| term is lost.",
+    "Gets D = +1/4 at x = −1 (a sign slip), then A = −D = −1/4, which flips the logarithm."
+   ],
+   "key": "MTH165-U3-045"
+  },
+  {
+   "topic": "Partial Fractions",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Evaluate ∫ dx/(x² − 2x + 5).",
+   "code": "",
+   "options": [
+    "(1/2)tan⁻¹((x − 1)/2) + C",
+    "(1/4)ln|(x − 3)/(x + 1)| + C",
+    "tan⁻¹((x − 1)/2) + C",
+    "(1/2)tan⁻¹((x + 1)/2) + C"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The discriminant is (−2)² − 4·5 = −16 < 0, so x² − 2x + 5 has no real factors and cannot be split into linear partial fractions. Complete the square: x² − 2x + 5 = (x − 1)² + 2². Then ∫ dx/((x − 1)² + 2²) = (1/2)tan⁻¹((x − 1)/2) + C.",
+   "why_wrong": [
+    "",
+    "Treats (x − 1)² + 4 as (x − 1)² − 4 = (x − 3)(x + 1) and splits it into partial fractions. A quadratic with a negative discriminant cannot be factored over the reals.",
+    "Leaves out the 1/a = 1/2 that the tan⁻¹ formula carries.",
+    "Completes the square with the wrong sign. x² − 2x + 5 = (x − 1)² + 4, not (x + 1)² + 4."
+   ],
+   "key": "MTH165-U3-046"
+  },
+  {
+   "topic": "Definite Integral Properties",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Evaluate ∫₋₁¹ dx/(1 + eˣ).",
+   "code": "",
+   "options": [
+    "0",
+    "1",
+    "2 + 2 ln(2/(1 + e))",
+    "2"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The integrand is neither odd nor even, so use ∫₋ₐᵃ f(x) dx = ∫₋ₐᵃ f(−x) dx (King's rule, where a + b − x = −x). Here f(x) + f(−x) = 1/(1 + eˣ) + eˣ/(eˣ + 1) = 1. So 2I = ∫₋₁¹ 1 dx = 2, which gives I = 1.",
+   "why_wrong": [
+    "Treats 1/(1 + eˣ) as odd. But f(−x) = eˣ/(1 + eˣ), which is not −f(x), so the shortcut to 0 does not apply.",
+    "",
+    "Treats the integrand as even and doubles ∫₀¹. But f(−x) ≠ f(x), so the doubling rule does not apply.",
+    "Correctly finds 2I = ∫₋₁¹ 1 dx = 2 but forgets to divide by 2."
+   ],
+   "key": "MTH165-U3-047"
+  },
+  {
+   "topic": "Definite Integral Properties",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which statement about ∫₀^π cos³x dx is correct?",
+   "code": "",
+   "options": [
+    "It equals 4/3, because cos³x is an even function, so the integral is 2∫₀^(π/2) cos³x dx.",
+    "It equals 0, because cos³x is an odd function.",
+    "It equals 4/3, because cos³(π − x) = cos³x.",
+    "It equals 0, because cos³(π − x) = −cos³x."
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The 0-to-2a rule depends on f(2a − x), not on whether f is even. Here 2a = π and cos(π − x) = −cos x, so cos³(π − x) = −cos³x. The two halves cancel, so ∫₀^π cos³x dx = 0. Whether cos³x is even depends on f(−x), and that only matters on an interval symmetric about 0.",
+   "why_wrong": [
+    "cos³x is even, but ∫₀^(2a) f = 2∫₀ᵃ f needs f(2a − x) = f(x). Here f(π − x) = −f(x), which gives 0 instead.",
+    "cos³x is even, not odd (cos(−x) = cos x), and the odd-function rule needs an interval symmetric about 0 anyway. The value 0 is right, but the reason is wrong.",
+    "cos(π − x) = −cos x, so cos³(π − x) = −cos³x. The stated identity is false.",
+    ""
+   ],
+   "key": "MTH165-U3-048"
+  }
+ ]
+}

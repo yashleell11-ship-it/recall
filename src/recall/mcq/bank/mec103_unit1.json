@@ -1,0 +1,1111 @@
+{
+ "subject_code": "MEC103",
+ "unit": 1,
+ "unit_label": "Introduction to Engineering Drawing: Instruments, Line Types, Lettering, Dimensioning, Scales and Conic Sections",
+ "questions": [
+  {
+   "topic": "Instruments and Lines",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the size of an A3 drawing sheet?",
+   "code": "",
+   "options": [
+    "210 × 297 mm",
+    "420 × 594 mm",
+    "297 × 420 mm",
+    "594 × 841 mm"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The A-series sizes are A0 841 × 1189, A1 594 × 841, A2 420 × 594, A3 297 × 420 and A4 210 × 297 (all mm). Each size is the next larger one halved across its longer side. So A3 is half of A2: 594 ÷ 2 = 297, which gives 297 × 420 mm.",
+   "why_wrong": [
+    "210 × 297 mm is A4, half of A3, so it is one size too small.",
+    "420 × 594 mm is A2, twice A3, so it is one size too large.",
+    "",
+    "594 × 841 mm is A1, two sizes larger than A3."
+   ],
+   "key": "MEC103-U1-001"
+  },
+  {
+   "topic": "Instruments and Lines",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which pencil grade is the hardest in the standard range of drawing pencils?",
+   "code": "",
+   "options": [
+    "7B",
+    "HB",
+    "9B",
+    "9H"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The eighteen grades run 9H, 8H … 2H, H, F, HB, B, 2B … 7B, from hardest to softest. A higher number in front of H means a harder lead, so 9H is the hardest and 7B is the softest.",
+   "why_wrong": [
+    "7B is the softest grade, at the opposite end of the range.",
+    "HB is a middle grade. It is softer than every H grade and softer than F.",
+    "9B is not a standard grade. The soft end of the range stops at 7B.",
+    ""
+   ],
+   "key": "MEC103-U1-002"
+  },
+  {
+   "topic": "Instruments and Lines",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which line type is used to draw the visible outlines (edges) of an object?",
+   "code": "",
+   "options": [
+    "Continuous thin",
+    "Continuous thick",
+    "Dashed (short dashes)",
+    "Long-dash dotted thin (chain)"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Visible outlines are the most important lines on a drawing, so they are drawn continuous and thick to stand out. Continuous thin lines are used for dimension, extension and leader lines and for hatching. Dashed lines show hidden edges, and thin chain lines show centre lines.",
+   "why_wrong": [
+    "Continuous thin is used for dimension, extension and leader lines and for hatching, not for outlines.",
+    "",
+    "Dashed lines show hidden edges, which cannot be seen from the viewing direction.",
+    "Thin chain lines are used for centre lines and lines of symmetry."
+   ],
+   "key": "MEC103-U1-003"
+  },
+  {
+   "topic": "Instruments and Lines",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which line type is used for centre lines, lines of symmetry and pitch circles?",
+   "code": "",
+   "options": [
+    "Long-dash dotted thin (chain thin)",
+    "Dashed (short dashes)",
+    "Continuous thin",
+    "Chain thin with thick ends"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Centre lines, axes of symmetry and pitch circles are drawn as thin long-dash dotted (chain) lines. A chain line with thickened ends is kept for the cutting-plane line, and dashed lines mean hidden edges. Neither of those can stand in for a centre line.",
+   "why_wrong": [
+    "",
+    "Dashed lines show hidden edges, so a dashed centre line would be read as a hidden edge.",
+    "Continuous thin is used for dimension, extension and leader lines and for hatching.",
+    "Chain thin with thick ends is the cutting-plane line, not a centre line."
+   ],
+   "key": "MEC103-U1-004"
+  },
+  {
+   "topic": "Lettering",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In single-stroke vertical Gothic lettering, what is the height-to-width ratio of the letter M?",
+   "code": "",
+   "options": [
+    "7:8",
+    "7:5",
+    "7:6",
+    "7:4"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Most capital letters are drawn at 7:5, but I, J, L, M and W are exceptions. M is wider than normal at 7:6. W is the widest at 7:8, and L and J are narrower at 7:4.",
+   "why_wrong": [
+    "7:8 is the ratio for W, the widest letter.",
+    "7:5 is the general ratio for letters, but M is one of the exceptions (I, J, L, M, W).",
+    "",
+    "7:4 applies to L, J and the numerals other than 1, not to M."
+   ],
+   "key": "MEC103-U1-005"
+  },
+  {
+   "topic": "Lettering",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Letters and numerals on an engineering drawing are designated (specified) by their:",
+   "code": "",
+   "options": [
+    "Width",
+    "Height",
+    "Stroke thickness",
+    "Spacing between letters"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Lettering size is always given by height, for example 5 mm or 7 mm lettering. The width then follows from the fixed height-to-width ratio (7:5 for most letters). So height is the only number needed to specify the size of a letter.",
+   "why_wrong": [
+    "Width is not specified directly. It follows from the height through the height-to-width ratio.",
+    "",
+    "Single-stroke Gothic strokes all have the same thickness, and thickness is not how letter size is given.",
+    "Spacing, such as the 2 mm gap between letters, is a layout rule, not the size of the letter."
+   ],
+   "key": "MEC103-U1-006"
+  },
+  {
+   "topic": "Dimensioning",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A circular hole of diameter 30 mm is correctly dimensioned as:",
+   "code": "",
+   "options": [
+    "R30",
+    "Ø15",
+    "□30",
+    "Ø30"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The symbol Ø in front of a figure means a diameter, and R means a radius. A full circle of diameter 30 mm is therefore marked Ø30. The unit is not written after the figure because it is given once in a note.",
+   "why_wrong": [
+    "R30 means a radius of 30 mm, which is a circle of diameter 60 mm.",
+    "Ø15 puts the radius value after the diameter symbol, which describes a hole half the size.",
+    "□ marks a square feature, not a circular hole.",
+    ""
+   ],
+   "key": "MEC103-U1-007"
+  },
+  {
+   "topic": "Dimensioning",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In the unidirectional system of dimensioning, all dimension figures are placed so that they can be read from:",
+   "code": "",
+   "options": [
+    "The bottom edge of the sheet only",
+    "The bottom or the right-hand side of the sheet",
+    "The left-hand side of the sheet only",
+    "Any side, turning with the direction of the dimension line"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "In the unidirectional system every figure reads from the bottom edge of the sheet. Each figure is inserted in a break at the middle of the dimension line. Reading from the bottom or the right-hand side belongs to the aligned system.",
+   "why_wrong": [
+    "",
+    "Reading from the bottom or the right-hand side is the aligned system.",
+    "Neither system writes figures to be read from the left-hand side.",
+    "Figures that turn with the dimension line belong to the aligned system, and even there reading is limited to the bottom or right-hand side."
+   ],
+   "key": "MEC103-U1-008"
+  },
+  {
+   "topic": "Dimensioning",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "According to the rules of dimensioning, where is the unit of length (such as mm) stated on a drawing?",
+   "code": "",
+   "options": [
+    "After every dimension figure",
+    "Above each dimension line, before the figure",
+    "Once, in a note placed below the drawing",
+    "In the title of each view"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "All dimensions on a drawing use one unit of length, and that unit is not written after each figure. Instead, a single note such as 'All dimensions are in mm' is placed below the drawing. This keeps the dimension figures uncluttered.",
+   "why_wrong": [
+    "Writing the unit after every figure is exactly what the rule forbids.",
+    "Only the figure goes on the dimension line. The unit is not written beside it at all.",
+    "",
+    "View titles name the view, such as Front View. The unit is given once, in a note below the drawing."
+   ],
+   "key": "MEC103-U1-009"
+  },
+  {
+   "topic": "Scales and RF",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "If 1 m is represented by 5 cm on a drawing, what is the representative fraction (RF)?",
+   "code": "",
+   "options": [
+    "5",
+    "1/20",
+    "20",
+    "1/200"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "RF is a pure ratio, so both lengths must be in the same unit: RF = 5 cm ÷ 1 m = 5 cm ÷ 100 cm = 1/20. Because RF < 1, this is a reducing scale.",
+   "why_wrong": [
+    "5 comes from dividing 5 cm by 1 m without first converting to the same unit, but RF must be a pure ratio.",
+    "",
+    "20 is the ratio upside down, actual length ÷ drawing length.",
+    "1/200 comes from converting 1 m to 1000 (mm) while leaving the 5 in cm."
+   ],
+   "key": "MEC103-U1-010"
+  },
+  {
+   "topic": "Scales and RF",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A drawing is made to the scale 1:2. Compared with the object, the lengths on the drawing are:",
+   "code": "",
+   "options": [
+    "Twice the corresponding actual lengths",
+    "Equal to the actual lengths",
+    "One-quarter of the actual lengths",
+    "Half the corresponding actual lengths"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A scale X:Y means drawing length : actual length. So 1:2 means 1 unit on paper stands for 2 units on the object, and the drawing is half size. It is a reducing scale with RF = 1/2 < 1. An enlarging scale is written X:1, for example 2:1 for twice size.",
+   "why_wrong": [
+    "Twice size is 2:1. This option reads 1:2 backwards, as if it were an enlarging scale.",
+    "Equal lengths means full scale, 1:1.",
+    "One-quarter is the ratio of areas at 1:2 (½ × ½), not of lengths.",
+    ""
+   ],
+   "key": "MEC103-U1-011"
+  },
+  {
+   "topic": "Scales and RF",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A plain scale can measure lengths correct up to:",
+   "code": "",
+   "options": [
+    "One decimal place",
+    "Two decimal places",
+    "Three decimal places",
+    "Whole units only"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A plain scale shows two units, a main unit and its subdivision such as metres and decimetres. So it reads to one decimal place, for example 3.5 m. Reading to two decimal places needs a diagonal scale, which shows three units.",
+   "why_wrong": [
+    "",
+    "Two decimal places is what a diagonal scale can do, not a plain scale.",
+    "A plain scale shows only two units, so it cannot read to three decimal places. Even a diagonal scale reads only to two.",
+    "The first main division of a plain scale is subdivided, so it can read a fraction of the main unit, not just whole units."
+   ],
+   "key": "MEC103-U1-012"
+  },
+  {
+   "topic": "Conic Sections",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the eccentricity of a parabola?",
+   "code": "",
+   "options": [
+    "e = 0",
+    "e < 1",
+    "e = 1",
+    "e > 1"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Eccentricity e = (distance of a point from the focus) ÷ (its distance from the directrix). On a parabola these two distances are always equal, so e = 1. A circle has e = 0, an ellipse e < 1 and a hyperbola e > 1.",
+   "why_wrong": [
+    "e = 0 describes a circle.",
+    "e < 1 describes an ellipse.",
+    "",
+    "e > 1 describes a hyperbola."
+   ],
+   "key": "MEC103-U1-013"
+  },
+  {
+   "topic": "Conic Sections",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A right circular cone is cut by a plane parallel to its base. The section obtained is:",
+   "code": "",
+   "options": [
+    "An ellipse",
+    "A circle",
+    "A parabola",
+    "A triangle"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A plane parallel to the base cuts every generator at the same distance from the apex, so the section is a circle. Tilting the plane to the axis while it still cuts all the generators gives an ellipse. A plane parallel to one generator gives a parabola, and a plane through the apex gives a triangle.",
+   "why_wrong": [
+    "An ellipse needs the plane to be inclined to the axis while still cutting all the generators.",
+    "",
+    "A parabola needs the plane to be parallel to one generator.",
+    "A triangle is formed only when the plane passes through the apex."
+   ],
+   "key": "MEC103-U1-014"
+  },
+  {
+   "topic": "Instruments and Lines",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which sequence lists pencil grades correctly from hardest to softest?",
+   "code": "",
+   "options": [
+    "2H, H, HB, F, B",
+    "H, 2H, F, HB, B",
+    "B, HB, F, H, 2H",
+    "2H, H, F, HB, B"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The standard order is 9H … 3H, 2H, H, F, HB, B, 2B … 7B, from hardest to softest. A higher number in front of H means a harder lead, so 2H comes before H. F sits between H and HB.",
+   "why_wrong": [
+    "F and HB are swapped. F is harder than HB, so it comes first.",
+    "H is placed before 2H, but a higher number in front of H means a harder lead, so 2H is the harder one.",
+    "This is the correct order reversed, running from softest to hardest.",
+    ""
+   ],
+   "key": "MEC103-U1-015"
+  },
+  {
+   "topic": "Instruments and Lines",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of the following is NOT drawn as a continuous thin line?",
+   "code": "",
+   "options": [
+    "Dimension line",
+    "Hidden edge",
+    "Extension (projection) line",
+    "Hatching (section lines)"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Dimension lines, extension lines, leader lines and hatching are all drawn continuous and thin. A hidden edge is drawn dashed (short dashes), which tells the reader that the edge cannot be seen from the viewing direction.",
+   "why_wrong": [
+    "Dimension lines are drawn continuous and thin.",
+    "",
+    "Extension (projection) lines are drawn continuous and thin.",
+    "Hatching is drawn continuous and thin, never thick."
+   ],
+   "key": "MEC103-U1-016"
+  },
+  {
+   "topic": "Lettering",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which pairing of character and height-to-width ratio in single-stroke vertical Gothic lettering is correct?",
+   "code": "",
+   "options": [
+    "L — 7:4",
+    "W — 7:6",
+    "I — 7:3",
+    "Numeral 5 — 7:5"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Most capital letters are 7:5 and most numerals are 7:4, with exceptions for narrow and wide characters. L and J are narrow at 7:4, and I, a single stroke, is 7:1. The numeral 1 is 7:3, M is 7:6 and W is 7:8.",
+   "why_wrong": [
+    "",
+    "7:6 is the ratio for M. W is the widest letter, at 7:8.",
+    "7:3 is the ratio for the numeral 1. The letter I is 7:1.",
+    "7:5 is the general ratio for letters. Numerals other than 1 are 7:4."
+   ],
+   "key": "MEC103-U1-017"
+  },
+  {
+   "topic": "Lettering",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of the following statements is NOT one of the rules of lettering?",
+   "code": "",
+   "options": [
+    "All letters in one line should have the same height.",
+    "The gap between two letters in a word should be 2 mm.",
+    "Letters should read upright from the bottom edge, even as aligned-system dimension figures.",
+    "The distance between two lines of lettering equals the height of one letter."
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Lettering normally reads upright from the bottom edge, but the rule makes an exception for dimensioning. In the aligned system, the figure of a vertical dimension reads from the right-hand side, so it cannot be upright from the bottom edge. The other three statements are rules of lettering as written.",
+   "why_wrong": [
+    "This is a rule: all letters in one line share the same height.",
+    "This is a rule: letters within a word are spaced 2 mm apart.",
+    "",
+    "This is a rule: the gap between lines equals one letter height."
+   ],
+   "key": "MEC103-U1-018"
+  },
+  {
+   "topic": "Dimensioning",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of the following practices violates the rules of dimensioning?",
+   "code": "",
+   "options": [
+    "Placing a dimension inside a view because it reads more clearly there",
+    "Using the same unit of length for every dimension on the drawing",
+    "Repeating a dimension already given in the front view on the top view as well",
+    "Stating the unit once in a note below the drawing"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Each dimension is given only once. Showing the same size in two views makes one of them redundant, and the two copies can end up disagreeing. The other three practices are either required by the rules or allowed by them.",
+   "why_wrong": [
+    "This is allowed. Dimensions go outside the views as far as possible, but an inside dimension is preferred when it is clearer.",
+    "This is required. One unit of length is used for every dimension on a drawing.",
+    "",
+    "This is required. The unit is not written after each figure but is given once, in a note below the drawing."
+   ],
+   "key": "MEC103-U1-019"
+  },
+  {
+   "topic": "Dimensioning",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Dimensions of 10, 20 and 30 mm are all measured from one common reference line and share a common extension line. This method of dimensioning is:",
+   "code": "",
+   "options": [
+    "Chain (continuous) dimensioning",
+    "Parallel (progressive) dimensioning",
+    "Combined dimensioning",
+    "Aligned dimensioning"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "In parallel (progressive) dimensioning every dimension starts from one datum, so 10, 20 and 30 are all distances from the same line. Chain dimensioning would place them arrowhead to arrowhead in series instead, giving 10, 10, 10 for the same three points.",
+   "why_wrong": [
+    "Chain dimensioning places dimensions arrowhead to arrowhead in series, each one starting where the last ended.",
+    "",
+    "Combined dimensioning uses both the chain and parallel methods on the same drawing, not only a common datum.",
+    "Aligned is a system for which way figures read (from the bottom or the right). It is not a method for arranging dimensions in series."
+   ],
+   "key": "MEC103-U1-020"
+  },
+  {
+   "topic": "Dimensioning",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement correctly describes the aligned system of dimensioning?",
+   "code": "",
+   "options": [
+    "Figures are placed at the middle and on top of the dimension line, and read from the bottom or the right-hand side of the sheet.",
+    "Figures are placed at the middle of the dimension line by breaking it, and read from the bottom edge of the sheet only.",
+    "Figures are placed at the middle and on top of the dimension line, and read from the bottom or the left-hand side of the sheet.",
+    "Figures are placed by breaking the dimension line at the middle, and read from the bottom or the right-hand side of the sheet."
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "In the aligned system each figure sits above the middle of an unbroken dimension line and turns with it. So horizontal dimensions read from the bottom and vertical ones from the right-hand side. The unidirectional system instead breaks the line and writes every figure to read from the bottom edge.",
+   "why_wrong": [
+    "",
+    "This describes the unidirectional system.",
+    "Aligned figures read from the bottom or the right-hand side, not the left.",
+    "Breaking the dimension line to insert the figure belongs to the unidirectional system. Aligned figures sit on top of an unbroken line."
+   ],
+   "key": "MEC103-U1-021"
+  },
+  {
+   "topic": "Scales and RF",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "On a plain scale, 1 km is represented by 4 cm. The scale must measure up to 5 km, and a distance of 3.7 km is to be marked on it. What is the length of the scale?",
+   "code": "",
+   "options": [
+    "14.8 cm",
+    "4 cm",
+    "20 cm",
+    "0.2 cm"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "RF = 4 cm ÷ 1 km = 4 ÷ 100 000 = 1/25 000. Length of scale = RF × the maximum length it must measure = (1/25 000) × 500 000 cm = 20 cm. The 3.7 km distance is only marked on the finished scale and does not set its length.",
+   "why_wrong": [
+    "14.8 cm is RF × 3.7 km, the distance to be marked, instead of RF × the 5 km maximum.",
+    "4 cm is the length for just 1 km (one main division), not for the whole scale.",
+    "",
+    "0.2 cm comes from working in metres (5000 m ÷ 25 000 = 0.2) but writing the answer as 0.2 cm, when it is 0.2 m."
+   ],
+   "key": "MEC103-U1-022"
+  },
+  {
+   "topic": "Scales and RF",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement correctly distinguishes a diagonal scale from a plain scale?",
+   "code": "",
+   "options": [
+    "A diagonal scale shows two units and reads to one decimal place.",
+    "A plain scale shows three units and reads to two decimal places.",
+    "A diagonal scale reads to two decimal places because its RF is always greater than 1.",
+    "A diagonal scale shows three units and reads to two decimal places, using similar triangles."
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A plain scale subdivides its first main unit, so it shows two units (such as m and dm) and reads to one decimal place. A diagonal scale divides the smallest division further using diagonals and similar triangles. So it shows three units (such as m, dm and cm) and reads to two decimal places, for example 2.58 m.",
+   "why_wrong": [
+    "Two units and one decimal place describe the plain scale.",
+    "This gives the plain scale what the diagonal scale can do, so the two are swapped.",
+    "The extra precision comes from the diagonals (similar triangles), not from the RF. Diagonal scales are commonly reducing scales, such as RF = 1/20.",
+    ""
+   ],
+   "key": "MEC103-U1-023"
+  },
+  {
+   "topic": "Scales and RF",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A line 1.5 cm long on a drawing represents an actual length of 3 m. What are the RF and the type of scale?",
+   "code": "",
+   "options": [
+    "RF = 1/200, reducing",
+    "RF = 1/2, reducing",
+    "RF = 200, enlarging",
+    "RF = 1/2000, reducing"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Convert both lengths to the same unit: 3 m = 300 cm, so RF = 1.5 ÷ 300 = 1/200. Because RF < 1, the drawing is smaller than the object, so the scale is reducing.",
+   "why_wrong": [
+    "",
+    "1/2 comes from dividing 1.5 by 3 without converting metres to centimetres.",
+    "200 is the ratio upside down (actual ÷ drawing). RF is drawing length ÷ actual length, and a value above 1 would wrongly suggest an enlarging scale.",
+    "1/2000 comes from converting 3 m to 3000 (mm) while leaving 1.5 in cm."
+   ],
+   "key": "MEC103-U1-024"
+  },
+  {
+   "topic": "Conic Sections",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which pairing of cutting plane and section of a right circular cone is correct?",
+   "code": "",
+   "options": [
+    "Plane passing through the apex — hyperbola",
+    "Plane parallel to the base — ellipse",
+    "Plane parallel to one generator — parabola",
+    "Plane inclined to the axis and cutting all the generators — hyperbola"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The section depends on how the plane meets the generators. A plane parallel to one generator never meets that generator, so the curve stays open, which makes it a parabola. A hyperbola needs the plane to make a smaller angle with the axis than the generators do.",
+   "why_wrong": [
+    "A plane through the apex gives a triangle.",
+    "A plane parallel to the base gives a circle.",
+    "",
+    "A plane inclined to the axis that cuts all the generators gives an ellipse."
+   ],
+   "key": "MEC103-U1-025"
+  },
+  {
+   "topic": "Conic Sections",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For an ellipse, the sum of the distances of any point on the curve from the two foci is 100 mm, and the foci are 60 mm apart. What is its eccentricity?",
+   "code": "",
+   "options": [
+    "0.3",
+    "0.75",
+    "1.67",
+    "0.6"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The constant sum of the focal distances equals the major axis, so 2a = 100 mm and a = 50 mm. The foci are 2c = 60 mm apart, so c = 30 mm. Then e = c/a = 30/50 = 0.6, which is less than 1, as an ellipse must be.",
+   "why_wrong": [
+    "0.3 divides c = 30 by the whole major axis (100) instead of the semi-major axis a = 50.",
+    "0.75 is c/b. Here b = √(50² − 30²) = 40 and 30/40 = 0.75, but e uses a, not b.",
+    "1.67 is a/c, the ratio upside down. An ellipse must have e < 1.",
+    ""
+   ],
+   "key": "MEC103-U1-026"
+  },
+  {
+   "topic": "Instruments and Lines",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A drawing office stocks only A0 sheets (841 × 1189 mm). A student cuts one sheet in half across its longer side, then takes one of the two pieces and cuts it in half across its longer side again. Which standard sheet size is each piece from the second cut?",
+   "code": "",
+   "options": [
+    "594 × 841 mm",
+    "297 × 420 mm",
+    "420 × 594 mm",
+    "210 × 297 mm"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Each A-size is the next larger size halved across its longer side. The first cut halves 1189 and gives A1 (594 × 841 mm). The second cut halves 841 and gives A2 (420 × 594 mm). Each cut halves the area, so two cuts leave one quarter of A0's area.",
+   "why_wrong": [
+    "This is A1, the result of the first cut only. The second halving has not been applied.",
+    "This is A3, which needs three halvings of A0. The student made only two.",
+    "",
+    "This is A4. Halving BOTH sides at each cut quarters the area each time, so two such cuts overshoot to A4."
+   ],
+   "key": "MEC103-U1-027"
+  },
+  {
+   "topic": "Instruments and Lines",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A block has a drilled through-hole that cannot be seen in the front view, and the top view shows where a section is taken. Which set of line types is correct for (i) the hole's hidden edges in the front view, (ii) the axis of the hole, and (iii) the cutting-plane line in the top view?",
+   "code": "",
+   "options": [
+    "(i) dashed; (ii) long-dash dotted (chain) thin; (iii) chain thin with thick ends",
+    "(i) chain thin; (ii) dashed; (iii) chain thin with thick ends",
+    "(i) dashed; (ii) continuous thin; (iii) chain thin with thick ends",
+    "(i) dashed; (ii) chain thin; (iii) continuous thick"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Hidden edges are drawn with short dashes, never with a chain line. An axis is a centre line, which is long-dash dotted (chain) thin. The cutting-plane line is also chain thin, but its ends are thick so it cannot be mistaken for a centre line.",
+   "why_wrong": [
+    "",
+    "Swaps the hidden line and the centre line. Hidden edges are dashed and the axis is a chain line.",
+    "Draws the axis as a continuous thin line. Centre lines are long-dash dotted (chain) thin.",
+    "Draws the cutting plane as continuous thick, the visible-outline type. A cutting plane is chain thin with thick ends."
+   ],
+   "key": "MEC103-U1-028"
+  },
+  {
+   "topic": "Instruments and Lines",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which pair of features on an engineering drawing is drawn with exactly the same line type?",
+   "code": "",
+   "options": [
+    "A cutting-plane line and a centre line",
+    "A hidden edge and a line of symmetry",
+    "A visible outline and hatching lines",
+    "Hatching lines and a leader line"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Hatching, dimension, extension and leader lines are all continuous thin, so hatching and a leader line use the same line type. A cutting-plane line looks close to a centre line because both are chain thin. The cutting plane has thick ends, though, so the two are different line types.",
+   "why_wrong": [
+    "Both are chain thin, but the cutting-plane line has thick ends and the centre line does not, so they are different line types.",
+    "A hidden edge is dashed. A line of symmetry is long-dash dotted (chain) thin.",
+    "A visible outline is continuous thick. Hatching is continuous thin, never thick.",
+    ""
+   ],
+   "key": "MEC103-U1-029"
+  },
+  {
+   "topic": "Instruments and Lines",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which pencil grade is BOTH one of the three grades recommended for technical drawing AND softer than F?",
+   "code": "",
+   "options": [
+    "H",
+    "HB",
+    "B",
+    "2H"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "From hardest to softest the range runs 9H … 2H, H, F, HB, B, 2B … 7B. The three grades recommended for technical drawing are H, 2H and HB. HB comes after F, so it is softer than F, and it is the only recommended grade that is. H and 2H are recommended but harder than F, and B is softer but not recommended.",
+   "why_wrong": [
+    "H is recommended, but it sits just before F in the range, so it is harder than F.",
+    "",
+    "B is softer than F, but it is not one of the three recommended grades (H, 2H, HB).",
+    "2H is recommended, but it is harder than both H and F."
+   ],
+   "key": "MEC103-U1-030"
+  },
+  {
+   "topic": "Lettering",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student letters the word MILL in single-stroke vertical Gothic capitals 14 mm high, leaving the standard 2 mm gap between adjacent letters. What is the overall length of the word?",
+   "code": "",
+   "options": [
+    "30 mm",
+    "36 mm",
+    "40 mm",
+    "46 mm"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "At a height of 14 mm, M (7:6) is 14 × 6/7 = 12 mm wide, I (7:1) is 2 mm and each L (7:4) is 8 mm. The letters total 12 + 2 + 8 + 8 = 30 mm. The three 2 mm gaps add 6 mm, which gives 36 mm.",
+   "why_wrong": [
+    "Adds only the letter widths and leaves out the three 2 mm gaps between letters.",
+    "",
+    "Uses W's ratio of 7:8 for M (16 mm) instead of 7:6 (12 mm): 16 + 2 + 8 + 8 + 6 = 40.",
+    "Gives every letter the general 7:5 ratio (10 mm each), although I, L and M are exceptions: 40 + 6 = 46."
+   ],
+   "key": "MEC103-U1-031"
+  },
+  {
+   "topic": "Lettering",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A title is lettered in single-stroke vertical capitals 7 mm high. Taking one standard letter width, what space should be left between two words, and what should the distance between two lines of the title be?",
+   "code": "",
+   "options": [
+    "2 mm between words; 7 mm between lines",
+    "5 mm between words; 5 mm between lines",
+    "7 mm between words; 5 mm between lines",
+    "5 mm between words; 7 mm between lines"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A standard letter is 7:5, so at a height of 7 mm it is 5 mm wide. Words are spaced one letter width apart (5 mm). The distance between two lines equals the height of one letter (7 mm). The 2 mm figure is the gap between letters within a word.",
+   "why_wrong": [
+    "Uses the 2 mm gap between letters within a word as the space between words.",
+    "Takes the line spacing as a letter width. It equals the letter height.",
+    "Swaps the two rules. Words are one letter WIDTH apart and lines are one letter HEIGHT apart.",
+    ""
+   ],
+   "key": "MEC103-U1-032"
+  },
+  {
+   "topic": "Lettering",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "When lettered at the same height in single-stroke vertical Gothic, which two characters have the same width?",
+   "code": "",
+   "options": [
+    "The letter I and the numeral 1",
+    "The letters M and W",
+    "The letter L and the numeral 4",
+    "The letter J and the letter A"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "L is an exception at 7:4, and every numeral except 1 is also 7:4, so L and 4 are equally wide. I and 1 both look like a single stroke, but I is 7:1 and the numeral 1 is 7:3.",
+   "why_wrong": [
+    "Both look like a single vertical stroke, but I is 7:1 and the numeral 1 is 7:3, so 1 is three times as wide.",
+    "M is 7:6 and W is 7:8, so W is wider.",
+    "",
+    "J is an exception at 7:4, while A follows the general 7:5 ratio."
+   ],
+   "key": "MEC103-U1-033"
+  },
+  {
+   "topic": "Lettering",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A drawing is dimensioned in the aligned system. The figure on a vertical dimension is lettered so that it reads from the right-hand side of the sheet, while the title and notes read from the bottom edge. Does this follow the rules?",
+   "code": "",
+   "options": [
+    "Yes: lettering must appear upright from the bottom edge except when used for dimensioning, and aligned figures on vertical dimensions read from the right",
+    "No: every letter and numeral on a drawing must appear upright from the bottom edge",
+    "No: in the aligned system, figures on vertical dimensions must read from the left-hand side",
+    "No: the vertical figure should be written horizontally in a break in the dimension line so it reads from the bottom edge"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The lettering rule says letters appear upright from the bottom edge EXCEPT when they are used for dimensioning. In the aligned system each figure sits above and parallel to its dimension line, so the figure on a vertical dimension reads from the right-hand side. The drawing obeys both rules.",
+   "why_wrong": [
+    "",
+    "Ignores the exception in the lettering rule. Dimension figures do not have to read upright from the bottom edge.",
+    "Aligned figures read from the bottom or the RIGHT-hand side, never from the left.",
+    "That placement belongs to the unidirectional system. Using it for one dimension on an aligned drawing would mix the two systems, which is not allowed."
+   ],
+   "key": "MEC103-U1-034"
+  },
+  {
+   "topic": "Dimensioning",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "On a stepped shaft, two 10 mm steps are dimensioned in series with arrowheads touching tip-to-tip, and a separate 30 mm dimension is taken from the same left end face where the first 10 mm dimension starts. Which method of dimensioning has been used?",
+   "code": "",
+   "options": [
+    "Chain dimensioning",
+    "Parallel dimensioning",
+    "Combined dimensioning",
+    "Aligned dimensioning"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The two 10 mm dimensions in series are chain dimensioning. The 10 mm and 30 mm dimensions taken from the common end face are parallel dimensioning. When both methods appear on the same drawing, the method is called combined dimensioning.",
+   "why_wrong": [
+    "Describes only the two 10 mm dimensions in series. The 30 mm dimension from the common end face is not part of a chain.",
+    "Describes only the dimensions taken from the common end face. The tip-to-tip pair of 10 mm dimensions is a chain.",
+    "",
+    "Aligned is a system for placing and reading figures, not a method for dimensions in series."
+   ],
+   "key": "MEC103-U1-035"
+  },
+  {
+   "topic": "Dimensioning",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A plate has a through-hole of radius 9 mm and a rounded corner (arc) of radius 9 mm. All sizes on the drawing are in millimetres. Which pair of callouts is correct?",
+   "code": "",
+   "options": [
+    "Hole: Ø9; corner: R9",
+    "Hole: Ø18; corner: R9",
+    "Hole: R18; corner: Ø9",
+    "Hole: Ø18 mm; corner: R9 mm"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "A full circle is dimensioned by its diameter with the prefix Ø, so a hole of radius 9 mm is Ø18 (2 × 9 = 18). An arc is dimensioned by its radius with the prefix R, so the corner is R9. The unit is not written after each figure but stated once in a note below the drawing.",
+   "why_wrong": [
+    "Writes the radius value 9 with the diameter symbol. The hole's diameter is 2 × 9 = 18.",
+    "",
+    "Swaps the prefixes. Ø belongs to the full circle and R to the arc, and 18 is not the radius.",
+    "Writes the unit after each dimension. The unit is stated once in a note below the drawing."
+   ],
+   "key": "MEC103-U1-036"
+  },
+  {
+   "topic": "Dimensioning",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Five equally spaced extension lines mark four steps of 12 mm each on a part. The steps are dimensioned by chain dimensioning, and the overall dimension is also shown. What is the overall dimension and where is it placed?",
+   "code": "",
+   "options": [
+    "60, placed outside the chain of 12 mm dimensions",
+    "48, placed between the view and the chain of 12 mm dimensions",
+    "48, continued in line with the chain after the last 12 mm dimension",
+    "48, placed outside the chain of 12 mm dimensions"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Five extension lines enclose four spaces, so the overall length is 4 × 12 = 48 mm. In chain dimensioning the smaller dimensions run arrowhead-to-arrowhead, and the overall dimension is placed outside them, farther from the view.",
+   "why_wrong": [
+    "Multiplies 12 by the five extension lines instead of by the four spaces between them.",
+    "Places the overall dimension inside the smaller dimensions. It is placed outside them.",
+    "Treats the overall dimension as another link in the chain. Placed in series after the last step, it would measure a length beyond the part, so it is placed outside the chain instead.",
+    ""
+   ],
+   "key": "MEC103-U1-037"
+  },
+  {
+   "topic": "Dimensioning",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "On one drawing, every horizontal dimension figure is written above an unbroken dimension line, and every vertical dimension figure is written horizontally in a break at the middle of its dimension line. Every figure therefore reads from the bottom edge. What is the verdict?",
+   "code": "",
+   "options": [
+    "Incorrect: the horizontal dimensions follow the aligned system and the vertical ones the unidirectional system, and the two must never be mixed on one drawing",
+    "Correct: every figure reads from the bottom edge, which is all the unidirectional system requires",
+    "Correct: the aligned system allows either placement as long as figures read from the bottom or the right",
+    "Incorrect: only the vertical dimensions are wrong, because vertical figures must always read from the right-hand side"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The unidirectional system reads from the bottom edge AND inserts every figure in a break at the middle of the dimension line. The aligned system writes each figure above its dimension line and parallel to it. Figures above unbroken lines follow the aligned system, and horizontal figures in breaks on vertical lines follow the unidirectional system. Using both on one drawing breaks the rule that the two systems are never mixed.",
+   "why_wrong": [
+    "",
+    "Reading from the bottom is only half of the unidirectional system. It also inserts every figure by breaking the dimension line, which the horizontal dimensions do not do.",
+    "In the aligned system figures are parallel to their dimension lines, so the figure on a vertical dimension cannot be written horizontally.",
+    "Vertical figures read from the right only in the aligned system. In the unidirectional system they read from the bottom, so the vertical dimensions are not wrong by themselves."
+   ],
+   "key": "MEC103-U1-038"
+  },
+  {
+   "topic": "Dimensioning",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which statement about placing dimensions follows the rules of dimensioning?",
+   "code": "",
+   "options": [
+    "Dimensions must always be placed outside the views, without exception",
+    "A dimension line may cross an object line if that keeps the dimension outside the view",
+    "A dimension may be placed inside a view when it is clearer and more easily read there",
+    "A dimension needed in two views should be repeated in each view so that each can be read on its own"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Dimensions are placed outside the views as far as possible, and inside dimensions are preferred only when they are clearer and easier to read. Dimension lines must not cross each other or other lines of the object. Each dimension is given only once.",
+   "why_wrong": [
+    "Overstates the rule. Dimensions go outside only 'as far as possible', so an inside dimension is allowed when it is clearer.",
+    "Dimension lines must not cross any line of the object, even to keep a dimension outside the view.",
+    "",
+    "Repeating a dimension makes it redundant. Each dimension is given only once."
+   ],
+   "key": "MEC103-U1-039"
+  },
+  {
+   "topic": "Scales and RF",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "On a map, a plot of land of area 9 km² is represented by an area of 25 cm². What is the representative fraction of the map?",
+   "code": "",
+   "options": [
+    "1/6000",
+    "1/60 000",
+    "1/600 000",
+    "1/(3.6 × 10⁹)"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "1 km = 10⁵ cm, so 9 km² = 9 × 10¹⁰ cm² and the area ratio is 25 / (9 × 10¹⁰). RF is a ratio of lengths, and areas scale as its square. So RF = √(25 / (9 × 10¹⁰)) = 5 / (3 × 10⁵) = 1/60 000.",
+   "why_wrong": [
+    "Takes 1 km as 10⁴ cm, so 9 km² becomes 9 × 10⁸ cm² and the square root gives 1/6000.",
+    "",
+    "Takes 1 km as 10⁶ cm, so 9 km² becomes 9 × 10¹² cm² and the square root gives 1/600 000.",
+    "Quotes the area ratio itself (9 × 10¹⁰ / 25 = 3.6 × 10⁹) without taking its square root."
+   ],
+   "key": "MEC103-U1-040"
+  },
+  {
+   "topic": "Scales and RF",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Two towns 250 km apart are 5 cm apart on a map. A diagonal scale reading to single kilometres is to be drawn for this map, long enough to measure up to 700 km. What are the RF and the length of the scale?",
+   "code": "",
+   "options": [
+    "RF = 1/50; length = 14 cm",
+    "RF = 1/5 000 000; length = 5 cm",
+    "RF = 1/500 000; length = 140 cm",
+    "RF = 1/5 000 000; length = 14 cm"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "RF = 5 cm / 250 km = 5 / (250 × 10⁵ cm) = 1/5 000 000. The length of the scale is RF × the maximum length it must measure: 700 × 10⁵ cm / (5 × 10⁶) = 14 cm.",
+   "why_wrong": [
+    "Divides 5 by 250 without converting km to cm, so the 'RF' mixes units.",
+    "Multiplies RF by the 250 km between the towns instead of the 700 km the scale must measure, which just returns the 5 cm map distance.",
+    "Takes 1 km as 10⁴ cm when forming RF. That makes the RF ten times too large and the scale ten times too long.",
+    ""
+   ],
+   "key": "MEC103-U1-041"
+  },
+  {
+   "topic": "Scales and RF",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A site plan uses a scale on which 1 m is represented by 4 cm. The scale must be able to mark off 3.46 m and must measure up to 5 m. Which scale should be drawn, and how long is it?",
+   "code": "",
+   "options": [
+    "Diagonal scale, 20 cm long",
+    "Plain scale, 20 cm long",
+    "Diagonal scale, 13.84 cm long",
+    "Diagonal scale, 125 cm long"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "RF = 4 cm / 100 cm = 1/25, so the length of the scale is 1/25 × 500 cm = 20 cm. Marking 3.46 m needs metres, decimetres and centimetres, which is two decimal places. A diagonal scale reads to two decimal places, while a plain scale reads to only one.",
+   "why_wrong": [
+    "",
+    "A plain scale reads to only one decimal place (3.4 m or 3.5 m), so it cannot mark 3.46 m.",
+    "Multiplies RF by the 3.46 m to be marked (346 / 25 = 13.84 cm) instead of by the 5 m maximum.",
+    "Inverts the RF: 25 × 5 = 125 cm instead of 500 / 25 = 20 cm."
+   ],
+   "key": "MEC103-U1-042"
+  },
+  {
+   "topic": "Scales and RF",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A small component is drawn to the scale 2:1. On the drawing, one rectangular face measures 30 mm × 20 mm. What is the actual area of that face?",
+   "code": "",
+   "options": [
+    "300 mm²",
+    "600 mm²",
+    "150 mm²",
+    "2400 mm²"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "2:1 is an enlarging scale, so every actual length is half the drawn length and the face is 15 mm × 10 mm. Its area is 15 × 10 = 150 mm². Equivalently, the drawn area of 600 mm² is divided by 2² = 4, because areas scale as the square of the RF.",
+   "why_wrong": [
+    "Divides the drawn area of 600 mm² by 2. The scale applies to lengths, so the area must be divided by 2² = 4.",
+    "This is the area measured on the drawing, not the actual area.",
+    "",
+    "Reads 2:1 as a reducing scale and doubles each length (60 × 40 mm). 2:1 means the drawing is twice the actual size."
+   ],
+   "key": "MEC103-U1-043"
+  },
+  {
+   "topic": "Scales and RF",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A diagonal scale showing metres, decimetres and centimetres is drawn with RF = 1/20. What length on the paper represents the smallest length this scale can read?",
+   "code": "",
+   "options": [
+    "5 mm",
+    "0.5 mm",
+    "1 cm",
+    "0.05 mm"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "A diagonal scale of m, dm and cm reads to 1 cm, and on paper that is 1 cm × 1/20 = 0.05 cm = 0.5 mm. That length is too small to mark directly. This is why the diagonal (similar-triangle) construction divides the 5 mm decimetre division into ten parts.",
+   "why_wrong": [
+    "5 mm is the paper length of one decimetre (10 cm ÷ 20), the smallest division on the plain part, not the centimetre reading.",
+    "",
+    "1 cm is the actual length the scale reads, not its length on the paper.",
+    "Writes 0.05 cm as 0.05 mm, a unit slip that makes it ten times too small."
+   ],
+   "key": "MEC103-U1-044"
+  },
+  {
+   "topic": "Conic Sections",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A wheel of diameter 50 mm rolls without slipping along a straight road for one complete revolution, and a point on its rim traces a cycloid. What are the base length and the height of the cycloid arc?",
+   "code": "",
+   "options": [
+    "Base ≈ 314 mm; height 50 mm",
+    "Base ≈ 157 mm; height 25 mm",
+    "Base ≈ 78.5 mm; height 50 mm",
+    "Base ≈ 157 mm; height 50 mm"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "In one revolution the wheel rolls a distance equal to its circumference, so the base is πd = π × 50 ≈ 157 mm. The traced point rises to the top of the wheel, so the height equals the diameter, 50 mm.",
+   "why_wrong": [
+    "Uses 2πd. The circumference is πd (which equals 2πr).",
+    "Takes the height as the radius. The point rises to the top of the wheel, a full diameter above the road.",
+    "Uses πr (≈ 78.5 mm), which is only half the circumference.",
+    ""
+   ],
+   "key": "MEC103-U1-045"
+  },
+  {
+   "topic": "Conic Sections",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "An ellipse is to be drawn by the eccentricity (directrix-focus) method with the focus 60 mm from the directrix and e = 2/3. Where does the vertex lie on the axis between them?",
+   "code": "",
+   "options": [
+    "24 mm from the focus, 36 mm from the directrix",
+    "36 mm from the focus, 24 mm from the directrix",
+    "40 mm from the focus, 20 mm from the directrix",
+    "30 mm from the focus, 30 mm from the directrix"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "At the vertex V, e = VF / VD = 2/3 and VF + VD = 60 mm, so the 60 mm splits in the ratio 2 : 3. That gives VF = 60 × 2/5 = 24 mm and VD = 60 × 3/5 = 36 mm. The vertex is nearer the focus, as it must be when e < 1.",
+   "why_wrong": [
+    "",
+    "Inverts the ratio, taking e as the distance from the directrix divided by the distance from the focus.",
+    "Takes VF = e × 60 = 40 mm, which gives VF/VD = 40/20 = 2, not 2/3.",
+    "The midpoint gives VF/VD = 1, which is the eccentricity of a parabola, not 2/3."
+   ],
+   "key": "MEC103-U1-046"
+  },
+  {
+   "topic": "Conic Sections",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The generators of a right circular cone make 30° with its axis. A cutting plane that does not pass through the apex makes 20° with the axis. What section is obtained?",
+   "code": "",
+   "options": [
+    "Ellipse",
+    "Parabola",
+    "Hyperbola",
+    "Triangle"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The section depends on how the plane's angle with the axis compares with the generators' 30°. More than 30° (but less than 90°, which gives a circle) cuts all generators and gives an ellipse. Exactly 30° makes the plane parallel to a generator and gives a parabola, and less than 30°, as here at 20°, gives a hyperbola. A triangle needs the plane to pass through the apex.",
+   "why_wrong": [
+    "An ellipse needs the plane to cut all generators, which means making MORE than 30° with the axis. At 20° it does not.",
+    "A parabola needs the plane to be parallel to a generator, which means exactly 30° with the axis.",
+    "",
+    "A triangle is obtained only when the plane passes through the apex, which this plane does not."
+   ],
+   "key": "MEC103-U1-047"
+  },
+  {
+   "topic": "Conic Sections",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A taut string is unwound through one full turn from a circle of diameter 40 mm, and its end traces an involute. What is the length of the unwound string (the base of the involute), and what is true of the normal at any point on the curve?",
+   "code": "",
+   "options": [
+    "≈ 251.3 mm; the normal is tangent to the base circle",
+    "≈ 125.7 mm; the normal is tangent to the base circle",
+    "≈ 125.7 mm; the normal passes through the centre of the base circle",
+    "≈ 62.8 mm; the normal is tangent to the base circle"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "One full turn unwinds the whole circumference, πd = π × 40 ≈ 125.7 mm. At every point the taut string is the normal to the involute. The string leaves the circle along a tangent, so the normal is tangent to the base circle.",
+   "why_wrong": [
+    "Uses 2πd. The circumference of a 40 mm circle is π × 40 ≈ 125.7 mm.",
+    "",
+    "Confuses the involute's normal with a normal to the circle itself. The involute's normal is the taut string, which is tangent to the circle.",
+    "Uses πr = π × 20 ≈ 62.8 mm, which is only half the circumference."
+   ],
+   "key": "MEC103-U1-048"
+  }
+ ]
+}

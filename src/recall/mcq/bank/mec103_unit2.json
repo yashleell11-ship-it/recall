@@ -1,0 +1,1111 @@
+{
+ "subject_code": "MEC103",
+ "unit": 2,
+ "unit_label": "Projections of Points, Lines and Planes",
+ "questions": [
+  {
+   "topic": "Projections of Points",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A point A is 25 mm above the HP and 35 mm in front of the VP. Where does its front view a′ lie?",
+   "code": "",
+   "options": [
+    "35 mm above XY",
+    "25 mm above XY",
+    "35 mm below XY",
+    "25 mm below XY"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The front view is the projection on the VP, and its distance from XY equals the point's height above the HP. For a first-quadrant point it lies above XY, so a′ is 25 mm above XY. The 35 mm distance in front of the VP fixes the top view instead, which lies 35 mm below XY.",
+   "why_wrong": [
+    "Uses the distance from the VP, which fixes the top view, not the front view, and also puts it on the wrong side of XY.",
+    "",
+    "This is where the top view a lies, not the front view.",
+    "The distance is right but the side is wrong: a front view below XY would mean the point is below the HP."
+   ],
+   "key": "MEC103-U2-001"
+  },
+  {
+   "topic": "Projections of Points",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A point B lies in the HP and is 30 mm in front of the VP. Where does its front view b′ lie?",
+   "code": "",
+   "options": [
+    "30 mm below XY",
+    "30 mm above XY",
+    "On the XY line",
+    "It has no front view, since the point lies in the HP"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The front view's distance from XY equals the point's height above the HP. A point lying in the HP has zero height, so b′ falls on XY. Its top view b lies 30 mm below XY because the point is 30 mm in front of the VP.",
+   "why_wrong": [
+    "This is the top view b, which shows the distance in front of the VP.",
+    "Treats the 30 mm distance from the VP as a height above the HP, but the point has no height.",
+    "",
+    "Every point has a front view. A point lying in the HP simply has its front view on XY."
+   ],
+   "key": "MEC103-U2-002"
+  },
+  {
+   "topic": "Projections of Points",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A point lies above the HP and in front of the VP. In which quadrant is it?",
+   "code": "",
+   "options": [
+    "Second quadrant",
+    "Fourth quadrant",
+    "Third quadrant",
+    "First quadrant"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The HP and VP divide space into four quadrants. The first is above the HP and in front of the VP, the second is above the HP and behind the VP, the third is below the HP and behind the VP, and the fourth is below the HP and in front of the VP.",
+   "why_wrong": [
+    "The second quadrant is above the HP but behind the VP.",
+    "The fourth quadrant is in front of the VP but below the HP.",
+    "The third quadrant is below the HP and behind the VP, which is the opposite of both conditions.",
+    ""
+   ],
+   "key": "MEC103-U2-003"
+  },
+  {
+   "topic": "Projections of Points",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A point is 20 mm above the HP and 30 mm in front of the VP. How far apart are its front view and top view on the drawing sheet?",
+   "code": "",
+   "options": [
+    "50 mm",
+    "10 mm",
+    "36.1 mm",
+    "30 mm"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The front view lies 20 mm above XY and the top view lies 30 mm below XY, both on one projector perpendicular to XY. Because they are on opposite sides of XY, the separation is 20 + 30 = 50 mm.",
+   "why_wrong": [
+    "",
+    "Subtracts (30 − 20), which would only be right if both views lay on the same side of XY.",
+    "√(20² + 30²) = 36.1 mm is the point's distance in space from the line where the HP and VP meet, not the distance between the views on the sheet.",
+    "Gives only the top view's distance from XY and ignores the front view's 20 mm."
+   ],
+   "key": "MEC103-U2-004"
+  },
+  {
+   "topic": "Projections of Lines",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A line is parallel to the VP and inclined to the HP. In which view does it show its true length?",
+   "code": "",
+   "options": [
+    "Top view",
+    "Front view",
+    "Both views",
+    "Neither view"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A line shows its true length in the view on the plane it is parallel to. Because it is parallel to the VP, the front view (the projection on the VP) is true length and shows the true inclination θ with XY. The top view is shorter, at L cos θ.",
+   "why_wrong": [
+    "The top view is true length only for a line parallel to the HP. This line is inclined to the HP, so its top view is shortened.",
+    "",
+    "Both views are true length only when the line is parallel to both planes.",
+    "Neither view is true length only for a line inclined to both planes, and this one is parallel to the VP."
+   ],
+   "key": "MEC103-U2-005"
+  },
+  {
+   "topic": "Projections of Lines",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A line 60 mm long is perpendicular to the HP. What is its top view?",
+   "code": "",
+   "options": [
+    "A 60 mm line perpendicular to XY",
+    "A 60 mm line parallel to XY",
+    "A line shorter than 60 mm",
+    "A point"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Every point on a line perpendicular to the HP lies on one projector to the HP, so the whole line projects to a single point in the top view. Its front view is a 60 mm true-length line perpendicular to XY.",
+   "why_wrong": [
+    "That is its front view, on the VP, which the line is parallel to.",
+    "A 60 mm line parallel to XY is the top view of a line parallel to both planes, not of a line perpendicular to the HP.",
+    "A shortened top view comes from a line inclined to the HP. A perpendicular line collapses completely to a point.",
+    ""
+   ],
+   "key": "MEC103-U2-006"
+  },
+  {
+   "topic": "Projections of Lines",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A line AB, 80 mm long, is parallel to the VP and inclined at 60° to the HP. What is the length of its top view?",
+   "code": "",
+   "options": [
+    "69.3 mm",
+    "80 mm",
+    "40 mm",
+    "160 mm"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The top view is the projection on the HP, so its length is TL × cos(inclination to the HP). Top view = 80 cos 60° = 80 × 0.5 = 40 mm. The front view stays 80 mm because the line is parallel to the VP.",
+   "why_wrong": [
+    "80 sin 60° = 69.3 mm is the difference in height of the two ends above the HP, not the length of the top view.",
+    "80 mm is the front view. The line is inclined to the HP, so its top view is shorter than the true length.",
+    "",
+    "Divides by cos 60° instead of multiplying. No view can be longer than the true length."
+   ],
+   "key": "MEC103-U2-007"
+  },
+  {
+   "topic": "Projections of Lines",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A line is parallel to both the HP and the VP. What does its front view look like?",
+   "code": "",
+   "options": [
+    "A line parallel to XY, equal to the true length",
+    "A line parallel to XY, shorter than the true length",
+    "A line perpendicular to XY",
+    "A point"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Because the line is parallel to the VP, it projects on the VP at its true length. Because it is parallel to the HP, every point on it is at the same height, so the front view runs parallel to XY. Its top view is also true length and parallel to XY.",
+   "why_wrong": [
+    "",
+    "A front view shorter than the true length comes only from a line inclined to the VP, and this line is parallel to it.",
+    "A front view perpendicular to XY comes from a line with no extent along XY, such as one perpendicular to the HP; a line parallel to both planes runs parallel to XY.",
+    "A point front view belongs to a line perpendicular to the VP."
+   ],
+   "key": "MEC103-U2-008"
+  },
+  {
+   "topic": "Traces of Lines",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the horizontal trace (HT) of a straight line?",
+   "code": "",
+   "options": [
+    "The point where the line, produced if necessary, meets the VP",
+    "The point where the line, produced if necessary, meets the HP",
+    "The point where the line crosses the XY line",
+    "The top view of the line"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The horizontal trace is the point where the line, extended if needed, meets the HP. The vertical trace is the point where it meets the VP. Because the HT lies in the HP, its front view falls on XY.",
+   "why_wrong": [
+    "This is the definition of the vertical trace (VT), not the horizontal trace.",
+    "",
+    "A line in space usually never touches XY. Traces are the points where the line meets the HP or the VP.",
+    "The top view is the projection of the whole line, while a trace is a single point on the line."
+   ],
+   "key": "MEC103-U2-009"
+  },
+  {
+   "topic": "Traces of Lines",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A line is parallel to the HP and inclined to the VP. Which trace or traces does it have?",
+   "code": "",
+   "options": [
+    "Only an HT",
+    "Both an HT and a VT",
+    "Only a VT",
+    "Neither an HT nor a VT"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A line parallel to the HP never meets the HP however far it is produced, so it has no HT. It is inclined to the VP, so it meets the VP when produced and therefore has a VT.",
+   "why_wrong": [
+    "Swaps the rule. A line parallel to the HP has no HT.",
+    "Not every line has both traces. A line parallel to a plane never meets that plane.",
+    "",
+    "A line has neither trace only when it is parallel to both the HP and the VP."
+   ],
+   "key": "MEC103-U2-010"
+  },
+  {
+   "topic": "Traces of Lines",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A line is perpendicular to the HP. With what does its horizontal trace (HT) coincide?",
+   "code": "",
+   "options": [
+    "Its front view, drawn perpendicular to XY",
+    "Its vertical trace",
+    "Nothing, because a line perpendicular to the HP has no HT",
+    "Its top view, which is a point"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A line perpendicular to the HP, produced if necessary, meets the HP at the foot of the perpendicular, and its whole top view collapses to that same point. So the HT coincides with the point top view. The line is parallel to the VP, so it has no VT.",
+   "why_wrong": [
+    "The front view is a true-length line, but the HT is a single point whose front view lies on XY where the front view, produced, meets it.",
+    "A line perpendicular to the HP is parallel to the VP, so it has no VT.",
+    "Confuses perpendicular with parallel. A line perpendicular to the HP does meet it, so it has an HT.",
+    ""
+   ],
+   "key": "MEC103-U2-011"
+  },
+  {
+   "topic": "Projections of Planes",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A plane figure is parallel to the HP. In which view does it show its true shape?",
+   "code": "",
+   "options": [
+    "Front view",
+    "Top view",
+    "Side view",
+    "Neither the front view nor the top view"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A plane shows its true shape only in the view on a plane of projection it is parallel to. Because it is parallel to the HP, it shows its true shape in the top view. It is then perpendicular to the VP, so its front view is a straight line parallel to XY.",
+   "why_wrong": [
+    "The plane is perpendicular to the VP, so its front view is an edge view: a straight line.",
+    "",
+    "The plane is also perpendicular to the profile plane, so its side view is a straight line as well.",
+    "A plane loses its true shape only when it is inclined to the plane of projection, and this one is parallel to the HP."
+   ],
+   "key": "MEC103-U2-012"
+  },
+  {
+   "topic": "Projections of Planes",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is a plane figure called when it is inclined to both the HP and the VP?",
+   "code": "",
+   "options": [
+    "Perpendicular plane",
+    "Profile plane",
+    "Oblique plane",
+    "Horizontal plane"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A plane inclined to both reference planes is called an oblique plane. It shows its true shape in neither the front view nor the top view, because it is parallel to neither plane of projection.",
+   "why_wrong": [
+    "A perpendicular plane is perpendicular to at least one reference plane, so it appears as an edge view in the view on that plane.",
+    "A profile plane is perpendicular to both the HP and the VP, not inclined to them.",
+    "",
+    "A horizontal plane is parallel to the HP, not inclined to it."
+   ],
+   "key": "MEC103-U2-013"
+  },
+  {
+   "topic": "Projections of Planes",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A plane figure is perpendicular to the VP and inclined at 30° to the HP. What is its front view?",
+   "code": "",
+   "options": [
+    "A straight line inclined at 30° to XY",
+    "Its true shape",
+    "A straight line parallel to XY",
+    "A straight line inclined at 60° to XY"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A plane appears as a straight line (an edge view) in the view on the plane it is perpendicular to. This plane is perpendicular to the VP, so its front view is a line. Because the plane is inclined at 30° to the HP, that line makes 30° with XY, and the top view shows a reduced (apparent) shape.",
+   "why_wrong": [
+    "",
+    "The plane would need to be parallel to the VP to show its true shape in the front view. It is perpendicular to the VP, so it is seen edge-on.",
+    "A line parallel to XY would mean the plane is parallel to the HP, not inclined at 30° to it.",
+    "Uses the complement (90° − 30°). The edge view makes the true inclination with XY."
+   ],
+   "key": "MEC103-U2-014"
+  },
+  {
+   "topic": "Projections of Points",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A point P is 40 mm below the HP and 25 mm behind the VP. Where do its front view p′ and top view p lie?",
+   "code": "",
+   "options": [
+    "p′ 40 mm above XY; p 25 mm below XY",
+    "p′ 25 mm below XY; p 40 mm above XY",
+    "p′ 40 mm below XY; p 25 mm below XY",
+    "p′ 40 mm below XY; p 25 mm above XY"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A point below the HP and behind the VP is in the third quadrant. The front view lies below XY by the point's distance below the HP, which is 40 mm. When the HP is rotated to coincide with the VP, the part of it behind the VP swings above XY, so the top view lies 25 mm above XY.",
+   "why_wrong": [
+    "This is the first-quadrant layout. It ignores that P is below the HP and behind the VP.",
+    "Swaps the distances. The front view shows the distance from the HP (40 mm) and the top view shows the distance from the VP (25 mm).",
+    "Both views below XY belong to the fourth quadrant. A point behind the VP has its top view above XY.",
+    ""
+   ],
+   "key": "MEC103-U2-015"
+  },
+  {
+   "topic": "Projections of Points",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For which of these points does the top view lie on the XY line?",
+   "code": "",
+   "options": [
+    "A point in the HP, 20 mm in front of the VP",
+    "A point in the VP, 20 mm above the HP",
+    "A point 20 mm above the HP and 20 mm in front of the VP",
+    "A point 20 mm below the HP and 20 mm behind the VP"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The top view's distance from XY equals the point's distance from the VP. A point lying in the VP is at zero distance from it, so its top view falls on XY, while its front view stays 20 mm above XY.",
+   "why_wrong": [
+    "A point in the HP has its front view on XY. Its top view lies 20 mm below XY.",
+    "",
+    "Both views of this point are 20 mm from XY: the front view above and the top view below.",
+    "This third-quadrant point has its top view 20 mm above XY and its front view 20 mm below XY."
+   ],
+   "key": "MEC103-U2-016"
+  },
+  {
+   "topic": "Projections of Points",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A point Q is 15 mm above the HP and 20 mm behind the VP. What is the distance between its front view and top view on the drawing sheet?",
+   "code": "",
+   "options": [
+    "35 mm",
+    "25 mm",
+    "5 mm",
+    "20 mm"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Q is in the second quadrant. Its front view is 15 mm above XY, and because Q is behind the VP, its top view is also above XY, 20 mm up. Both views lie on the same projector on the same side of XY, so they are 20 − 15 = 5 mm apart.",
+   "why_wrong": [
+    "Adds the two distances as you would for a first-quadrant point, but here both views lie above XY.",
+    "√(15² + 20²) = 25 mm is the point's distance in space from the line where the HP and VP meet, not the separation of the views on the sheet.",
+    "",
+    "Gives only the top view's distance from XY."
+   ],
+   "key": "MEC103-U2-017"
+  },
+  {
+   "topic": "Projections of Lines",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A line AB, 80 mm long, is inclined at 45° to the HP and 30° to the VP. What is the length of its front view?",
+   "code": "",
+   "options": [
+    "69.3 mm",
+    "56.6 mm",
+    "40 mm",
+    "80 mm"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The front view is the projection on the VP, so its length is TL × cos(inclination to the VP). Front view = 80 cos 30° = 80 × 0.866 = 69.3 mm. The data is valid because θ + φ = 45° + 30° = 75°, which does not exceed 90°.",
+   "why_wrong": [
+    "",
+    "Uses the HP angle: 80 cos 45° = 56.6 mm is the length of the top view, not the front view.",
+    "80 sin 30° = 40 mm is the difference between the two ends' distances from the VP, not the length of a view.",
+    "A line inclined to both planes shows its true length in neither view."
+   ],
+   "key": "MEC103-U2-018"
+  },
+  {
+   "topic": "Projections of Lines",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A line is inclined at θ to the HP and φ to the VP, and it is neither parallel nor perpendicular to either plane. Its front view makes an angle α with XY and its top view makes an angle β with XY. Which relation is correct?",
+   "code": "",
+   "options": [
+    "α < θ and β < φ",
+    "α = θ and β = φ",
+    "α > θ and β > φ",
+    "α = φ and β = θ"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The front view keeps the full rise L sin θ but is shortened to L cos φ, so sin α = sin θ ÷ cos φ, which is greater than sin θ. That makes α > θ. The same reasoning on the HP gives β > φ, so both apparent angles are larger than the true angles.",
+   "why_wrong": [
+    "This is the common trap. The views are shortened while the rise stays the same, which makes the apparent angles larger, not smaller.",
+    "α equals θ only when the line is parallel to the VP, and β equals φ only when the line is parallel to the HP.",
+    "",
+    "Pairs each view with the wrong true angle. The front view's angle α grows out of θ, the inclination to the HP, and there is no general equality between α and φ."
+   ],
+   "key": "MEC103-U2-019"
+  },
+  {
+   "topic": "Projections of Lines",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which pair of true inclinations, θ to the HP and φ to the VP, is impossible for a straight line?",
+   "code": "",
+   "options": [
+    "θ = 30°, φ = 60°",
+    "θ = 0°, φ = 90°",
+    "θ = 35°, φ = 40°",
+    "θ = 50°, φ = 45°"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "For any straight line θ + φ ≤ 90°. The sum equals 90° only when the line lies in a profile plane, one perpendicular to both the HP and the VP. Here 50° + 45° = 95°, which exceeds 90°, so no line can have this pair.",
+   "why_wrong": [
+    "The sum is exactly 90°, which is allowed: the line lies in a profile plane.",
+    "This is a line perpendicular to the VP, which is automatically parallel to the HP.",
+    "The sum is 75°, well within 90°.",
+    ""
+   ],
+   "key": "MEC103-U2-020"
+  },
+  {
+   "topic": "Projections of Lines",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about a 70 mm line perpendicular to the VP is NOT correct?",
+   "code": "",
+   "options": [
+    "Its front view is a point",
+    "Its front view is a 70 mm line perpendicular to XY",
+    "Its top view is 70 mm long and perpendicular to XY",
+    "It is parallel to the HP"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A line perpendicular to the VP projects on the VP as a point, so its front view is a point, not a line. On the HP, which it is parallel to, it shows a 70 mm true-length top view perpendicular to XY.",
+   "why_wrong": [
+    "True: every point of the line lies on one projector to the VP, so the front view is a point.",
+    "",
+    "True: the line is parallel to the HP, so its top view is true length and runs perpendicular to XY.",
+    "True: a line perpendicular to the VP is necessarily parallel to the HP."
+   ],
+   "key": "MEC103-U2-021"
+  },
+  {
+   "topic": "Traces of Lines",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A line AB, 60 mm long, is parallel to the VP and inclined at 30° to the HP. Its lower end A is 15 mm above the HP. How far from A, measured along the line produced beyond A, is its horizontal trace?",
+   "code": "",
+   "options": [
+    "30 mm",
+    "7.5 mm",
+    "17.3 mm",
+    "26.0 mm"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Because the line is parallel to the VP, its front view shows the true 30° inclination. The line has to drop 15 mm to reach the HP, so the distance along the line is 15 ÷ sin 30° = 15 ÷ 0.5 = 30 mm.",
+   "why_wrong": [
+    "",
+    "Multiplies by sin 30° instead of dividing.",
+    "Divides by cos 30°, which pairs the 15 mm height with the wrong side of the right triangle.",
+    "15 ÷ tan 30° = 26.0 mm is the horizontal distance between the projectors of A and the HT, not the distance along the line."
+   ],
+   "key": "MEC103-U2-022"
+  },
+  {
+   "topic": "Traces of Lines",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The front view a′b′ of a line, produced, meets XY at a point h′. What does h′ represent?",
+   "code": "",
+   "options": [
+    "The line's vertical trace",
+    "The top view of the line's horizontal trace",
+    "The front view of the line's horizontal trace",
+    "The point where the line itself meets the XY line in space"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The HT lies in the HP, and any point in the HP has its front view on XY. The HT is also on the line, so its front view lies on a′b′ produced, and the only such point on XY is h′. Projecting from h′ to the top view produced then locates the HT itself.",
+   "why_wrong": [
+    "The VT lies on the front view produced, on the projector through the point where the top view, produced, meets XY; it may be above or below XY and in general is not on it.",
+    "The top view of the HT lies on the top view produced, found by projecting from h′. It is not on XY.",
+    "",
+    "A line in space generally never meets XY. h′ is only the front view of the HT."
+   ],
+   "key": "MEC103-U2-023"
+  },
+  {
+   "topic": "Traces of Lines",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about the traces of a line is NOT correct?",
+   "code": "",
+   "options": [
+    "A line perpendicular to the VP has its VT coinciding with its point front view",
+    "A line parallel to the VP and inclined to the HP has no VT",
+    "A line parallel to both the HP and the VP has neither an HT nor a VT",
+    "A line parallel to the HP and inclined to the VP has no VT"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A line parallel to a plane never meets it, so a line parallel to the HP has no HT. A line parallel to the HP but inclined to the VP does meet the VP when produced, so it has a VT. The false statement swaps the two traces.",
+   "why_wrong": [
+    "True: the line meets the VP at one point, and that is exactly where its whole front view collapses.",
+    "True: a line parallel to the VP never meets it, so it has no VT.",
+    "True: a line parallel to both planes meets neither of them.",
+    ""
+   ],
+   "key": "MEC103-U2-024"
+  },
+  {
+   "topic": "Projections of Planes",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A plane figure is perpendicular to the HP and inclined at 40° to the VP. Which statement about its views is correct?",
+   "code": "",
+   "options": [
+    "Its top view is a straight line inclined at 40° to XY",
+    "Its front view shows its true shape",
+    "Its top view shows its true shape",
+    "Its front view is a straight line inclined at 40° to XY"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Because the plane is perpendicular to the HP, the top view sees it edge-on as a straight line, and that line makes the plane's true inclination of 40° with XY. The plane is inclined to the VP, so its front view is a reduced (apparent) shape, not its true shape.",
+   "why_wrong": [
+    "",
+    "The plane would need to be parallel to the VP to show its true shape in the front view. It is inclined at 40° to the VP, so the front view is reduced.",
+    "The plane is perpendicular to the HP, so its top view is an edge view (a line), not a shape.",
+    "The edge view appears in the view on the plane it is perpendicular to, which is the HP, not the VP."
+   ],
+   "key": "MEC103-U2-025"
+  },
+  {
+   "topic": "Projections of Planes",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about a plane figure parallel to the VP is NOT correct?",
+   "code": "",
+   "options": [
+    "It is perpendicular to the HP",
+    "Its top view is a straight line perpendicular to XY",
+    "Its front view shows its true shape",
+    "Its top view is a straight line parallel to XY"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A plane parallel to the VP is perpendicular to the HP, so its top view is an edge view. Every point of the plane is the same distance in front of the VP, so that edge line runs parallel to XY, not perpendicular to it. Its front view shows its true shape.",
+   "why_wrong": [
+    "True: a plane parallel to the VP is automatically perpendicular to the HP.",
+    "",
+    "True: the plane is parallel to the VP, so its front view shows its true shape.",
+    "True: every point is equally far from the VP, so the edge-view top view runs parallel to XY."
+   ],
+   "key": "MEC103-U2-026"
+  },
+  {
+   "topic": "Projections of Points",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "On a drawing, the front view p′ of a point P lies on the XY line and its top view p lies 25 mm above XY. Where is the point P?",
+   "code": "",
+   "options": [
+    "In the VP, 25 mm above the HP",
+    "In the HP, 25 mm behind the VP",
+    "In the HP, 25 mm in front of the VP",
+    "25 mm above the HP and 25 mm behind the VP, in the second quadrant"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The front view's distance from XY gives the point's height above or below the HP, so p′ on XY means zero height: P lies in the HP. The top view's distance from XY gives the distance from the VP, and a top view above XY means the point is behind the VP. So P is in the HP, 25 mm behind the VP.",
+   "why_wrong": [
+    "Swaps which view falls on XY: a point in the VP has its top view on XY and its front view off it, the opposite of what is given.",
+    "",
+    "Reads a top view above XY as 'in front of the VP'; a point in front of the VP has its top view below XY.",
+    "Ignores that p′ on XY means the point has zero height, so it cannot be 25 mm above the HP."
+   ],
+   "key": "MEC103-U2-027"
+  },
+  {
+   "topic": "Projections of Points",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Point A is 20 mm above the HP and 30 mm in front of the VP. Point B is 40 mm below the HP and 25 mm behind the VP. The projectors through A and B are 80 mm apart. What is the distance between the front views a′ and b′ on the drawing sheet?",
+   "code": "",
+   "options": [
+    "80 mm",
+    "≈ 82.5 mm",
+    "100 mm",
+    "≈ 97.1 mm"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "a′ lies 20 mm above XY because A is above the HP, and b′ lies 40 mm below XY because B is below the HP, so they are 20 + 40 = 60 mm apart vertically. With the projectors 80 mm apart, a′b′ = √(80² + 60²) = √10000 = 100 mm.",
+   "why_wrong": [
+    "Uses only the 80 mm gap between the projectors and ignores the 60 mm vertical gap between a′ and b′.",
+    "Places b′ 40 mm above XY as if B were above the HP, so the vertical gap becomes 40 − 20 = 20 mm and √(80² + 20²) ≈ 82.5 mm.",
+    "",
+    "Measures between the top views instead: a is 30 mm below XY and b is 25 mm above it, giving √(80² + 55²) ≈ 97.1 mm."
+   ],
+   "key": "MEC103-U2-028"
+  },
+  {
+   "topic": "Projections of Points",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "A point P is 20 mm above the HP and 30 mm in front of the VP. It is then moved 45 mm straight backward, perpendicular to the VP and away from the observer. Where do its views now lie?",
+   "code": "",
+   "options": [
+    "p′ stays 20 mm above XY; p moves to 15 mm above XY",
+    "p′ stays 20 mm above XY; p moves to 15 mm below XY",
+    "p′ moves to 25 mm below XY; p stays 30 mm below XY",
+    "p′ stays 20 mm above XY; p moves to 45 mm above XY"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Moving perpendicular to the VP changes only the distance from the VP, so the height, and with it p′ at 20 mm above XY, is unchanged. The point ends 45 − 30 = 15 mm behind the VP, and a point behind the VP has its top view above XY, so p is 15 mm above XY. P is now in the second quadrant.",
+   "why_wrong": [
+    "",
+    "Computes 30 − 45 but drops the sign, keeping the point in front of the VP; it has passed through the VP to 15 mm behind it.",
+    "Applies the 45 mm shift to the height (20 − 45 = −25) as if the point moved downward; moving perpendicular to the VP changes the top view, not the front view.",
+    "Takes the 45 mm movement as the new distance behind the VP, forgetting the point started 30 mm in front of it."
+   ],
+   "key": "MEC103-U2-029"
+  },
+  {
+   "topic": "Projections of Points",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The front view and the top view of a point coincide at a single spot 30 mm above the XY line. Where is the point?",
+   "code": "",
+   "options": [
+    "30 mm above the HP and 30 mm in front of the VP",
+    "30 mm below the HP and 30 mm in front of the VP",
+    "30 mm above the HP and 30 mm behind the VP",
+    "30 mm below the HP and 30 mm behind the VP"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Two views can coincide only when both lie on the same side of XY at the same distance, which happens for an equidistant point in the second quadrant (both views above XY) or the fourth quadrant (both below XY). Here the spot is above XY: p′ above XY means above the HP, and p above XY means behind the VP. So the point is 30 mm above the HP and 30 mm behind the VP.",
+   "why_wrong": [
+    "Equidistance alone is not enough: in the first quadrant p′ is 30 mm above XY but p is 30 mm below it, so the views are 60 mm apart.",
+    "In the fourth quadrant the views do coincide, but both lie 30 mm below XY, not above it.",
+    "",
+    "In the third quadrant p′ is 30 mm below XY and p is 30 mm above it, so the views lie on opposite sides."
+   ],
+   "key": "MEC103-U2-030"
+  },
+  {
+   "topic": "Projections of Points",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A point P is 60 mm below the HP and 25 mm in front of the VP. How far apart are its front view and top view on the sheet, and how far is P in space from the line of intersection of the HP and the VP?",
+   "code": "",
+   "options": [
+    "85 mm apart on the sheet; 65 mm from the line in space",
+    "35 mm apart on the sheet; 35 mm from the line in space",
+    "35 mm apart on the sheet; 85 mm from the line in space",
+    "35 mm apart on the sheet; 65 mm from the line in space"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "In the fourth quadrant p′ is 60 mm below XY (below the HP) and p is 25 mm below XY (in front of the VP), so on one projector they are 60 − 25 = 35 mm apart. In space the 60 mm and 25 mm perpendiculars to the HP and VP are at right angles, so the distance to the line of intersection is √(60² + 25²) = √4225 = 65 mm. The sheet separation depends on the quadrant; the spatial distance does not.",
+   "why_wrong": [
+    "Adds 60 + 25 as if the views lay on opposite sides of XY, which is the first- or third-quadrant layout; in the fourth quadrant both views are below XY.",
+    "Treats the 35 mm sheet separation as a real distance in space; the sheet gap comes from how the HP is rotated, not from the point's position.",
+    "Adds the two distances for the spatial distance, but the perpendiculars to the HP and VP are at right angles and combine by Pythagoras.",
+    ""
+   ],
+   "key": "MEC103-U2-031"
+  },
+  {
+   "topic": "Projections of Lines",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A line AB, 120 mm long, is inclined at 30° to the HP and 60° to the VP. Which statement about its projections is correct?",
+   "code": "",
+   "options": [
+    "The data is impossible, because θ + φ must be less than 90°",
+    "Front view 60 mm and top view ≈ 103.9 mm, both perpendicular to XY",
+    "Front view ≈ 103.9 mm and top view 60 mm, both perpendicular to XY",
+    "Front view 60 mm at 30° to XY and top view ≈ 103.9 mm at 60° to XY"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "θ + φ can never exceed 90°, but it can equal 90°; the line then lies in a profile plane and both its views are perpendicular to XY on one projector. Front view = TL × cos φ = 120 × cos 60° = 60 mm, and top view = TL × cos θ = 120 × cos 30° ≈ 103.9 mm.",
+   "why_wrong": [
+    "Misstates the limit: θ + φ cannot exceed 90°, but equal to 90° is allowed and puts the line in a profile plane.",
+    "",
+    "Pairs each angle with the wrong view: the front view uses the inclination to the VP (cos 60°) and the top view the inclination to the HP (cos 30°).",
+    "Assumes the views make the true angles with XY; for a line in a profile plane both views are perpendicular to XY."
+   ],
+   "key": "MEC103-U2-032"
+  },
+  {
+   "topic": "Projections of Lines",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A straight rod AB, 90 mm long, is held parallel to the VP and 20 mm in front of it, inclined at 30° to the HP, with its lower end A 10 mm above the HP. Where do the front view b′ and the top view b of the upper end B lie?",
+   "code": "",
+   "options": [
+    "b′ 45 mm above XY; b 20 mm below XY",
+    "b′ ≈ 87.9 mm above XY; b 20 mm below XY",
+    "b′ 55 mm above XY; b 65 mm below XY",
+    "b′ 55 mm above XY; b 20 mm below XY"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The rise of B above A is TL × sin θ = 90 × sin 30° = 45 mm, so B is 10 + 45 = 55 mm above the HP and b′ is 55 mm above XY. Because the rod is parallel to the VP, every point on it is 20 mm in front of the VP, so b lies 20 mm below XY, just like a, and the top view is parallel to XY.",
+   "why_wrong": [
+    "Finds the 45 mm rise correctly but forgets that end A already starts 10 mm above the HP.",
+    "Uses 90 × cos 30° ≈ 77.9 mm for the rise; that is the length of the top view, while the rise is TL × sin θ.",
+    "Lets the distance from the VP grow by 45 mm too, but a line parallel to the VP stays the same distance from it along its whole length.",
+    ""
+   ],
+   "key": "MEC103-U2-033"
+  },
+  {
+   "topic": "Projections of Lines",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "A line 100 mm long has a front view 50 mm long. What does this tell you about the line?",
+   "code": "",
+   "options": [
+    "It is inclined at 30° to the VP",
+    "It is inclined at 60° to the HP",
+    "It is inclined at 60° to the VP",
+    "Its inclination cannot be found without the top view"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The front view is the projection on the VP, so its length is TL × cos φ, where φ is the inclination to the VP. cos φ = 50/100 = 0.5 gives φ = 60°. The front view's length alone does not fix θ, the inclination to the HP.",
+   "why_wrong": [
+    "Uses sin instead of cos: 50/100 = sin 30°, but a projected length is TL × cos of the inclination.",
+    "Pairs the front view with the HP; the length of the front view depends on the inclination to the VP.",
+    "",
+    "The true length and the front-view length together already fix the inclination to the VP, so no top view is needed."
+   ],
+   "key": "MEC103-U2-034"
+  },
+  {
+   "topic": "Projections of Lines",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The front view of a line makes 40° with XY and its top view is parallel to XY. What is the line's true inclination θ to the HP?",
+   "code": "",
+   "options": [
+    "Less than 40°, because the apparent inclination always exceeds the true one",
+    "Exactly 40°",
+    "More than 40°",
+    "It cannot be found without the true length"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A top view parallel to XY means every point of the line is the same distance from the VP, so the line is parallel to the VP. Its front view is then its true length and shows the true inclination to the HP, so θ = 40°. The rule that the apparent angle exceeds the true angle applies only to a line inclined to both planes.",
+   "why_wrong": [
+    "Applies the 'apparent angle is larger' rule, which holds only for a line inclined to both planes; this line is parallel to the VP.",
+    "",
+    "Reverses the apparent/true relation, and still misses that a line parallel to the VP shows its true angle in the front view.",
+    "The front view is the true-length view here, so the angle is read directly from it; no length is needed."
+   ],
+   "key": "MEC103-U2-035"
+  },
+  {
+   "topic": "Projections of Lines",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A line AB, 100 mm long, is inclined to both the HP and the VP. End A is 10 mm above the HP and end B is 60 mm above the HP. What is the length of its top view?",
+   "code": "",
+   "options": [
+    "It cannot be found without the inclination to the VP",
+    "50 mm",
+    "≈ 111.8 mm",
+    "≈ 86.6 mm"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The difference in height of the ends is TL × sin θ, so sin θ = 50/100 = 0.5 and θ = 30°. The top view length is TL × cos θ = 100 × cos 30° ≈ 86.6 mm, the same as √(100² − 50²). The inclination to the VP changes the top view's direction, not its length.",
+   "why_wrong": [
+    "The top view's length depends only on θ, and θ is fixed by the 50 mm height difference; φ only affects its direction.",
+    "Takes the 50 mm height difference, which is TL × sin θ, as the top view; the top view is TL × cos θ.",
+    "Adds the squares, √(100² + 50²); a projection can never be longer than the true length.",
+    ""
+   ],
+   "key": "MEC103-U2-036"
+  },
+  {
+   "topic": "Projections of Lines",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "A line AB, 60 mm long, is parallel to the HP and inclined at 30° to the VP. End A is 20 mm in front of the VP and end B is farther from it. How far is B in front of the VP, and how long is the front view a′b′?",
+   "code": "",
+   "options": [
+    "B is 50 mm in front of the VP; a′b′ ≈ 52 mm",
+    "B is 50 mm in front of the VP; a′b′ is 60 mm",
+    "B is ≈ 72 mm in front of the VP; a′b′ is 30 mm",
+    "B is 30 mm in front of the VP; a′b′ ≈ 52 mm"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Parallel to the HP means the top view is the true length and makes the true angle of 30° with XY. B lies 60 × sin 30° = 30 mm farther from the VP than A, so it is 20 + 30 = 50 mm in front of the VP. The front view is parallel to XY with length TL × cos φ = 60 × cos 30° ≈ 52 mm.",
+   "why_wrong": [
+    "",
+    "Treats the front view as true length; a line parallel to the HP shows its true length in the top view, while the front view shortens by cos 30°.",
+    "Swaps sin and cos: 20 + 60 × cos 30° ≈ 72 mm and 60 × sin 30° = 30 mm.",
+    "Takes the 30 mm offset as B's full distance from the VP, forgetting that A already starts 20 mm in front of it."
+   ],
+   "key": "MEC103-U2-037"
+  },
+  {
+   "topic": "Traces of Lines",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "A line AB is parallel to the HP and 30 mm above it, and inclined at 35° to the VP. Where is its vertical trace (VT)?",
+   "code": "",
+   "options": [
+    "It has no VT, because the line is parallel to the HP",
+    "On the front view produced, 30 mm above XY",
+    "On XY, where the top view produced meets XY",
+    "It has both traces, and its HT lies on XY"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "This line is parallel to the HP and inclined to the VP, so when produced it meets the VP: it has a VT but no HT. Every point on the line, the VT included, is 30 mm above the HP. So the VT lies on the front view produced, 30 mm above XY.",
+   "why_wrong": [
+    "Swaps the rule: a line parallel to the HP has no HT, but it still meets the VP, so it has a VT.",
+    "",
+    "That point is only v, the top view of the VT; the VT itself is found by projecting up to the front view produced, 30 mm above XY.",
+    "A line parallel to the HP never meets the HP, so it has no HT; only the VT exists."
+   ],
+   "key": "MEC103-U2-038"
+  },
+  {
+   "topic": "Traces of Lines",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "End A of a line AB lies in the HP, 20 mm in front of the VP. End B is 30 mm above the HP and 60 mm in front of the VP. Where is the line's vertical trace (VT)?",
+   "code": "",
+   "options": [
+    "At end A itself, because A lies in the HP",
+    "15 mm above XY, on the front view produced beyond a′",
+    "15 mm below XY, on the front view produced beyond a′",
+    "≈ 26.7 mm below XY, on the front view produced beyond a′"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Going from A to B the line rises 30 mm while moving 40 mm away from the VP. Producing it backwards from A by the 20 mm needed to reach the VP therefore drops it 20 × 30/40 = 15 mm, so the VT is 15 mm below the HP. It is marked 15 mm below XY on the front view produced beyond a′; A itself is the HT.",
+   "why_wrong": [
+    "A lies in the HP, so A is the HT, not the VT; the VT is where the line meets the VP.",
+    "Gets the 15 mm right but loses the direction: the line is falling as it moves back from A towards the VP, so it meets the VP below the HP.",
+    "",
+    "Inverts the ratio, using 20 × 40/30; the height changes 30 mm for every 40 mm change in distance from the VP, not the other way round."
+   ],
+   "key": "MEC103-U2-039"
+  },
+  {
+   "topic": "Traces of Lines",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A line inclined to both the HP and the VP has its HT and its VT at the very same point in space. What must be true?",
+   "code": "",
+   "options": [
+    "The line is parallel to XY",
+    "The line lies in a profile plane",
+    "The line meets the XY line, and that meeting point is both traces",
+    "The line is equally inclined to the HP and the VP"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The HT lies in the HP and the VT lies in the VP, so a single point that is both must lie in both planes, which means on their line of intersection, XY. So the line passes through XY, and on the drawing both h and v′ fall on XY at that point. Neither equal inclinations nor a profile plane forces the two traces together.",
+   "why_wrong": [
+    "A line parallel to XY is parallel to both the HP and the VP, so it has no traces at all, and it would not be inclined to both planes.",
+    "A line in a profile plane has its HT and VT on one projector, but they are two different points unless the line also passes through XY.",
+    "",
+    "Equal inclinations say nothing about where the line is placed; such a line can meet the HP and the VP at two different points."
+   ],
+   "key": "MEC103-U2-040"
+  },
+  {
+   "topic": "Traces of Lines",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "End A of a line AB is 20 mm above the HP and 10 mm in front of the VP; end B is 20 mm below the HP and 50 mm in front of the VP. How far in front of the VP is the horizontal trace (HT), and where is it marked on the drawing?",
+   "code": "",
+   "options": [
+    "20 mm; marked 20 mm below XY, midway between the end projectors",
+    "0 mm; it is marked on XY where a′b′ crosses XY",
+    "It has no HT, because its ends lie on opposite sides of the HP",
+    "30 mm; marked 30 mm below XY, midway between the end projectors"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A is 20 mm above and B 20 mm below the HP, so the line crosses the HP exactly halfway along AB, and that crossing point is the HT. Halfway along, the distance from the VP is (10 + 50)/2 = 30 mm. The HT is therefore marked 30 mm below XY on the top view, midway between the end projectors; its front view h′ is where a′b′ crosses XY.",
+   "why_wrong": [
+    "Halves the change in distance, (50 − 10)/2 = 20 mm, but forgets to add A's own 10 mm.",
+    "Confuses the HT with its front view h′, which lies on XY; the HT is in the HP but in front of the VP.",
+    "Gets it backwards: ends on opposite sides of the HP guarantee that the line crosses the HP between them.",
+    ""
+   ],
+   "key": "MEC103-U2-041"
+  },
+  {
+   "topic": "Traces of Lines",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The HT of a line is 20 mm in front of the VP and its VT is 30 mm above the HP. The projectors through the HT and the VT are 60 mm apart. What is the true length of the part of the line between its HT and VT?",
+   "code": "",
+   "options": [
+    "70 mm",
+    "≈ 78.1 mm",
+    "≈ 63.2 mm",
+    "60 mm"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The HT lies in the HP (height 0, 20 mm in front of the VP) and the VT lies in the VP (30 mm above the HP, distance 0 from the VP). The segment between them spans 60 mm along XY, 20 mm in distance from the VP and 30 mm in height, so its true length is √(60² + 20² + 30²) = √4900 = 70 mm.",
+   "why_wrong": [
+    "",
+    "Measures on the sheet between h (20 mm below XY) and v′ (30 mm above XY), √(60² + 50²) ≈ 78.1 mm; those two marks are in different views, so their sheet distance is not a true length.",
+    "This is only the top view length, √(60² + 20²); it ignores the 30 mm rise from the HT to the VT.",
+    "Uses only the distance between the projectors, ignoring that the traces also differ in height and in distance from the VP."
+   ],
+   "key": "MEC103-U2-042"
+  },
+  {
+   "topic": "Projections of Planes",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "A square plate of 40 mm side is perpendicular to the VP and inclined at 60° to the HP, with two of its edges perpendicular to the VP. What is its top view?",
+   "code": "",
+   "options": [
+    "A 40 mm square, since the edges perpendicular to the VP keep their true length",
+    "A 40 mm × 20 mm rectangle",
+    "A 40 mm × ≈ 34.6 mm rectangle",
+    "A straight line 40 mm long at 60° to XY"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The two edges perpendicular to the VP are parallel to the HP, so they show their true length of 40 mm. The other two edges lie at 60° to the HP and shorten to 40 × cos 60° = 20 mm. The top view is a 40 mm × 20 mm rectangle, while the front view is a 40 mm line at 60° to XY.",
+   "why_wrong": [
+    "Only the edges perpendicular to the VP keep their true length; the edges along the slope shorten, so a plate inclined to the HP cannot show its true shape in the top view.",
+    "",
+    "Uses cos 30°, the complement; the plate is inclined at 60° to the HP, so the sloping edges shorten by cos 60°.",
+    "That is the front view: a plane perpendicular to the VP is seen edge-on in the front view, not the top view."
+   ],
+   "key": "MEC103-U2-043"
+  },
+  {
+   "topic": "Projections of Planes",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "An equilateral triangular plate of 50 mm side is perpendicular to the HP and inclined at 60° to the VP, with one side perpendicular to the HP. What is its top view?",
+   "code": "",
+   "options": [
+    "A straight line 50 mm long at 60° to XY",
+    "A straight line ≈ 21.7 mm long at 60° to XY",
+    "A triangle, foreshortened because the plate is inclined to the VP",
+    "A straight line ≈ 43.3 mm long at 60° to XY"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A plane perpendicular to the HP appears as a straight line in the top view, at its true inclination to the VP, here 60° to XY. The side perpendicular to the HP projects as a single point, so the line's length is the plate's width measured square to that side: the altitude, 50 × sin 60° ≈ 43.3 mm. Horizontal lines in a vertical plane are parallel to the HP, so this width is not shortened.",
+   "why_wrong": [
+    "Takes the side length; the side perpendicular to the HP shrinks to a point, so the top view's length is the triangle's altitude, not its side.",
+    "Shortens the 43.3 mm width by cos 60°; an edge view shows the plate's width at full length, and the 60° only sets the line's direction.",
+    "A plane perpendicular to the HP is seen edge-on from above, so its top view is a line; the foreshortened triangle is its front view.",
+    ""
+   ],
+   "key": "MEC103-U2-044"
+  },
+  {
+   "topic": "Projections of Planes",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A door panel is drawn as a rectangle 40 mm wide and 100 mm tall while the door is closed, parallel to the VP, with its hinge edge vertical. The door is then swung open by 30° about the hinge. What does its front view become?",
+   "code": "",
+   "options": [
+    "A rectangle 100 mm tall and ≈ 34.6 mm wide",
+    "A rectangle 100 mm tall and 20 mm wide",
+    "The same 40 mm × 100 mm rectangle as before",
+    "A straight line 40 mm long at 30° to XY"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Swinging about a vertical hinge keeps the door perpendicular to the HP but inclines it at 30° to the VP. The vertical edges stay parallel to the VP and show their true 100 mm, while the 40 mm horizontal edges are inclined at 30° to the VP and shorten to 40 × cos 30° ≈ 34.6 mm. The 40 mm line at 30° to XY is the top view.",
+   "why_wrong": [
+    "",
+    "Uses sin 30° (40 × 0.5 = 20 mm); a projected length is the true length × cos of the inclination.",
+    "Assumes turning about a vertical axis leaves the front view unchanged; only the top view keeps its 40 mm length, and the front view narrows.",
+    "That is the top view: the door is now perpendicular to the HP, so it is seen edge-on from above, not from the front."
+   ],
+   "key": "MEC103-U2-045"
+  },
+  {
+   "topic": "Projections of Planes",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The front view of a circular plate of 60 mm diameter is a straight line, and its top view is an ellipse with a 60 mm major axis and a minor axis of about 52 mm. What is the plate's position?",
+   "code": "",
+   "options": [
+    "Perpendicular to the VP and inclined at 60° to the HP",
+    "Perpendicular to the HP and inclined at 30° to the VP",
+    "Perpendicular to the VP and inclined at 30° to the HP",
+    "Inclined to both the HP and the VP, since neither view is a true circle"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A front view that is a straight line is an edge view, so the plate is perpendicular to the VP. In the top view the diameter perpendicular to the VP keeps its 60 mm, while the diameter along the slope shortens to 60 × cos θ. 60 cos θ = 52 gives cos θ ≈ 0.866, so θ = 30° to the HP.",
+   "why_wrong": [
+    "Solves 52/60 with sin instead of cos; the minor axis is 60 × cos θ, which gives 30°, not 60°.",
+    "Reads the edge view the wrong way round: a straight-line front view means perpendicular to the VP, not the HP.",
+    "",
+    "A plate inclined to both planes would show no edge view at all; a straight-line front view means it is perpendicular to the VP."
+   ],
+   "key": "MEC103-U2-046"
+  },
+  {
+   "topic": "Projections of Planes",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A triangular plate is perpendicular to both the HP and the VP. Which statement about its projections is correct?",
+   "code": "",
+   "options": [
+    "Both views show its true shape, since it is inclined to neither plane",
+    "Both views are straight lines parallel to XY",
+    "The front view shows its true shape and the top view is a straight line perpendicular to XY",
+    "Both views are straight lines perpendicular to XY; its true shape appears only in a side view"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Perpendicular to the VP makes the front view an edge (a straight line), and perpendicular to the HP makes the top view an edge too. A plane perpendicular to both is perpendicular to XY, so both lines are perpendicular to XY on the same projector. It is parallel to the profile plane, so only a side view shows its true shape.",
+   "why_wrong": [
+    "Being perpendicular to a plane is not being parallel to it; true shape appears only on a plane of projection the figure is parallel to.",
+    "An edge view parallel to XY belongs to a plane parallel to the HP (seen in the front view) or to the VP (seen in the top view); a plane perpendicular to both is perpendicular to XY.",
+    "A true-shape front view would need the plate parallel to the VP, but it is perpendicular to the VP, so the front view is an edge.",
+    ""
+   ],
+   "key": "MEC103-U2-047"
+  },
+  {
+   "topic": "Projections of Planes",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A rectangular plate 60 mm × 40 mm rests on one of its 60 mm edges on the HP. That edge is parallel to the VP, and the plate's surface is inclined at 30° to the HP. Which describes its views?",
+   "code": "",
+   "options": [
+    "Top view a 60 mm × ≈ 34.6 mm rectangle and front view a 60 mm × 20 mm rectangle; neither shows the true shape",
+    "Front view a 40 mm line at 30° to XY and top view a 60 mm × ≈ 34.6 mm rectangle",
+    "Top view the true 60 mm × 40 mm rectangle, because the resting edge lies in the HP",
+    "Top view a 60 mm × 20 mm rectangle and front view a 60 mm × ≈ 34.6 mm rectangle"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The 60 mm edges are parallel to XY, so they show their true length in both views. The 40 mm edges lie in a profile plane at 30° to the HP, and so at 60° to the VP, giving 40 × cos 30° ≈ 34.6 mm in the top view and 40 × cos 60° = 20 mm in the front view. The plate is inclined to both planes, so neither view is an edge view or its true shape.",
+   "why_wrong": [
+    "",
+    "Applies the 'perpendicular to the VP' case, which needs the resting edge perpendicular to the VP; with that edge parallel to the VP the plate is inclined to both planes and has no edge view in the front view.",
+    "One edge lying in the HP does not make the plate parallel to the HP; its surface is tilted at 30°, so the 40 mm sides shorten in the top view.",
+    "Swaps the cosines: the 40 mm sides are at 30° to the HP (top view 40 × cos 30°) and at 60° to the VP (front view 40 × cos 60°)."
+   ],
+   "key": "MEC103-U2-048"
+  }
+ ]
+}

@@ -1,0 +1,1111 @@
+{
+ "subject_code": "CSE326",
+ "unit": 2,
+ "unit_label": "Semantic HTML and Forms",
+ "questions": [
+  {
+   "topic": "Semantic Page Structure",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which HTML element represents a self-contained piece of content, such as a blog post or news story, that would still make sense if it were distributed on its own?",
+   "code": "",
+   "options": [
+    "<section>",
+    "<article>",
+    "<aside>",
+    "<div>"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "<article> marks a complete, independent composition, such as a post, a news story or a forum reply, that could be republished on its own. <section> groups one thematic part of a larger whole, usually with a heading, and is not meant to stand alone.",
+   "why_wrong": [
+    "<section> is a thematic grouping inside a larger document, not a standalone composition.",
+    "",
+    "<aside> is for content only loosely related to what surrounds it, like a sidebar.",
+    "<div> is a generic container with no meaning at all."
+   ],
+   "key": "CSE326-U2-001"
+  },
+  {
+   "topic": "Semantic Page Structure",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which element wraps the dominant, primary content of a page, leaving out repeated parts like the site header, navigation and footer?",
+   "code": "",
+   "options": [
+    "<body>",
+    "<section>",
+    "<main>",
+    "<header>"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "<main> holds the content that is unique to this page, and a page should have only one visible <main>. <body> contains everything, including the header, nav and footer that repeat on every page.",
+   "why_wrong": [
+    "<body> wraps all visible content, including the repeated header, navigation and footer, not just the primary content.",
+    "<section> is a thematic grouping; a page can have many, and none of them marks the main content.",
+    "",
+    "<header> holds introductory content or a site banner, which is exactly the repeated part being left out."
+   ],
+   "key": "CSE326-U2-002"
+  },
+  {
+   "topic": "Semantic Page Structure",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which element is meant for a block of major navigation links, such as a site menu?",
+   "code": "",
+   "options": [
+    "<aside>",
+    "<footer>",
+    "<section>",
+    "<nav>"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "<nav> identifies a section whose purpose is navigation: links to other pages or to parts of the current page. Assistive technology exposes it as a navigation landmark so users can jump straight to it. It is meant for major navigation blocks, not every group of links.",
+   "why_wrong": [
+    "<aside> is for loosely related content like a sidebar or call-out box, not the main navigation.",
+    "<footer> holds closing information such as copyright or author details; it may contain a few links but does not mark a navigation block.",
+    "<section> is a thematic grouping with no navigation meaning.",
+    ""
+   ],
+   "key": "CSE326-U2-003"
+  },
+  {
+   "topic": "Forms and Submission",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "When a form is submitted, which attribute of a control provides the key in each name=value pair that is sent?",
+   "code": "",
+   "options": [
+    "name",
+    "id",
+    "value",
+    "for"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Each submitted pair is built as name=value, so the name attribute is the key. A control with no name is not submitted at all, even if it has an id and a value.",
+   "why_wrong": [
+    "",
+    "id identifies the element for labels, CSS and scripts; it is never used as the submitted key.",
+    "value is the data half of the pair, not the key.",
+    "for is an attribute of <label>, used to point at a control's id."
+   ],
+   "key": "CSE326-U2-004"
+  },
+  {
+   "topic": "Forms and Submission",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does an unchecked checkbox contribute to the data sent when its form is submitted?",
+   "code": "",
+   "options": [
+    "Its name with the value \"off\"",
+    "Its name with an empty value",
+    "Nothing, because it is left out of the submission",
+    "Its name with the value \"false\""
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Only checked checkboxes are submitted. An unchecked box is left out entirely, so the receiving page simply sees no pair for that name. A checked box sends its value attribute, or \"on\" if it has none.",
+   "why_wrong": [
+    "\"off\" is never sent; the browser does not invent an opposite of \"on\" for unchecked boxes.",
+    "An unchecked box does not even send its name with a blank value; the whole pair is omitted.",
+    "",
+    "Forms send strings, and an unchecked box sends nothing at all, not \"false\"."
+   ],
+   "key": "CSE326-U2-005"
+  },
+  {
+   "topic": "Forms and Submission",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which attribute of <form> must be set to \"multipart/form-data\" so that a file chosen in <input type=\"file\"> is actually uploaded?",
+   "code": "",
+   "options": [
+    "method",
+    "enctype",
+    "action",
+    "accept"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "enctype sets how the form data is encoded. File contents can only be sent with enctype=\"multipart/form-data\", and that encoding also needs method=\"post\". Without it, only the file's name is sent.",
+   "why_wrong": [
+    "method takes \"get\" or \"post\", not an encoding type; POST is needed too, but it does not set the encoding.",
+    "",
+    "action is the URL the form data is sent to.",
+    "accept goes on the file input and only filters which file types the picker offers."
+   ],
+   "key": "CSE326-U2-006"
+  },
+  {
+   "topic": "Forms and Submission",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "With which form method does the submitted data appear in the URL's query string (after the ?)?",
+   "code": "",
+   "options": [
+    "GET",
+    "POST",
+    "Both GET and POST",
+    "Neither, because form data never appears in the URL"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "With GET, the browser builds a query string like ?user=ada&id=7 and adds it to the action URL, so the data shows in the address bar and in history. With POST, the pairs travel in the request body instead, which is why POST is used for passwords, large data and files.",
+   "why_wrong": [
+    "",
+    "POST puts the pairs in the request body, not in the URL.",
+    "Only GET adds the pairs to the URL; POST keeps them in the body.",
+    "GET does place form data in the URL's query string."
+   ],
+   "key": "CSE326-U2-007"
+  },
+  {
+   "topic": "Input Types and Validation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which attribute stops a form from submitting while a text field is left empty?",
+   "code": "",
+   "options": [
+    "readonly",
+    "pattern",
+    "placeholder",
+    "required"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "required makes a field mandatory: an empty value fails validation (valueMissing) and the browser blocks submission with a message. pattern is only checked once the field has a value, so on its own it does not reject an empty field.",
+   "why_wrong": [
+    "readonly only prevents editing, and it also removes the field from validation, so it never blocks submission.",
+    "pattern is checked only when the field is not empty; an empty field passes it.",
+    "placeholder is just hint text shown inside an empty field; it enforces nothing.",
+    ""
+   ],
+   "key": "CSE326-U2-008"
+  },
+  {
+   "topic": "Input Types and Validation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which input type makes the browser check that the entered value is in the format of an email address before submitting?",
+   "code": "",
+   "options": [
+    "type=\"email\"",
+    "type=\"text\"",
+    "type=\"url\"",
+    "type=\"tel\""
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "type=\"email\" checks that the value has the shape of an email address and flags typeMismatch if it does not. It checks the format only; it cannot tell whether the address actually exists.",
+   "why_wrong": [
+    "",
+    "type=\"text\" accepts any string and does no format check.",
+    "type=\"url\" checks for an absolute URL like https://example.com, not an email address.",
+    "type=\"tel\" is for phone numbers and performs no format validation at all."
+   ],
+   "key": "CSE326-U2-009"
+  },
+  {
+   "topic": "Input Types and Validation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which input type displays a slider for picking a number between a minimum and a maximum?",
+   "code": "",
+   "options": [
+    "type=\"number\"",
+    "type=\"range\"",
+    "type=\"date\"",
+    "type=\"color\""
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "type=\"range\" renders a slider. It uses 0 to 100 when min and max are not given, and its default value is the midpoint. type=\"number\" instead shows a box with spinner arrows for typing an exact value.",
+   "why_wrong": [
+    "type=\"number\" shows a text box with up and down spinner arrows, not a slider.",
+    "",
+    "type=\"date\" shows a date picker.",
+    "type=\"color\" shows a colour picker."
+   ],
+   "key": "CSE326-U2-010"
+  },
+  {
+   "topic": "Tables and Data",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which element gives a table its title and must be placed as the first child of <table>?",
+   "code": "",
+   "options": [
+    "<th>",
+    "<thead>",
+    "<title>",
+    "<caption>"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "<caption> is the table's title. It must be the first child of <table>, and screen readers announce it when the user reaches the table. <title> is the document title in <head> and has nothing to do with tables.",
+   "why_wrong": [
+    "<th> is a header cell for one row or column, not a title for the whole table.",
+    "<thead> groups the header rows; it is not a caption.",
+    "<title> sets the page title shown in the browser tab and belongs in <head>.",
+    ""
+   ],
+   "key": "CSE326-U2-011"
+  },
+  {
+   "topic": "Tables and Data",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which markup makes one data cell stretch across three columns?",
+   "code": "",
+   "options": [
+    "<td rowspan=\"3\">",
+    "<td cols=\"3\">",
+    "<td colspan=\"3\">",
+    "<td span=\"3\">"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "colspan sets how many columns a cell spans horizontally, and rowspan sets how many rows it spans vertically. The row then needs fewer cells of its own, because the spanned slots are already filled.",
+   "why_wrong": [
+    "rowspan stretches the cell down across three rows, not across three columns.",
+    "cols is an attribute of <textarea> (its visible width), not of table cells.",
+    "",
+    "span is used on <col> and <colgroup>, not on <td>."
+   ],
+   "key": "CSE326-U2-012"
+  },
+  {
+   "topic": "Accessibility",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "For <label for=\"...\"> to be tied to a form control, the value of for must match which attribute of that control?",
+   "code": "",
+   "options": [
+    "Its name",
+    "Its id",
+    "Its value",
+    "Its type"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "for points to an id, so <label for=\"email\"> is linked to <input id=\"email\">. Once linked, a screen reader announces the label text for that field, and clicking the label focuses the field. name is used only as the key when the form is submitted.",
+   "why_wrong": [
+    "name is the key sent with the form data; label association uses id, not name.",
+    "",
+    "value is the control's current data, which changes as the user types.",
+    "type only chooses the kind of control (text, email and so on); it cannot identify one particular field."
+   ],
+   "key": "CSE326-U2-013"
+  },
+  {
+   "topic": "Accessibility",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which pair of elements groups a set of related controls, such as radio buttons, and gives the group a caption?",
+   "code": "",
+   "options": [
+    "<fieldset> and <legend>",
+    "<div> and <label>",
+    "<section> and <caption>",
+    "<form> and <title>"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "<fieldset> draws a group around related controls, and <legend>, as its first child, captions that group. Screen readers use the legend as the group's name, so the options are heard in context.",
+   "why_wrong": [
+    "",
+    "<div> has no grouping meaning, and a <label> names one control, not a group.",
+    "<caption> is only valid as the title of a <table>.",
+    "<title> belongs in <head> as the document title; <form> is the whole form, not a captioned group."
+   ],
+   "key": "CSE326-U2-014"
+  },
+  {
+   "topic": "Semantic Page Structure",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about HTML5 semantic elements is NOT correct?",
+   "code": "",
+   "options": [
+    "A page may contain several <header> elements, for example one for the page and one inside each <article>.",
+    "A page may contain more than one <nav> element.",
+    "A page should have only one visible (non-hidden) <main> element.",
+    "<section> is a generic container with the same meaning as <div>."
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "<section> carries meaning: it marks a thematic grouping of content, normally with its own heading. When a wrapper is needed only for styling or scripting, <div> is the right choice. <header>, <footer> and <nav> can each appear several times, but only one <main> may be visible.",
+   "why_wrong": [
+    "This rule is true: <header> introduces its nearest article or section, so each article can have its own.",
+    "This rule is true: a page can have a main menu <nav> and, for example, a table-of-contents <nav>.",
+    "This rule is true: more than one <main> is allowed only when all but one carry the hidden attribute.",
+    ""
+   ],
+   "key": "CSE326-U2-015"
+  },
+  {
+   "topic": "Semantic Page Structure",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which pairing of content with its semantic element is correct?",
+   "code": "",
+   "options": [
+    "A news story that could be republished on its own → <section>",
+    "A wrapper added only so CSS can apply a layout → <section>",
+    "A glossary box beside an article, only loosely related to it → <aside>",
+    "The site-wide menu of links to the main pages → <aside>"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "<aside> is for content that is only loosely related to what surrounds it, like a glossary box, pull-quote or sidebar. A standalone story is an <article>, a styling-only wrapper is a <div>, and the main site menu is a <nav>.",
+   "why_wrong": [
+    "A self-contained, republishable story is an <article>; <section> is a thematic part of something larger.",
+    "A wrapper with no meaning of its own should be a <div>; <section> implies a themed group with a heading.",
+    "",
+    "Major navigation links belong in <nav>; <aside> is for loosely related side content."
+   ],
+   "key": "CSE326-U2-016"
+  },
+  {
+   "topic": "Forms and Submission",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The user clicks Join in the code below. Which URL does the browser request?",
+   "code": "<form action=\"/join\" method=\"get\">\n  <input name=\"city\" value=\"Pune\" disabled>\n  <input name=\"roll\" value=\"42\" readonly>\n  <input type=\"checkbox\" name=\"agree\" checked>\n  <button type=\"submit\">Join</button>\n</form>",
+   "options": [
+    "/join?city=Pune&agree=on",
+    "/join?roll=42&agree=on",
+    "/join?roll=42&agree=true",
+    "/join?city=Pune&roll=42&agree=on"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Disabled controls are left out of the submission, so city=Pune is not sent. readonly only blocks editing, so roll=42 is sent. The checked box has no value attribute, so it sends the default string \"on\", and the button has no name, so it adds nothing.",
+   "why_wrong": [
+    "Swaps the two rules: the disabled field is dropped, but the readonly field is still submitted.",
+    "",
+    "A checked checkbox without a value attribute sends \"on\", not \"true\".",
+    "Includes city=Pune, but a disabled control's value is never submitted."
+   ],
+   "key": "CSE326-U2-017"
+  },
+  {
+   "topic": "Forms and Submission",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The code below is meant to upload the contents of the chosen photo. Which change makes that work?",
+   "code": "<form action=\"/upload\" method=\"get\">\n  <input type=\"file\" name=\"photo\">\n  <button>Upload</button>\n</form>",
+   "options": [
+    "Add enctype=\"multipart/form-data\" to the <form> and keep method=\"get\"",
+    "Change method to \"post\" and leave enctype unchanged",
+    "Change method to \"post\" and add enctype=\"multipart/form-data\" to the <form>",
+    "Add accept=\"image/*\" to the file input"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "File contents are sent only when the form uses method=\"post\" together with enctype=\"multipart/form-data\". A GET form can only put text in the URL, so it sends just the file's name, and POST with the default encoding also sends only the name.",
+   "why_wrong": [
+    "enctype is ignored for GET; the data still goes into the URL, so only the file name is sent.",
+    "POST with the default urlencoded encoding sends only the file's name, not its contents.",
+    "",
+    "accept only filters which files the picker shows; it does not change how the form data is sent."
+   ],
+   "key": "CSE326-U2-018"
+  },
+  {
+   "topic": "Forms and Submission",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The user clicks Go in the code below. Which URL does the browser request?",
+   "code": "<form id=\"signup\" action=\"/s\" method=\"get\">\n  <input name=\"user\" value=\"ria\">\n  <button>Go</button>\n</form>\n<input name=\"batch\" value=\"K24\" form=\"signup\">\n<input name=\"note\" value=\"hi\">",
+   "options": [
+    "/s?user=ria",
+    "/s?user=ria&note=hi",
+    "/s?user=ria&batch=K24&note=hi",
+    "/s?user=ria&batch=K24"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The form attribute ties a control to the form whose id it names, even when the control sits outside that <form> in the markup, so batch joins the signup form's data. note has no form attribute and is outside the form, so it belongs to no form and is not sent. The button has no name, so it adds no pair.",
+   "why_wrong": [
+    "Ignores form=\"signup\", which makes batch part of the form despite its position outside the <form> tags.",
+    "Mixes up the two inputs: batch is linked by its form attribute, while note is not linked to any form.",
+    "Includes note, but a control outside the <form> with no form attribute is not associated with any form.",
+    ""
+   ],
+   "key": "CSE326-U2-019"
+  },
+  {
+   "topic": "Input Types and Validation",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For the input in the code below, which entered value passes validation?",
+   "code": "<input type=\"number\" name=\"qty\" min=\"2\" max=\"20\" step=\"4\">",
+   "options": [
+    "8",
+    "12",
+    "18",
+    "22"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "When min is set, it becomes the step base, so the allowed values are 2 + 4k: 2, 6, 10, 14, 18. For 18, 18 − 2 = 16 is a multiple of 4 and 18 ≤ 20, so it is valid. 8 and 12 are multiples of 4, but they are off step when counted from 2.",
+   "why_wrong": [
+    "Measures the step from 0 instead of from min: 8 − 2 = 6 is not a multiple of 4, so it fails with stepMismatch.",
+    "Also measures from 0: 12 − 2 = 10 is not a multiple of 4, so it fails with stepMismatch.",
+    "",
+    "22 − 2 = 20 is on step, but 22 > max = 20, so it fails with rangeOverflow."
+   ],
+   "key": "CSE326-U2-020"
+  },
+  {
+   "topic": "Input Types and Validation",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which value typed into the input in the code below passes validation?",
+   "code": "<input name=\"pin\" pattern=\"[0-9]{4}\" required>",
+   "options": [
+    "1234",
+    "12345",
+    "a1234",
+    "12a4"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "pattern must match the entire value, as if it were anchored at both ends, so [0-9]{4} means exactly four digits and nothing else. A value that merely contains four digits somewhere inside it fails with patternMismatch.",
+   "why_wrong": [
+    "",
+    "It contains four digits, but the whole value is five digits long, and pattern must match all of it.",
+    "The leading letter a is not a digit, so the full value does not match even though 1234 appears inside it.",
+    "The a is not a digit, so the value fails even though it is four characters long."
+   ],
+   "key": "CSE326-U2-021"
+  },
+  {
+   "topic": "Input Types and Validation",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "In the code below, a user can select both Small and Large at the same time. Which change makes it possible to choose only one?",
+   "code": "<p>T-shirt size:</p>\n<input type=\"radio\" id=\"s\" name=\"sizeS\" value=\"S\">\n<label for=\"s\">Small</label>\n<input type=\"radio\" id=\"l\" name=\"sizeL\" value=\"L\">\n<label for=\"l\">Large</label>",
+   "options": [
+    "Give both radio buttons the same id",
+    "Give both radio buttons the same value",
+    "Wrap both radio buttons in a <fieldset>",
+    "Give both radio buttons the same name, e.g. name=\"size\""
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Radio buttons form a mutually exclusive group only when they share the same name within the same form. Checking one then unchecks the others, and only the checked one's value is sent under that name, e.g. size=L.",
+   "why_wrong": [
+    "ids must be unique on a page, and the id plays no part in radio grouping.",
+    "The values must differ so the choice can be told apart; the shared name, not the value, forms the group.",
+    "<fieldset> groups controls visually and for screen readers, but it does not make radio buttons mutually exclusive.",
+    ""
+   ],
+   "key": "CSE326-U2-022"
+  },
+  {
+   "topic": "Tables and Data",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "How many <td> cells must the third row in the code below contain so that every row is exactly 3 columns wide?",
+   "code": "<table>\n  <tr><th colspan=\"3\">Timetable</th></tr>\n  <tr><td rowspan=\"2\">Mon</td><td>CSE326</td><td>MTH174</td></tr>\n  <tr><!-- cells go here --></tr>\n</table>",
+   "options": [
+    "2",
+    "3",
+    "1",
+    "4"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The header spans all 3 columns. In row 2, Mon has rowspan=\"2\", so it also fills the first column of row 3. Row 3 therefore needs only 3 − 1 = 2 cells of its own.",
+   "why_wrong": [
+    "",
+    "Forgets that Mon's rowspan=\"2\" already fills the first slot of row 3.",
+    "Treats rowspan as taking two slots in row 3; it fills only one column there.",
+    "Adds three new cells on top of the spanned Mon cell, pushing the row to 4 columns."
+   ],
+   "key": "CSE326-U2-023"
+  },
+  {
+   "topic": "Tables and Data",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which order of table parts inside <table> is valid?",
+   "code": "",
+   "options": [
+    "<caption>, <thead>, <tbody>, <tfoot>",
+    "<thead>, <caption>, <tbody>, <tfoot>",
+    "<thead>, <tbody>, <tfoot>, <caption>",
+    "<caption>, <tbody>, <thead>, <tfoot>"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "<caption> must be the first child of <table>. After it comes the header group <thead>, then the body <tbody>, and <tfoot> can follow the body rows. Keeping the head before the body lets browsers and screen readers tell the header rows apart from the data.",
+   "why_wrong": [
+    "",
+    "<caption> must be the first child of <table>, before <thead>.",
+    "<caption> cannot come last; it must be the very first child.",
+    "<thead> has to come before <tbody>, not after it."
+   ],
+   "key": "CSE326-U2-024"
+  },
+  {
+   "topic": "Accessibility",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about labelling form controls is NOT correct?",
+   "code": "",
+   "options": [
+    "A <label> can be tied to a control by wrapping the control inside the <label>.",
+    "placeholder can replace a <label> because its text stays visible while the user types.",
+    "<label for=\"x\"> is tied to the control whose id is \"x\".",
+    "Clicking a label that is tied to a checkbox toggles that checkbox."
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "placeholder is only a hint shown in an empty field. It disappears as soon as the user starts typing, so the prompt is lost, and it is not a substitute for a <label>. A proper label is tied either explicitly with for and id, or implicitly by wrapping the control.",
+   "why_wrong": [
+    "This rule is true: wrapping gives an implicit label association without needing for and id.",
+    "",
+    "This rule is true: for is matched against the control's id.",
+    "This rule is true: an associated label becomes part of the click target, so clicking it toggles the checkbox."
+   ],
+   "key": "CSE326-U2-025"
+  },
+  {
+   "topic": "Accessibility",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "In the code below, which attribute should be added to the <th> cells Mon and Wed so assistive technology knows that each one heads its own row?",
+   "code": "<table>\n  <tr><th scope=\"col\">Day</th><th scope=\"col\">Room</th></tr>\n  <tr><th>Mon</th><td>Lab 1</td></tr>\n  <tr><th>Wed</th><td>Lab 3</td></tr>\n</table>",
+   "options": [
+    "scope=\"col\"",
+    "scope=\"rowgroup\"",
+    "scope=\"row\"",
+    "headers=\"row\""
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "scope=\"row\" says the header applies to the other cells in its own row, so a screen reader announces Mon when reading Lab 1. scope=\"col\" is for headers that sit on top of a column, like Day and Room here.",
+   "why_wrong": [
+    "scope=\"col\" would mark Mon as heading the column below it, which is the job of Day and Room.",
+    "rowgroup makes a header cover a whole group of rows, such as a <tbody>, not just its own row.",
+    "",
+    "headers goes on data cells and lists the ids of their header cells; it is not a scope keyword."
+   ],
+   "key": "CSE326-U2-026"
+  },
+  {
+   "topic": "Semantic Page Structure",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A blog page already has a site-wide <header> with the logo and main menu. Inside the post's <article>, the author wants to mark up the post's title, author name and publication date together. A classmate says this must be a <div>, because a page can have only one <header>. Which statement is correct?",
+   "code": "",
+   "options": [
+    "Use a <div>, because a document may contain only one <header> element.",
+    "Use another <header> inside the <article>. A <header> introduces its nearest article or section, so a page can have several.",
+    "Use a <main> inside the <article>, because <main> holds a post's own introductory content.",
+    "Use an <aside> inside the <article>, because the title, author and date are about the post rather than part of it."
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "<header> represents introductory content for its nearest <article> or <section>, or for the whole page when it sits directly in <body>. So a page commonly has a site header plus one header per article. The post's heading, author and <time> belong in the article's own <header>. The only-one-per-page rule applies to a visible <main>, not to <header>, <footer> or <nav>.",
+   "why_wrong": [
+    "This is the trap: no rule limits a page to one <header>. The one-per-page rule belongs to a visible <main>.",
+    "",
+    "<main> is the page's single dominant content area, not an introduction block. A <main> is also not allowed inside an <article>.",
+    "<aside> is for content only loosely related to its surroundings, like a sidebar. The post's title and byline introduce the post, so they belong in its <header>."
+   ],
+   "key": "CSE326-U2-027"
+  },
+  {
+   "topic": "Semantic Page Structure",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A blog post is marked up as an <article>. Readers' comments are listed below it. Each comment has its own author, date and text, and the site also shows single comments on their own in a 'Latest comments' box on other pages. Which element should wrap each comment?",
+   "code": "",
+   "options": [
+    "A <section> for each comment, placed inside the post's <article>",
+    "An <aside> for each comment, placed inside the post's <article>",
+    "An <article> for each comment, nested inside the post's <article>",
+    "A <main> for each comment, placed after the post's <article>"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "<article> marks content that makes sense on its own and can be reused elsewhere, and each comment fits that description. When articles are nested, the inner ones relate to the outer one, and user comments on a blog post are the standard example. A <section> with a 'Comments' heading may wrap the whole list, but each comment is itself an <article>.",
+   "why_wrong": [
+    "<section> groups content by theme, usually under a heading. A self-contained unit that can be shown on its own elsewhere is exactly what <article> is for.",
+    "<aside> is for content only loosely related to its surroundings. Comments are directly about the post.",
+    "",
+    "A page may have only one visible <main>, and it holds the page's dominant content, not repeated units like comments."
+   ],
+   "key": "CSE326-U2-028"
+  },
+  {
+   "topic": "Semantic Page Structure",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A single-page site shows one view at a time using the code below. What does an HTML validator report?",
+   "code": "<body>\n  <header>\n    <nav>Home | Courses | Contact</nav>\n  </header>\n  <main id=\"home\">...</main>\n  <main id=\"courses\" hidden>...</main>\n  <main id=\"contact\" hidden>...</main>\n  <footer>\n    <nav>Privacy | Terms</nav>\n  </footer>\n</body>",
+   "options": [
+    "It is invalid, because <nav> may appear only once on a page.",
+    "It is invalid, because <nav> may not be placed inside <header> or <footer>.",
+    "It is invalid, because a document may contain only one <main> element, hidden or not.",
+    "It is valid: several <main> elements are allowed when all but one have the hidden attribute, and <nav> may appear more than once."
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "HTML allows only one <main> without the hidden attribute. Extra <main> elements are fine as long as they are hidden, which is how one-view-at-a-time pages are often built. Here only #home is visible. <nav>, <header> and <footer> have no once-per-page limit, and <nav> may sit inside either <header> or <footer>.",
+   "why_wrong": [
+    "<nav> can be used for every major block of navigation links, so a header menu and a footer menu may both be <nav>.",
+    "<nav> is allowed inside both <header> and <footer>. A menu inside the site header is the most common place for it.",
+    "The rule is about visible <main> elements: only one may lack the hidden attribute. Hidden alternatives are allowed.",
+    ""
+   ],
+   "key": "CSE326-U2-029"
+  },
+  {
+   "topic": "Semantic Page Structure",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "In the code below, the wrapper marked ??? exists only so that CSS can arrange the cards in a grid. It has no heading and adds no theme beyond the page's own. Which element should replace ???",
+   "code": "<main>\n  <h1>Our Courses</h1>\n  <??? class=\"card-grid\">\n    <article class=\"card\">...</article>\n    <article class=\"card\">...</article>\n    <article class=\"card\">...</article>\n  </???>\n</main>",
+   "options": [
+    "<section>",
+    "<article>",
+    "<div>",
+    "<aside>"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "When an element is needed only for styling or scripting, HTML's guidance is to use <div>, which carries no meaning. <section> is for a thematic part of the document, and it normally has its own heading. Using <section> here would add an unlabelled region that means nothing instead of a plain layout box.",
+   "why_wrong": [
+    "This is the trap: <section> is not a generic container. It marks a thematic part of the document that normally has a heading. A styling-only wrapper should be a <div>.",
+    "The cards are the self-contained items and are already <article>s. The wrapper around them is not a standalone piece of content.",
+    "",
+    "<aside> is for content only loosely related to the page, like a sidebar. These cards are the page's main content."
+   ],
+   "key": "CSE326-U2-030"
+  },
+  {
+   "topic": "Forms and Submission",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "In the code below, a text box for the search words has to sit in the page header, far away from the <form>. Its value must still be sent when the form's Search button is clicked. Which markup for the text box does this?",
+   "code": "<header>\n  <!-- search box goes here -->\n</header>\n<main>...</main>\n<form id=\"filters\" name=\"search-form\" action=\"/results\" method=\"get\">\n  <select name=\"sort\">\n    <option>Newest</option>\n    <option>Oldest</option>\n  </select>\n  <button>Search</button>\n</form>",
+   "options": [
+    "<input name=\"q\" form=\"search-form\">",
+    "<input name=\"q\" form=\"#filters\">",
+    "<input name=\"q\" form=\"filters\">",
+    "<input name=\"q\" for=\"filters\">"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "A control outside a <form> joins that form when its form attribute holds the form's id. The browser then treats the box as one of the form's controls, so clicking Search sends q=… together with sort=…. Without that attribute, a control placed outside the form is never submitted.",
+   "why_wrong": [
+    "The form attribute is matched against the form's id, not its name attribute, so \"search-form\" links to nothing.",
+    "The value is a plain id, not a CSS selector. With the #, the browser looks for an element whose id is literally \"#filters\".",
+    "",
+    "for belongs to <label> and points at a control. It does not attach an input to a form."
+   ],
+   "key": "CSE326-U2-031"
+  },
+  {
+   "topic": "Forms and Submission",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "The user changes nothing in the code below and clicks Order. Which URL does the browser request?",
+   "code": "<form action=\"/order\">\n  <input type=\"checkbox\" name=\"topping\" value=\"cheese\" checked>\n  <input type=\"checkbox\" name=\"topping\" value=\"olive\">\n  <input type=\"checkbox\" name=\"topping\" value=\"corn\" checked>\n  <select name=\"size\">\n    <option>Small</option>\n    <option selected>Medium</option>\n  </select>\n  <button>Order</button>\n</form>",
+   "options": [
+    "/order?topping=cheese&topping=corn&size=Medium",
+    "/order?topping=corn&size=Medium",
+    "/order?topping=cheese,corn&size=Medium",
+    "/order?topping=cheese&topping=corn&size="
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The form has no method attribute, so it uses GET and the pairs go into the query string. Each checked checkbox adds its own name=value pair even when names repeat, so topping appears twice, and the unchecked olive box is left out. The selected option has no value attribute, so its text, Medium, is sent.",
+   "why_wrong": [
+    "",
+    "Same-name controls do not overwrite each other. Every checked box adds its own pair, so cheese is not lost.",
+    "The browser never joins values with commas. Each checked box is sent as a separate topping=… pair.",
+    "An <option> without a value attribute submits its text, so the selected option sends size=Medium, not an empty value."
+   ],
+   "key": "CSE326-U2-032"
+  },
+  {
+   "topic": "Forms and Submission",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student's login form uses method=\"get\", with a text field named user and a password field named pass. A classmate logs in with it on a shared lab computer. What problem does this cause, and what fixes it?",
+   "code": "",
+   "options": [
+    "GET leaves out password fields, so the password never arrives. Switching to method=\"post\" makes it get sent.",
+    "Nothing is exposed, because type=\"password\" encrypts the value before it is added to the URL.",
+    "The only risk is the browser saving the password, and adding autocomplete=\"off\" to the field solves it.",
+    "The address becomes …?user=…&pass=…, so the password shows in the address bar and browser history. method=\"post\" puts the pairs in the request body instead."
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "method=\"get\" appends every name=value pair to the URL's query string. So pass=… appears in the address bar, in the browser history and in any saved link on the shared computer. method=\"post\" carries the pairs in the request body, which keeps them out of the URL. Encrypting the data while it travels is a separate job, done by HTTPS.",
+   "why_wrong": [
+    "GET sends every named, enabled control, password fields included. The problem is where the data goes, not whether it is sent.",
+    "type=\"password\" only hides the characters on screen with dots. The real text goes into the URL as plain text.",
+    "autocomplete does not stop GET from writing the password into the URL, and that URL is what ends up in the history.",
+    ""
+   ],
+   "key": "CSE326-U2-033"
+  },
+  {
+   "topic": "Forms and Submission",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A checkout form must show the price 499 in a text box that the user can see but cannot change. The price must still be sent when the form is submitted. Which input does this?",
+   "code": "",
+   "options": [
+    "<input name=\"price\" value=\"499\" disabled>",
+    "<input value=\"499\" readonly>",
+    "<input name=\"price\" placeholder=\"499\" readonly>",
+    "<input name=\"price\" value=\"499\" readonly>"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "readonly blocks editing but keeps the control in the submitted data, so price=499 is sent. Disabled controls are skipped at submission, controls without a name are never sent, and placeholder text is not a value. All three conditions are needed together: a name, a real value, and readonly.",
+   "why_wrong": [
+    "disabled does stop editing, but a disabled control is left out of the submission entirely, so price never arrives.",
+    "readonly is right, but a control with no name attribute has no key, so it is never submitted.",
+    "placeholder is only a hint shown while the box is empty. The value is empty, so price= is sent with nothing after it.",
+    ""
+   ],
+   "key": "CSE326-U2-034"
+  },
+  {
+   "topic": "Forms and Submission",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The user selects Beta in the code below and clicks Vote. Which URL does the browser request?",
+   "code": "<form action=\"/vote\">\n  <input type=\"radio\" name=\"pick\" id=\"a\">\n  <label for=\"a\">Alpha</label>\n  <input type=\"radio\" name=\"pick\" id=\"b\">\n  <label for=\"b\">Beta</label>\n  <button>Vote</button>\n</form>",
+   "options": [
+    "/vote?pick=Beta",
+    "/vote?pick=on",
+    "/vote?pick=b",
+    "/vote?b=on"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "A selected radio button sends name=value, and the value comes from its value attribute. These radios have no value attribute, so the selected one sends the default string on, the same default a checkbox uses. To send pick=beta, the input needs value=\"beta\".",
+   "why_wrong": [
+    "Label text is only shown to the user. It is never submitted as the control's value.",
+    "",
+    "The id links the label to the radio button, but it is not the submitted value.",
+    "The key of every pair is the name attribute (pick), not the id."
+   ],
+   "key": "CSE326-U2-035"
+  },
+  {
+   "topic": "Input Types and Validation",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A user types www.lpu.in into the field in the code below and clicks Save. What happens?",
+   "code": "<form action=\"/profile\">\n  <input type=\"url\" name=\"site\" required>\n  <button>Save</button>\n</form>",
+   "options": [
+    "Submission is blocked, because type=\"url\" only accepts an absolute URL that starts with a scheme such as https://.",
+    "The form submits /profile?site=www.lpu.in, because any text containing a dot counts as a URL.",
+    "The browser adds https:// by itself and submits https://www.lpu.in as the value.",
+    "The form submits, because type=\"url\" only changes the on-screen keyboard and never checks the value."
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "An <input type=\"url\"> is valid only when it holds an absolute URL, and an absolute URL starts with a scheme like https://. www.lpu.in has no scheme, so the field has a type mismatch and the browser shows a message instead of submitting. Typing https://www.lpu.in would pass.",
+   "why_wrong": [
+    "",
+    "type=\"url\" does not just look for a dot. Without a scheme, the text is not an absolute URL, so it fails.",
+    "The browser never rewrites what the user typed. It only reports that the value is invalid.",
+    "type=\"url\" does bring up a URL-friendly keyboard on phones, but it also checks the value before submitting."
+   ],
+   "key": "CSE326-U2-036"
+  },
+  {
+   "topic": "Input Types and Validation",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student's sign-up page puts required, type=\"email\" and pattern on every field. She decides that the program receiving the data does not need to check it again. Why is that wrong?",
+   "code": "",
+   "options": [
+    "The browser runs these checks only for method=\"post\", so a GET form is never checked.",
+    "type=\"email\" confirms that the mailbox really exists, but required and pattern stop working when JavaScript is turned off.",
+    "The checks run in the visitor's own browser. Anyone can delete the attributes in DevTools or send data without using the page, so the checks help honest users but do not protect the data.",
+    "The checks run only after the data reaches the receiving program, so the page itself blocks nothing."
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The user's browser checks required, type and pattern before submitting, which gives quick, friendly feedback. The browser and the page are under the user's control, so the checks can be removed or skipped entirely. That makes them a usability feature, not a security control, and whatever receives the data must still validate it.",
+   "why_wrong": [
+    "Constraint validation works the same for GET and POST forms. The method only decides where the pairs are placed.",
+    "type=\"email\" checks only the format, never whether the mailbox exists. These HTML attributes also work without JavaScript.",
+    "",
+    "These checks run in the browser before anything is sent. That is why they can show a message and stop the submission."
+   ],
+   "key": "CSE326-U2-037"
+  },
+  {
+   "topic": "Input Types and Validation",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The user types 98765 into the phone field in the code below and clicks Apply. What happens?",
+   "code": "<form action=\"/apply\">\n  <input name=\"roll\" value=\"\" readonly required>\n  <input name=\"batch\" value=\"\" disabled required>\n  <input name=\"phone\" required>\n  <button>Apply</button>\n</form>",
+   "options": [
+    "The form submits and the browser requests /apply?roll=&phone=98765",
+    "Submission is blocked, because roll is required and still empty.",
+    "The form submits and the browser requests /apply?phone=98765",
+    "The form submits and the browser requests /apply?roll=&batch=&phone=98765"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Readonly and disabled controls are both excluded from constraint validation, so required on roll and batch cannot stop the form. Only phone is checked, and it has a value. At submission, the readonly roll is sent with an empty value (roll=), the disabled batch is skipped, and phone=98765 follows. The button has no name, so it adds nothing.",
+   "why_wrong": [
+    "",
+    "This is the trap: a readonly control is excluded from constraint validation, so its required attribute never blocks submission.",
+    "readonly only stops editing. The control is still submitted, and an empty text value is sent as roll=.",
+    "Disabled controls are never submitted, so batch does not appear at all."
+   ],
+   "key": "CSE326-U2-038"
+  },
+  {
+   "topic": "Input Types and Validation",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which entry in the pin field of the code below lets the form submit?",
+   "code": "<form action=\"/address\">\n  <input name=\"pin\" pattern=\"[0-9]{6}\">\n  <button>Save</button>\n</form>",
+   "options": [
+    "(field left empty)",
+    "1440011",
+    "144 001",
+    "14400"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "pattern is checked only when the field has a value. An empty field fails only if it is also required, and this one is not. Any value that is not empty must match the whole pattern, as if it were anchored at both the start and the end. So only exactly six digits, or an empty field, can be submitted, and of these choices only the empty field passes.",
+   "why_wrong": [
+    "",
+    "It contains six digits in a row, but pattern must match the entire value, and seven digits fail [0-9]{6}.",
+    "The space is not a digit, so the whole value does not match six digits.",
+    "Five digits do not satisfy {6}, which demands exactly six."
+   ],
+   "key": "CSE326-U2-039"
+  },
+  {
+   "topic": "Input Types and Validation",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The user clicks Send in the code below without touching either control. Which URL does the browser request?",
+   "code": "<form action=\"/rate\">\n  <input type=\"range\" name=\"stars\" min=\"0\" max=\"10\">\n  <input type=\"checkbox\" name=\"anon\">\n  <button>Send</button>\n</form>",
+   "options": [
+    "/rate?stars=0",
+    "/rate?",
+    "/rate?stars=5&anon=off",
+    "/rate?stars=5"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "An <input type=\"range\"> can never be empty. With no value attribute it starts at min + (max − min) ÷ 2 = 0 + (10 − 0) ÷ 2 = 5, so stars=5 is sent. The unchecked checkbox contributes nothing, and the button has no name.",
+   "why_wrong": [
+    "A range slider with no value attribute does not start at min. It starts at the midpoint.",
+    "A slider always has a value, unlike an unchecked checkbox, so stars is sent even if it was never touched.",
+    "The midpoint is right, but an unchecked checkbox is left out completely. It is never sent as off.",
+    ""
+   ],
+   "key": "CSE326-U2-040"
+  },
+  {
+   "topic": "Tables and Data",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "In the code below, which attribute added to the cell containing 25 explicitly links it to both of its header cells?",
+   "code": "<table>\n  <tr>\n    <td></td>\n    <th id=\"c1\">CA1</th>\n    <th id=\"c2\">CA2</th>\n  </tr>\n  <tr>\n    <th id=\"r1\">Asha</th>\n    <td>27</td>\n    <td>25</td>\n  </tr>\n</table>",
+   "options": [
+    "headers=\"r1 c2\"",
+    "headers=\"Asha CA2\"",
+    "headers=\"#r1 #c2\"",
+    "scope=\"r1 c2\""
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The cell 25 is in Asha's row (header id r1) and the CA2 column (header id c2). The headers attribute on a <td> lists the ids of all its header cells, separated by spaces, so headers=\"r1 c2\" ties the cell to both. This explicit link matters most in complex tables where scope alone is not enough.",
+   "why_wrong": [
+    "",
+    "headers lists the ids of the header cells, not their visible text.",
+    "The values are plain ids separated by spaces, not CSS selectors with #.",
+    "scope goes on a <th> and only takes values like row or col. It cannot name specific cells."
+   ],
+   "key": "CSE326-U2-041"
+  },
+  {
+   "topic": "Tables and Data",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "The table in the code below looks right, but a screen-reader user moving through the marks hears only '27', '25', with no column names. What should change?",
+   "code": "<table>\n  <tr>\n    <td><strong>Name</strong></td>\n    <td><strong>CA1</strong></td>\n    <td><strong>CA2</strong></td>\n  </tr>\n  <tr>\n    <td>Asha</td>\n    <td>27</td>\n    <td>25</td>\n  </tr>\n</table>",
+   "options": [
+    "Add scope=\"col\" to the existing <td> cells and keep the <strong> tags.",
+    "Change the top-row cells into <th scope=\"col\"> elements.",
+    "Move the top row into a <caption> element so it is read out first.",
+    "Make the top row larger with CSS so it stands out as a header row."
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "<strong> inside a <td> only makes the text bold. The cell is still a data cell, so nothing tells a screen reader that Name or CA1 labels a column. Marking those cells as <th scope=\"col\"> makes them column headers, so the screen reader can announce 'CA1, 27' as the user moves through the marks. <th> is already bold by default, so the <strong> tags are no longer needed. It is also centred by default, and CSS can change that if the old alignment is wanted.",
+   "why_wrong": [
+    "scope works only on <th>. A <td> is always a data cell, whatever attributes it has.",
+    "",
+    "<caption> is a single title for the whole table, not a row of column headers, and it cannot hold table cells.",
+    "Styling changes only the look. To assistive technology, the cells are still data cells."
+   ],
+   "key": "CSE326-U2-042"
+  },
+  {
+   "topic": "Tables and Data",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "In the timetable in the code below, Monday's Lab is one session that lasts periods 2 and 3. It should appear as a single merged cell. Which change does that?",
+   "code": "<table>\n  <tr><th>Period</th><th>Mon</th><th>Tue</th></tr>\n  <tr><th>1</th><td>Maths</td><td>Physics</td></tr>\n  <tr><th>2</th><td>Lab</td><td>English</td></tr>\n  <tr><th>3</th><td>Lab</td><td>Maths</td></tr>\n</table>",
+   "options": [
+    "Add colspan=\"2\" to the Lab cell in period 2's row, and delete the Lab cell from period 3's row.",
+    "Add rowspan=\"2\" to the Lab cell in period 3's row, and delete the Lab cell from period 2's row.",
+    "Add rowspan=\"2\" to the Lab cell in period 2's row, and delete the Lab cell from period 3's row.",
+    "Add rowspan=\"2\" to the Lab cell in period 2's row, and keep the Lab cell in period 3's row."
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Periods run down the table, so a session covering two periods spans two rows. That means rowspan=\"2\" goes on the upper Lab cell. That cell then also fills Monday's slot in period 3, so period 3's row must lose its Lab <td> and becomes <th>3</th><td>Maths</td>, with Maths landing under Tue. Every row still fills exactly three columns.",
+   "why_wrong": [
+    "colspan stretches across columns, so Lab would cover Mon and Tue in period 2 and push English into a fourth column.",
+    "A rowspan reaches downward from the row it is written in. Period 2 would lose its Lab, and English would slide under Mon.",
+    "",
+    "Once Lab spans down, it already fills Monday in period 3. The leftover Lab cell is pushed under Tue, and Maths moves into a new fourth column."
+   ],
+   "key": "CSE326-U2-043"
+  },
+  {
+   "topic": "Tables and Data",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A results table needs one header row, then the Section A students, then the Section B students. Each section must be kept as its own group of rows in the markup. Which structure is valid HTML?",
+   "code": "",
+   "options": [
+    "One <tbody> that contains two nested <tbody> elements, one per section",
+    "A single <thead>, then two <tbody> elements, one per section",
+    "A single <tbody>, with a <caption> placed between the Section A and Section B rows",
+    "A single <thead>, then two <section> elements inside the <table>, one per section"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A table may have one optional <caption>, one <thead>, any number of <tbody> elements and one <tfoot>. Using several <tbody> elements is the built-in way to split body rows into groups, such as one per section, while the single <thead> labels them all. The trap is believing a table can have only one <tbody>.",
+   "why_wrong": [
+    "<tbody> may contain only <tr> rows. Row groups cannot be nested inside each other.",
+    "",
+    "A table has at most one <caption>, and it must be the very first child of <table>, not placed between rows.",
+    "<section> is not allowed as a child of <table>. Row groups inside a table are made with <tbody>."
+   ],
+   "key": "CSE326-U2-044"
+  },
+  {
+   "topic": "Accessibility",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student's page uses <h1> for the site name. Section titles use <h4> because <h2> looked too big, and sub-titles inside sections are written as <p><b>…</b></p>. A screen-reader user reports two problems: the list of headings jumps from level 1 to level 4, and the sub-titles are missing from it. Which fix is right?",
+   "code": "",
+   "options": [
+    "Keep the <h4> tags and wrap each section title in <strong> so it is announced as important.",
+    "Keep the markup and give the <p><b> sub-titles a bigger font size so they look like headings.",
+    "Replace the <h4> tags with <header> elements, which screen readers list as headings.",
+    "Mark section titles as <h2> and sub-titles as <h3>, and set their sizes with CSS."
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Screen-reader users jump through a page by its headings, so each heading level must match the structure: sections under the h1 are h2, and their sub-parts are h3. Never choose a level for its default size, because CSS can make any heading any size. Bold paragraphs are not headings at all, which is why the sub-titles were missing from the list.",
+   "why_wrong": [
+    "<strong> marks importance within text. It does not change the heading level, so the list still jumps from 1 to 4.",
+    "Making text look like a heading does not make it one. Screen readers list real heading elements (<h1>–<h6>), not styled text.",
+    "<header> is an introductory region, not a heading, so the titles would drop out of the heading list entirely.",
+    ""
+   ],
+   "key": "CSE326-U2-045"
+  },
+  {
+   "topic": "Accessibility",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "The control in the code below works with a mouse. A keyboard-only user, though, cannot reach it with Tab or press it with Enter or Space. Which replacement fixes both problems without any extra script?",
+   "code": "<div class=\"btn\" onclick=\"openMenu()\">Menu</div>",
+   "options": [
+    "<button type=\"button\" onclick=\"openMenu()\">Menu</button>",
+    "<div class=\"btn\" tabindex=\"0\" onclick=\"openMenu()\">Menu</div>",
+    "<div class=\"btn\" title=\"Menu\" onclick=\"openMenu()\">Menu</div>",
+    "<span class=\"btn\" onclick=\"openMenu()\">Menu</span>"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A native <button> is in the Tab order, fires its click on Enter and Space, and is announced as a button, all with no extra code. A <div> or <span> does none of these things, and tabindex only adds focus. Using the native element is the simplest accessible fix.",
+   "why_wrong": [
+    "",
+    "tabindex=\"0\" lets Tab reach the div, but Enter and Space still do not fire its click, and it is not announced as a button.",
+    "title only adds a tooltip. The div still cannot receive focus or respond to keys.",
+    "A <span> has the same problem as a <div>: it cannot receive focus and ignores Enter and Space."
+   ],
+   "key": "CSE326-U2-046"
+  },
+  {
+   "topic": "Accessibility",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The button in the code below shows only a magnifying-glass icon and has no text alternative. Which single change gives the button the accessible name \"Search\"?",
+   "code": "<button type=\"submit\">\n  <img src=\"search.svg\">\n</button>",
+   "options": [
+    "Add value=\"Search\" to the <button>",
+    "Add name=\"Search\" to the <button>",
+    "Add alt=\"Search\" to the <button>",
+    "Add alt=\"Search\" to the <img>"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "A <button> gets its accessible name from its content. Here the only content is an image, so the image's alt text becomes the button's name. With alt=\"Search\", a screen reader announces 'Search, button'. Without it, the button has no text to announce.",
+   "why_wrong": [
+    "This is the trap from <input type=\"submit\">, where value is the visible label. A <button> is labelled by its content, and its value is only submitted data.",
+    "name is the key used when the form is submitted. It is never read out as the button's label.",
+    "alt is an attribute of <img>, not of <button>, so on a button it does nothing.",
+    ""
+   ],
+   "key": "CSE326-U2-047"
+  },
+  {
+   "topic": "Accessibility",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which statement about the code below is correct?",
+   "code": "<label for=\"mail\">Email</label>\n<input type=\"email\" name=\"mail\" id=\"email\">\n\n<label>Phone\n  <input type=\"tel\" name=\"phone\">\n</label>",
+   "options": [
+    "Both inputs are labelled, because for=\"mail\" matches the email input's name.",
+    "Neither input is labelled: for=\"mail\" matches no id, and a wrapping <label> also needs a for attribute.",
+    "Only the phone input is labelled: wrapping a control in <label> links them, but for=\"mail\" matches no id.",
+    "Only the email input is labelled: a <label> must use for, so wrapping the phone input does nothing."
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A <label> is tied to a control in one of two ways: its for attribute matches the control's id, or the control sits inside the label. The email label's for=\"mail\" matches the input's name, but the input's id is \"email\", so no link is made and clicking Email does nothing. The phone input sits inside its <label>, so it is labelled with no for needed.",
+   "why_wrong": [
+    "for is matched against id, not name. The email input's id is \"email\", so for=\"mail\" points at nothing.",
+    "The first half is right, but a <label> that wraps its control is linked to it without any for attribute.",
+    "",
+    "Wrapping is a valid way to label a control. The email label is the broken one, because for=\"mail\" finds no matching id."
+   ],
+   "key": "CSE326-U2-048"
+  }
+ ]
+}

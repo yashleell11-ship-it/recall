@@ -1,0 +1,1088 @@
+{
+ "subject_code": "INT108",
+ "unit": 3,
+ "unit_label": "Strings, Lists, Tuples and Dictionaries",
+ "questions": [
+  {
+   "topic": "Strings",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "word = \"program\"\nprint(word[2:5])",
+   "options": [
+    "rog",
+    "ogr",
+    "ogra",
+    "rogr"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Index from 0: p0 r1 o2 g3 r4 a5 m6. word[2:5] takes indexes 2, 3 and 4. The stop index 5 is left out, so the result is \"ogr\".",
+   "why_wrong": [
+    "Counts positions from 1 instead of 0, so the slice starts at the 'r' rather than the 'o' at index 2.",
+    "",
+    "Includes the stop index 5 ('a'), but a slice stops just before its stop index.",
+    "Counts from 1 and also includes the stop index, which is two mistakes at once."
+   ],
+   "key": "INT108-U3-001"
+  },
+  {
+   "topic": "Strings",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "s = \"banana\"\nprint(s.find(\"n\"))",
+   "options": [
+    "3",
+    "-1",
+    "2",
+    "4"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "find() returns the index of the FIRST occurrence of the substring. In \"banana\", b0 a1 n2, so the first 'n' is at index 2. find() returns -1 only when the substring does not occur at all.",
+   "why_wrong": [
+    "Counts positions from 1. Python indexes start at 0, so the first 'n' is at index 2.",
+    "-1 means \"not found\", but \"n\" does occur in \"banana\".",
+    "",
+    "4 is the index of the LAST 'n'. find() searches from the left and stops at the first match."
+   ],
+   "key": "INT108-U3-002"
+  },
+  {
+   "topic": "Strings",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Running the code below raises which exception?",
+   "code": "s = \"cat\"\ns[0] = \"b\"",
+   "options": [
+    "IndexError",
+    "ValueError",
+    "NameError",
+    "TypeError"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Strings are immutable, so you cannot assign to one of their characters. Python raises TypeError: 'str' object does not support item assignment. To get \"bat\" you build a new string instead, e.g. s = \"b\" + s[1:].",
+   "why_wrong": [
+    "IndexError is for an index that does not exist. Index 0 exists in \"cat\".",
+    "ValueError is for a value of the right type but an unsuitable value, such as int(\"abc\"). It is not raised for item assignment.",
+    "NameError is for a name that was never defined, and s is defined on the first line.",
+    ""
+   ],
+   "key": "INT108-U3-003"
+  },
+  {
+   "topic": "Lists",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "nums = [10, 20, 30, 40, 50]\nprint(nums[-2])",
+   "options": [
+    "30",
+    "40",
+    "[40, 50]",
+    "20"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Negative indexes count from the end: nums[-1] is 50, so nums[-2] is 40. A single index gives back one element, not a list.",
+   "why_wrong": [
+    "Ignores the minus sign and reads nums[2].",
+    "",
+    "That is the slice nums[-2:]. A plain index returns one element, not a list.",
+    "Counts two places from the front (nums[1]) instead of two places from the end."
+   ],
+   "key": "INT108-U3-004"
+  },
+  {
+   "topic": "Lists",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "a = [1, 2]\nprint(a * 3)",
+   "options": [
+    "[1, 2, 1, 2, 1, 2]",
+    "[3, 6]",
+    "[[1, 2], [1, 2], [1, 2]]",
+    "[1, 1, 1, 2, 2, 2]"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Multiplying a list by an integer n repeats the whole list n times and joins the copies into one flat list. So [1, 2] * 3 is [1, 2, 1, 2, 1, 2]. It does not multiply the numbers.",
+   "why_wrong": [
+    "",
+    "Multiplies each element by 3, as in maths. For a list, * means repetition.",
+    "Wraps each copy in its own inner list, but repetition gives one flat list.",
+    "Repeats each element on its own, when the whole sequence [1, 2] is what gets repeated."
+   ],
+   "key": "INT108-U3-005"
+  },
+  {
+   "topic": "Lists",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "a = [5, 6, 7, 8]\ndel a[1]\nprint(a)",
+   "options": [
+    "[6, 7, 8]",
+    "[5, 6, 7, 8]",
+    "[5, 7, 8]",
+    "[7, 8]"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "del a[1] removes the element at INDEX 1, which is 6. The list becomes [5, 7, 8]. del works by position. Removing by value is what a.remove(x) does.",
+   "why_wrong": [
+    "Counts indexes from 1, so it deletes the first element (5) instead of the one at index 1.",
+    "Treats del a[1] as \"delete the value 1\" and, finding no 1, leaves the list unchanged. del removes by index.",
+    "",
+    "Deletes everything up to and including index 1, as del a[:2] would. del a[1] removes one element."
+   ],
+   "key": "INT108-U3-006"
+  },
+  {
+   "topic": "Tuples",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which of these creates a tuple containing the single element 5?",
+   "code": "",
+   "options": [
+    "(5)",
+    "[5]",
+    "{5}",
+    "(5,)"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The comma makes a tuple, not the parentheses. (5,) is a one-element tuple. (5) is just the integer 5 inside grouping brackets, the same as writing 5.",
+   "why_wrong": [
+    "Without a comma these parentheses only group, so (5) is the int 5.",
+    "Square brackets make a list, not a tuple.",
+    "Braces with a value inside make a set, not a tuple.",
+    ""
+   ],
+   "key": "INT108-U3-007"
+  },
+  {
+   "topic": "Tuples",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "a, b = 1, 2\na, b = b, a\nprint(a, b)",
+   "options": [
+    "2 1",
+    "1 2",
+    "2 2",
+    "(2, 1)"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "In tuple assignment the whole right side (b, a) is evaluated first, giving (2, 1). Only then is it unpacked into a and b. The values swap, and print(a, b) shows two values separated by a space: 2 1.",
+   "why_wrong": [
+    "",
+    "Assumes the swap line does nothing. Tuple assignment really exchanges the two values.",
+    "Runs it as two separate steps (a = b, then b = a). The right side is evaluated in full before either name changes.",
+    "print(a, b) prints two separate values separated by a space, not a tuple with brackets."
+   ],
+   "key": "INT108-U3-008"
+  },
+  {
+   "topic": "Tuples",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "def min_max(nums):\n    return min(nums), max(nums)\n\nprint(min_max([4, 9, 1]))",
+   "options": [
+    "1 9",
+    "(1, 9)",
+    "[1, 9]",
+    "1"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "return min(nums), max(nums) packs the two values into one tuple, (1, 9). The function returns that single tuple object, and print shows it with parentheses.",
+   "why_wrong": [
+    "That would be the output of print(lo, hi) after unpacking. Printing the returned tuple itself shows the parentheses.",
+    "",
+    "Comma-separated return values are packed into a tuple, not a list.",
+    "Assumes return stops after the first value. Both values are returned together as one tuple."
+   ],
+   "key": "INT108-U3-009"
+  },
+  {
+   "topic": "Dictionaries",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does print(type({})) display?",
+   "code": "",
+   "options": [
+    "<class 'set'>",
+    "<class 'dict'>",
+    "<class 'NoneType'>",
+    "<class 'tuple'>"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Empty braces {} create an empty dictionary. An empty set has no literal of its own and must be written set().",
+   "why_wrong": [
+    "Braces are also used for sets, but an empty pair {} is a dict. An empty set is set().",
+    "",
+    "{} is a real, empty dict object, not None.",
+    "An empty tuple is written (). Braces never make a tuple."
+   ],
+   "key": "INT108-U3-010"
+  },
+  {
+   "topic": "Dictionaries",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "d = {\"a\": 1, \"b\": 2}\nprint(d.get(\"c\"))",
+   "options": [
+    "0",
+    "-1",
+    "None",
+    "False"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "get() looks up a key without raising an error. When the key is missing and no default is given, it returns None. By contrast, d[\"c\"] would raise KeyError.",
+   "why_wrong": [
+    "get() returns 0 only if you pass 0 as the default, as in d.get(\"c\", 0).",
+    "-1 is what str.find() returns for \"not found\". Dictionary get() has no such convention.",
+    "",
+    "The missing-key result is None, not the boolean False."
+   ],
+   "key": "INT108-U3-011"
+  },
+  {
+   "topic": "Dictionaries",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A sparse matrix is stored as a dictionary that keeps only the non-zero cells. What does the code below print?",
+   "code": "grid = {(0, 3): 1, (2, 1): 4}\nprint(grid.get((1, 1), 0))",
+   "options": [
+    "None",
+    "0",
+    "4",
+    "(1, 1)"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The key (1, 1) is not in the dictionary, so get() returns its second argument, the default 0. That is why a dict works as a sparse matrix: every cell you did not store reads back as 0.",
+   "why_wrong": [
+    "None is returned only when no default is given. Here the default 0 is passed.",
+    "",
+    "(2, 1) and (1, 1) are different keys. A tuple key must match exactly, not just in the column.",
+    "get() returns the stored value (or the default), never the key you looked up."
+   ],
+   "key": "INT108-U3-012"
+  },
+  {
+   "topic": "Aliasing and Copying",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "a = [1, 2, 3]\nb = a\nb.append(4)\nprint(a, b)",
+   "options": [
+    "[1, 2, 3] [1, 2, 3, 4]",
+    "[1, 2, 3, 4] [1, 2, 3, 4]",
+    "[1, 2, 3, 4] [1, 2, 3]",
+    "[1, 2, 3] [4]"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "b = a copies no data. It makes b a second name for the same list object. Appending through b changes that one list, so both names show [1, 2, 3, 4].",
+   "why_wrong": [
+    "Assumes b = a makes a copy. It creates an alias, so a sees the change.",
+    "",
+    "Gets the aliasing backwards. The object was changed through b, and both names refer to it.",
+    "Assumes b started as a new empty list. b refers to the full list that a names."
+   ],
+   "key": "INT108-U3-013"
+  },
+  {
+   "topic": "Aliasing and Copying",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "a is a list. Which statement makes b a new, separate list holding the same elements as a?",
+   "code": "",
+   "options": [
+    "b = a",
+    "b = [a]",
+    "b == a",
+    "b = a[:]"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The full slice a[:] builds a new list object containing a's elements, so changing b's length leaves a alone. list(a) does the same thing. Plain assignment b = a only adds a second name for the same list.",
+   "why_wrong": [
+    "Creates an alias: b and a are the same list, so b.append(0) would also change a.",
+    "Creates a new list whose only element is the list a itself, [[...]], not a copy of a's elements.",
+    "== compares two values and assigns nothing, so b is not created.",
+    ""
+   ],
+   "key": "INT108-U3-014"
+  },
+  {
+   "topic": "Strings",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "With s defined as in the code below, which expression raises an error when evaluated?",
+   "code": "s = \"python\"",
+   "options": [
+    "s[10:20]",
+    "s[-1]",
+    "s[10]",
+    "s[2:10]"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "A single index must exist. \"python\" has indexes 0 to 5, so s[10] raises IndexError: string index out of range. A slice never raises for out-of-range bounds. It just clips them, so s[10:20] is '' and s[2:10] is 'thon'.",
+   "why_wrong": [
+    "An out-of-range SLICE quietly returns the empty string '' and raises nothing.",
+    "Negative indexes are valid. s[-1] is the last character, 'n'.",
+    "",
+    "A slice's stop may go past the end. It is clipped to the length, giving 'thon'."
+   ],
+   "key": "INT108-U3-015"
+  },
+  {
+   "topic": "Strings",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "print(\"apple\" < \"banana\", \"Zebra\" < \"apple\", \"10\" < \"9\")",
+   "options": [
+    "True False True",
+    "True False False",
+    "True True False",
+    "True True True"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Strings are compared character by character using character codes. 'a' < 'b' gives True. Every uppercase letter has a smaller code than every lowercase one ('Z' is 90, 'a' is 97), so \"Zebra\" < \"apple\" is True. \"10\" < \"9\" compares '1' with '9' first, and '1' is smaller, so it is also True.",
+   "why_wrong": [
+    "Compares \"Zebra\" and \"apple\" alphabetically while ignoring case. Uppercase letters come before all lowercase ones.",
+    "Ignores case AND compares \"10\" and \"9\" as numbers. Both are character-by-character string comparisons.",
+    "Compares \"10\" and \"9\" as numbers. As strings, '1' < '9' decides it at the first character.",
+    ""
+   ],
+   "key": "INT108-U3-016"
+  },
+  {
+   "topic": "Lists",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "x = [3, 1, 2]\ny = x.sort()\nprint(x, y)",
+   "options": [
+    "[1, 2, 3] None",
+    "[3, 1, 2] [1, 2, 3]",
+    "[1, 2, 3] [1, 2, 3]",
+    "[3, 1, 2] None"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "list.sort() sorts the list IN PLACE and returns None, so x becomes [1, 2, 3] and y is None. The built-in sorted(x) is the one that returns a new sorted list and leaves x unchanged.",
+   "why_wrong": [
+    "",
+    "Treats sort() like sorted(): it assumes a new sorted list is returned and x is left alone.",
+    "Correctly sees x sorted but assumes sort() also returns the list. It returns None.",
+    "Sees that y is None but assumes x was not sorted. sort() does rearrange x."
+   ],
+   "key": "INT108-U3-017"
+  },
+  {
+   "topic": "Lists",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "a = [1, 2]\nb = [1, 2]\na.append([3, 4])\nb.extend([3, 4])\nprint(len(a), len(b))",
+   "options": [
+    "4 4",
+    "3 3",
+    "3 4",
+    "4 3"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "append() adds its argument as ONE element, so a becomes [1, 2, [3, 4]] with length 3. extend() adds each item of the argument separately, so b becomes [1, 2, 3, 4] with length 4.",
+   "why_wrong": [
+    "Treats append() like extend(). append() puts the whole list [3, 4] in as a single element.",
+    "Treats extend() like append(). extend() adds 3 and 4 as two separate elements.",
+    "",
+    "Swaps the two methods: append nests the list, extend spreads it out."
+   ],
+   "key": "INT108-U3-018"
+  },
+  {
+   "topic": "Lists",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "def double_all(nums):\n    for i in range(len(nums)):\n        nums[i] = nums[i] * 2\n\nmarks = [1, 2, 3]\ndouble_all(marks)\nprint(marks)",
+   "options": [
+    "[1, 2, 3]",
+    "None",
+    "[1, 2, 3, 2, 4, 6]",
+    "[2, 4, 6]"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "When a list is passed to a function, the parameter nums refers to the SAME list object as marks. nums[i] = ... replaces elements of that shared list, so marks becomes [2, 4, 6] even though the function returns nothing.",
+   "why_wrong": [
+    "Assumes the function works on a private copy. A list parameter is the caller's own list object.",
+    "double_all returns None, but the code prints marks, not the function's result.",
+    "Treats nums[i] = ... as adding new elements. Assigning to an index replaces the element already there.",
+    ""
+   ],
+   "key": "INT108-U3-019"
+  },
+  {
+   "topic": "Tuples",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these expressions does NOT produce a tuple?",
+   "code": "",
+   "options": [
+    "(7,)",
+    "7, 8",
+    "(7)",
+    "tuple([7])"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The comma creates a tuple, not the parentheses. (7) is just the integer 7 in grouping brackets. (7,) and 7, 8 both contain a comma, so both are tuples, and tuple([7]) converts a list into the tuple (7,).",
+   "why_wrong": [
+    "The trailing comma makes this a one-element tuple.",
+    "A comma creates a tuple even without parentheses. This is the tuple (7, 8).",
+    "",
+    "tuple() converts the list [7] into the tuple (7,)."
+   ],
+   "key": "INT108-U3-020"
+  },
+  {
+   "topic": "Tuples",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print (or which error does it raise)?",
+   "code": "t = (1, [2, 3])\nt[1].append(4)\nprint(t)",
+   "options": [
+    "(1, [2, 3])",
+    "TypeError",
+    "(1, [2, 3], 4)",
+    "(1, [2, 3, 4])"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "A tuple's immutability is shallow: you cannot replace t[1] with another object, but the list stored at t[1] is itself mutable. t[1].append(4) changes that list in place, and no tuple slot is reassigned, so t prints as (1, [2, 3, 4]).",
+   "why_wrong": [
+    "Assumes the tuple protects the list inside it. The inner list really was changed.",
+    "TypeError comes only from assigning to a tuple slot, such as t[1] = [9]. Calling a method on the list inside is allowed.",
+    "Assumes the 4 was added to the tuple. append() acts on the inner list, and the tuple still has two elements.",
+    ""
+   ],
+   "key": "INT108-U3-021"
+  },
+  {
+   "topic": "Dictionaries",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "d = {\"b\": 1, \"a\": 2, \"b\": 3}\nprint(d)",
+   "options": [
+    "{'a': 2, 'b': 3}",
+    "{'b': 1, 'a': 2}",
+    "{'b': 3, 'a': 2}",
+    "{'b': 1, 'a': 2, 'b': 3}"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "A dict key can appear only once, so the later \"b\": 3 overwrites the earlier value 1. The key keeps the position where it was first inserted. Since Python 3.7 dicts keep insertion order and are not sorted, so the result is {'b': 3, 'a': 2}.",
+   "why_wrong": [
+    "Sorts the keys, or moves 'b' to the end. Dicts keep insertion order, and 'b' was inserted first.",
+    "Keeps the FIRST value for the duplicate key. The last value written wins.",
+    "",
+    "Keeps both entries. Keys are unique, so the second \"b\" replaces the first one's value."
+   ],
+   "key": "INT108-U3-022"
+  },
+  {
+   "topic": "Dictionaries",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "d = {\"a\": 1, \"b\": 2}\nprint(2 in d, \"a\" in d, len(d))",
+   "options": [
+    "False True 2",
+    "True True 2",
+    "True False 2",
+    "False True 4"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The in operator on a dictionary checks KEYS only. 2 is a value, not a key, so 2 in d is False, while \"a\" in d is True. len(d) counts key-value pairs, so it is 2.",
+   "why_wrong": [
+    "",
+    "Assumes in also searches the values. It checks keys only, so 2 in d is False.",
+    "Gets it backwards and assumes in checks values instead of keys.",
+    "Counts keys and values separately. len() counts key-value pairs, and there are 2."
+   ],
+   "key": "INT108-U3-023"
+  },
+  {
+   "topic": "Aliasing and Copying",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "a = [1, 2]\nb = a\na = a + [3]\nprint(a, b)",
+   "options": [
+    "[1, 2, 3] [1, 2, 3]",
+    "[1, 2, 3] [1, 2]",
+    "[1, 2] [1, 2]",
+    "[1, 2] [1, 2, 3]"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "After b = a both names refer to one list. a + [3] builds a NEW list [1, 2, 3], and a = ... rebinds only the name a to it. b still refers to the original [1, 2]. By contrast, a += [3] would extend the shared list in place, and b would see it too.",
+   "why_wrong": [
+    "Treats a = a + [3] like a += [3]. The + builds a new list, so the original that b names is untouched.",
+    "",
+    "Assumes a is unchanged. The name a is rebound to the new list [1, 2, 3].",
+    "Gets it backwards: the new list belongs to a, and b keeps the original."
+   ],
+   "key": "INT108-U3-024"
+  },
+  {
+   "topic": "Aliasing and Copying",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "a = [1, 2, 3]\nb = a[:]\nc = a\nprint(a == b, a is b, a is c)",
+   "options": [
+    "True True True",
+    "False False True",
+    "True False False",
+    "True False True"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "== compares contents and is compares identity (the same object). b = a[:] is a new list with equal contents, so a == b is True and a is b is False. c = a binds another name to the same object, so a is c is True.",
+   "why_wrong": [
+    "Assumes the slice a[:] returns the same object. It builds a new list.",
+    "Treats == as an identity check. == compares values, and the contents are equal.",
+    "Assumes c = a makes a copy. Plain assignment creates an alias to the same object.",
+    ""
+   ],
+   "key": "INT108-U3-025"
+  },
+  {
+   "topic": "Strings",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student counts how often the pattern \"ana\" occurs in a word by calling find() in a loop, then compares the result with count(). What does the code below print?",
+   "code": "s = \"banana\"\ncount = 0\ni = s.find(\"ana\")\nwhile i != -1:\n    count += 1\n    i = s.find(\"ana\", i + 1)\nprint(count, s.count(\"ana\"))",
+   "options": [
+    "1 2",
+    "2 1",
+    "1 1",
+    "2 2"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "find(\"ana\") returns 1. Restarting the search at i + 1 = 2 finds the overlapping match at index 3, and the search from 4 returns -1, so count is 2. count() counts non-overlapping matches only: after the match at 1 it resumes at index 4, where only \"na\" is left, so it returns 1.",
+   "why_wrong": [
+    "Swaps the two results: the find loop restarts at i + 1 so it catches overlaps, while count() does not.",
+    "",
+    "Assumes the find loop also skips overlapping matches; restarting at i + 1 (not after the whole match) finds the second 'ana' at index 3.",
+    "Assumes count() also counts overlapping matches; it resumes searching after the end of each match."
+   ],
+   "key": "INT108-U3-026"
+  },
+  {
+   "topic": "Strings",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Marks typed in with input() were stored as strings and never converted to int. A student sorts them to find the lowest mark. What does the code below print?",
+   "code": "marks = [\"9\", \"45\", \"100\"]\nprint(sorted(marks))",
+   "options": [
+    "['9', '45', '100']",
+    "[9, 45, 100]",
+    "['100', '45', '9']",
+    "TypeError"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Strings are compared character by character from the left, not by numeric value. The first characters are '9', '4' and '1', and '1' < '4' < '9', so '100' comes first and '9' comes last. Converting each item with int() first would give numeric order.",
+   "why_wrong": [
+    "Compares the strings as numbers; string comparison looks at the first character, and '9' > '4' > '1'.",
+    "Assumes sorted() converts digit strings to ints; it keeps the original str items, so they print with quotes.",
+    "",
+    "Strings can be compared with < and sorted, so no error is raised."
+   ],
+   "key": "INT108-U3-027"
+  },
+  {
+   "topic": "Lists",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A canteen keeps token numbers in a list. Some tokens are cancelled and then the first token is served. What does the code below print?",
+   "code": "nums = [10, 20, 30, 40, 50]\ndel nums[1:3]\nnums.remove(50)\nx = nums.pop(0)\nprint(x, nums)",
+   "options": [
+    "10 []",
+    "10 [40]",
+    "40 [10]",
+    "40 []"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "del nums[1:3] deletes indices 1 and 2 (the stop index is excluded), leaving [10, 40, 50]. remove(50) deletes the VALUE 50, giving [10, 40]. pop(0) removes and returns the item at index 0, so x = 10 and nums = [40].",
+   "why_wrong": [
+    "Includes the stop index, so del nums[1:3] also deletes 40 and the list ends up empty.",
+    "",
+    "Treats pop(0) like pop(), removing the last item; the argument 0 is the index of the item to remove.",
+    "Counts positions from 1 and also includes the stop, so it deletes 10, 20 and 30 instead of 20 and 30."
+   ],
+   "key": "INT108-U3-028"
+  },
+  {
+   "topic": "Lists",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A shopkeeper tries two different loops to update the prices stored in a list. What does the code below print?",
+   "code": "prices = [100, 200, 300]\nfor p in prices:\n    p = p * 2\nfor i in range(len(prices)):\n    prices[i] = prices[i] + 10\nprint(prices)",
+   "options": [
+    "[210, 410, 610]",
+    "[100, 200, 300]",
+    "IndexError",
+    "[110, 210, 310]"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "In the first loop, p = p * 2 only rebinds the loop variable p to a new int; the list itself is never touched. The second loop assigns through the index, prices[i] = ..., which changes the list, so each price rises by 10 only. range(len(prices)) gives 0, 1, 2, which are all valid indices.",
+   "why_wrong": [
+    "Assumes p = p * 2 writes back into the list; it only rebinds the loop variable p.",
+    "Assumes the index loop also works on copies; prices[i] = ... assigns into the list itself.",
+    "Thinks range(len(prices)) reaches index 3; it stops at len − 1 = 2.",
+    ""
+   ],
+   "key": "INT108-U3-029"
+  },
+  {
+   "topic": "Lists",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "rolls = [1, 2]\nrolls.append([3, 4])\nrolls.extend(\"56\")\nprint(rolls)",
+   "options": [
+    "[1, 2, [3, 4], '5', '6']",
+    "[1, 2, 3, 4, '56']",
+    "[1, 2, [3, 4], '56']",
+    "[1, 2, 3, 4, 5, 6]"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "append() adds its argument as ONE element, so the list [3, 4] becomes a single nested item. extend() loops over its argument and adds each item separately; looping over the string \"56\" gives the characters '5' and '6'. The result is [1, 2, [3, 4], '5', '6'].",
+   "why_wrong": [
+    "",
+    "Swaps the two methods: append does not unpack [3, 4], and extend does not add \"56\" as one item.",
+    "Treats extend like append; extend adds each character of the string as its own element.",
+    "Assumes both methods flatten and that the characters become ints; extend keeps '5' and '6' as strings."
+   ],
+   "key": "INT108-U3-030"
+  },
+  {
+   "topic": "Tuples",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Three students in seats a, b and c swap places using tuple assignment. What does the code below print?",
+   "code": "a, b, c = 1, 2, 3\na, b = b, a\nb, c = c, b\nprint(a, b, c)",
+   "options": [
+    "2 3 3",
+    "2 3 1",
+    "(2, 3, 1)",
+    "2 3 2"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "In tuple assignment the whole right side is evaluated first and only then assigned. a, b = b, a packs (2, 1), so a = 2 and b = 1. b, c = c, b then packs the current values (3, 1), so b = 3 and c = 1, and print shows 2 3 1.",
+   "why_wrong": [
+    "Runs both swaps one assignment at a time (b = c, then c = b), so values are overwritten before they are read.",
+    "",
+    "print(a, b, c) prints three separate values separated by spaces, not a tuple in brackets.",
+    "Runs only the first swap one assignment at a time, so a and b both become 2 before the second swap."
+   ],
+   "key": "INT108-U3-031"
+  },
+  {
+   "topic": "Tuples",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A helper function returns the lowest, highest and average marks of a class. What does the code below print?",
+   "code": "def stats(nums):\n    return min(nums), max(nums), sum(nums) / len(nums)\n\nr = stats([4, 9, 2])\nlo, hi, avg = r\nprint(r, avg)",
+   "options": [
+    "(2, 9, 5.0) 5.0",
+    "(2, 9, 5) 5",
+    "[2, 9, 5.0] 5.0",
+    "2 9 5.0 5.0"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A return statement with comma-separated values packs them into ONE tuple, so r is (2, 9, 5.0) and printing it shows round brackets. The / operator always gives a float in Python 3: 15 / 3 = 5.0. The tuple is then unpacked into lo, hi and avg, so avg is 5.0.",
+   "why_wrong": [
+    "",
+    "/ always returns a float in Python 3, even when the division is exact; 15 / 3 is 5.0.",
+    "Comma-separated return values are packed into a tuple, not a list.",
+    "r is a single tuple object, so print shows it with round brackets and commas."
+   ],
+   "key": "INT108-U3-032"
+  },
+  {
+   "topic": "Tuples",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A quiz leaderboard stores (score, name) tuples. What does the code below print?",
+   "code": "board = [(85, \"Ravi\"), (92, \"Anu\"), (85, \"Aman\")]\nprint(sorted(board))",
+   "options": [
+    "[(92, 'Anu'), (85, 'Ravi'), (85, 'Aman')]",
+    "[(85, 'Ravi'), (85, 'Aman'), (92, 'Anu')]",
+    "[(85, 'Aman'), (92, 'Anu'), (85, 'Ravi')]",
+    "[(85, 'Aman'), (85, 'Ravi'), (92, 'Anu')]"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Tuples are compared element by element: first by score, and only when the scores are equal by the next element, the name. sorted() is ascending by default, so 85 comes before 92. The tie between the two 85s is broken by 'Aman' < 'Ravi'.",
+   "why_wrong": [
+    "Assumes sorted() puts the highest score first; it sorts ascending unless reverse=True is given.",
+    "Assumes only the first element is compared; when the scores tie, the names are compared next.",
+    "Sorts by name; tuple comparison starts with the first element, which is the score.",
+    ""
+   ],
+   "key": "INT108-U3-033"
+  },
+  {
+   "topic": "Dictionaries",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student counts how many times each word appears in a sentence. What does the code below print?",
+   "code": "text = \"to be or not to be\"\nfreq = {}\nfor w in text.split():\n    freq[w] = freq.get(w, 0) + 1\nprint(freq)",
+   "options": [
+    "{'to': 2, 'be': 2, 'or': 1, 'not': 1}",
+    "{'be': 2, 'not': 1, 'or': 1, 'to': 2}",
+    "KeyError",
+    "{'to': 1, 'be': 1, 'or': 1, 'not': 1}"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "freq.get(w, 0) returns the current count, or 0 when w is not yet a key, so no KeyError is raised and each repeat adds 1. 'to' and 'be' each appear twice. A dict keeps its keys in the order they were first inserted, so they print as to, be, or, not.",
+   "why_wrong": [
+    "",
+    "Assumes a dict sorts its keys; since Python 3.7 it keeps insertion order.",
+    "get() returns the default for a missing key instead of raising; only freq[w] on a missing key raises KeyError.",
+    "Assumes a repeated word is skipped; the second 'to' reads the stored 1 and saves 2."
+   ],
+   "key": "INT108-U3-034"
+  },
+  {
+   "topic": "Dictionaries",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A 3 × 3 sparse matrix is stored as a dictionary of its non-zero cells, keyed by (row, column). The code below adds up the main diagonal. What does it print?",
+   "code": "m = {(0, 0): 5, (1, 1): 2, (1, 2): 3, (2, 0): 7}\ntotal = 0\nfor i in range(3):\n    total += m.get((i, i), 0)\nprint(total)",
+   "options": [
+    "17",
+    "TypeError",
+    "7",
+    "KeyError"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The loop looks up (0, 0), (1, 1) and (2, 2). The first two are stored (5 and 2); (2, 2) is a zero cell that is not stored, so get() returns the default 0. total = 5 + 2 + 0 = 7. Tuples are immutable and hashable, so they are valid dictionary keys.",
+   "why_wrong": [
+    "Adds every stored value (5 + 2 + 3 + 7); the loop only looks up the diagonal cells (i, i).",
+    "Thinks a tuple cannot be a dict key; tuples are hashable, and only mutable keys such as lists raise TypeError.",
+    "",
+    "get() with a default returns 0 for the missing (2, 2); only m[(2, 2)] would raise KeyError."
+   ],
+   "key": "INT108-U3-035"
+  },
+  {
+   "topic": "Aliasing and Copying",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student builds a tic-tac-toe board and marks the centre cell. What does the code below print?",
+   "code": "board = [[\"-\"] * 3] * 3\nboard[1][1] = \"X\"\nprint(board[0], board[0] is board[2])",
+   "options": [
+    "['-', 'X', '-'] True",
+    "['-', '-', '-'] False",
+    "['X', 'X', 'X'] True",
+    "['-', 'X', '-'] False"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "[\"-\"] * 3 builds one row, and the outer * 3 makes a list holding three references to that SAME row. So board[1][1] = \"X\" changes the one shared row, the change shows through board[0], and board[0] is board[2] is True. Within the row, assigning to index 1 replaces only that one slot.",
+   "why_wrong": [
+    "",
+    "Assumes the outer * 3 makes three separate rows; it repeats a reference to one row.",
+    "Assumes the inner * 3 also links the cells; board[1][1] = \"X\" replaces only index 1 of the row.",
+    "The change can only show in board[0] because all three rows are one object, so is gives True."
+   ],
+   "key": "INT108-U3-036"
+  },
+  {
+   "topic": "Aliasing and Copying",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Before editing a list of marks, a student makes a backup and a second name for the list. What does the code below print?",
+   "code": "marks = [70, 80]\nbackup = marks[:]\nsame = marks\nmarks.append(90)\nprint(backup, same is marks, backup is marks)",
+   "options": [
+    "[70, 80, 90] True True",
+    "[70, 80] False False",
+    "[70, 80] True False",
+    "[70, 80, 90] True False"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "marks[:] builds a NEW list with the same items, so backup is a separate object and keeps [70, 80] after the append. same = marks copies nothing; it binds a second name to the same list, so same is marks is True. backup is marks is False because they are two different objects.",
+   "why_wrong": [
+    "Treats the slice marks[:] as another name for the same list; slicing builds a new list.",
+    "Treats same = marks as a copy; plain assignment only binds a second name to the same object.",
+    "",
+    "A separate copy does not follow later changes to the original, so backup stays [70, 80]."
+   ],
+   "key": "INT108-U3-037"
+  },
+  {
+   "topic": "Strings",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "s = \"banana\"\nprint(s.find(\"n\", 3), s.find(\"x\"), s[s.find(\"x\")])",
+   "options": [
+    "IndexError",
+    "4 -1 a",
+    "1 -1 a",
+    "ValueError"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "find(\"n\", 3) starts searching at index 3 but still returns the position in the whole string, so it finds the 'n' at index 4. find() returns -1 when the substring is absent instead of raising. That -1 is then used as an index, and s[-1] is simply the last character 'a': a silent bug, not an error.",
+   "why_wrong": [
+    "Expects s[-1] to fail; -1 is a valid index meaning the last character.",
+    "",
+    "Counts the position from the start argument (4 − 3); find() returns the index in the whole string.",
+    "Confuses find() with index(); only index() raises ValueError when the substring is missing."
+   ],
+   "key": "INT108-U3-038"
+  },
+  {
+   "topic": "Strings",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "s = \"COMPUTER\"\nprint(s[5:1:-2] + s[1:5:-1] + s[-2:])",
+   "options": [
+    "TPOER",
+    "TPOMPUER",
+    "TUPMER",
+    "TPER"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "s[5:1:-2] starts at index 5 ('T') and steps back by 2 to index 3 ('P'); index 1 is the stop and is excluded, giving 'TP'. s[1:5:-1] moves backwards from 1, but 5 lies ahead, so it is the empty string ''. s[-2:] is 'ER', and 'TP' + '' + 'ER' = 'TPER'.",
+   "why_wrong": [
+    "Includes the stop index 1 ('O') in the backward slice; the stop is always excluded.",
+    "Reads s[1:5:-1] as s[1:5]; with a negative step and start < stop the slice is empty.",
+    "Ignores the step size 2 and takes every character from index 5 down to 2.",
+    ""
+   ],
+   "key": "INT108-U3-039"
+  },
+  {
+   "topic": "Lists",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "def add_bonus(scores):\n    for i in range(len(scores)):\n        scores[i] += 5\n    scores = [0]\n    return scores\nmarks = [50, 60]\nnew = add_bonus(marks)\nprint(marks, new)",
+   "options": [
+    "[50, 60] [0]",
+    "[0] [0]",
+    "[55, 65] [0]",
+    "[55, 65] [55, 65]"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The parameter scores is a second name for the same list object as marks, so scores[i] += 5 changes that shared list to [55, 65]. scores = [0] then rebinds only the local name to a brand-new list; marks is unaffected. The function returns that new list, so new is [0].",
+   "why_wrong": [
+    "Assumes the function receives a copy; the parameter refers to the same list, so the item changes reach marks.",
+    "Assumes rebinding the parameter changes the caller's variable; scores = [0] only moves the local name.",
+    "",
+    "Misses that scores = [0] rebinds the name before return, so the function returns the new list [0]."
+   ],
+   "key": "INT108-U3-040"
+  },
+  {
+   "topic": "Lists",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "data = [[1, 2], 3, \"45\"]\nprint(1 in data, [1, 2] in data, \"4\" in data, len(data))",
+   "options": [
+    "True True True 3",
+    "False True False 3",
+    "False True True 3",
+    "False True False 4"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "in on a list compares each top-level element with ==. The elements are [1, 2], 3 and \"45\": 1 equals none of them, [1, 2] equals the first, and \"4\" is not equal to \"45\" (substring checking happens only when the container itself is a string). len counts the three top-level elements.",
+   "why_wrong": [
+    "Assumes in searches inside the nested list and the string; it only compares the list's own elements.",
+    "",
+    "Treats \"4\" in data as a substring test; data is a list, so \"4\" must equal a whole element.",
+    "Counts the inner list's items separately; len counts [1, 2] as a single element."
+   ],
+   "key": "INT108-U3-041"
+  },
+  {
+   "topic": "Tuples",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which line of the code below is the FIRST to raise an error?",
+   "code": "t = (1, [2, 3], \"ab\")\nt[1].append(4)\nt[1][0] = 9\nt[2][0] = \"A\"\nt[0] = 5",
+   "options": [
+    "t[1].append(4)",
+    "t[1][0] = 9",
+    "t[2][0] = \"A\"",
+    "t[0] = 5"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "A tuple's immutability is shallow: its slots cannot be reassigned, but a mutable list stored in a slot can still change, so both list lines run and t becomes (1, [9, 3, 4], 'ab'). t[2] is the string 'ab', and strings are immutable too, so t[2][0] = \"A\" raises TypeError. The program stops there, before t[0] = 5 is reached.",
+   "why_wrong": [
+    "append() mutates the list inside the tuple; the tuple still holds the same list object, so no error.",
+    "t[1][0] = 9 assigns into the list, not into a tuple slot, and lists allow item assignment.",
+    "",
+    "This line would raise TypeError, but the program has already stopped at the string assignment on the line before."
+   ],
+   "key": "INT108-U3-042"
+  },
+  {
+   "topic": "Tuples",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which ONE of these tuple assignments raises an error?",
+   "code": "",
+   "options": [
+    "p, q = (5,)",
+    "a, b = \"hi\"",
+    "x, y = [1, [2, 3]]",
+    "(m, n) = [7, 8]"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Tuple assignment accepts any sequence on the right as long as the number of items matches the number of names. \"hi\" has 2 characters, [1, [2, 3]] has 2 elements (the inner list counts as one) and [7, 8] has 2. (5,) is a tuple with only ONE item, so unpacking it into two names raises ValueError.",
+   "why_wrong": [
+    "",
+    "A string is a sequence, so a gets 'h' and b gets 'i'.",
+    "The list has exactly two elements, 1 and [2, 3]; the nested list counts as one item.",
+    "Brackets on the left are optional and the right side may be a list; two names, two items."
+   ],
+   "key": "INT108-U3-043"
+  },
+  {
+   "topic": "Dictionaries",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "d = {\"a\": 1, \"b\": 2, \"a\": 3}\nd[\"c\"] = d.pop(\"b\")\nprint(d)",
+   "options": [
+    "{'a': 3, 'c': 2}",
+    "{'a': 1, 'c': 2}",
+    "{'a': 3, 'b': 2, 'c': 2}",
+    "{'a': 1, 'a': 3, 'c': 2}"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A dict cannot hold the same key twice: the later \"a\": 3 overwrites the value, so d starts as {'a': 3, 'b': 2}. pop(\"b\") removes the key 'b' and returns its value 2. That value is stored under the new key 'c', giving {'a': 3, 'c': 2}.",
+   "why_wrong": [
+    "",
+    "Keeps the first value of the duplicate key; with a repeated key the last value wins.",
+    "Treats pop() like get(); pop removes the key as well as returning its value.",
+    "Assumes a dict can store the same key twice; keys are unique."
+   ],
+   "key": "INT108-U3-044"
+  },
+  {
+   "topic": "Dictionaries",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "marks = {\"Anu\": 78, \"Ravi\": 91, \"Sita\": 85}\nprint(max(marks), max(marks.values()), len(marks))",
+   "options": [
+    "Ravi 91 3",
+    "91 91 3",
+    "Sita 91 6",
+    "Sita 91 3"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Iterating over a dict, which is what max() does, gives its KEYS, so max(marks) compares the names as strings: 'Sita' > 'Ravi' > 'Anu'. max(marks.values()) compares the marks and gives 91. len() counts key-value pairs, which is 3.",
+   "why_wrong": [
+    "Assumes max(marks) compares the values and returns the topper's name; it compares only the keys.",
+    "Assumes max(marks) looks at the values; iterating a dict yields its keys.",
+    "Counts keys and values separately; len() of a dict is its number of key-value pairs.",
+    ""
+   ],
+   "key": "INT108-U3-045"
+  },
+  {
+   "topic": "Aliasing and Copying",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "a = [1, 2]\nb = a\na.append(3)\na = a + [4]\nb.append(5)\nprint(a, b)",
+   "options": [
+    "[1, 2, 3, 4, 5] [1, 2, 3, 4, 5]",
+    "[1, 2, 3, 4] [1, 2, 5]",
+    "[1, 2, 3, 4] [1, 2, 3, 5]",
+    "[1, 2, 3, 4, 5] [1, 2, 3, 5]"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "b = a makes both names refer to one list, so a.append(3) is seen through b: both are [1, 2, 3]. a = a + [4] builds a NEW list [1, 2, 3, 4] and rebinds only a, while b still names the old list. b.append(5) therefore changes only the old list, giving [1, 2, 3, 5].",
+   "why_wrong": [
+    "Treats a = a + [4] like a += [4], which would extend the shared list in place; + builds a new list.",
+    "Treats b = a as a copy; b is the same list, so it also sees append(3).",
+    "",
+    "Assumes a and b stay linked after a is rebound; after a = a + [4] they name different lists."
+   ],
+   "key": "INT108-U3-046"
+  },
+  {
+   "topic": "Aliasing and Copying",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "a = {\"x\": [1], \"y\": 2}\nb = a.copy()\nb[\"x\"].append(5)\nb[\"y\"] = 9\nprint(a)",
+   "options": [
+    "{'x': [1], 'y': 9}",
+    "{'x': [1], 'y': 2}",
+    "{'x': [1, 5], 'y': 9}",
+    "{'x': [1, 5], 'y': 2}"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "a.copy() makes a new dict, but it is a SHALLOW copy: b[\"x\"] refers to the very same list as a[\"x\"]. So b[\"x\"].append(5) mutates that shared list and a sees [1, 5]. b[\"y\"] = 9 replaces a value in b's own dict only, so a[\"y\"] stays 2.",
+   "why_wrong": [
+    "Reverses the rule: the mutated shared list shows in both dicts, but assigning b[\"y\"] affects only b.",
+    "Treats copy() as a deep copy; the nested list is shared, not duplicated.",
+    "Treats b = a.copy() as an alias; assigning a key in b does not change a.",
+    ""
+   ],
+   "key": "INT108-U3-047"
+  }
+ ]
+}

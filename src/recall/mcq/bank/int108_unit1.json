@@ -1,0 +1,1065 @@
+{
+ "subject_code": "INT108",
+ "unit": 1,
+ "unit_label": "Environment, Variables, Expressions and Statements",
+ "questions": [
+  {
+   "topic": "Environment and Statements",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which of these correctly displays Hello in Python 3?",
+   "code": "",
+   "options": [
+    "print \"Hello\"",
+    "print(\"Hello\")",
+    "echo(\"Hello\")",
+    "printf(\"Hello\")"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "In Python 3, print is a built-in function, so what you want to display goes inside parentheses: print(\"Hello\"). Leaving out the parentheses was Python 2 syntax. In Python 3 it raises a SyntaxError.",
+   "why_wrong": [
+    "This is Python 2 syntax, where print was a statement. Python 3 needs parentheses, so this is a SyntaxError.",
+    "",
+    "echo is a shell command, not a Python built-in. Calling it raises NameError.",
+    "printf is C's output function. Python has no built-in printf, so this raises NameError."
+   ],
+   "key": "INT108-U1-001"
+  },
+  {
+   "topic": "Environment and Statements",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which character starts a single-line comment in Python?",
+   "code": "",
+   "options": [
+    "//",
+    "/*",
+    "#",
+    "--"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Python ignores everything from # to the end of the line, so # starts a comment. You can put a comment on its own line or after code, as in age = 20  # student age.",
+   "why_wrong": [
+    "// starts a comment in C/C++/Java. In Python, // is the floor-division operator.",
+    "/* opens a block comment in C. It has no meaning in Python.",
+    "",
+    "-- starts a comment in SQL. In Python it is two minus signs."
+   ],
+   "key": "INT108-U1-002"
+  },
+  {
+   "topic": "Variables and Keywords",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which of these is a valid Python variable name?",
+   "code": "",
+   "options": [
+    "2total",
+    "total-price",
+    "class",
+    "total_price"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "An identifier can contain letters, digits and underscores, but it cannot start with a digit and cannot be a reserved keyword. total_price follows every rule. It is also a meaningful name, which is good style.",
+   "why_wrong": [
+    "An identifier cannot start with a digit.",
+    "A hyphen is the minus operator, so Python reads this as total minus price.",
+    "class is a reserved keyword, so it cannot be used as a variable name.",
+    ""
+   ],
+   "key": "INT108-U1-003"
+  },
+  {
+   "topic": "Variables and Keywords",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which of these is a reserved keyword in Python 3?",
+   "code": "",
+   "options": [
+    "class",
+    "print",
+    "marks",
+    "input"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "class is one of Python's reserved keywords, so you cannot use it as a variable name. print and input are built-in functions, not keywords. marks is an ordinary name.",
+   "why_wrong": [
+    "",
+    "print was a keyword only in Python 2. In Python 3 it is a built-in function.",
+    "marks is an ordinary identifier that any program may use.",
+    "input is a built-in function name, not a reserved keyword."
+   ],
+   "key": "INT108-U1-004"
+  },
+  {
+   "topic": "Variables and Keywords",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What happens when the code below runs?",
+   "code": "total = 50\nprint(totl)",
+   "options": [
+    "SyntaxError",
+    "NameError",
+    "TypeError",
+    "50"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Python can only look up a name that has already been given a value. totl, a typo for total, was never assigned, so print(totl) raises NameError. Python does not substitute the closest matching name.",
+   "why_wrong": [
+    "The line is grammatically valid Python. The problem is that the name is unknown, which is a runtime NameError, not a syntax problem.",
+    "",
+    "TypeError means an operation was applied to the wrong type of value. Here there is no value at all.",
+    "Python never uses total's value in place of totl. Python 3.10 and later add the hint Did you mean: 'total'? to the error, but nothing is printed and the program stops with NameError."
+   ],
+   "key": "INT108-U1-005"
+  },
+  {
+   "topic": "Values and Types",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In Python 3, what is the type of the value returned by input()?",
+   "code": "",
+   "options": [
+    "int",
+    "float",
+    "str",
+    "bool"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "input() always returns the typed text as a str, even when the user types digits. To do arithmetic you must convert it, for example int(input()) or float(input()).",
+   "why_wrong": [
+    "You get an int only if you convert explicitly with int(input()).",
+    "You get a float only if you convert explicitly with float(input()).",
+    "",
+    "Nothing converts the typed text to a Boolean automatically."
+   ],
+   "key": "INT108-U1-006"
+  },
+  {
+   "topic": "Values and Types",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "print(int(3.99))",
+   "options": [
+    "4",
+    "3.99",
+    "3.0",
+    "3"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "int() does not round. It drops the fractional part, truncating toward zero, so int(3.99) is 3. The result is an int, so it prints as 3, not 3.0.",
+   "why_wrong": [
+    "This rounds to the nearest whole number, but int() truncates.",
+    "This assumes int() leaves the float unchanged. int() always returns an int.",
+    "The result is an int, not a float, so it prints without .0.",
+    ""
+   ],
+   "key": "INT108-U1-007"
+  },
+  {
+   "topic": "Values and Types",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "age = \"20\"\nprint(type(age))",
+   "options": [
+    "<class 'str'>",
+    "<class 'int'>",
+    "<class 'float'>",
+    "<class 'char'>"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The quotes make \"20\" a string, so its type is str. The digits inside do not make it a number. You would need int(age) to get the integer 20.",
+   "why_wrong": [
+    "",
+    "This judges by the digits. Anything inside quotes is a str.",
+    "There is no decimal point, and anyway the quotes make it a str.",
+    "Python has no separate char type. Text of any length, even a single character, is a str."
+   ],
+   "key": "INT108-U1-008"
+  },
+  {
+   "topic": "Operators and Precedence",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "print(17 // 5)",
+   "options": [
+    "3.4",
+    "4",
+    "3",
+    "2"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "// is floor division: it divides and then rounds the result down to a whole number. 17 / 5 is 3.4, and rounding down gives 3. You can check it: 17 = 5·3 + 2.",
+   "why_wrong": [
+    "3.4 is the result of true division, 17 / 5.",
+    "This rounds 3.4 up. Floor division rounds down.",
+    "",
+    "2 is the remainder, 17 % 5, not the quotient."
+   ],
+   "key": "INT108-U1-009"
+  },
+  {
+   "topic": "Operators and Precedence",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print in Python 3?",
+   "code": "print(10 / 2)",
+   "options": [
+    "5",
+    "5.0",
+    "5.00",
+    "0"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "In Python 3, / always gives a float, even when the division comes out exact. So 10 / 2 is 5.0. Use 10 // 2 to get the integer 5.",
+   "why_wrong": [
+    "This is Python 2 behaviour, or the result of //. In Python 3, / always returns a float.",
+    "",
+    "Python prints the shortest form of the float, 5.0. It does not pad to two decimal places.",
+    "0 is the remainder, 10 % 2, not the quotient."
+   ],
+   "key": "INT108-U1-010"
+  },
+  {
+   "topic": "Operators and Precedence",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "print(23 % 4)",
+   "options": [
+    "3",
+    "5",
+    "5.75",
+    "0.75"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "% gives the remainder after division. Since 23 = 4·5 + 3, 23 % 4 is 3.",
+   "why_wrong": [
+    "",
+    "5 is the quotient, 23 // 4, not the remainder.",
+    "5.75 is the result of true division, 23 / 4.",
+    "0.75 is the fractional part of 5.75. The remainder is the leftover whole amount, 3."
+   ],
+   "key": "INT108-U1-011"
+  },
+  {
+   "topic": "String Operations",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "word = \"PYTHON\"\nprint(word[-1])",
+   "options": [
+    "P",
+    "O",
+    "Y",
+    "N"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Negative indexes count from the end of the string, and -1 is the last character. In \"PYTHON\" the last character is N.",
+   "why_wrong": [
+    "P is at index 0, the first character. -1 counts from the other end.",
+    "O is at index -2. This treats -1 as second from last.",
+    "Y is at index 1. The minus sign matters.",
+    ""
+   ],
+   "key": "INT108-U1-012"
+  },
+  {
+   "topic": "String Operations",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "print(\"ha\" * 3)",
+   "options": [
+    "ha ha ha",
+    "hahaha",
+    "ha3",
+    "hhhaaa"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Multiplying a string by an integer repeats the whole string that many times and joins the copies with nothing between them. \"ha\" * 3 is \"hahaha\".",
+   "why_wrong": [
+    "Repetition does not insert spaces between the copies.",
+    "",
+    "This treats * as joining the number on as text. * repeats the string.",
+    "This repeats each character in turn. * repeats the whole string as one unit."
+   ],
+   "key": "INT108-U1-013"
+  },
+  {
+   "topic": "String Operations",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "print(len(\"Hi there\"))",
+   "options": [
+    "7",
+    "2",
+    "8",
+    "9"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "len() counts every character in the string, including spaces. \"Hi there\" has H, i, a space, then t, h, e, r, e, which is 2 + 1 + 5 = 8.",
+   "why_wrong": [
+    "This skips the space, but a space is a character too.",
+    "This counts words. len() counts characters.",
+    "",
+    "This adds an end-of-string marker as C does. len() counts only the characters actually in the string."
+   ],
+   "key": "INT108-U1-014"
+  },
+  {
+   "topic": "Environment and Statements",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about Python 3 is NOT correct?",
+   "code": "",
+   "options": [
+    "print is a function, so its arguments go inside parentheses.",
+    "input() returns what the user typed as a str.",
+    "Dividing two ints with / gives a float, so 10 / 2 is 5.0.",
+    "raw_input() reads keyboard input as a str."
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "raw_input() existed only in Python 2. Python 3 renamed it to input(), and calling raw_input() now raises NameError. The other three statements describe real Python 3 behaviour, and all three differ from Python 2.",
+   "why_wrong": [
+    "This is true: print(...) is a function call in Python 3. print \"x\" is Python 2 syntax.",
+    "This is true: input() always returns a str, and you convert it with int() or float().",
+    "This is true: in Python 3, / always gives a float. Integer-style division is //.",
+    ""
+   ],
+   "key": "INT108-U1-015"
+  },
+  {
+   "topic": "Environment and Statements",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which letters does the code below print?",
+   "code": "# print(\"A\")\nprint(\"B\")  # print(\"C\")\n\"\"\"print(\"D\")\"\"\"",
+   "options": [
+    "Only B",
+    "A and B",
+    "B and C",
+    "B and D"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The # on line 1 comments out the whole line. On line 2, everything after the # is ignored, so only print(\"B\") runs. Line 3 is a triple-quoted string on its own: it is just text that Python evaluates and discards, so the print(\"D\") inside it never runs.",
+   "why_wrong": [
+    "",
+    "A # at the start comments out the entire line, including the print.",
+    "Everything after # on a line is ignored, even text that looks like code.",
+    "Text inside triple quotes is string data, not code, so it does not run."
+   ],
+   "key": "INT108-U1-016"
+  },
+  {
+   "topic": "Variables and Keywords",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "x = 5\ny = x\nx = x + 3\nprint(x, y)",
+   "options": [
+    "8 8",
+    "8 5",
+    "5 5",
+    "5 8"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "y = x makes y refer to the value x has at that moment, which is 5. x = x + 3 then makes x refer to a new value, 8, and y is unaffected. print shows 8 5.",
+   "why_wrong": [
+    "This assumes y stays linked to x. Assignment copies the current value reference, and rebinding x later does not change y.",
+    "",
+    "x = x + 3 does update x. The right side is computed as 8 and then stored back in x.",
+    "This swaps the two results, as if the new value were stored in y."
+   ],
+   "key": "INT108-U1-017"
+  },
+  {
+   "topic": "Variables and Keywords",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What is the result of running the code below?",
+   "code": "marks = 40\nMarks = 90\nprint(marks + Marks)",
+   "options": [
+    "180",
+    "4090",
+    "130",
+    "SyntaxError"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Python names are case-sensitive, so marks and Marks are two different variables holding 40 and 90. Both are ints, so + adds them: 40 + 90 = 130.",
+   "why_wrong": [
+    "This treats marks and Marks as one variable overwritten with 90. Names are case-sensitive.",
+    "This joins the values as text. They are ints, so + adds them.",
+    "",
+    "An identifier may start with a capital letter, so Marks is a perfectly valid name."
+   ],
+   "key": "INT108-U1-018"
+  },
+  {
+   "topic": "Values and Types",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these conversions raises a ValueError?",
+   "code": "",
+   "options": [
+    "int(\"3.5\")",
+    "int(3.5)",
+    "float(\"3.5\")",
+    "int(\"35\")"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "int() given a string accepts only whole-number text, so the string \"3.5\" cannot be parsed and raises ValueError. Given the float 3.5, int() simply truncates it to 3. To turn \"3.5\" into an integer, go through float first: int(float(\"3.5\")).",
+   "why_wrong": [
+    "",
+    "This passes a float, not a string, and int() truncates it to 3 without an error.",
+    "float() parses decimal text happily and returns 3.5.",
+    "\"35\" is whole-number text, so int() returns 35."
+   ],
+   "key": "INT108-U1-019"
+  },
+  {
+   "topic": "Values and Types",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "When the code below runs, the user types 5 and presses Enter. What does print(x * 2) display?",
+   "code": "x = input(\"Enter a number: \")\nprint(x * 2)",
+   "options": [
+    "10",
+    "5 5",
+    "TypeError",
+    "55"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "input() returns the string \"5\", not the number 5. A string times an integer repeats the string, so \"5\" * 2 is \"55\". To get 10 you need int(input(...)).",
+   "why_wrong": [
+    "This assumes input() returned the int 5. It returns the str \"5\".",
+    "String repetition joins the copies with no space.",
+    "str * int is valid: it means repetition. It is str + int that raises TypeError.",
+    ""
+   ],
+   "key": "INT108-U1-020"
+  },
+  {
+   "topic": "Operators and Precedence",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "print(10 - 2 * 3 + 4)",
+   "options": [
+    "28",
+    "8",
+    "0",
+    "56"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "* comes before + and -, so 2 * 3 = 6 is done first. The remaining - and + have equal precedence and run left to right: 10 − 6 = 4, then 4 + 4 = 8.",
+   "why_wrong": [
+    "This works strictly left to right, ignoring precedence: (10 − 2)·3 + 4 = 28.",
+    "",
+    "This does the + before the -: 10 − (6 + 4) = 0. Equal-precedence - and + go left to right.",
+    "This adds parentheses that are not there: (10 − 2)·(3 + 4) = 56."
+   ],
+   "key": "INT108-U1-021"
+  },
+  {
+   "topic": "Operators and Precedence",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "print(-2 ** 2, (-2) ** 2)",
+   "options": [
+    "-4 4",
+    "4 4",
+    "-4 -4",
+    "4 -4"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "** binds more tightly than unary minus, so -2 ** 2 means -(2 ** 2) = -4. With parentheses, (-2) ** 2 squares negative two, giving 4.",
+   "why_wrong": [
+    "",
+    "This applies the minus before **, reading -2 ** 2 as (-2) ** 2. ** binds tighter than unary minus.",
+    "This ignores the parentheses. (-2) ** 2 squares a negative number, which gives a positive result.",
+    "This reverses both rules. The unparenthesised form is the negative one."
+   ],
+   "key": "INT108-U1-022"
+  },
+  {
+   "topic": "Operators and Precedence",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "score = 10\nscore += 5\nscore *= 2\nscore -= 8\nprint(score)",
+   "options": [
+    "12",
+    "14",
+    "22",
+    "-8"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Each augmented assignment updates the stored value in order: 10 + 5 = 15, then 15·2 = 30, then 30 − 8 = 22.",
+   "why_wrong": [
+    "This merges the lines into one expression, 10 + 5·2 − 8 = 12. Each line runs on its own, in order.",
+    "This does the subtraction before the doubling: (10 + 5 − 8)·2 = 14. The statements run top to bottom.",
+    "",
+    "This reads score -= 8 as score = -8. The -= operator subtracts 8 from the current value."
+   ],
+   "key": "INT108-U1-023"
+  },
+  {
+   "topic": "String Operations",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "print(\"Python\"[1:4])",
+   "options": [
+    "ytho",
+    "Pyt",
+    "Pyth",
+    "yth"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Indexes start at 0, so index 1 is 'y'. A slice includes the start index and excludes the stop index, so [1:4] takes indexes 1, 2 and 3: 'y', 't', 'h', giving yth.",
+   "why_wrong": [
+    "This includes the stop index 4 ('o'). The stop index is excluded.",
+    "This counts from 1, as if P were at position 1. Python indexes from 0, so index 1 is 'y'.",
+    "This counts from 1 and also includes the stop position.",
+    ""
+   ],
+   "key": "INT108-U1-024"
+  },
+  {
+   "topic": "String Operations",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "name = \"Asha\"\nmarks = 92\nprint(f\"{name} scored {marks + 3}%\")",
+   "options": [
+    "Asha scored 923%",
+    "{name} scored {marks + 3}%",
+    "Asha scored 95%",
+    "Asha scored marks + 3%"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The f prefix makes each {...} a placeholder. Python evaluates the expression inside and inserts the result. marks is the int 92, so {marks + 3} becomes 95.",
+   "why_wrong": [
+    "This joins 92 and 3 as text. marks is an int, so + adds them.",
+    "This is what prints without the f prefix. With f, the braces are replaced by values.",
+    "",
+    "The braces can hold whole expressions, not just variable names, and the expression is evaluated."
+   ],
+   "key": "INT108-U1-025"
+  },
+  {
+   "topic": "Environment and Statements",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student saves the program below as marks.py and runs it. What appears on the screen?",
+   "code": "print(\"Start\")\nmarks = 85\nprint(\"Marks: \" + marks)\nprint(\"End\")",
+   "options": [
+    "Start, Marks: 85 and End on three separate lines",
+    "Start, then a TypeError from line 3; End is never printed",
+    "A SyntaxError before anything is printed",
+    "Start and End, with line 3 skipped"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Lines run from top to bottom, so line 1 prints Start before anything goes wrong. On line 3, + cannot join a str and an int, so Python raises TypeError: can only concatenate str (not \"int\") to str, and the program stops. Line 4 never runs. The fix is \"Marks: \" + str(marks) or print(\"Marks:\", marks).",
+   "why_wrong": [
+    "Assumes + turns the int 85 into text automatically. Python never converts an int to str for concatenation.",
+    "",
+    "Line 3 is valid Python grammar. The problem only appears when it runs and meets a str and an int, which is a runtime TypeError, not a SyntaxError.",
+    "Python does not skip a failing line and carry on. An unhandled error stops the program at that line."
+   ],
+   "key": "INT108-U1-026"
+  },
+  {
+   "topic": "Environment and Statements",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "x = 5  # x = 10\nprint(\"x is # x\", x)  # print(x * 2)",
+   "options": [
+    "x is # x 5",
+    "x is 5",
+    "x is # x 10",
+    "x is 10"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A # starts a comment only when it is outside a string, so the # x inside the quotes is ordinary text and gets printed. The # x = 10 and # print(x * 2) after the code are real comments and never run, so x stays 5. print joins its two arguments with one space, giving x is # x 5.",
+   "why_wrong": [
+    "",
+    "Treats the # inside the quotes as a comment. Inside a string literal, # is just a character.",
+    "Runs the comment # x = 10. Everything after a # outside a string is ignored, so x is still 5.",
+    "Makes both mistakes: drops the # x inside the string and also runs the commented-out x = 10."
+   ],
+   "key": "INT108-U1-027"
+  },
+  {
+   "topic": "Environment and Statements",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The code below is saved as test.py and run with python test.py. What is printed before the error message appears?",
+   "code": "print(\"A\")\nx = 5\nprint(\"B\"\nprint(\"C\")",
+   "options": [
+    "Nothing at all",
+    "A only",
+    "A and B",
+    "A, B and C"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "When a .py file runs, Python first parses the whole file and compiles it to bytecode, and only then executes anything. The unclosed bracket on line 3 makes the file invalid, so a SyntaxError is reported during parsing and not even line 1 runs. A runtime error such as TypeError is different, because the lines before it do execute.",
+   "why_wrong": [
+    "",
+    "Assumes the script runs line by line and stops at line 3. That is how a runtime error behaves, but a SyntaxError is found while the whole file is parsed, before line 1 runs.",
+    "Assumes the missing ) is noticed only after print(\"B\" has run. A statement with an unclosed bracket cannot run at all, and the whole file is rejected first.",
+    "Assumes Python closes the bracket automatically. It never guesses missing punctuation. It reports a SyntaxError."
+   ],
+   "key": "INT108-U1-028"
+  },
+  {
+   "topic": "Environment and Statements",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The code below is saved in a file and run as a script, not typed at the >>> prompt. What does it print?",
+   "code": "x = 5\nx + 3\nprint(x)",
+   "options": [
+    "Only 8",
+    "Only 5",
+    "8, then 5 on the next line",
+    "A SyntaxError, because x + 3 is not a complete statement"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "x + 3 is an expression statement. Python evaluates it to 8 and then throws the result away, because nothing assigns it back to x. A script never displays a bare expression. Only the >>> interactive shell echoes the value of an expression you type. So x is still 5 and print(x) shows 5. Changing x needs x = x + 3 or x += 3.",
+   "why_wrong": [
+    "Assumes x + 3 updates x. Without an assignment (x = x + 3 or x += 3), the result is discarded.",
+    "",
+    "Expects the script to echo the value of x + 3 the way the >>> shell does. A script shows only what print() outputs.",
+    "A lone expression is a valid statement in Python. It is evaluated and its value is discarded, so there is no SyntaxError."
+   ],
+   "key": "INT108-U1-029"
+  },
+  {
+   "topic": "Variables and Keywords",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student writes the code below to add a 5-mark bonus. What happens when it runs?",
+   "code": "marks = 40\nBonus = 5\nmarks = marks + bonus\nprint(marks)",
+   "options": [
+    "It prints 45, because Python ignores the case of variable names",
+    "SyntaxError on line 2, because a variable name cannot start with a capital letter",
+    "NameError on line 3, because bonus (lowercase) was never assigned",
+    "It prints 40, because the undefined bonus is treated as 0"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Python names are case-sensitive, so Bonus and bonus are two different names. Line 2 creates Bonus. Line 3 reads bonus, which has never been assigned, so Python raises NameError: name 'bonus' is not defined and stops. Using the same spelling on both lines fixes it.",
+   "why_wrong": [
+    "Python is case-sensitive. Bonus and bonus are different names, so bonus is not found.",
+    "An identifier may start with any letter, upper or lower case, or with an underscore. Bonus = 5 is a legal assignment.",
+    "",
+    "Python gives no default value to an unassigned name. Reading one raises NameError instead of using 0."
+   ],
+   "key": "INT108-U1-030"
+  },
+  {
+   "topic": "Variables and Keywords",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "a, b = 3, 7\na, b = b, a + b\nprint(a, b)",
+   "options": [
+    "7 14",
+    "7 10",
+    "10 7",
+    "SyntaxError"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "In a multiple assignment, Python evaluates the whole right side first, using the old values: b is 7 and a + b is 3 + 7 = 10. Only then does it store the results, so a = 7 and b = 10. The code prints 7 10.",
+   "why_wrong": [
+    "Assigns one name at a time: a becomes 7 first, then b = 7 + 7. In fact the right side is evaluated in full with the old a = 3 before either name changes.",
+    "",
+    "Pairs the values with the wrong names. The first value (b, which is 7) goes to the first target, a.",
+    "Assigning several names in one statement with commas is valid Python (tuple assignment), not a syntax error."
+   ],
+   "key": "INT108-U1-031"
+  },
+  {
+   "topic": "Variables and Keywords",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A student names a variable str in the program below. What happens when it runs?",
+   "code": "str = \"Score: \"\nmarks = 90\nprint(str + str(marks))",
+   "options": [
+    "It prints Score: 90",
+    "SyntaxError on line 1, because str is a reserved keyword",
+    "TypeError on line 3, because str now refers to a string, which cannot be called like a function",
+    "NameError on line 3, because line 1 deleted the built-in str()"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "str is a built-in function, not a keyword, so line 1 is legal. It does make the name str point to the string \"Score: \" instead of the function. On line 3, str(marks) tries to call that string, and Python raises TypeError: 'str' object is not callable. Do not reuse built-in names such as str, int, input or print as variable names.",
+   "why_wrong": [
+    "Assumes the built-in str() can still be reached. After line 1, the name str refers to the string \"Score: \".",
+    "str is the name of a built-in function, not a reserved keyword, so assigning to it is allowed. Keywords are words like if, for, None and True.",
+    "",
+    "The name str still exists but now refers to a string. The failure comes from calling that string, which is a TypeError, not a missing name."
+   ],
+   "key": "INT108-U1-032"
+  },
+  {
+   "topic": "Variables and Keywords",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "a = b = \"hi\"\nb += \"!\"\nprint(a, b)",
+   "options": [
+    "hi hi!",
+    "hi! hi!",
+    "hi hi",
+    "TypeError"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "a = b = \"hi\" makes both names refer to the same string. Strings are immutable, so b += \"!\" cannot change that string. It builds a new string \"hi!\" and points only b at it. a still refers to the original \"hi\", so the output is hi hi!.",
+   "why_wrong": [
+    "",
+    "Assumes += changed the shared string in place, so a sees the change too. Strings are immutable, so b gets a brand-new string and a is untouched.",
+    "Assumes immutability means b cannot change at all. The string object cannot be modified, but the name b can be pointed at the new string \"hi!\".",
+    "Immutability only forbids changing a string in place, as in b[0] = 'H'. b += \"!\" creates a new string, so no error is raised."
+   ],
+   "key": "INT108-U1-033"
+  },
+  {
+   "topic": "Values and Types",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "x = -3.7\ny = float(\"2.9\")\nprint(int(x), round(x), int(y))",
+   "options": [
+    "-4 -4 2",
+    "-3 -4 2",
+    "-4 -4 3",
+    "-3 -3 2"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "int() on a float drops the fractional part, truncating toward zero: int(-3.7) is -3 and int(2.9) is 2. round() goes to the nearest integer, and -3.7 is nearer to -4. float(\"2.9\") is a valid conversion, so y is the float 2.9 and no ValueError occurs.",
+   "why_wrong": [
+    "Treats int() as floor (toward −∞). int() truncates toward zero, so int(-3.7) is -3, not -4.",
+    "",
+    "Treats int() as rounding to the nearest whole number. int(2.9) cuts off the .9 and gives 2.",
+    "Treats round() like int(). round(-3.7) goes to the nearest integer, which is -4."
+   ],
+   "key": "INT108-U1-034"
+  },
+  {
+   "topic": "Values and Types",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below print in Python 3?",
+   "code": "print(type(7 / 7), type(7 // 2.0), type(True + 1))",
+   "options": [
+    "<class 'float'> <class 'float'> <class 'int'>",
+    "<class 'int'> <class 'int'> <class 'int'>",
+    "<class 'float'> <class 'int'> <class 'int'>",
+    "<class 'float'> <class 'float'> <class 'bool'>"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "In Python 3, / always returns a float, even when the division is exact: 7 / 7 is 1.0. // returns an int only when both operands are ints. With the float 2.0 it gives 3.0. bool is a subclass of int, so True + 1 is the int 2.",
+   "why_wrong": [
+    "",
+    "Assumes 7 / 7 is an int because both operands are ints, as in Python 2, and that // always gives an int. In Python 3, / always returns a float (1.0), and 7 // 2.0 is the float 3.0.",
+    "Assumes // always returns an int. With a float operand, 7 // 2.0 is the float 3.0.",
+    "Assumes arithmetic on a bool stays a bool. True behaves as the int 1, so True + 1 is the int 2."
+   ],
+   "key": "INT108-U1-035"
+  },
+  {
+   "topic": "Values and Types",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "print(bool(\"False\") + bool(\"0\") + bool(\" \") + bool(0.0))",
+   "options": [
+    "1",
+    "2",
+    "3",
+    "True"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "A string is falsy only when it is empty. So \"False\", \"0\" and \" \" (one space) are all truthy, whatever they say. The float 0.0 is falsy. bool is a subclass of int, so the sum is 1 + 1 + 1 + 0 = 3, an int.",
+   "why_wrong": [
+    "Judges the strings by their content and counts \"False\" and \"0\" as False. Any non-empty string is True.",
+    "Treats bool(\"0\") as False, as if it were the number 0. \"0\" is a one-character string, so it is True.",
+    "",
+    "Assumes adding bools gives a bool. True acts as the int 1, so True + True + True + False is the int 3."
+   ],
+   "key": "INT108-U1-036"
+  },
+  {
+   "topic": "Values and Types",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print in Python 3?",
+   "code": "a = 10 / 2\nb = 10 // 2\nprint(a == b, type(a) == type(b), a + b)",
+   "options": [
+    "False False 10.0",
+    "True True 10",
+    "True False 10",
+    "True False 10.0"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "10 / 2 is the float 5.0 and 10 // 2 is the int 5. == compares numeric value, and 5.0 equals 5, so a == b is True. Their types (float and int) differ, so the second test is False. Adding an int to a float gives a float: 5.0 + 5 = 10.0.",
+   "why_wrong": [
+    "Assumes values of different types can never be equal. == compares the numbers, and 5.0 == 5 is True.",
+    "Uses Python 2 division, where 10 / 2 is the int 5. In Python 3, / always gives a float.",
+    "Forgets that mixing types promotes to float. float + int gives a float, so the sum is 10.0, not 10.",
+    ""
+   ],
+   "key": "INT108-U1-037"
+  },
+  {
+   "topic": "Operators and Precedence",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A teacher has 47 students and wants teams of 6. She needs to print the number of complete teams, then the number of students left without a team. Which statement prints exactly that in Python 3?",
+   "code": "",
+   "options": [
+    "print(47 // 6, 47 % 6)",
+    "print(47 / 6, 47 % 6)",
+    "print(round(47 / 6), 47 % 6)",
+    "print(47 % 6, 47 // 6)"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Floor division gives the number of whole groups: 47 // 6 = 7. % gives what is left over: 47 − 7·6 = 5. So it prints 7 5. In Python 3, / always returns a float (47 / 6 is 7.833333333333333), so it cannot count whole teams.",
+   "why_wrong": [
+    "",
+    "Uses true division and prints 7.833333333333333 5. A fractional count is not a number of complete teams.",
+    "Rounds 7.83 up to 8 and prints 8 5, but only 7 full teams of 6 can be formed.",
+    "Puts the values in the wrong order and prints 5 7, leftover first and teams second."
+   ],
+   "key": "INT108-U1-038"
+  },
+  {
+   "topic": "Operators and Precedence",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "a = -17\nb = 5\nprint(a // b, a % b, (a // b) * b + a % b)",
+   "options": [
+    "-3 -2 -17",
+    "-4 3 -17",
+    "-3 3 -12",
+    "-4 -2 -22"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "// floors toward −∞: -17 / 5 is -3.4, and floor(-3.4) is -4. The remainder takes the sign of the divisor (5), so -17 % 5 = -17 − (-4)·5 = 3. The check (a // b) * b + a % b = -20 + 3 = -17 always gives back a.",
+   "why_wrong": [
+    "Truncates -3.4 toward zero, as C does, and gives the remainder the dividend's sign. Python floors to -4, and the remainder follows the divisor, giving 3.",
+    "",
+    "Truncates the quotient to -3 but keeps the positive remainder. -3 × 5 + 3 is -12, so these two values do not even fit together.",
+    "Floors correctly to -4 but gives the remainder the sign of -17. In Python the remainder takes the divisor's sign, so it is 3."
+   ],
+   "key": "INT108-U1-039"
+  },
+  {
+   "topic": "Operators and Precedence",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What does the code below print in Python 3?",
+   "code": "print(2 ** 3 ** 2 / 2 ** 8)",
+   "options": [
+    "0.25",
+    "2",
+    "2.0",
+    "0"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "** is right-associative, so 2 ** 3 ** 2 means 2 ** (3 ** 2) = 2 ** 9 = 512. ** binds tighter than /, so the divisor is 2 ** 8 = 256. 512 / 256 is 2.0, because / always returns a float in Python 3, even when the division is exact.",
+   "why_wrong": [
+    "Groups ** from left to right: (2 ** 3) ** 2 = 64, and 64 / 256 = 0.25.",
+    "Gets 512 / 256 right but expects an int because it divides exactly. / always returns a float, 2.0.",
+    "",
+    "Groups ** from left to right (64), then truncates 64 / 256 to 0 the way Python 2 did with integers."
+   ],
+   "key": "INT108-U1-040"
+  },
+  {
+   "topic": "Operators and Precedence",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "x = 5\nprint(1 < x < 3, (1 < x) < 3)",
+   "options": [
+    "False True",
+    "True True",
+    "False False",
+    "TypeError"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A chained comparison 1 < x < 3 means (1 < x) and (x < 3). 1 < 5 is True but 5 < 3 is False, so the result is False. With brackets, (1 < x) is evaluated first and gives True. Then True < 3 compares 1 < 3, because bool is a subclass of int, and that is True.",
+   "why_wrong": [
+    "",
+    "Evaluates the chain left to right as (1 < x) < 3. Python instead reads 1 < x < 3 as 1 < x and x < 3, which is False for x = 5.",
+    "Assumes the brackets change nothing. (1 < x) becomes True, and True < 3 is 1 < 3, which is True.",
+    "Comparing a bool with an int is allowed because True behaves as 1, so no TypeError is raised."
+   ],
+   "key": "INT108-U1-041"
+  },
+  {
+   "topic": "Operators and Precedence",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "print(-2 ** 2 + 7 // -2 * 3)",
+   "options": [
+    "-8",
+    "-13",
+    "-6",
+    "-16"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "** binds tighter than unary minus, so -2 ** 2 is -(2 ** 2) = -4. // and * have equal precedence and run left to right. 7 // -2 floors -3.5 to -4, then -4 * 3 = -12. Finally -4 + (-12) = -16.",
+   "why_wrong": [
+    "Reads -2 ** 2 as (-2) ** 2 = 4. Unary minus binds more loosely than **, so it is -4. With 4, the sum 4 + (-12) gives -8.",
+    "Truncates 7 // -2 to -3 instead of flooring it to -4, which gives -4 + (-9).",
+    "Does -2 * 3 before the floor division. // and * have equal precedence and go left to right, so 7 // -2 happens first.",
+    ""
+   ],
+   "key": "INT108-U1-042"
+  },
+  {
+   "topic": "String Operations",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "The code below stores a username from a sign-up form. The developer wants name to become \"Pepper\", with only the first letter capitalised. Which line, run next, does this?",
+   "code": "name = \"pepper\"",
+   "options": [
+    "name[0] = \"P\"",
+    "name = name.replace(\"p\", \"P\")",
+    "name = \"P\" + name[2:]",
+    "name = \"P\" + name[1:]"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Strings are immutable, so the only way is to build a new string and assign it back to name. name[1:] is everything from index 1 to the end, \"epper\", so \"P\" + name[1:] is \"Pepper\". replace() does not work here because it changes every p in the word.",
+   "why_wrong": [
+    "Strings are immutable, so item assignment raises TypeError: 'str' object does not support item assignment.",
+    "replace() changes every occurrence, so \"pepper\" becomes \"PePPer\", not \"Pepper\".",
+    "Off by one: name[2:] is \"pper\", so the result is \"Ppper\" and the e at index 1 is lost.",
+    ""
+   ],
+   "key": "INT108-U1-043"
+  },
+  {
+   "topic": "String Operations",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Before saving a form field, an app cleans it with the code below. What does it print?",
+   "code": "text = \"  Hello World  \"\nclean = text.strip().lower().replace(\"o\", \"0\")\nprint(len(clean), clean)",
+   "options": [
+    "15 hell0 w0rld",
+    "11 hell0 world",
+    "11 hell0 w0rld",
+    "10 hell0w0rld"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "strip() removes spaces only at the two ends, giving \"Hello World\": 11 characters, with the middle space kept. lower() gives \"hello world\", and replace(\"o\", \"0\") replaces every o, giving \"hell0 w0rld\". Each method returns a new string, which is why they can be chained.",
+   "why_wrong": [
+    "Counts the original 15 characters. len is taken of clean, which has already lost the 4 spaces at the ends.",
+    "Assumes replace() changes only the first match. It replaces every occurrence unless a count is given.",
+    "",
+    "Assumes strip() removes all spaces. It only trims the ends, so the space between the words stays."
+   ],
+   "key": "INT108-U1-044"
+  },
+  {
+   "topic": "String Operations",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which line of the code below raises an error?",
+   "code": "s = \"LPU\"\na = s[1:10]\nb = s[-10:2]\nc = s[3:]\nd = s[3]",
+   "options": [
+    "a = s[1:10]",
+    "b = s[-10:2]",
+    "c = s[3:]",
+    "d = s[3]"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Slicing never raises for out-of-range bounds. It clamps them to the string: s[1:10] is \"PU\", s[-10:2] is \"LP\" and s[3:] is the empty string \"\". Indexing is strict. \"LPU\" has indices 0 to 2, so s[3] raises IndexError: string index out of range.",
+   "why_wrong": [
+    "A slice's stop may run past the end. It is clamped, so s[1:10] is simply \"PU\".",
+    "A slice's start may come before the beginning. -10 is clamped to 0, so s[-10:2] is \"LP\".",
+    "A slice that starts at the end is just empty, \"\", not an error. Only indexing checks bounds.",
+    ""
+   ],
+   "key": "INT108-U1-045"
+  },
+  {
+   "topic": "String Operations",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What does the code below print?",
+   "code": "s = \"PYTHON\"\nprint(s[4:1:-1], s[::-2])",
+   "options": [
+    "OHTY NHY",
+    "THO NHY",
+    "OHT OTP",
+    "OHT NHY"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "With a negative step, the slice walks right to left, from the start index down to the stop index, which it does not include. So s[4:1:-1] takes indices 4, 3, 2 = O, H, T. In s[::-2] the omitted start defaults to the last character, so it takes indices 5, 3, 1 = N, H, Y. The output is OHT NHY.",
+   "why_wrong": [
+    "Includes the stop index 1 (Y). The stop is excluded even when stepping backwards.",
+    "Reads indices 2 to 4 left to right. With step -1 the slice starts at index 4 and moves backwards: O, H, T.",
+    "Treats s[::-2] as s[::2] reversed (PTO becomes OTP). A negative step starts from the last character, N, and picks N, H, Y.",
+    ""
+   ],
+   "key": "INT108-U1-046"
+  }
+ ]
+}

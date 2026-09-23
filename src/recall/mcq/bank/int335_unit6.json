@@ -1,0 +1,1065 @@
+{
+ "subject_code": "INT335",
+ "unit": 6,
+ "unit_label": "Innovation Project, Re-Design and Product Presentation",
+ "questions": [
+  {
+   "topic": "NABC Framework",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In the NABC framework, what does the letter N stand for?",
+   "code": "",
+   "options": [
+    "Need",
+    "Novelty",
+    "Niche",
+    "Next step"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "NABC stands for Need, Approach, Benefits per costs, Competition. N is the Need: the important problem or opportunity the user or customer has. A pitch starts here because the approach, its benefits per costs and the comparison with competitors are all judged against this need.",
+   "why_wrong": [
+    "",
+    "Novelty is a common misreading of N; how new the idea is does not appear as an element. NABC starts from the user's need, not from the idea's originality.",
+    "Niche mistakes N for a market segment. Who has the problem is described inside the Need; it is not a separate element.",
+    "Next step is the last part of a persuasive presentation's spine, not a letter of NABC."
+   ],
+   "key": "INT335-U6-001"
+  },
+  {
+   "topic": "NABC Framework",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In the NABC framework, what does the letter A stand for?",
+   "code": "",
+   "options": [
+    "Analysis",
+    "Advantage",
+    "Approach",
+    "Audience"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A is the Approach: how the team plans to meet the need, meaning the solution and how it works. It comes second because an approach only makes sense once the need has been stated. Advantages over rivals belong under C (Competition), not under A.",
+   "why_wrong": [
+    "Analysis is a common wrong expansion. The A describes the proposed solution, not a study of the problem.",
+    "Advantage is a trap: being better than the alternatives is what the C element, Competition, covers.",
+    "",
+    "Audience mistakes A for the people being pitched to. The people who have the problem are described in the Need."
+   ],
+   "key": "INT335-U6-002"
+  },
+  {
+   "topic": "NABC Framework",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In the NABC framework, what does the letter B stand for?",
+   "code": "",
+   "options": [
+    "Budget",
+    "Benefits per costs",
+    "Business model",
+    "Brand value"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "B is Benefits per costs: what the user gains from the approach, weighed against what it costs them. The 'per costs' part matters, because a benefit only persuades when it is worth its price in money, time or effort. Cost is weighed here, so it does not need a letter of its own.",
+   "why_wrong": [
+    "Budget is a common wrong expansion. NABC has no separate budget element; cost is weighed inside Benefits per costs.",
+    "",
+    "Business model is a trap. NABC asks what the user gains relative to the cost, not how the company earns money.",
+    "Brand value is not an NABC element. B is about the user's benefit weighed against its costs."
+   ],
+   "key": "INT335-U6-003"
+  },
+  {
+   "topic": "NABC Framework",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In the NABC framework, what does the letter C stand for?",
+   "code": "",
+   "options": [
+    "Cost",
+    "Customer",
+    "Competition",
+    "Conclusion"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "C is Competition. It answers the question 'why is this better than the alternatives?' Cost already sits inside B (Benefits per costs), and the customer and their problem are covered by N (Need), so neither of them takes the C.",
+   "why_wrong": [
+    "Cost is the most common wrong expansion. Cost is already weighed inside B, Benefits per costs.",
+    "Customer is a trap, because the customer and their problem are covered by N, the Need.",
+    "",
+    "Conclusion is not an NABC element. C compares the approach with the competing alternatives."
+   ],
+   "key": "INT335-U6-004"
+  },
+  {
+   "topic": "Re-Design and Pivots",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is design refactoring?",
+   "code": "",
+   "options": [
+    "Improving a design's internal structure or consistency while keeping its purpose and behaviour the same",
+    "Changing the product's direction, such as its target user or the problem it solves",
+    "Replacing the product with a completely new one built from scratch",
+    "Adding every new feature that users request in testing"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Design refactoring tidies a design from the inside, for example by making components, labels or structure consistent. The product still serves the same purpose and behaves the same way for the user. Keeping purpose and behaviour unchanged is what separates refactoring from re-design and from a strategic pivot.",
+   "why_wrong": [
+    "",
+    "Changing the target user or the problem is a strategic pivot, which changes direction instead of keeping the purpose.",
+    "Building a completely new product throws the existing design away. Refactoring keeps the design and improves its structure.",
+    "Adding requested features changes what the product does. Refactoring keeps behaviour the same."
+   ],
+   "key": "INT335-U6-005"
+  },
+  {
+   "topic": "Re-Design and Pivots",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is a strategic pivot?",
+   "code": "",
+   "options": [
+    "Making icons and labels consistent across screens while the product behaves the same",
+    "A change in product direction, such as a new target user, problem, technology or delivery model",
+    "Repeating a usability test with a fresh group of participants",
+    "Reordering the slides of a product presentation"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A strategic pivot changes where the product is going: who it is for, which problem it solves, what technology it uses or how it is delivered. It is a bigger decision than refactoring or re-design, both of which keep the product on its current direction.",
+   "why_wrong": [
+    "Making icons and labels consistent without changing behaviour is design refactoring, not a pivot.",
+    "",
+    "Repeating a test is part of iteration. It gathers evidence but does not change the product's direction.",
+    "Reordering slides changes the presentation, not the product's direction."
+   ],
+   "key": "INT335-U6-006"
+  },
+  {
+   "topic": "Re-Design and Pivots",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does re-design mean in design practice?",
+   "code": "",
+   "options": [
+    "Changing the design of an existing product",
+    "Designing a product for a problem that no existing product addresses",
+    "Changing the product's target user or delivery model",
+    "Presenting an unchanged design to a new audience"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Re-design starts from a product that already exists and changes its design, such as its layout, flow or form, often to fix problems found in use or testing. It keeps the same product and direction. Changing the target user or the delivery model would be a strategic pivot instead.",
+   "why_wrong": [
+    "",
+    "A product for a problem that nothing yet addresses is a new design. Re-design needs an existing product to change.",
+    "Changing the target user or delivery model changes the product's direction, which makes it a strategic pivot.",
+    "Showing the same design to new people changes nothing about the design, so it is not re-design."
+   ],
+   "key": "INT335-U6-007"
+  },
+  {
+   "topic": "Iteration and Prioritisation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is iteration in a design project?",
+   "code": "",
+   "options": [
+    "Repeating the prototype–test–refine cycle, with each round shaped by what the last test showed",
+    "Changing the product's direction, such as switching to a new target user",
+    "Building one final version and presenting it without testing",
+    "Summarising the product in a pitch of about 30–60 seconds"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Iteration means going round the cycle again: build or change a prototype, test it, learn from the results and refine it. The evidence from each test drives the next round of changes, which is why those changes need to stay attributable.",
+   "why_wrong": [
+    "",
+    "Switching to a new target user is a strategic pivot, a change of direction rather than a refinement cycle.",
+    "Skipping testing removes the feedback loop that iteration depends on.",
+    "A 30–60 second summary is an elevator pitch, which is a way of presenting, not a design cycle."
+   ],
+   "key": "INT335-U6-008"
+  },
+  {
+   "topic": "Iteration and Prioritisation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "When usability issues found in testing are ranked, what does the severity of an issue describe?",
+   "code": "",
+   "options": [
+    "How seriously it stops users from completing their task",
+    "How many participants mentioned it",
+    "How recently it was reported",
+    "How much the team likes the proposed fix"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Severity is about impact. An issue that blocks the core task is severe even if only a few participants run into it. Frequency, meaning how often an issue is mentioned, is a separate measure, so a rare blocking defect can outrank a popular feature request.",
+   "why_wrong": [
+    "",
+    "The number of people who mentioned an issue is its frequency, which is a different measure from severity.",
+    "When an issue was reported says nothing about how badly it affects the task.",
+    "The team's liking for a fix is an opinion, not a measure of how the issue affects users."
+   ],
+   "key": "INT335-U6-009"
+  },
+  {
+   "topic": "Elevator Pitch",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Roughly how long does an elevator pitch run?",
+   "code": "",
+   "options": [
+    "About 30–60 seconds",
+    "About 5 minutes",
+    "About 15–20 minutes",
+    "About an hour"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "An elevator pitch is short enough to give during a brief chance meeting, roughly 30–60 seconds. In that time it states the user problem, the solution and the primary benefit. Anything longer, such as a full demo, is a different form.",
+   "why_wrong": [
+    "",
+    "Five minutes is a short talk, far longer than the 30–60 seconds of an elevator pitch.",
+    "15–20 minutes is the length of a full product presentation, not a pitch.",
+    "An hour is the length of a workshop or lecture, nowhere near an elevator pitch."
+   ],
+   "key": "INT335-U6-010"
+  },
+  {
+   "topic": "Elevator Pitch",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which three things should an elevator pitch state?",
+   "code": "",
+   "options": [
+    "The user problem, the solution and the primary benefit",
+    "The feature list, the technology stack and the database design",
+    "The team members' names, the budget and the timeline",
+    "A live demonstration, a question round and a summary"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "In roughly 30–60 seconds, an elevator pitch must say what problem the user has, what the solution is and the main benefit it brings. It is not a feature list, a summary of the technical architecture or a demonstration. None of those fit the time, and none of them lead with the user.",
+   "why_wrong": [
+    "",
+    "A feature list and technical details are what a pitch must avoid. They do not say what problem is solved or why it matters.",
+    "Names, budget and timeline are project-management details, not the problem–solution–benefit core of a pitch.",
+    "A demonstration and a question round cannot fit into 30–60 seconds. A pitch is a statement, not a demo."
+   ],
+   "key": "INT335-U6-011"
+  },
+  {
+   "topic": "Presentation and Case Study",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In the spine of a persuasive product presentation, what comes first?",
+   "code": "",
+   "options": [
+    "The problem",
+    "The solution",
+    "The evidence",
+    "The next step"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The spine runs problem, insight, solution, evidence, next step. Starting with the problem gives the audience a reason to care before they see the solution. The evidence then shows that the solution works, and the next step says what should happen now.",
+   "why_wrong": [
+    "",
+    "Opening with the solution is the common mistake. Without the problem first, the audience has no reason to value it; it belongs third.",
+    "Evidence comes fourth, because it supports a solution the audience must already have seen.",
+    "The next step closes the presentation. It is the last element, not the first."
+   ],
+   "key": "INT335-U6-012"
+  },
+  {
+   "topic": "Presentation and Case Study",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does a technical design case study document that a product demo usually does not?",
+   "code": "",
+   "options": [
+    "The concepts that were rejected and the evidence behind the design decisions",
+    "The working features of the final product",
+    "The product's name and logo",
+    "A 30–60 second summary of the main benefit"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A demo shows the finished product working. A technical design case study records how the team got there: which concepts were considered and rejected, and what evidence, such as test results, supported each decision. With that record, others can judge whether the final design was well reasoned.",
+   "why_wrong": [
+    "",
+    "The working features are exactly what a demo shows, so they do not set a case study apart.",
+    "A name and logo appear in almost any presentation. They are not the design reasoning that a case study records.",
+    "A 30–60 second summary of the benefit is an elevator pitch, not a case study."
+   ],
+   "key": "INT335-U6-013"
+  },
+  {
+   "topic": "NABC Framework",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which option lists the four elements of NABC in the correct order?",
+   "code": "",
+   "options": [
+    "Need, Approach, Benefits per costs, Competition",
+    "Need, Benefits per costs, Approach, Competition",
+    "Approach, Need, Competition, Benefits per costs",
+    "Need, Approach, Competition, Benefits per costs"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "NABC follows its own letters: Need, Approach, Benefits per costs, Competition. The order is logical. First state the problem, then say how you solve it, then show what it gains for what it costs, and finally show why it beats the alternatives.",
+   "why_wrong": [
+    "",
+    "This swaps A and B. The benefits cannot be weighed before the approach that produces them has been described.",
+    "This puts the solution before the need and also swaps B and C. The letters themselves give the order N, A, B, C.",
+    "This swaps B and C. Benefits per costs comes before Competition, as the letters show."
+   ],
+   "key": "INT335-U6-014"
+  },
+  {
+   "topic": "NABC Framework",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A team's pitch says: \"Using the planner is free, and each student gets a ready-made weekly timetable in a few minutes.\" Which NABC element does this sentence supply?",
+   "code": "",
+   "options": [
+    "Need",
+    "Approach",
+    "Benefits per costs",
+    "Competition"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The sentence states what the user gains (a ready timetable in minutes) against what it costs them (nothing). That makes it Benefits per costs. It names no rival product or method, so it is not Competition, and it does not explain how the planner works, so it is not Approach.",
+   "why_wrong": [
+    "Need would state the students' problem. This sentence states what they gain and what it costs them.",
+    "Approach would describe how the planner works, and the sentence gives no mechanism.",
+    "",
+    "Competition needs a comparison with alternatives, and no other product or method is compared here."
+   ],
+   "key": "INT335-U6-015"
+  },
+  {
+   "topic": "NABC Framework",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which question does the Competition element of NABC answer?",
+   "code": "",
+   "options": [
+    "Why is this better than the alternatives?",
+    "What important problem does the user have?",
+    "How does the solution work?",
+    "What does the user gain relative to what it costs?"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Each NABC element answers one question. Need: what is the problem? Approach: how do we solve it? Benefits per costs: what is gained for what it costs? Competition: why does this beat the alternatives? Anything framed as a comparison with other options belongs to Competition.",
+   "why_wrong": [
+    "",
+    "The user's problem is the question that Need answers.",
+    "How the solution works is the question that Approach answers.",
+    "Gain relative to cost is Benefits per costs. Cost belongs inside B, not C."
+   ],
+   "key": "INT335-U6-016"
+  },
+  {
+   "topic": "Re-Design and Pivots",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these changes to a campus-navigation app is NOT a strategic pivot?",
+   "code": "",
+   "options": [
+    "Changing the target user from students to hospital visitors",
+    "Changing the delivery model from a phone app to staffed help desks",
+    "Changing the core technology from GPS to QR-code signs",
+    "Making button labels consistent across screens without changing what the app does"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A strategic pivot changes product direction: the target user, the problem, the technology or the delivery model. Making labels consistent while the app's purpose and behaviour stay the same is design refactoring. Calling this kind of cleanup a pivot is a common mix-up.",
+   "why_wrong": [
+    "A new target user is one of the defining kinds of pivot, so this change is a pivot.",
+    "Changing the delivery model changes how the product reaches users, so this change is a pivot.",
+    "Changing the core technology is one of the four kinds of pivot, so this change is a pivot.",
+    ""
+   ],
+   "key": "INT335-U6-017"
+  },
+  {
+   "topic": "Re-Design and Pivots",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement correctly distinguishes design refactoring from re-design?",
+   "code": "",
+   "options": [
+    "Refactoring improves internal structure or consistency while preserving purpose and behaviour; re-design changes the design of an existing product",
+    "Refactoring changes the product's target user; re-design only changes its colours",
+    "Refactoring and re-design are two names for the same activity",
+    "Refactoring is done only before the first prototype; re-design is done only after launch"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Refactoring is conservative: it cleans up structure or consistency and must leave the design's purpose and behaviour as they were. Re-design goes further and changes the design of the existing product. Neither of them changes the target user; that would be a strategic pivot.",
+   "why_wrong": [
+    "",
+    "Changing the target user is a strategic pivot, not refactoring, and re-design is not limited to colours.",
+    "The two are different. Refactoring must keep purpose and behaviour the same, while re-design changes the design itself.",
+    "The difference lies in what each one changes, not in when it happens. Both work on a design that already exists."
+   ],
+   "key": "INT335-U6-018"
+  },
+  {
+   "topic": "Iteration and Prioritisation",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which comparison between test round 1 and test round 2 lets an improvement in task completion be credited to a newly added search bar?",
+   "code": "",
+   "options": [
+    "Round 2 adds only the search bar; the instructions, other screens and way of recruiting participants stay the same",
+    "Round 2 adds the search bar and also rewrites the instructions",
+    "Round 2 adds the search bar and recruits participants from a different course",
+    "Round 2 adds the search bar along with every other planned change"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "An effect can only be credited to a change when that change is the only difference between the rounds. Rewriting the instructions, switching the participant group or bundling in other changes each adds a second variable. Any rise in completion could then come from something other than the search bar.",
+   "why_wrong": [
+    "",
+    "Rewriting the instructions is a second change, so the improvement could come from the new instructions.",
+    "A different participant group is also a variable, because different people may simply perform better.",
+    "Bundling every change gives only their combined effect, and nothing separates the search bar's share."
+   ],
+   "key": "INT335-U6-019"
+  },
+  {
+   "topic": "Iteration and Prioritisation",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about prioritising issues found in user testing is correct?",
+   "code": "",
+   "options": [
+    "A rarely reported defect that blocks the core task can outrank a frequently requested new feature",
+    "The most frequently requested feature should always be fixed first",
+    "Issues should be fixed in the order in which they were reported",
+    "Severity and frequency mean the same thing, so either can decide the order"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Severity measures how badly an issue hurts the user's ability to do the core task. Frequency measures how often the issue comes up. A defect that stops users completing the core task matters more than a popular request for something extra, even when fewer people reported it.",
+   "why_wrong": [
+    "",
+    "This ranks by frequency alone, which would put a popular extra above a defect that stops people using the product.",
+    "The order of reports only shows when testers noticed each issue, not how much it matters.",
+    "Severity (impact on the task) and frequency (how often it is raised) are different measures and can point in opposite directions."
+   ],
+   "key": "INT335-U6-020"
+  },
+  {
+   "topic": "Elevator Pitch",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these is the best opening for an elevator pitch?",
+   "code": "",
+   "options": [
+    "\"New students lose time finding rooms in large campus blocks. Our app guides them to the right room the first time.\"",
+    "\"Our system uses a React front end, a Node.js API and a PostgreSQL database.\"",
+    "\"Our app has twelve features: search, bookmarks, dark mode, room photos and more.\"",
+    "\"Let me walk you through every screen of the app in a live demo.\""
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A strong pitch leads with the user problem and links it to the solution and its main benefit. Opening with the technology, a feature list or a demo tells the listener what was built, but not why it matters to anyone.",
+   "why_wrong": [
+    "",
+    "This opens with the technical architecture, so the listener hears no user problem and no benefit.",
+    "A feature list says what the app has, not what problem it solves or why that matters.",
+    "A pitch is a short statement, not a demonstration, and a full walkthrough cannot fit into 30–60 seconds."
+   ],
+   "key": "INT335-U6-021"
+  },
+  {
+   "topic": "Elevator Pitch",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "How does an elevator pitch differ from a product demonstration?",
+   "code": "",
+   "options": [
+    "A pitch states the user problem, the solution and the primary benefit in roughly 30–60 seconds; a demo shows the product being used",
+    "A pitch shows every feature working live; a demo only names the problem",
+    "A pitch summarises the technical architecture; a demo states the benefit",
+    "A pitch runs about 15–20 minutes; a demo takes under a minute"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Both put the product in front of an audience, but they do different jobs. The elevator pitch is a 30–60 second statement of the problem, the solution and the primary benefit. A demonstration shows the product actually being used.",
+   "why_wrong": [
+    "",
+    "Showing features working live is what a demo does. The pitch is a short spoken statement.",
+    "A pitch is not a summary of the technical architecture. It leads with the user's problem and the benefit.",
+    "This reverses the lengths. The pitch is the short one, at roughly 30–60 seconds."
+   ],
+   "key": "INT335-U6-022"
+  },
+  {
+   "topic": "Presentation and Case Study",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which option gives the spine of a persuasive product presentation in the correct order?",
+   "code": "",
+   "options": [
+    "Problem → insight → solution → evidence → next step",
+    "Solution → problem → evidence → insight → next step",
+    "Problem → solution → insight → next step → evidence",
+    "Insight → problem → solution → next step → evidence"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The spine builds an argument. The problem gives the audience a reason to care, the insight explains what the team learned about it, and the solution responds to that insight. The evidence then shows that the solution works, and the next step asks for action. Each part depends on the one before it.",
+   "why_wrong": [
+    "",
+    "Leading with the solution skips the reason to care. The problem must come first.",
+    "The insight must come before the solution it leads to, and the evidence must come before the closing next step.",
+    "The problem comes before the insight about it, and the presentation should end on the next step, not on the evidence."
+   ],
+   "key": "INT335-U6-023"
+  },
+  {
+   "topic": "Presentation and Case Study",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "In a product presentation, which of these counts as evidence that the project succeeded?",
+   "code": "",
+   "options": [
+    "Test results measured against the success criteria set at the start",
+    "A polished, high-fidelity prototype",
+    "A positive reaction from the audience during the presentation",
+    "Improved metrics that are unrelated to the original success criteria"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A claim of success needs evidence tied to the criteria the team committed to at the start. A polished prototype shows effort, and applause shows the talk went well. Unrelated metrics measure something else. None of these shows that the original goal was met.",
+   "why_wrong": [
+    "",
+    "Polish shows how finished the prototype looks, not whether it met the success criteria.",
+    "An audience reacting well to the talk is not a test of the product against its criteria.",
+    "Metrics unrelated to the stated criteria measure something other than what the project promised."
+   ],
+   "key": "INT335-U6-024"
+  },
+  {
+   "topic": "Presentation and Case Study",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "In the spine of a persuasive product presentation, which element comes immediately before the solution?",
+   "code": "",
+   "options": [
+    "The insight",
+    "The problem",
+    "The evidence",
+    "The next step"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The spine is problem → insight → solution → evidence → next step. The insight sits between the problem and the solution. It explains what the team discovered about the problem that makes the solution make sense.",
+   "why_wrong": [
+    "",
+    "The problem comes first, but the insight sits between it and the solution.",
+    "Evidence comes after the solution, because it shows that the solution works.",
+    "The next step is the final element and closes the presentation."
+   ],
+   "key": "INT335-U6-025"
+  },
+  {
+   "topic": "NABC Framework",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team pitching a campus room-finder app says: \"Students scan the QR code fixed at each stairwell, type a room number, and the app shows arrows along the corridor to that room.\" Which NABC element does this sentence supply?",
+   "code": "",
+   "options": [
+    "Need",
+    "Benefits per costs",
+    "Approach",
+    "Competition"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "NABC is Need, Approach, Benefits per costs, Competition. The sentence describes how the product works, meaning the way the team meets the need, and that is what the Approach element states. It names no user problem, weighs no gain against a cost and compares against no alternative.",
+   "why_wrong": [
+    "Need states the user's problem. This sentence describes the team's solution, not a difficulty users face.",
+    "Treats a working feature as a benefit. Benefits per costs would state what users gain and what it costs them, not the steps the app performs.",
+    "",
+    "Competition compares the product with existing alternatives. The sentence mentions no rival or current option."
+   ],
+   "key": "INT335-U6-026"
+  },
+  {
+   "topic": "NABC Framework",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "After a pitch for a hostel mess-menu app, a judge says: \"I understand the problem and how your app works, but why would students use it instead of the WhatsApp group where the mess committee already posts the menu?\" Which NABC element did the pitch leave weak?",
+   "code": "",
+   "options": [
+    "Competition",
+    "Need",
+    "Approach",
+    "Benefits per costs"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The judge accepts the problem (Need) and the mechanism (Approach), then asks why the app is better than an alternative students already use. \"Why is this better than the alternatives?\" is the question the Competition element answers. The common slip is filing that comparison under Benefits.",
+   "why_wrong": [
+    "",
+    "The judge says the problem is understood, so the Need was stated clearly enough.",
+    "The judge also says they understand how the app works, and that is what Approach covers.",
+    "Benefits per costs weighs the gain against its cost. A question about beating an option students already have (the WhatsApp group) belongs to Competition."
+   ],
+   "key": "INT335-U6-027"
+  },
+  {
+   "topic": "NABC Framework",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team's NABC slide opens with this Need: \"We need funding and two more developers to build our campus navigation app.\" What is wrong with this Need statement?",
+   "code": "",
+   "options": [
+    "It should state the price the app will charge students",
+    "It states what the team needs instead of the problem the users face",
+    "It should name the apps the team is competing against",
+    "Nothing, because Need lists the resources the team requires to build the product"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "In NABC, Need is the problem of the user or customer that the product addresses, for example students struggling to find rooms. This statement lists the team's own requirements (money and people), which says nothing about why anyone would want the product. Price belongs with Benefits per costs, and rival apps belong with Competition.",
+   "why_wrong": [
+    "Moves cost into the Need. What the product costs the user is weighed inside Benefits per costs.",
+    "",
+    "Naming rival apps is the Competition element, a separate letter. It does not fix the Need.",
+    "Reads Need as the team's needs. In NABC, Need is the user's problem, so a list of resources is exactly the mistake."
+   ],
+   "key": "INT335-U6-028"
+  },
+  {
+   "topic": "Re-Design and Pivots",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Acting on no test finding, a canteen-ordering app team tidies its design: it merges three different button styles into one shared component and renames screens to follow one naming pattern. Every screen still does exactly what it did before, for the same users. Which term best describes this change?",
+   "code": "",
+   "options": [
+    "Re-design",
+    "Strategic pivot",
+    "Iteration driven by test results",
+    "Design refactoring"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Design refactoring improves the internal structure or consistency of a design while keeping its purpose and behaviour the same. Here the team unifies components and naming, but no screen changes what it does or whom it serves. A re-design would change how the product works for users, and a pivot would change its direction.",
+   "why_wrong": [
+    "Re-design changes how the existing product works for its users. Here every screen behaves exactly as before, and only structure and consistency improved.",
+    "A pivot changes direction: target user, problem, technology or delivery model. None of these changed.",
+    "No test finding prompted this change, so it is not test-driven iteration. A clean-up that keeps behaviour the same is refactoring.",
+    ""
+   ],
+   "key": "INT335-U6-029"
+  },
+  {
+   "topic": "Re-Design and Pivots",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team built an app that shows students which study rooms are empty. Interviews reveal that students can usually find a room, but what they struggle with is finding classmates to study with. The team drops room-finding and builds a study-partner matching app for the same students. What is this change?",
+   "code": "",
+   "options": [
+    "Design refactoring",
+    "Strategic pivot",
+    "Re-design",
+    "A single usability fix"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A strategic pivot changes the product's direction: its target user, the problem it solves, its technology or its delivery model. The users stay the same here, but the problem changes from finding rooms to finding study partners. That goes beyond changing the design of the existing product.",
+   "why_wrong": [
+    "Refactoring keeps the design's purpose and behaviour. Here the purpose itself is replaced.",
+    "",
+    "Re-design changes the design of an existing product. Here the product's direction changed because it now solves a different problem, and that defines a pivot.",
+    "A usability fix repairs one problem in an existing product. Here the whole product and the problem it targets were replaced."
+   ],
+   "key": "INT335-U6-030"
+  },
+  {
+   "topic": "Re-Design and Pivots",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team calls its change \"just a refactor of checkout\". The change moves payment to before item selection, so users now go through a different sequence of steps. The app's purpose and users are unchanged. Why is \"refactor\" the wrong label?",
+   "code": "",
+   "options": [
+    "Refactoring applies only to program code, never to a design",
+    "Any change to checkout alters the product's direction, so it is a pivot",
+    "Refactoring must preserve the design's behaviour, and this change alters what users do, so it is a re-design",
+    "Refactoring requires the target user to change, and here the users are the same"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Design refactoring tidies structure or consistency while keeping the design's purpose and behaviour the same. Changing the order of steps users follow changes behaviour, so this is a re-design of the existing product. It is not a pivot either, because the purpose and users are unchanged.",
+   "why_wrong": [
+    "Design refactoring is also a design-practice term. It means improving a design's internal structure or consistency without changing its behaviour.",
+    "A pivot changes target user, problem, technology or delivery model. Reordering checkout for the same users and purpose changes none of these.",
+    "",
+    "Confuses refactoring with a pivot. A change of target user defines a pivot, while refactoring leaves users and behaviour untouched."
+   ],
+   "key": "INT335-U6-031"
+  },
+  {
+   "topic": "Iteration and Prioritisation",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "After testing a bus-pass app with 8 students, a team logs the four issues below. Buying the pass is the app's core task. Which issue should the team fix first?",
+   "code": "",
+   "options": [
+    "7 of 8 students asked for a dark mode",
+    "5 of 8 students said the icons looked slightly small",
+    "4 of 8 students wanted a button to share the pass with friends",
+    "2 of 8 students could not pay because the keyboard covered the Pay button"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Issues are prioritised by severity, meaning how badly an issue stops users from completing the task, not by how many people mention it. A defect that blocks payment, the core task, is critical even though only 2 of 8 students hit it. Dark mode, icon size and sharing are requests or cosmetic points that do not stop anyone from using the app.",
+   "why_wrong": [
+    "Ranks by frequency. This is the most-mentioned item, but it is a feature request that blocks no one.",
+    "A cosmetic complaint. Small icons annoy users but do not stop them from paying.",
+    "A new-feature request. Without a share button, users can still complete the core task.",
+    ""
+   ],
+   "key": "INT335-U6-032"
+  },
+  {
+   "topic": "Iteration and Prioritisation",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team ran four test rounds with the same tasks and the same kind of participants. Round 1 was the original design. Round 2 added a campus map and a new colour scheme. Round 3 was round 2 plus a filter button. Round 4 was round 3 with the map removed. Which pair of rounds isolates the effect of the filter button?",
+   "code": "",
+   "options": [
+    "Round 1 vs round 3",
+    "Round 2 vs round 3",
+    "Round 3 vs round 4",
+    "Round 1 vs round 4"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A result can be credited to one change only when that change is the only difference between the two rounds compared. Round 3 is round 2 plus the filter button and nothing else, so that pair isolates it. Every other pair differs in the map, the colours, or more than one thing.",
+   "why_wrong": [
+    "Rounds 1 and 3 differ in three things (map, colours and filter button), so the effect cannot be split among them.",
+    "",
+    "Round 4 only removes the map from round 3, so this pair isolates the map, not the filter button.",
+    "Round 4 has both the new colours and the filter button, which round 1 lacks, so two changes are mixed together."
+   ],
+   "key": "INT335-U6-033"
+  },
+  {
+   "topic": "Elevator Pitch",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team's elevator pitch goes: \"Hostel students often miss meals because mess timings change every week and are posted on a single notice board. With us, nobody misses a meal again.\" Which required part of an elevator pitch is missing?",
+   "code": "",
+   "options": [
+    "The user problem",
+    "The solution, meaning what the product actually is or does",
+    "The primary benefit",
+    "The technical architecture"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "An elevator pitch states the user problem, the solution and the primary benefit in roughly 30–60 seconds. The first sentence gives the problem and the second promises a benefit, but the listener never learns what the product is: an app, an alert service or a display board. Technical architecture is not a required part of a pitch at all.",
+   "why_wrong": [
+    "The first sentence states the problem clearly: meals are missed because timings change and are posted in only one place.",
+    "",
+    "\"Nobody misses a meal again\" is the benefit, so this part is present.",
+    "Architecture is not one of the three required parts. A pitch should not turn into a technical summary."
+   ],
+   "key": "INT335-U6-034"
+  },
+  {
+   "topic": "Elevator Pitch",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team's 45-second elevator pitch reads: \"Students often walk to the computer lab only to find every seat taken. Our app lets them book a lab slot from their phone. It is built with a cross-platform framework and a cloud database.\" Which change would improve it most?",
+   "code": "",
+   "options": [
+    "Replace the last sentence with the main benefit: students arrive knowing a seat is waiting",
+    "Add technical detail on how bookings sync between devices, to show build quality",
+    "Stretch it to three minutes so that every feature can be listed",
+    "Replace the problem sentence with a quick demo of the booking screen"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "An elevator pitch states the user problem, the solution and the primary benefit in roughly 30–60 seconds. This draft has the problem and the solution, but its last sentence is a technical summary and the benefit is never stated. Replacing that sentence with the benefit completes the pitch without making it longer.",
+   "why_wrong": [
+    "",
+    "More technical detail moves the pitch further toward an architecture summary, which a pitch is not, and the benefit is still missing.",
+    "A pitch runs roughly 30–60 seconds. Listing every feature turns it into a long feature list.",
+    "This drops the user problem, which is a required part, and turns the pitch into a demonstration."
+   ],
+   "key": "INT335-U6-035"
+  },
+  {
+   "topic": "Presentation and Case Study",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A presentation's first slide says: \"First-year students often arrive late because they cannot find their classrooms.\" The next slide says: \"Our interviews showed they find the building easily; they get lost inside it, because room numbers jump between wings.\" Which part of the presentation spine does the second slide supply?",
+   "code": "",
+   "options": [
+    "Problem",
+    "Evidence",
+    "Next step",
+    "Insight"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The spine runs problem, insight, solution, evidence, next step. The second slide reports what research revealed about why the problem happens, an understanding drawn from interviews, and that is the insight. Evidence comes after the solution and shows that the solution works, but no solution has been mentioned yet.",
+   "why_wrong": [
+    "The first slide already stated the problem (students arriving late because they cannot find classrooms). This slide explains why it happens, which is the insight.",
+    "Evidence comes after the solution and shows that the solution works. No solution has been introduced yet.",
+    "The next step closes the presentation by saying what happens next. This slide reports a research finding.",
+    ""
+   ],
+   "key": "INT335-U6-036"
+  },
+  {
+   "topic": "Presentation and Case Study",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team is closing its product presentation for a hostel laundry-booking app. Which closing slide best fits the last element of the presentation spine?",
+   "code": "",
+   "options": [
+    "Next step: a two-week trial in one hostel block, for which we need the warden's approval",
+    "Thank you, any questions?",
+    "Recap: booking, reminders, queue view and dark mode",
+    "The app is finished and needs no further work"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The presentation spine ends with the next step: a concrete action that follows from the evidence, often with what the team needs from the audience. A named trial with a clear request gives listeners something to act on. Thanks, a feature recap or a claim that the work is finished all close the talk without saying what happens next.",
+   "why_wrong": [
+    "",
+    "A courtesy, not a next step. It tells the audience nothing about what should happen after the talk.",
+    "A recap of features repeats the solution. It does not move the project forward.",
+    "Declaring the work finished removes the next step entirely, and no evidence supports a claim that nothing is left to do."
+   ],
+   "key": "INT335-U6-037"
+  },
+  {
+   "topic": "NABC Framework",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A team's NABC for a library seat-finder app has the four entries below. Which entry is filed under the wrong letter?",
+   "code": "",
+   "options": [
+    "Need: students lose the start of their study time walking between floors looking for a free seat",
+    "Approach: seat sensors feed a live floor map that students check on their phones before going up",
+    "Benefits per costs: unlike the entry counter, which shows only how many people are inside, the app shows which floor has free seats",
+    "Competition: the entry counter gives only a total headcount, and asking staff means queuing at the desk"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Benefits per costs states what users gain, weighed against what it costs. A sentence built as \"unlike the existing option, ours does X\" answers \"why is this better than the alternatives?\", and that is Competition. The entry filed under Benefits per costs also mentions no cost at all. The other entries are filed correctly: the Need entry states the users' problem, the Approach entry describes how the solution works, and the Competition entry describes the existing alternatives and their limits.",
+   "why_wrong": [
+    "Filed correctly. It states the users' problem (study time lost hunting for seats), which is the Need.",
+    "Filed correctly. It describes how the solution works, which is the Approach, even though it mentions phones.",
+    "",
+    "Filed correctly. It describes the existing alternatives and their limits, which is what Competition covers. It is not the Need, because it describes rival options rather than the users' problem."
+   ],
+   "key": "INT335-U6-038"
+  },
+  {
+   "topic": "NABC Framework",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A team's B entry in its NABC reads: \"Students reach their classrooms faster and arrive less stressed.\" A reviewer marks it incomplete. What does the entry still need?",
+   "code": "",
+   "options": [
+    "What those gains cost users or the college, so the benefit can be weighed against it",
+    "A full project budget in place of the benefit statement, since B stands for Budget",
+    "A comparison showing why the app beats the printed campus map",
+    "A list of the app's features, so the benefit is backed by specifics"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "B in NABC stands for Benefits per costs: the gain is stated relative to what it costs the user or the organisation in money, time or effort. The entry gives the gains but no cost, so no one can judge whether it is good value. A comparison with the printed map belongs under Competition, and B does not stand for Budget.",
+   "why_wrong": [
+    "",
+    "Expands B as Budget. B is Benefits per costs, and replacing the benefit with a budget loses the gain entirely.",
+    "A comparison with an alternative is the Competition element, a separate letter. It does not complete the B entry.",
+    "Features describe what the product does, which belongs to the Approach. They do not supply the cost side that Benefits per costs needs."
+   ],
+   "key": "INT335-U6-039"
+  },
+  {
+   "topic": "Re-Design and Pivots",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A hostel-complaints app gets new colours, new icons and a new screen flow for logging a complaint. It still serves the same hostel students, solves the same problem and is delivered the same way, as a phone app. A teammate calls it \"our big pivot\". Which label is correct?",
+   "code": "",
+   "options": [
+    "Strategic pivot, because nearly every screen changed",
+    "Strategic pivot in delivery model, because the steps for logging a complaint changed",
+    "Design refactoring, because the purpose and users stayed the same",
+    "Re-design, because the design changed while the product's direction did not"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A pivot is defined by a change of direction (target user, problem, technology or delivery model), not by how much of the interface changed. All four are the same here, so however large the change is, it is a re-design. It is not refactoring either, because the new screen flow changes what users do, and refactoring must keep behaviour the same.",
+   "why_wrong": [
+    "Judges a pivot by how big the visual change is. A pivot needs a change of user, problem, technology or delivery model, and none of these changed.",
+    "Delivery model means how the product reaches users, and it is still a phone app. A new sequence of screens is a design change, not a new delivery model.",
+    "Refactoring must keep behaviour the same. A new flow for logging complaints changes what users do.",
+    ""
+   ],
+   "key": "INT335-U6-040"
+  },
+  {
+   "topic": "Re-Design and Pivots",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A notes-sharing app keeps every screen and feature exactly as it is. The only change is its audience: instead of offering it to college students, the team now offers it to coaching centres to share notes with their batches. Which label fits this change?",
+   "code": "",
+   "options": [
+    "Strategic pivot, because the target user changed",
+    "Design refactoring, because no screen or feature changed",
+    "Re-design, because the product is being adapted for a new audience",
+    "No design term applies, because the screens and features are untouched"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A strategic pivot changes the product's direction (its target user, problem, technology or delivery model) and can happen without touching a single screen. Here the target user changes from students to coaching centres, so it is a pivot. Refactoring and re-design both describe changes to the design itself, and the design did not change.",
+   "why_wrong": [
+    "",
+    "Refactoring improves a design's internal structure or consistency. Here the design is unchanged, and what changed is who the product is for.",
+    "Re-design means changing the design of the product, but the scenario says no screen or feature changed.",
+    "Assumes only interface changes count. A change of target user is a change of product direction, which is exactly a strategic pivot."
+   ],
+   "key": "INT335-U6-041"
+  },
+  {
+   "topic": "Iteration and Prioritisation",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "Between two test rounds, a team changed only one thing in its campus-navigation app: it added a \"Nearest exit\" button. The original participants were busy, so round 2 used students from a different course. Task success rose from 50% to 75%. What can the team conclude about the button?",
+   "code": "",
+   "options": [
+    "The button raised task success by 25 percentage points",
+    "The button caused roughly half of the 25-point rise, and the new group caused the rest",
+    "Nothing about the button alone, because the participant group also changed between rounds",
+    "The button had no effect, because the rise came from the new participants"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A change can be credited only when it is the only difference between the two rounds. Two things differ here: the button and the people tested. A different group may find the tasks easier or harder for reasons that have nothing to do with the design. The rise from 50% to 75% is real, but the data cannot separate the two causes, so the team should retest the button with a comparable group.",
+   "why_wrong": [
+    "Treats the button as the only change. The participant group changed too, so the 25 points cannot be credited to the button.",
+    "Invents a split between the two causes. Nothing in the data measures how much each one contributed.",
+    "",
+    "Credits the whole rise to the new participants, which the data cannot show either. The two causes are mixed together in both directions."
+   ],
+   "key": "INT335-U6-042"
+  },
+  {
+   "topic": "Iteration and Prioritisation",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "Round 1 of testing a quiz app found three issues. 2 of 8 students lost all their answers when the app went to the background mid-quiz, 6 of 8 asked for a timer display, and 5 of 8 asked for a leaderboard. The team has time for one round of changes and wants round 2 to show whether its change worked. Which plan is best?",
+   "code": "",
+   "options": [
+    "Add only the timer display, since most students asked for it, and keep everything else the same",
+    "Fix the answer-loss bug, add the timer and add the leaderboard, so round 2 shows the biggest improvement",
+    "Fix only the answer-loss bug, keep everything else the same, and retest with the same kind of students",
+    "Fix only the answer-loss bug, and recruit round 2 from a different course so the results are fresh"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Two rules apply together. First, severity outranks frequency: losing every answer blocks the core task, so it comes before the more-requested timer and leaderboard. Second, to know whether the fix worked, it must be the only difference between the rounds, with the design otherwise the same and the same kind of participants.",
+   "why_wrong": [
+    "Ranks by frequency. The timer is the most requested item but blocks no one, while the answer-loss bug stops the core task.",
+    "Three changes at once make round 2 impossible to attribute, so the team cannot tell whether the bug fix worked.",
+    "",
+    "The fix is right, but changing the participant group adds a second difference between the rounds, so a change in results cannot be credited to the fix."
+   ],
+   "key": "INT335-U6-043"
+  },
+  {
+   "topic": "Elevator Pitch",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "At a project expo, judges walk from stall to stall and each team gets about one minute. Which plan fits an elevator pitch?",
+   "code": "",
+   "options": [
+    "A 45-second tour of the app's main screens, tapping through the booking flow",
+    "A 45-second spoken statement of the users' problem, the solution and its main benefit",
+    "A 5-minute talk moving through problem, insight, solution, evidence and next step",
+    "A 30-second rundown of the app's five strongest features"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "An elevator pitch has to meet two conditions at once: it runs roughly 30–60 seconds, and it states the user problem, the solution and the primary benefit. The screen tour and the feature rundown are the right length but have the wrong content, a demonstration and a feature list. The 5-minute talk follows the structure of a full product presentation, not a pitch.",
+   "why_wrong": [
+    "Right length, but a walkthrough of screens is a demonstration, and a pitch is not a demonstration.",
+    "",
+    "That is the spine of a full product presentation, and at about five minutes it is far longer than a 30–60 second pitch.",
+    "Right length, but a feature list says nothing about the users' problem or the main benefit."
+   ],
+   "key": "INT335-U6-044"
+  },
+  {
+   "topic": "Presentation and Case Study",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A team's stated success criterion was: \"Cut the time first-year students take to find their exam hall.\" Which result in its final presentation is evidence that the project met this criterion?",
+   "code": "",
+   "options": [
+    "First-year testers' median time to reach the exam hall fell from 9 to 4 minutes on the same task",
+    "Testers rated the app 4.5 out of 5 on average for ease of use",
+    "200 first-year students downloaded the app in its first week",
+    "The campus map loads in under one second, even on a basic phone"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A presentation claim needs evidence tied to the success criterion the team set at the start. The criterion is about how long students take to find the exam hall, and only the timed comparison on the same task measures that. A good rating, many downloads and a fast-loading map are real results, but none of them shows that students found the hall faster.",
+   "why_wrong": [
+    "",
+    "A rating shows how testers felt, not how long they took to find the hall. Liking the app is not the same as meeting the criterion.",
+    "Downloads measure adoption, which has nothing to do with the stated criterion about finding the exam hall.",
+    "Load speed is a technical measure. A fast map does not show that students actually reached the hall sooner."
+   ],
+   "key": "INT335-U6-045"
+  },
+  {
+   "topic": "Presentation and Case Study",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A team's technical design case study includes two rejected concepts, each with the note \"we didn't like it\". Which change most strengthens the case study?",
+   "code": "",
+   "options": [
+    "None is needed, because listing rejected concepts already separates a case study from a demo",
+    "For each rejected concept, add the test or research evidence that led to dropping it",
+    "Remove the rejected concepts, since a case study should present only the final design",
+    "Replace the notes with high-fidelity mock-ups of each rejected concept"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A technical design case study records design decisions, including the rejected concepts and the evidence behind them. \"We didn't like it\" is only an opinion, so the reader cannot see why the final design is better supported. Adding what testing or research showed turns the list into a record of decisions that can be traced.",
+   "why_wrong": [
+    "Meets only half the requirement. A case study records rejected concepts together with the evidence for rejecting them, and bare opinions leave the decisions unsupported.",
+    "",
+    "Showing only the final design is what a demo does. A case study keeps rejected concepts to document how decisions were made.",
+    "Polish is not evidence. A high-fidelity mock-up still does not show why the concept was dropped."
+   ],
+   "key": "INT335-U6-046"
+  }
+ ]
+}

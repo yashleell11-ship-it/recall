@@ -1,0 +1,1111 @@
+{
+ "subject_code": "MEC103",
+ "unit": 5,
+ "unit_label": "Development of Surfaces",
+ "questions": [
+  {
+   "topic": "Development Principles",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is meant by the development of the surface of a solid?",
+   "code": "",
+   "options": [
+    "The front view of the solid drawn in first-angle projection",
+    "The true shape of the section cut through the solid by an inclined plane",
+    "The surface of the solid unfolded or unrolled onto a single flat plane",
+    "A pictorial view of the solid showing three faces at once"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A development is the surface of a solid opened out and laid flat on one plane, as if the solid were made of sheet metal, cut along a seam and unfolded. Because it is the real surface spread flat, every line in it is a true length and it shows the true area. It is the pattern from which the solid can be cut and folded.",
+   "why_wrong": [
+    "A front view is an orthographic projection of the solid; it does not open the surface out flat.",
+    "That is a sectional view (true shape of a section), which shows only the cut face, not the whole surface laid out.",
+    "",
+    "That describes a pictorial (isometric) view; a development is a flat figure with no depth shown."
+   ],
+   "key": "MEC103-U5-001"
+  },
+  {
+   "topic": "Development Principles",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In the development of a solid's surface, every line is drawn to its:",
+   "code": "",
+   "options": [
+    "True length",
+    "Length as measured in the front view",
+    "Length as measured in the top view",
+    "Isometric (foreshortened) length"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A development is the actual surface laid flat, so no line in it may be shortened: every edge, generator and base side appears at its true length, and the figure has the true area of the surface. An edge that is inclined to the planes of projection must have its true length found first before it is transferred.",
+   "why_wrong": [
+    "",
+    "An edge inclined to the VP appears foreshortened in the front view, so its front-view length is generally less than its true length.",
+    "Sloping edges are foreshortened in the top view as well, so plan lengths are not true lengths.",
+    "Isometric foreshortening belongs to pictorial drawing; a development must not shrink any line."
+   ],
+   "key": "MEC103-U5-002"
+  },
+  {
+   "topic": "Development Principles",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Unless the ends are specifically asked for, the development of a prism or cylinder shows:",
+   "code": "",
+   "options": [
+    "The lateral surface together with both ends, in every case",
+    "The lateral surface only",
+    "The base only",
+    "The lateral surface and the base, but never the top"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "By convention a development covers the lateral (side) surface only. The base and top are attached separately only when a closed development is asked for. For a right cylinder this lateral surface is the πd × h rectangle; for a right prism it is the perimeter × height rectangle.",
+   "why_wrong": [
+    "The ends are not always part of it; they are added only when a closed development is asked for.",
+    "",
+    "The base alone is a flat face already; the development is about opening out the side surface.",
+    "There is no rule that includes the base and leaves out the top; both ends are omitted unless asked for."
+   ],
+   "key": "MEC103-U5-003"
+  },
+  {
+   "topic": "Development Principles",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Along which edge is the development of a solid conventionally opened out (its seam)?",
+   "code": "",
+   "options": [
+    "The longest edge",
+    "A base edge",
+    "The edge nearest the observer",
+    "The shortest edge"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A development is laid out from a single seam, and the convention is to open it along the shortest edge, so the joint that must later be made is as short as possible. The rest of the surface is then unrolled in order from that seam.",
+   "why_wrong": [
+    "Opening along the longest edge gives the longest joint, the opposite of the convention.",
+    "A lateral development is opened along a lateral edge or generator, not along an edge of the base.",
+    "Nearness to the observer has no bearing on the seam; the convention is based on edge length.",
+    ""
+   ],
+   "key": "MEC103-U5-004"
+  },
+  {
+   "topic": "Methods of Development",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which method of development is used for prisms and cylinders?",
+   "code": "",
+   "options": [
+    "Radial-line development",
+    "Parallel-line development",
+    "Triangulation",
+    "Approximate (zone) method"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Prisms and cylinders have lateral edges or generators that are all parallel to one another, so the surface opens out into a strip bounded by parallel lines. This is parallel-line development, and for a right prism or right cylinder it gives a rectangle.",
+   "why_wrong": [
+    "Radial-line development is for pyramids and cones, whose edges meet at an apex.",
+    "",
+    "Triangulation is for transition pieces and oblique forms.",
+    "Zone methods are approximations for spheres, which are not truly developable."
+   ],
+   "key": "MEC103-U5-005"
+  },
+  {
+   "topic": "Methods of Development",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which method of development is used for pyramids and cones?",
+   "code": "",
+   "options": [
+    "Parallel-line development",
+    "Triangulation",
+    "Radial-line development",
+    "Approximate (lune) method"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A pyramid's slant edges and a cone's generators all meet at the apex, so in the development they radiate from one point: radial-line development. A cone gives a sector of radius equal to its slant height; a pyramid gives triangles built on the true length of its slant edge.",
+   "why_wrong": [
+    "Parallel-line development is for prisms and cylinders, whose edges are parallel.",
+    "Triangulation is for transition pieces and oblique forms.",
+    "",
+    "The lune method only approximates a sphere; cones and pyramids develop exactly."
+   ],
+   "key": "MEC103-U5-006"
+  },
+  {
+   "topic": "Methods of Development",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Triangulation development is mainly used for:",
+   "code": "",
+   "options": [
+    "Transition pieces",
+    "Right prisms",
+    "Right circular cylinders",
+    "Spheres"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A transition piece joins two openings of different shape (for example square to round), so its surface has neither parallel generators nor a single apex. Its surface is split into triangles whose true lengths are found and laid out one by one. The same method suits oblique forms.",
+   "why_wrong": [
+    "",
+    "Right prisms have parallel lateral edges and use parallel-line development.",
+    "Right cylinders have parallel generators and use parallel-line development.",
+    "Spheres are not truly developable; they are approximated by zone or lune methods."
+   ],
+   "key": "MEC103-U5-007"
+  },
+  {
+   "topic": "Methods of Development",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "How is the surface of a sphere developed?",
+   "code": "",
+   "options": [
+    "Exactly, by parallel-line development",
+    "Exactly, by radial-line development",
+    "Exactly, as a circle whose radius equals the sphere's radius",
+    "Only approximately, by zone or lune methods"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A sphere is curved in two directions, so it cannot be flattened without stretching or tearing; it is not truly developable. It is approximated by cutting it into zones (bands between horizontal planes) or lunes (segments between meridian planes) and developing each piece approximately.",
+   "why_wrong": [
+    "A sphere has no parallel generators; its double curvature means it cannot be unrolled exactly.",
+    "A sphere has no apex from which generators radiate; radial-line development suits cones and pyramids.",
+    "No flat figure matches a sphere's surface exactly; a flat circle would need the surface to be stretched or torn.",
+    ""
+   ],
+   "key": "MEC103-U5-008"
+  },
+  {
+   "topic": "Prisms and Cylinders",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "The lateral surface of a right circular cylinder develops into a:",
+   "code": "",
+   "options": [
+    "Sector of a circle",
+    "Set of triangles",
+    "Rectangle",
+    "Trapezium"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Unrolling the curved surface of a right cylinder gives a rectangle: one side equals the base circumference πd and the other equals the height h. All generators are parallel and equal in length, which is why the figure is a rectangle.",
+   "why_wrong": [
+    "A sector is the development of a cone, whose generators meet at the apex.",
+    "Triangles come from the faces of a pyramid, not from a cylinder's curved surface.",
+    "",
+    "A right cylinder's generators are all equal (h) and parallel, so opposite sides of the development are equal and parallel: a rectangle, not a trapezium."
+   ],
+   "key": "MEC103-U5-009"
+  },
+  {
+   "topic": "Prisms and Cylinders",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A right circular cylinder has a base diameter of 40 mm and a height of 60 mm. What is the length of the rectangle (the side other than the height) that forms its lateral development?",
+   "code": "",
+   "options": [
+    "251.3 mm",
+    "125.7 mm",
+    "62.8 mm",
+    "5026.5 mm"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The rectangle's length is the base circumference: πd = π × 40 = 125.66 ≈ 125.7 mm. Its other side is the height, 60 mm.",
+   "why_wrong": [
+    "Uses 2πd = 80π; the circumference is πd (or 2πr), not 2πd.",
+    "",
+    "Uses πr = 20π, which is only half the circumference.",
+    "Uses πd² = 1600π, which has the units of an area, not a length."
+   ],
+   "key": "MEC103-U5-010"
+  },
+  {
+   "topic": "Prisms and Cylinders",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A right square prism has a base side of 30 mm and a height of 50 mm. What is the length of the rectangle that forms its lateral development?",
+   "code": "",
+   "options": [
+    "30 mm",
+    "900 mm",
+    "42.4 mm",
+    "120 mm"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The four lateral faces unfold side by side, so the rectangle's length is the base perimeter: 4 × 30 = 120 mm, and its height is 50 mm. Fold lines every 30 mm mark the vertical edges.",
+   "why_wrong": [
+    "Uses one side instead of the whole perimeter; that is the width of a single face.",
+    "900 = 30² is the base area, not a length.",
+    "42.4 = 30√2 is the base diagonal, which does not appear along the development.",
+    ""
+   ],
+   "key": "MEC103-U5-011"
+  },
+  {
+   "topic": "Pyramids and Cones",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "The lateral surface of a right circular cone develops into a:",
+   "code": "",
+   "options": [
+    "Rectangle",
+    "Sector of a circle",
+    "Full circle of radius equal to the base radius",
+    "Trapezium"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "All generators of a right cone are equal to the slant height L and meet at the apex, so when unrolled they radiate from one point and form a sector of radius L. The sector's arc length equals the base circumference 2πr.",
+   "why_wrong": [
+    "A rectangle is the development of a cylinder, whose generators are parallel.",
+    "",
+    "The development is only part of a circle (a sector), and its radius is the slant height, not the base radius.",
+    "A trapezium has straight sides; the cone's base edge is curved, so its development is bounded by an arc."
+   ],
+   "key": "MEC103-U5-012"
+  },
+  {
+   "topic": "Pyramids and Cones",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In the development of a right circular cone, the radius of the sector equals the cone's:",
+   "code": "",
+   "options": [
+    "Base radius",
+    "Axis (vertical) height",
+    "Slant height",
+    "Base diameter"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Every generator from the apex to the base circle has length L, the slant height, and in the development each generator becomes a radius of the sector. So the sector radius is L = √(r² + h²), not r or h.",
+   "why_wrong": [
+    "The base radius fixes the sector's arc length (2πr), not its radius.",
+    "The axis height lies inside the cone and is shorter than the generators that become the sector's radii.",
+    "",
+    "The base diameter is not a generator length; like r, it enters only through the arc length."
+   ],
+   "key": "MEC103-U5-013"
+  },
+  {
+   "topic": "Pyramids and Cones",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A right circular cone has a base radius of 20 mm and a slant height of 80 mm. What is the included angle of the sector that forms its lateral development?",
+   "code": "",
+   "options": [
+    "45°",
+    "180°",
+    "1440°",
+    "90°"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "θ = (r/L) × 360° = (20/80) × 360° = 0.25 × 360° = 90°. Check: the sector's arc = (90/360) × 2π × 80 = 40π mm, which equals the base circumference 2π × 20.",
+   "why_wrong": [
+    "Uses 180° instead of 360°: (20/80) × 180° = 45°.",
+    "Uses the diameter 40 mm in place of r: (40/80) × 360° = 180°.",
+    "Inverts the ratio: (80/20) × 360° = 1440°, more than a full circle.",
+    ""
+   ],
+   "key": "MEC103-U5-014"
+  },
+  {
+   "topic": "Pyramids and Cones",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A right circular cone has a base diameter of 28 mm and a vertical height of 48 mm. What is the included angle of the sector that forms the development of its lateral surface?",
+   "code": "",
+   "options": [
+    "100.8°",
+    "105°",
+    "201.6°",
+    "50.4°"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "First find the slant height: r = 28/2 = 14 mm, so L = √(14² + 48²) = √(196 + 2304) = √2500 = 50 mm. Then θ = (r/L) × 360° = (14/50) × 360° = 100.8°. The sector's radius is 50 mm, the slant height.",
+   "why_wrong": [
+    "",
+    "Uses the vertical height 48 mm in place of the slant height: (14/48) × 360° = 105°.",
+    "Uses the diameter 28 mm in place of the radius: (28/50) × 360° = 201.6°.",
+    "Uses 180° instead of 360°: (14/50) × 180° = 50.4°."
+   ],
+   "key": "MEC103-U5-015"
+  },
+  {
+   "topic": "Prisms and Cylinders",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these correctly describes the lateral development of a right regular pentagonal prism with a base side of 25 mm and a height of 70 mm?",
+   "code": "",
+   "options": [
+    "A 125 mm × 70 mm rectangle, divided by fold lines into five 25 mm panels",
+    "A 25 mm × 70 mm rectangle",
+    "Five triangles with 25 mm bases, radiating from a common point",
+    "A 125 mm × 70 mm rectangle with the two pentagonal ends attached to it"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A prism takes parallel-line development: its lateral faces unfold side by side into a rectangle whose length is the base perimeter, 5 × 25 = 125 mm, and whose height is 70 mm. Fold lines at the vertical edges divide it into five 25 mm panels, with the seam edge forming both ends of the rectangle.",
+   "why_wrong": [
+    "",
+    "Uses one side instead of the perimeter; that is just one lateral face.",
+    "Triangles radiating from a point are the radial-line development of a pyramid, not a prism.",
+    "The ends are not part of the lateral development; they are added only when a closed development is asked for."
+   ],
+   "key": "MEC103-U5-016"
+  },
+  {
+   "topic": "Development Principles",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about the development of a surface is NOT correct?",
+   "code": "",
+   "options": [
+    "Every line in it is drawn to its true length",
+    "Its area equals the true area of the surface it represents",
+    "It is laid out from a single seam, conventionally the shortest edge",
+    "Its sloping edges may be drawn to a reduced length, as they appear in the front view"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A development is the real surface flattened, so nothing in it can be foreshortened: every line is a true length and the figure has the true area. Sloping edges that look shorter in a view must have their true lengths found first (for example by rotation) before being transferred. Opening from one seam at the shortest edge is the standard convention.",
+   "why_wrong": [
+    "This is true: a development never shows a foreshortened line.",
+    "This is true: since every line is a true length, the flat figure has exactly the surface's area.",
+    "This is true: the development is opened from one seam, conventionally the shortest edge.",
+    ""
+   ],
+   "key": "MEC103-U5-017"
+  },
+  {
+   "topic": "Methods of Development",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which pairing of a solid with its development method is correct?",
+   "code": "",
+   "options": [
+    "Hexagonal prism — radial-line development",
+    "Square pyramid — parallel-line development",
+    "Frustum of a cone — radial-line development",
+    "Hemisphere — exact parallel-line development"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A frustum of a cone is part of a cone whose generators, extended, all meet at the apex, so it is developed by radial lines: the full cone's sector minus the small sector cut off at the top. Prisms take parallel-line development, pyramids take radial-line development, and a hemisphere, being doubly curved, can only be approximated.",
+   "why_wrong": [
+    "Swaps the methods: a prism's lateral edges are parallel, so it takes parallel-line development.",
+    "Swaps the methods: a pyramid's slant edges meet at the apex, so it takes radial-line development.",
+    "",
+    "A hemisphere is doubly curved and not truly developable; it can only be approximated by zone or lune methods."
+   ],
+   "key": "MEC103-U5-018"
+  },
+  {
+   "topic": "Methods of Development",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What property of prisms and cylinders makes parallel-line development the right method for them?",
+   "code": "",
+   "options": [
+    "Their lateral edges or generators all meet at a common apex",
+    "Their lateral edges or generators are parallel to one another",
+    "Their bases are always circles",
+    "Their surfaces are curved in two directions"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "In a prism or cylinder the lateral edges (or generators) run parallel to each other and to the axis, so when the surface is unrolled they stay parallel lines, giving a strip bounded by parallel lines, a rectangle for a right solid. Edges meeting at an apex is the property that calls for radial-line development instead.",
+   "why_wrong": [
+    "That is the property of pyramids and cones, which is why they take radial-line development.",
+    "",
+    "A prism's base is a polygon, not a circle; the base shape is not what decides the method.",
+    "Double curvature belongs to a sphere, and it makes a surface NOT truly developable."
+   ],
+   "key": "MEC103-U5-019"
+  },
+  {
+   "topic": "Pyramids and Cones",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "In the development of a right square pyramid, the two sloping sides of each triangular face are drawn equal to the pyramid's:",
+   "code": "",
+   "options": [
+    "Vertical height (axis length)",
+    "Slant height of a face (apex to the midpoint of a base side)",
+    "True length of the slant (lateral) edge",
+    "Base side length"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Each triangular face is bounded by two lateral (slant) edges running from the apex to base corners, so the sloping sides of every triangle in the development are the true length of the slant edge. The face's slant height is only the altitude of that triangle, which is shorter, and the vertical height lies inside the solid.",
+   "why_wrong": [
+    "The axis runs inside the pyramid; it is not an edge of any face.",
+    "The face slant height is the triangle's altitude (apex to base midpoint), which is shorter than the edges that form its sloping sides.",
+    "",
+    "The base side is the bottom side of each triangle, not its sloping sides."
+   ],
+   "key": "MEC103-U5-020"
+  },
+  {
+   "topic": "Pyramids and Cones",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A right regular hexagonal pyramid has a base side of 30 mm and an axis height of 40 mm. What is the true length of each slant edge, used to draw the triangles of its development?",
+   "code": "",
+   "options": [
+    "40 mm",
+    "47.7 mm",
+    "70 mm",
+    "50 mm"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "A slant edge runs from the apex down to a base corner. In a regular hexagon the distance from the centre to a corner equals the side, 30 mm, so the edge is the hypotenuse of a right triangle with legs 30 mm and 40 mm: √(30² + 40²) = √2500 = 50 mm.",
+   "why_wrong": [
+    "Takes the vertical (axis) height as the edge; the edge is inclined and therefore longer.",
+    "√(25.98² + 40²) = √2275 ≈ 47.7 mm is the slant height of a face (apex to the midpoint of a base side), not the edge to a corner.",
+    "Adds the two legs (30 + 40) instead of combining them with Pythagoras.",
+    ""
+   ],
+   "key": "MEC103-U5-021"
+  },
+  {
+   "topic": "Prisms and Cylinders",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The lateral development of a right circular cylinder is a rectangle 132 mm long and 80 mm high. Taking π = 22/7, what is the cylinder's base diameter?",
+   "code": "",
+   "options": [
+    "21 mm",
+    "42 mm",
+    "84 mm",
+    "6.5 mm"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The rectangle's length is the base circumference, so πd = 132 mm and d = 132 × 7/22 = 42 mm. The 80 mm side is simply the cylinder's height.",
+   "why_wrong": [
+    "21 mm = 132 ÷ 2π is the radius, not the diameter.",
+    "",
+    "Treats the length as πr, giving r = 42 mm and d = 84 mm.",
+    "Treats the length as πd², giving d = √42 ≈ 6.5 mm; a length cannot be set equal to an area formula."
+   ],
+   "key": "MEC103-U5-022"
+  },
+  {
+   "topic": "Prisms and Cylinders",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Taking π = 22/7, what is the area of the lateral development of a right circular cylinder with a base diameter of 35 mm and a height of 50 mm?",
+   "code": "",
+   "options": [
+    "5500 mm²",
+    "11000 mm²",
+    "2750 mm²",
+    "7425 mm²"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The lateral development is a rectangle πd long and h high: πd = (22/7) × 35 = 110 mm, so its area = 110 × 50 = 5500 mm². Because a development shows the true area, this is also the cylinder's curved surface area.",
+   "why_wrong": [
+    "",
+    "Uses 2πd = 220 mm as the length, doubling the circumference.",
+    "Uses πr = 55 mm, only half the circumference.",
+    "Adds the two end circles (2 × 962.5 = 1925 mm²); the lateral development excludes the ends unless a closed development is asked for."
+   ],
+   "key": "MEC103-U5-023"
+  },
+  {
+   "topic": "Pyramids and Cones",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A right pyramid resting on its base is cut by a plane inclined to its axis, and the development of the lower part is needed. How are the true lengths of the cut portions of the slant edges obtained?",
+   "code": "",
+   "options": [
+    "By measuring them directly off the front view",
+    "By measuring them directly off the top view",
+    "By rotating each edge until it is parallel to a plane of projection, then projecting the cut point onto that true-length line",
+    "By drawing every remaining edge portion equal to the full uncut slant edge"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Most slant edges are inclined to the VP, so their front-view lengths are foreshortened. Each edge is rotated about the axis until it is parallel to the VP, where its projection shows its true length; the cut point keeps its height during rotation, so it is projected horizontally onto this true-length line and the true cut length is read off.",
+   "why_wrong": [
+    "Edges inclined to the VP appear foreshortened in the front view, so their lengths there are not true lengths.",
+    "The slant edges are inclined to the HP, so they are foreshortened in the top view too.",
+    "",
+    "An inclined cut meets each edge at a different height, so the remaining edge portions differ in length; none equals the full slant edge."
+   ],
+   "key": "MEC103-U5-024"
+  },
+  {
+   "topic": "Methods of Development",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these solids is NOT developed by the radial-line method?",
+   "code": "",
+   "options": [
+    "Right circular cone",
+    "Square pyramid",
+    "Frustum of a hexagonal pyramid",
+    "Right circular cylinder"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Radial-line development works when all lateral edges or generators meet, or would meet if extended, at one apex: cones, pyramids and their frustums. A cylinder's generators are parallel and never meet, so it takes parallel-line development instead.",
+   "why_wrong": [
+    "A cone's generators all meet at the apex, so it is a radial-line case.",
+    "A pyramid's slant edges meet at the apex, so it is a radial-line case.",
+    "A frustum's edges, extended, meet at the original apex, so it is developed by radial lines from that point.",
+    ""
+   ],
+   "key": "MEC103-U5-025"
+  },
+  {
+   "topic": "Development Principles",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these surfaces can be developed exactly, rather than only approximately?",
+   "code": "",
+   "options": [
+    "The lateral surface of a frustum of a cone",
+    "The surface of a hemisphere",
+    "The surface of a sphere",
+    "A spherical zone cut from a sphere by two parallel planes"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A surface is truly developable when it is curved in at most one direction, like a cylinder, a cone or a frustum of a cone; it then unrolls flat with every line at true length. A sphere and every part of one (a hemisphere, a zone) is curved in two directions, so it can only be approximated by zone or lune methods.",
+   "why_wrong": [
+    "",
+    "A hemisphere is doubly curved, like the full sphere, so it can only be approximated.",
+    "A sphere is the standard example of a surface that is not truly developable.",
+    "A spherical zone is still part of a doubly curved surface; the zone method only approximates it, for example as a frustum of a cone."
+   ],
+   "key": "MEC103-U5-026"
+  },
+  {
+   "topic": "Prisms and Cylinders",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A tinsmith is making an open-top cylindrical can (no lid) of 70 mm base diameter and 100 mm height. Taking π = 22/7, which set of flat pieces does its development need?",
+   "code": "",
+   "options": [
+    "A 220 mm × 100 mm rectangle and one circle of 70 mm diameter",
+    "A 440 mm × 100 mm rectangle and one circle of 70 mm diameter",
+    "A 220 mm × 100 mm rectangle and two circles of 70 mm diameter",
+    "A 110 mm × 100 mm rectangle and one circle of 70 mm diameter"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The curved side develops by parallel lines into a rectangle πd long and as high as the can: 22/7 × 70 = 220 mm by 100 mm. End pieces are added only where the object has them. An open-top can has a bottom but no lid, so it needs exactly one 70 mm circle.",
+   "why_wrong": [
+    "",
+    "Uses 2πd = 440 mm. The circumference of a 70 mm circle is πd = 220 mm, not 2πd.",
+    "Adds a lid circle, but the can is open at the top, so it needs only the bottom circle.",
+    "Uses πr = 110 mm, which is only half the circumference. The rectangle's length is πd."
+   ],
+   "key": "MEC103-U5-027"
+  },
+  {
+   "topic": "Pyramids and Cones",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "A right square pyramid has four equilateral triangular faces with sides of 40 mm. When its lateral surface is developed about the apex, what total angle does the development cover at the apex?",
+   "code": "",
+   "options": [
+    "254.6°",
+    "180°",
+    "240°",
+    "360°"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Each face is an equilateral triangle, so its two sloping sides (the slant edges, true length 40 mm) meet at 60°. The development lays the four faces side by side about the apex, covering 4 × 60° = 240°. The cone formula θ = (r/L) × 360° does not apply here, because a pyramid's base edges are straight chords of the 40 mm arc and not the arc itself.",
+   "why_wrong": [
+    "Treats the pyramid as the cone through its base corners: (28.28/40) × 360° ≈ 254.6°. A pyramid's base edges are chords, not an arc, so its fan of faces is narrower.",
+    "Treats the pyramid as the cone that touches the mid-points of its base edges: (20/40) × 360° = 180°. The development is built from the actual faces, and each face has a 60° apex angle.",
+    "",
+    "Assumes the faces close into a full circle about the apex. That happens only when the pyramid is completely flat."
+   ],
+   "key": "MEC103-U5-028"
+  },
+  {
+   "topic": "Methods of Development",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A workshop is fabricating a storage bin from sheet metal. It has a cylindrical drum, a right conical roof on top of the drum, and a square-to-round transition piece joining the drum's circular outlet to a square duct. Which development methods suit the drum, the roof and the transition piece, in that order?",
+   "code": "",
+   "options": [
+    "Radial-line, parallel-line, triangulation",
+    "Parallel-line, radial-line, triangulation",
+    "Parallel-line, triangulation, radial-line",
+    "Parallel-line, radial-line, radial-line"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The drum's generators are all parallel, so it takes parallel-line development. The right cone's generators all meet at the apex, so it takes radial-line development. The square-to-round piece has neither parallel lines nor a single apex, so it is divided into triangles and developed by triangulation.",
+   "why_wrong": [
+    "Swaps the first two: a drum has parallel generators (parallel-line) and a right cone's generators meet at its apex (radial-line).",
+    "",
+    "Treats the right cone as needing triangles and the transition piece as a cone. A right cone takes radial-line development, and the transition piece's lines do not meet at a single apex.",
+    "Treats the transition piece as a cone. Its surface lines do not all meet at one apex, so it needs triangulation."
+   ],
+   "key": "MEC103-U5-029"
+  },
+  {
+   "topic": "Prisms and Cylinders",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "A right square prism and a right circular cylinder have the same height, and their lateral developments are rectangles of the same length. If the cylinder's base diameter is 56 mm, what is the prism's base side? (Take π = 22/7.)",
+   "code": "",
+   "options": [
+    "22 mm",
+    "44 mm",
+    "56 mm",
+    "88 mm"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Equal development lengths mean the prism's base perimeter equals the cylinder's base circumference. πd = 22/7 × 56 = 176 mm, so 4 × side = 176 mm and side = 44 mm.",
+   "why_wrong": [
+    "Uses πr = 88 mm as the circumference and then divides by 4. The circumference is πd = 176 mm.",
+    "",
+    "Assumes the side equals the diameter. Equal developments need the perimeter to equal the circumference, not the widths to match.",
+    "Uses 2πd = 352 mm as the circumference before dividing by 4."
+   ],
+   "key": "MEC103-U5-030"
+  },
+  {
+   "topic": "Prisms and Cylinders",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A model of a rectangular air duct, which is a right rectangular prism, has a 40 mm × 25 mm cross-section and a length of 60 mm. It is to be folded from one flat sheet. What is the size of its lateral development?",
+   "code": "",
+   "options": [
+    "160 mm × 60 mm",
+    "65 mm × 60 mm",
+    "100 mm × 60 mm",
+    "130 mm × 60 mm"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "A prism's lateral surface opens out by parallel lines into a rectangle. Its length is the full perimeter of the cross-section and its height is the prism's length. Perimeter = 2 × (40 + 25) = 130 mm, so the development is 130 mm × 60 mm, with fold lines dividing it into panels of 40, 25, 40 and 25 mm.",
+   "why_wrong": [
+    "Multiplies the 40 mm side by 4 as if the section were a square. The perimeter of a 40 × 25 rectangle is 2 × (40 + 25).",
+    "Adds only two adjacent sides (40 + 25), which covers half the duct. The development must go all the way round.",
+    "Multiplies the 25 mm side by 4 as if the section were a square with that side.",
+    ""
+   ],
+   "key": "MEC103-U5-031"
+  },
+  {
+   "topic": "Pyramids and Cones",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A conical hood is made by bending a sheet-metal sector, 90 mm in radius with an included angle of 120°, until its two straight edges meet. What is the base diameter of the hood?",
+   "code": "",
+   "options": [
+    "60 mm",
+    "180 mm",
+    "30 mm",
+    "120 mm"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The sector's arc becomes the hood's base circle, and its radius becomes the slant height. Arc = (120/360) × 2π × 90 = 60π mm, and πd = 60π gives d = 60 mm. Equivalently, r = (θ/360°) × L = (1/3) × 90 = 30 mm.",
+   "why_wrong": [
+    "",
+    "Takes the sector radius (90 mm) as the base radius. The sector radius becomes the slant height, not the base radius.",
+    "Stops at the base radius, r = (120/360) × 90 = 30 mm. The diameter is twice this.",
+    "Uses 180° in place of 360° in the ratio, which gives r = (120/180) × 90 = 60 mm and d = 120 mm."
+   ],
+   "key": "MEC103-U5-032"
+  },
+  {
+   "topic": "Development Principles",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A right circular cone has a base diameter of 60 mm and a slant height of 100 mm. A student draws its development as a sector of radius 100 mm with an included angle of 108°. Which check correctly judges the drawing?",
+   "code": "",
+   "options": [
+    "Its arc must equal 2πd = 120π mm, so the angle should be 216°",
+    "Its radius must equal the base radius, 30 mm, so the sector must be redrawn",
+    "Its arc, (108/360) × 2π × 100 = 60π mm, equals the base circumference π × 60 = 60π mm, so it is correct",
+    "Its area, 3000π mm², should equal the base area of 900π mm², so it is too large"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Every length in a development is a true length, so the sector's arc must equal the base circumference it wraps round. (108/360) × 2π × 100 = 0.3 × 200π = 60π mm, which matches π × 60. This agrees with θ = (r/L) × 360° = (30/100) × 360° = 108°.",
+   "why_wrong": [
+    "Uses 2πd. The arc wraps round the base once, so it equals the circumference πd = 60π mm.",
+    "The sector radius is the slant height, 100 mm, because every generator is drawn to its true length. A 30 mm radius would give a flat disc.",
+    "",
+    "The development's area equals the lateral area, πrL = π × 30 × 100 = 3000π mm², not the base area. The base is not part of the lateral development."
+   ],
+   "key": "MEC103-U5-033"
+  },
+  {
+   "topic": "Development Principles",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A thread is wound exactly once round a right circular cylinder of 35 mm base diameter and 264 mm height. It runs from a point on the base circle to the point directly above it on the top circle, by the shortest possible path. Taking π = 22/7, how long is the thread?",
+   "code": "",
+   "options": [
+    "374 mm",
+    "286 mm",
+    "343.7 mm",
+    "266.3 mm"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The curved surface opens out into a rectangle πd = 22/7 × 35 = 110 mm long and 264 mm high. The shortest path becomes a straight diagonal of that rectangle: √(110² + 264²) = √81796 = 286 mm. This works because a development keeps every distance along the surface at its true length.",
+   "why_wrong": [
+    "Adds 110 + 264, as if the thread went round the base and then straight up. The shortest path is the rectangle's diagonal.",
+    "",
+    "Uses 2πd = 220 mm as the rectangle's length. The circumference is πd = 110 mm.",
+    "Uses the 35 mm diameter as the rectangle's length instead of the circumference πd."
+   ],
+   "key": "MEC103-U5-034"
+  },
+  {
+   "topic": "Methods of Development",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "The lateral surface of a frustum of a right square pyramid (the top cut off parallel to the base) is to be developed by the radial-line method. What must be done first?",
+   "code": "",
+   "options": [
+    "Draw a rectangle as long as the base perimeter and as high as the frustum, then fold it at the corners",
+    "Strike the arcs from the frustum's top face with a radius equal to the frustum's vertical height",
+    "Divide the base into twelve equal parts and draw a generator through each division",
+    "Extend the slant edges until they meet, locating the apex of the complete pyramid"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Radial-line development works from a common apex, and a frustum has lost its apex. So the slant edges are extended to find the apex of the complete pyramid. The full pyramid is then developed with arcs of radius equal to the true length of its slant edge, and the cut-off top is removed using the true lengths of the shorter edges.",
+   "why_wrong": [
+    "That is parallel-line development for a prism. A frustum's slant edges converge, so its faces are trapeziums that no rectangle can form.",
+    "Arcs are struck from the apex of the complete pyramid using the true lengths of the slant edges. The vertical height is not the length of any edge.",
+    "That step is for a cone or cylinder. A square pyramid is developed face by face using its four slant edges.",
+    ""
+   ],
+   "key": "MEC103-U5-035"
+  },
+  {
+   "topic": "Methods of Development",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "In the parallel-line development of a right circular cylinder of 42 mm base diameter, the base circle in the top view is divided into 12 equal parts, with a generator through each division. Taking π = 22/7, how far apart are the generators on the development's stretch-out line?",
+   "code": "",
+   "options": [
+    "3.5 mm",
+    "5.5 mm",
+    "11 mm",
+    "22 mm"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The stretch-out line is the base circumference, πd = 22/7 × 42 = 132 mm. The 12 generators divide it equally: 132 ÷ 12 = 11 mm. Each spacing is the true arc length between neighbouring divisions.",
+   "why_wrong": [
+    "Divides the 42 mm diameter by 12. The stretch-out line is the circumference, not the diameter.",
+    "Divides πr = 66 mm by 12. The circumference is πd = 132 mm.",
+    "",
+    "Divides 2πd = 264 mm by 12. The circumference is πd."
+   ],
+   "key": "MEC103-U5-036"
+  },
+  {
+   "topic": "Pyramids and Cones",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "A right circular cone of 30 mm base radius and 90 mm slant height is developed by the radial-line method, with its base circle divided into 12 equal parts. In the development, what angle separates two neighbouring generators?",
+   "code": "",
+   "options": [
+    "30°",
+    "10°",
+    "90°",
+    "20°"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The whole sector subtends θ = (r/L) × 360° = (30/90) × 360° = 120°, and the 12 generators divide it equally: 120° ÷ 12 = 10°. The 30° spacing is true only in the top view. In the development the base circle's length is spread along an arc of radius L, so the angles shrink in the ratio r/L.",
+   "why_wrong": [
+    "That is 360° ÷ 12, the spacing in the top view. In the development the whole base arc spans only 120°.",
+    "",
+    "Inverts the ratio, (L/r) × 360° = 1080°, then divides by 12. The correct formula is θ = (r/L) × 360°.",
+    "Uses the diameter in place of the radius, (60/90) × 360° = 240°, then divides by 12."
+   ],
+   "key": "MEC103-U5-037"
+  },
+  {
+   "topic": "Prisms and Cylinders",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A hole is to be cut in a right circular cylinder of 56 mm base diameter. In the top view, the hole's centre lies 90° round the base circle from the seam, and it is 30 mm above the base. Taking π = 22/7, how far from the seam, along the stretch-out line, is the hole's centre plotted on the development?",
+   "code": "",
+   "options": [
+    "44 mm",
+    "22 mm",
+    "88 mm",
+    "39.6 mm"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Distances along the stretch-out line are arc lengths of the base circle. A quarter turn (90°) is (90/360) × πd = ¼ × 22/7 × 56 = ¼ × 176 = 44 mm from the seam. The hole's centre is then plotted 30 mm up that generator.",
+   "why_wrong": [
+    "",
+    "Takes a quarter of πr = 88 mm. The stretch-out line is πd = 176 mm long, and a quarter of that is 44 mm.",
+    "Takes half the circumference, which would put the hole diametrically opposite the seam (180°), not 90° round.",
+    "Measures the straight chord between the two points in the top view, 28√2 ≈ 39.6 mm. Along the stretch-out line the distance is the arc length."
+   ],
+   "key": "MEC103-U5-038"
+  },
+  {
+   "topic": "Pyramids and Cones",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which right circular cone has a lateral surface that develops into an exact semicircle?",
+   "code": "",
+   "options": [
+    "Base diameter 60 mm, axis height 60 mm",
+    "Base diameter 60 mm, slant height 120 mm",
+    "Base diameter 60 mm, axis height 30 mm",
+    "Base diameter 60 mm, slant height 60 mm"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A semicircle means θ = 180°, and θ = (r/L) × 360° = 180° requires L = 2r. In other words, the slant height must equal the base diameter. With d = 60 mm, r = 30 mm and L = 60 mm give (30/60) × 360° = 180°.",
+   "why_wrong": [
+    "Sets the axis height, not the slant height, equal to the diameter. Then L = √(30² + 60²) ≈ 67.1 mm and θ = (30/67.1) × 360° ≈ 161°.",
+    "Doubles the diameter instead of the radius: (30/120) × 360° = 90°, a quarter circle.",
+    "With r = h = 30 mm, L = 30√2 ≈ 42.4 mm and θ ≈ 254.6°, which is more than a semicircle.",
+    ""
+   ],
+   "key": "MEC103-U5-039"
+  },
+  {
+   "topic": "Development Principles",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Every line in a development must be a true length. In which case can the lengths along the edges or generators, up to the cut, be measured straight off the front view with no rotation or other construction?",
+   "code": "",
+   "options": [
+    "Every slant edge of a right pyramid standing on its base on the HP, cut by a plane perpendicular to the VP",
+    "Every generator of a right circular cone standing on its base on the HP, cut by a plane perpendicular to the VP",
+    "Every lateral edge of a right prism standing on its base on the HP, cut by a plane perpendicular to the VP",
+    "Every lateral edge of a right prism lying on the HP with its axis parallel to the HP and inclined to the VP"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A line shows its true length in the front view only when it is parallel to the VP. A right prism standing on the HP has vertical lateral edges, which are perpendicular to the HP and therefore parallel to the VP, so each length up to the cut can be measured directly. Pyramid slant edges and most cone generators slope towards or away from the VP, so their true lengths need a construction first.",
+   "why_wrong": [
+    "A pyramid's slant edges are generally inclined to the VP, so their front views are foreshortened. Only an edge parallel to the VP shows its true length.",
+    "Only the two outline generators are parallel to the VP. Every other generator is foreshortened and must first be moved horizontally onto an outline generator.",
+    "",
+    "Edges inclined to the VP are foreshortened in the front view. Here the true lengths appear in the top view instead."
+   ],
+   "key": "MEC103-U5-040"
+  },
+  {
+   "topic": "Prisms and Cylinders",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A right hexagonal prism and a right circular cylinder both stand on their bases on the HP. Each is cut by a plane perpendicular to the VP and inclined to the HP. In the lateral developments of their lower parts, what shape does the cut edge take?",
+   "code": "",
+   "options": [
+    "Prism: one straight line; cylinder: one straight line",
+    "Prism: straight lines meeting at the fold lines; cylinder: an ellipse",
+    "Prism: a hexagon; cylinder: an ellipse",
+    "Prism: straight lines meeting at the fold lines; cylinder: a smooth wavy curve"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The cut edge is plotted by marking each edge's or generator's height up to the cut at its position along the stretch-out line. Each face of the prism is flat, so the cut across a face is straight and changes direction only at the fold lines. On the cylinder the height changes continuously round the surface, giving a smooth wavy (sine-type) curve. The ellipse is the true shape of the section, which is a separate drawing.",
+   "why_wrong": [
+    "The cut is a straight line in the front view, but going round the solid the cut height rises and then falls. It therefore cannot be a single straight line on the development.",
+    "The ellipse is the true shape of the cylinder's section, drawn on an auxiliary plane. In the development the cut edge is plotted from generator heights and forms a wavy curve.",
+    "A hexagon and an ellipse are the shapes of the cut sections seen face-on. They are not the edge of the unrolled surface.",
+    ""
+   ],
+   "key": "MEC103-U5-041"
+  },
+  {
+   "topic": "Methods of Development",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A concentric reducer joins a 100 mm diameter pipe to a 60 mm diameter pipe. Both ends are circles on the same axis, joined by a straight-sided surface. Which method develops its surface directly and exactly?",
+   "code": "",
+   "options": [
+    "Radial-line, because it is a frustum of a right circular cone whose generators all meet at one apex",
+    "Triangulation, because it is a transition piece joining two different pipe sizes",
+    "Parallel-line, because both of its ends are circles, as on a cylinder",
+    "An approximate method, because the surface curves in two directions like a sphere"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Two coaxial circles joined by straight lines form a frustum of a right circular cone. Extended, its generators all meet at one apex on the axis. So it is a radial-line job: develop the complete cone, then remove the small cone. Triangulation is kept for pieces such as square-to-round transitions, whose surface lines neither stay parallel nor meet at one apex.",
+   "why_wrong": [
+    "",
+    "Joining two sizes does not make it a triangulation job. Coaxial circular ends joined by straight lines form a right cone frustum, which the radial-line method develops exactly.",
+    "The ends are circles of different diameters, so the generators converge instead of staying parallel. No rectangle can fold into this shape.",
+    "The surface is part of a cone, curved in one direction only, so it develops exactly. Only double-curved surfaces such as a sphere need approximation."
+   ],
+   "key": "MEC103-U5-042"
+  },
+  {
+   "topic": "Pyramids and Cones",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A bucket is a frustum of a right circular cone, 30 mm in diameter at the bottom and 90 mm at the top. Its sloping side is 60 mm long from rim to rim. The side is developed by the radial-line method. What is the development?",
+   "code": "",
+   "options": [
+    "A sector of radius 60 mm and angle 270°",
+    "A trapezium 60 mm high whose parallel sides are 90π mm and 30π mm long",
+    "Part of a ring with radii 90 mm and 30 mm and an angle of 180°",
+    "Part of a ring with radii 90 mm and 30 mm and an angle of 60°"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The development is the full cone's sector minus the cut-off cone's sector, both struck from the apex. The radii shrink from 45 mm to 15 mm, a ratio of 1/3, so the small cone's slant x satisfies x/(x + 60) = 1/3, giving x = 30 mm and a full slant height of 90 mm. θ = (r/L) × 360° = (45/90) × 360° = 180°, so the development is a half-ring with radii 90 mm and 30 mm.",
+   "why_wrong": [
+    "Treats the 60 mm frustum side as the cone's slant height, (45/60) × 360° = 270°, and ignores the missing top part. The radii must be measured from the apex of the complete cone.",
+    "A trapezium cannot roll into a frustum. Because the generators converge, the rims are arcs struck from the apex.",
+    "",
+    "Pairs the small (bottom) radius, 15 mm, with the full slant height, 90 mm: (15/90) × 360° = 60°. The ratio must use the radius and slant height of the same cone, 45/90 or 15/30."
+   ],
+   "key": "MEC103-U5-043"
+  },
+  {
+   "topic": "Pyramids and Cones",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A right circular cone has a base diameter of 30 mm and an axis height of 8 mm. A student reports the sector angle of its development as 675°. Which diagnosis is correct?",
+   "code": "",
+   "options": [
+    "He used the diameter in place of the radius; halving gives the correct angle, 337.5°",
+    "Nothing is wrong: a flat cone's sector overlaps itself and is drawn as a full circle plus 315°",
+    "He inverted the ratio; the correct angle is (8/15) × 360° = 192°",
+    "He used the 8 mm axis height in place of the 17 mm slant height; the correct angle is about 317.6°"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The slant height is the hypotenuse, so L > r and θ = (r/L) × 360° must be less than 360°. An answer of 675° means the denominator was too small, and (15/8) × 360° = 675° shows the axis height was used. With L = √(15² + 8²) = √289 = 17 mm, θ = (15/17) × 360° ≈ 317.6°.",
+   "why_wrong": [
+    "Using the diameter with the proper slant height would give (30/17) × 360° ≈ 635°, not 675°. Halving 675° also leaves the axis height in the formula.",
+    "Since L > r, θ = (r/L) × 360° is always less than 360°. No right cone's development overlaps itself.",
+    "8/15 is h/r, which is still built on the axis height. Inverting r/L would give L/r, which makes the angle even larger.",
+    ""
+   ],
+   "key": "MEC103-U5-044"
+  },
+  {
+   "topic": "Development Principles",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "An ant starts at point A on the base rim of a right circular cone of 15 mm base radius and 90 mm slant height. It crawls once round the curved surface and returns to A by the shortest possible route. How long is the route?",
+   "code": "",
+   "options": [
+    "90 mm",
+    "94.2 mm",
+    "180 mm",
+    "155.9 mm"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Cut the cone along the generator through A and unroll it: θ = (r/L) × 360° = (15/90) × 360° = 60°, and A appears at both ends of the arc, as A and A′. The shortest route is the straight line AA′ on the development. With OA = OA′ = 90 mm and 60° between them, the triangle is equilateral, so AA′ = 90 mm.",
+   "why_wrong": [
+    "",
+    "This is the base circumference, 2π × 15, from walking along the rim. On the development the rim is an arc, and the straight chord AA′ is shorter.",
+    "This is the route up to the apex and back down, 2 × 90 mm. The straight line AA′ on the development is shorter.",
+    "Uses the diameter in the angle, (30/90) × 360° = 120°, which gives a chord of 2 × 90 × sin 60° ≈ 155.9 mm. The correct angle is 60°."
+   ],
+   "key": "MEC103-U5-045"
+  },
+  {
+   "topic": "Methods of Development",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Why is a square-to-round transition piece developed by triangulation rather than by the parallel-line or radial-line method?",
+   "code": "",
+   "options": [
+    "Its surface is double-curved like a sphere, so it can only be approximated",
+    "Its surface lines neither all run parallel nor all meet at one apex, so it is split into triangles laid out one by one",
+    "Triangulation lets the lengths be taken straight from the views without finding true lengths",
+    "Its two ends lie in parallel planes, which only triangulation can handle"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Parallel-line development needs all surface lines to be parallel (prisms, cylinders), and radial-line development needs them all to meet at one apex (pyramids, cones). A square-to-round piece is made of flat triangles standing on the sides of the square and curved conical parts at its corners, so neither condition holds for the whole surface. Triangulation divides it into triangles, finds the true length of each side, and lays the triangles down side by side.",
+   "why_wrong": [
+    "The piece is made of flat triangles and single-curved conical parts, all of which are developable. Approximation is only for double-curved surfaces such as a sphere.",
+    "",
+    "Triangulation depends on finding the true length of every triangle side, because most of them are inclined to both planes.",
+    "A cone frustum also has its ends in parallel planes, yet it is developed by radial lines. The other methods fail because the surface lines neither stay parallel nor meet at one apex."
+   ],
+   "key": "MEC103-U5-046"
+  },
+  {
+   "topic": "Prisms and Cylinders",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A right regular hexagonal prism fits exactly inside a right circular cylinder: its six corners lie on the cylinder's 42 mm diameter base circle, and both solids are 50 mm high. Taking π = 22/7, how long are their lateral developments?",
+   "code": "",
+   "options": [
+    "Prism 126 mm, cylinder 132 mm",
+    "Prism 252 mm, cylinder 132 mm",
+    "Prism 132 mm, cylinder 132 mm",
+    "Prism 126 mm, cylinder 264 mm"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A regular hexagon's side equals the radius of the circle through its corners, so the side is 42/2 = 21 mm and the prism's development is 6 × 21 = 126 mm long. The cylinder's is πd = 22/7 × 42 = 132 mm. The hexagon's sides are chords of the circle, so its perimeter must be a little shorter than the circumference.",
+   "why_wrong": [
+    "",
+    "Takes the hexagon's side as the circle's diameter, 42 mm. A hexagon inscribed in a circle has sides equal to the radius.",
+    "Assumes an inscribed prism has the same development length. Its straight sides are chords, which are shorter than the arcs they cut off.",
+    "Uses 2πd = 264 mm for the cylinder. The circumference is πd = 132 mm."
+   ],
+   "key": "MEC103-U5-047"
+  },
+  {
+   "topic": "Development Principles",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A conical cap, open at its base, has a base diameter of 42 mm and an axis height of 20 mm. Taking π = 22/7, what area of sheet does its development need, ignoring any overlap for the joint?",
+   "code": "",
+   "options": [
+    "1320 mm²",
+    "3300 mm²",
+    "1914 mm²",
+    "3828 mm²"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "A development shows the true area of the surface, and an open cap needs only its lateral surface. First find the slant height: L = √(21² + 20²) = √841 = 29 mm. Area = πrL = 22/7 × 21 × 29 = 66 × 29 = 1914 mm², the same as the sector's area (θ/360°) × πL².",
+   "why_wrong": [
+    "Uses the 20 mm axis height in πrL. The development needs the slant height, √(21² + 20²) = 29 mm.",
+    "Adds the base circle (π × 21² = 1386 mm²), but the cap is open at the base, so only its lateral surface is developed.",
+    "",
+    "Uses the diameter in πrL: 22/7 × 42 × 29. The lateral area is πrL with the 21 mm radius."
+   ],
+   "key": "MEC103-U5-048"
+  }
+ ]
+}

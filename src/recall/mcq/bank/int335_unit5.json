@@ -1,0 +1,1088 @@
+{
+ "subject_code": "INT335",
+ "unit": 5,
+ "unit_label": "Testing, Validation and Customer Experience",
+ "questions": [
+  {
+   "topic": "Feedback and Validation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What are the four quadrants of the Feedback Capture Matrix?",
+   "code": "",
+   "options": [
+    "Strengths, Weaknesses, Opportunities, Threats",
+    "Likes, Criticisms, Questions, Ideas",
+    "Observations, Pros, Cons, Ideas",
+    "Issue, Evidence, Frequency, Severity"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The Feedback Capture Matrix (also called the feedback capture grid) has four quadrants. Likes holds what worked, Criticisms what did not, Questions what the test raised, and Ideas the new suggestions it sparked. Sorting feedback under these four heads during or right after a test keeps praise, problems, open questions and new ideas apart.",
+   "why_wrong": [
+    "This is a SWOT analysis, a strategy tool for judging a business's position. It is not a way of capturing test feedback.",
+    "",
+    "'Observations' and 'Pros/Cons' are common guesses, but the matrix has no Observations quadrant. It splits reactions into Likes and Criticisms.",
+    "These are the columns of a prioritisation table for ranking problems found in testing. They are not the matrix's quadrants."
+   ],
+   "key": "INT335-U5-001"
+  },
+  {
+   "topic": "Feedback and Validation",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the Feedback Capture Matrix mainly used for?",
+   "code": "",
+   "options": [
+    "Ranking ideas by how feasible and impactful they are",
+    "Mapping each step a customer takes with a service",
+    "Organising the feedback a prototype receives during or right after testing",
+    "Checking the product against its requirements document"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The matrix is a capture tool for the Test stage. As people react to a prototype, each comment goes straight into Likes, Criticisms, Questions or Ideas. Feedback sorted this way shows at a glance what to keep, what to fix, what to look into and what to try next.",
+   "why_wrong": [
+    "Ranking ideas by feasibility and impact is the job of a prioritisation matrix. That is used when choosing ideas, not when capturing test feedback.",
+    "Mapping each step a customer takes is what a customer journey map does.",
+    "",
+    "Checking a product against its requirements is verification, which does not need a feedback grid."
+   ],
+   "key": "INT335-U5-002"
+  },
+  {
+   "topic": "Usability Testing",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In usability testing, what does \"Show, don't tell\" mean?",
+   "code": "",
+   "options": [
+    "The facilitator demonstrates the task first so the participant can repeat it",
+    "Ask the participant to perform the task rather than say what they would do",
+    "Ask the participant to predict which features they would use most",
+    "Give the participant a written explanation of the design before the test"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "What people say they would do often differs from what they actually do. Someone who says they would 'definitely check the size chart' may never open it. So the test asks participants to carry out the task, and the team trusts what they did over what they said.",
+   "why_wrong": [
+    "Demonstrating the steps breaks neutral facilitation. The participant just copies the facilitator, so the team learns nothing about whether they could do it alone.",
+    "",
+    "A prediction is a stated preference. It is exactly the 'telling' that this rule replaces with watching what people do.",
+    "A written explanation is telling, not showing. It also gives away how the design works before the test begins."
+   ],
+   "key": "INT335-U5-003"
+  },
+  {
+   "topic": "Usability Testing",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In a usability test, what is a leading question?",
+   "code": "",
+   "options": [
+    "The first question asked, used to lead into the session",
+    "A question whose wording suggests the answer the facilitator hopes to hear",
+    "A question the participant asks the facilitator during a task",
+    "An open question such as \"What did you expect to happen?\""
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A leading question has a judgement built into it, which nudges the participant towards agreeing. For example, \"Wasn't that checkout quick?\" already assumes the checkout was quick. Neutral wording lets the participant give their own opinion.",
+   "why_wrong": [
+    "'Leading' means steering the answer. It has nothing to do with where the question comes in the session.",
+    "",
+    "Questions from the participant are recorded, and they go in the Questions quadrant. They are not what 'leading' means.",
+    "This is the opposite: an open, neutral question that does not hint at any answer."
+   ],
+   "key": "INT335-U5-004"
+  },
+  {
+   "topic": "Usability Testing",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In the think-aloud method of usability testing, what are participants asked to do?",
+   "code": "",
+   "options": [
+    "Say what they are thinking out loud while they perform the tasks",
+    "Stay silent so the facilitator can concentrate on observing",
+    "Read the task instructions aloud and then stop talking",
+    "Discuss the design as a group before anyone uses it"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "In think-aloud, participants say their thoughts out loud as they work: what they are looking for, what they expect and what confuses them. The team hears the reasoning behind each action, not just the action itself.",
+   "why_wrong": [
+    "",
+    "Staying silent is the opposite of think-aloud. It hides the reasoning the method is meant to reveal.",
+    "Reading the instructions aloud reveals nothing about how the participant is thinking through the task.",
+    "A group discussion before use is a focus group. It collects opinions, not one participant's thinking while actually using the product."
+   ],
+   "key": "INT335-U5-005"
+  },
+  {
+   "topic": "Customer Experience",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does customer experience (CX) refer to?",
+   "code": "",
+   "options": [
+    "How easy a single screen or form is to use",
+    "The customer's overall perception of a brand across every interaction, from advertising to after-sales support",
+    "The number of years a customer has used a product",
+    "The company department that answers complaints"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Customer experience is the overall impression a customer forms from every contact with a brand: advertising, purchase, delivery, support, refunds and communication. It is broader than usability, which covers only how well one interaction with the product works.",
+   "why_wrong": [
+    "That is the usability of one interaction. CX includes it but covers the customer's whole relationship with the brand.",
+    "",
+    "How long someone has been a customer measures loyalty. It is not what CX means.",
+    "Customer support is one touchpoint within CX, not the whole of it."
+   ],
+   "key": "INT335-U5-006"
+  },
+  {
+   "topic": "Customer Experience",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Usability is usually defined by which three qualities of a user's interaction with a product?",
+   "code": "",
+   "options": [
+    "Desirability, feasibility and viability",
+    "Speed, cost and quality",
+    "Effectiveness, efficiency and satisfaction",
+    "Colour, layout and typography"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Usability is how well users reach their goals with a product. It asks whether they succeed (effectiveness), whether they do so without wasted time or effort (efficiency) and whether the use feels acceptable (satisfaction). All three concern one interaction with the product, which is why usability is narrower than customer experience.",
+   "why_wrong": [
+    "These three are used to judge whether an idea is worth pursuing: do people want it, can it be built, and can it last as a business. They do not define usability.",
+    "Speed, cost and quality are the classic project trade-off, not the parts of usability.",
+    "",
+    "These are visual design properties. A good-looking layout can still be hard to use."
+   ],
+   "key": "INT335-U5-007"
+  },
+  {
+   "topic": "Journey Mapping",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In customer experience design, what is a touchpoint?",
+   "code": "",
+   "options": [
+    "An obstacle that causes the customer effort, delay or confusion",
+    "Any moment of contact between the customer and the product, service or brand",
+    "Only the moment when the customer pays",
+    "The button users tap most often in an app"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A touchpoint is any point of contact with the brand, such as an advert, the website, a store visit, a delivery or a support call. Mapping all of them shows every place where the experience can go well or badly.",
+   "why_wrong": [
+    "That describes a pain point, which is an obstacle that can happen at a touchpoint. The two terms do not mean the same thing.",
+    "",
+    "Payment is only one touchpoint. Touchpoints happen before, during and after a purchase.",
+    "A frequently tapped button is a single interface element, far narrower than what 'touchpoint' means."
+   ],
+   "key": "INT335-U5-008"
+  },
+  {
+   "topic": "Journey Mapping",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In a customer journey, what is a pain point?",
+   "code": "",
+   "options": [
+    "The moment a customer first hears about the brand",
+    "An obstacle that creates effort, delay, confusion or dissatisfaction for the customer",
+    "The highest price a customer is willing to pay",
+    "A step where the customer feels delighted"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A pain point is a problem the customer runs into, such as a long wait, a confusing form or a hidden charge. Pain points happen at touchpoints, and they show where the journey most needs improving.",
+   "why_wrong": [
+    "First hearing about a brand is the awareness stage of a journey. It is not a pain point unless something goes wrong there.",
+    "",
+    "Willingness to pay is a pricing idea and has nothing to do with pain points.",
+    "Delight is the opposite. A pain point is where the experience goes wrong."
+   ],
+   "key": "INT335-U5-009"
+  },
+  {
+   "topic": "Journey Mapping",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does a customer journey map show?",
+   "code": "",
+   "options": [
+    "The company's reporting structure and who manages whom",
+    "The steps a customer goes through with a product or service over time, with what they do, think and feel at each",
+    "The technical components of a product and how they connect",
+    "A list of product features ranked by development cost"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A journey map lays out the customer's experience in time order, stage by stage. It has layers for actions, thoughts, emotions, channels and opportunities. Seeing the whole journey at once shows where pain points cluster and where to improve.",
+   "why_wrong": [
+    "That is an organisation chart. It shows the company's structure, not the customer's experience.",
+    "",
+    "That is a system architecture diagram. It shows the product's inner workings, not the customer's journey.",
+    "A cost-ranked feature list is a planning document. It contains no customer steps or feelings."
+   ],
+   "key": "INT335-U5-010"
+  },
+  {
+   "topic": "Navigation and Accessibility",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which of these is a basic accessibility rule for images on a website?",
+   "code": "",
+   "options": [
+    "Give each meaningful image alternative (alt) text that describes it",
+    "Put important text inside images instead of as plain text",
+    "Make key images flash to attract attention",
+    "Show images only when the mouse hovers over them"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Screen readers cannot see an image, so they read its alt text aloud instead. A short description gives blind and low-vision users the same information as everyone else. Purely decorative images can have empty alt text so that screen readers skip them.",
+   "why_wrong": [
+    "",
+    "A screen reader cannot read text inside an image unless alt text is added. Such text also cannot be resized or translated like ordinary text.",
+    "Flashing content is distracting and can trigger seizures in some people, so it harms accessibility.",
+    "Content that appears only on mouse hover is hard or impossible to reach on touch screens or with a keyboard."
+   ],
+   "key": "INT335-U5-011"
+  },
+  {
+   "topic": "Navigation and Accessibility",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the main purpose of breadcrumb navigation, such as Home › Shoes › Running?",
+   "code": "",
+   "options": [
+    "To show where the user is in the site's hierarchy and let them jump back to higher levels",
+    "To track the user's browsing for advertising",
+    "To list every page on the site in alphabetical order",
+    "To show how many steps are left to finish a purchase"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Breadcrumbs show the path from the home page down to the current page, and each level is a link. They answer the user's question 'Where am I?' and give a one-click way back up the hierarchy.",
+   "why_wrong": [
+    "",
+    "Tracking browsing for ads is done with cookies. Breadcrumbs are a visible navigation aid for the user.",
+    "A full alphabetical list of pages is a sitemap or index, not breadcrumbs.",
+    "Showing the steps left is a progress indicator, as in a checkout, and it looks forward. Breadcrumbs show the path above the current page."
+   ],
+   "key": "INT335-U5-012"
+  },
+  {
+   "topic": "Navigation and Accessibility",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Adding captions to videos mainly makes content accessible to which users?",
+   "code": "",
+   "options": [
+    "Users who are deaf or hard of hearing",
+    "Users who are colour-blind",
+    "Users who can use only a keyboard",
+    "Users on slow internet connections"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Captions show the spoken words and important sounds as text, so people who cannot hear the audio still get the content. They also help anyone watching in a noisy place or with the sound off.",
+   "why_wrong": [
+    "",
+    "Colour-blind users are helped by good contrast and by not relying on colour alone. Captions do nothing about colour.",
+    "Keyboard-only users need every control to work from the keyboard. Captions do not change how the video is operated.",
+    "Slow connections are helped by smaller files or lower resolution. Captions do not make anything load faster."
+   ],
+   "key": "INT335-U5-013"
+  },
+  {
+   "topic": "Feedback and Validation",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these test notes belongs in the Ideas quadrant of the Feedback Capture Matrix?",
+   "code": "",
+   "options": [
+    "\"I loved that delivery is included in the price.\"",
+    "\"The search bar was hard to find.\"",
+    "\"What happens to my saved list if I log out?\"",
+    "\"You could add a dark mode for reading at night.\""
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The Ideas quadrant holds new suggestions that the test sparks, and a proposed dark mode is one. Each of the other notes has its own quadrant: praise goes in Likes, a problem in Criticisms and an unanswered query in Questions.",
+   "why_wrong": [
+    "This praises something that already works, so it goes in Likes.",
+    "This reports a problem with the current design, so it goes in Criticisms.",
+    "This is something the participant wanted to know and the prototype did not answer, so it goes in Questions.",
+    ""
+   ],
+   "key": "INT335-U5-014"
+  },
+  {
+   "topic": "Feedback and Validation",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which pairing of validation and verification is correct?",
+   "code": "",
+   "options": [
+    "Validation: building the thing right. Verification: building the right thing.",
+    "Validation: building the right thing. Verification: building the thing right.",
+    "Validation: checking the code runs correctly. Verification: checking that users like it.",
+    "Validation and verification are two names for checking that the product meets its requirements."
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Validation asks whether the design meets the real user need (the right thing). Verification asks whether it meets its specification (the thing right). The two are independent: a product can pass every specified test and still fail validation because it solves a problem users do not have.",
+   "why_wrong": [
+    "The two definitions are swapped. Meeting the specification is verification.",
+    "",
+    "This mixes the two up. Checking that code runs correctly is a specification check, and verification never asks what users like.",
+    "Treating validation as meeting the requirements makes it the same as verification. Validation has to be checked with real users, not against the document."
+   ],
+   "key": "INT335-U5-015"
+  },
+  {
+   "topic": "Usability Testing",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these is the strongest evidence that a new filter feature is discoverable?",
+   "code": "",
+   "options": [
+    "Most participants said they would use the filters",
+    "Participants rated the filters 5 out of 5 in a survey",
+    "Participants found and used the filters without being told where they were",
+    "Participants used the filters after the facilitator pointed them out"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A feature is discoverable when users find it by themselves, so the evidence has to be what they were seen to do on a task with no help. What people say they would do (stated preference) must never count for more than what they were observed doing.",
+   "why_wrong": [
+    "This is stated preference. Saying 'I would use the filters' does not show that anyone could find them.",
+    "A rating is an opinion, often given after the participant has already seen the feature. It is not evidence that they found it unaided.",
+    "",
+    "Once the facilitator points to the feature, the task tests obedience, not discoverability."
+   ],
+   "key": "INT335-U5-016"
+  },
+  {
+   "topic": "Usability Testing",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which usability-test task wording tests discoverability rather than obedience?",
+   "code": "",
+   "options": [
+    "\"Tap Profile, then Addresses, then Edit.\"",
+    "\"Find a way to change your delivery address.\"",
+    "\"Open Settings and look for the Addresses option.\"",
+    "\"Use the Edit button next to your address to change it.\""
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A discoverability task gives the participant a goal and leaves the route to them. Their hesitations and wrong turns then tell the team something. Any wording that names the screen, menu or control gives away the answer, so completing it only shows that the participant followed an instruction.",
+   "why_wrong": [
+    "This spells out the whole route step by step, so completing it only tests obedience.",
+    "",
+    "Naming the Settings screen and the Addresses option tells the participant where the feature is.",
+    "Naming the Edit button tells the participant which control to use, so it cannot show whether they would have found it."
+   ],
+   "key": "INT335-U5-017"
+  },
+  {
+   "topic": "Usability Testing",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which facilitator question is neutral rather than leading?",
+   "code": "",
+   "options": [
+    "\"Wasn't the new checkout much faster?\"",
+    "\"How much did you like our clean, simple menu?\"",
+    "\"What did you expect to happen when you tapped that?\"",
+    "\"You found the search bar easily, right?\""
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A neutral question carries no judgement and gives no hint of the answer, so the participant's own view comes through. The other three build in an opinion ('much faster', 'clean, simple', 'easily'), which pushes the participant to agree.",
+   "why_wrong": [
+    "Asking \"Wasn't it much faster?\" tells the participant that the expected answer is yes.",
+    "Calling the menu 'clean, simple' builds in praise and assumes they liked it.",
+    "",
+    "The 'right?' at the end assumes they succeeded and invites them to agree."
+   ],
+   "key": "INT335-U5-018"
+  },
+  {
+   "topic": "Customer Experience",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which complaint is about the wider customer experience rather than the usability of the app's interface?",
+   "code": "",
+   "options": [
+    "\"I could not find the Save button on the form.\"",
+    "\"The checkout made me type my address twice.\"",
+    "\"My refund took three weeks to arrive.\"",
+    "\"The text on the payment screen was too small to read.\""
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Usability covers how effectively, efficiently and satisfyingly someone completes an interaction with the product itself. A slow refund happens after the sale, away from any screen, so it belongs to the wider customer experience. Calling it a usability problem mixes up the two ideas.",
+   "why_wrong": [
+    "Not finding a control is an effectiveness problem inside the interface, so it is a usability problem.",
+    "Typing the same details twice is an efficiency problem in the interaction, so it is a usability problem.",
+    "",
+    "Text too small to read on a screen is an interface problem, so it is a usability problem."
+   ],
+   "key": "INT335-U5-019"
+  },
+  {
+   "topic": "Customer Experience",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about usability and customer experience is correct?",
+   "code": "",
+   "options": [
+    "A highly usable interface guarantees a good customer experience.",
+    "Customer experience covers only how easy the product's screens are to use.",
+    "A product can be very usable and still give a poor customer experience.",
+    "Usability includes advertising, delivery and refunds."
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Usability is one part of customer experience. It covers the quality of an interaction with the product, while CX also includes advertising, purchase, delivery, support, refunds and communication. So an app that is easy to use can still leave customers unhappy if deliveries are late or support is unhelpful.",
+   "why_wrong": [
+    "This treats usability as enough on its own. Problems elsewhere in the journey, such as delivery, support or refunds, can still ruin the experience.",
+    "This shrinks CX down to usability. CX covers every interaction with the brand, not just the screens.",
+    "",
+    "This stretches usability until it means CX. Advertising, delivery and refunds happen outside any single interaction with the product."
+   ],
+   "key": "INT335-U5-020"
+  },
+  {
+   "topic": "Journey Mapping",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "On a customer journey map, which layer would hold the entry \"Add live order tracking here to reduce worry\"?",
+   "code": "",
+   "options": [
+    "Emotions",
+    "Actions",
+    "Channels",
+    "Opportunities"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The entry suggests an improvement the team could make, and that is what the Opportunities layer records. It mentions worry, but the customer's worry itself would go in Emotions. The proposed fix belongs in Opportunities.",
+   "why_wrong": [
+    "The word 'worry' is a trap. Emotions records how the customer feels, not what the team could change.",
+    "Actions records what the customer does at each stage, such as placing or tracking an order. It does not record design changes.",
+    "Channels records how contact happens (app, SMS, call centre), not ideas for improvement.",
+    ""
+   ],
+   "key": "INT335-U5-021"
+  },
+  {
+   "topic": "Journey Mapping",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which journey-map entry belongs in the Thoughts layer rather than the Emotions layer?",
+   "code": "",
+   "options": [
+    "Anxious",
+    "\"Did my payment actually go through?\"",
+    "Relieved",
+    "Frustrated"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The Thoughts layer records what the customer is thinking at that stage, often written as the question or sentence running through their head. The Emotions layer records how they feel, usually as one feeling word. 'Anxious', 'Relieved' and 'Frustrated' therefore all go in Emotions.",
+   "why_wrong": [
+    "'Anxious' is a feeling, so it goes in Emotions.",
+    "",
+    "'Relieved' is a feeling, so it goes in Emotions.",
+    "'Frustrated' is a feeling, so it goes in Emotions."
+   ],
+   "key": "INT335-U5-022"
+  },
+  {
+   "topic": "Journey Mapping",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For a food-delivery brand, which of these is an indirect touchpoint?",
+   "code": "",
+   "options": [
+    "The brand's own ordering app",
+    "The delivery rider handing over the order",
+    "The brand's customer-support chat",
+    "A friend's post about the brand on social media"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A direct touchpoint is contact the brand itself provides and controls, such as its app, its delivery staff and its support channels. An indirect touchpoint reaches the customer through someone else, such as word of mouth, reviews or news, and it still shapes how the customer sees the brand. A friend's post is the brand reaching the customer through a third party.",
+   "why_wrong": [
+    "The brand's own app is contact that the brand provides directly, so it is a direct touchpoint.",
+    "The rider delivers on the brand's behalf as part of the service itself, so this is direct contact.",
+    "The support chat is run by the brand for its customers, so it is a direct touchpoint.",
+    ""
+   ],
+   "key": "INT335-U5-023"
+  },
+  {
+   "topic": "Navigation and Accessibility",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these is NOT a good accessibility practice?",
+   "code": "",
+   "options": [
+    "Giving every form field a visible text label",
+    "Marking form errors only by turning the field border red",
+    "Making every feature usable with the keyboard alone",
+    "Keeping strong contrast between text and its background"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Colour must never be the only way information is shown. Colour-blind users and screen-reader users may miss a red border completely. An error should also be shown in text, such as 'Enter a valid email', or with an icon.",
+   "why_wrong": [
+    "A visible label tells every user, including screen-reader users, what the field is for, so this is good practice.",
+    "",
+    "Keyboard access serves users who cannot use a mouse, so this is good practice.",
+    "Strong contrast helps low-vision users read the text, so this is good practice."
+   ],
+   "key": "INT335-U5-024"
+  },
+  {
+   "topic": "Navigation and Accessibility",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these breaks a basic navigation rule?",
+   "code": "",
+   "options": [
+    "Highlighting the current page in the main menu",
+    "Moving the main menu to a different position on each page",
+    "Using clear labels such as \"Fees\" instead of vague ones such as \"Stuff\"",
+    "Providing a link back to the home page from every page"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Navigation should be consistent: the main menu stays in the same place with the same labels on every page, so users learn it once and never have to hunt for it. Highlighting the current page, clear labels and a link home from every page are standard rules. They help users see where they are and where they can go.",
+   "why_wrong": [
+    "Highlighting the current page tells users where they are, so it follows the navigation rules.",
+    "",
+    "Clear, descriptive labels help users predict what each link leads to, so they follow the rules.",
+    "A link home from every page lets lost users start again, so it follows good navigation practice."
+   ],
+   "key": "INT335-U5-025"
+  },
+  {
+   "topic": "Feedback and Validation",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "While testing a paper prototype of a canteen pre-order app, three different participants ask, \"Does the timer mean my food is ready, or that my order will be cancelled?\" Where should the team record this in the Feedback Capture Matrix, and what does it tell them?",
+   "code": "",
+   "options": [
+    "Criticisms: participants disliked having a countdown timer on the order screen",
+    "Questions: the timer's meaning is unclear and needs to be clarified or explored",
+    "Ideas: participants are proposing an automatic order-cancellation feature",
+    "Likes: participants noticed the timer, which shows it is doing its job"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The Questions quadrant holds the questions the experience raised in users' minds. When several participants ask the same thing, the design is not communicating what the timer means, so the team should clarify it or investigate further in the next iteration. Nobody expressed dislike or proposed something new, so Criticisms and Ideas do not fit.",
+   "why_wrong": [
+    "Nobody said they disliked the timer; a question about what it means is not a complaint, and filing it as one hides that the real issue is unclear communication.",
+    "",
+    "Participants asked what the timer does; they did not suggest any new feature, so there is no idea to record.",
+    "Noticing an element is not approving of it; confusion about its meaning is the opposite of evidence that it works."
+   ],
+   "key": "INT335-U5-026"
+  },
+  {
+   "topic": "Feedback and Validation",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A hostel laundry app is built exactly to the warden's requirement list: book a slot, cancel a slot, pay online. Every item is implemented and passes its checks. After launch, students still walk to the laundry room, because what they actually wanted was to see which machines are free right now. Which activity, done earlier, would most likely have caught this?",
+   "code": "",
+   "options": [
+    "Re-checking every feature against the warden's requirement list before launch",
+    "Having a second developer review the code for bugs and errors",
+    "Testing the booking and payment flows on more phone models",
+    "Testing a rough prototype with students to check it meets their real need"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "This is a validation failure: the app was built right (it matches the requirement list) but it was not the right thing for students. Validation asks whether the design meets the real user need, and only real users can answer that, so a cheap prototype tested with students would have shown they cared about live machine availability. Re-checking the list, code review and device testing are all verification, which the app had already passed.",
+   "why_wrong": [
+    "This is verification; the app already matched every item on the list, so re-checking the list cannot reveal that the list itself missed the need.",
+    "Code review checks that the thing was built right; there were no bugs, the problem was building the wrong thing.",
+    "Device testing confirms the existing flows work; it says nothing about whether students needed those flows at all.",
+    ""
+   ],
+   "key": "INT335-U5-027"
+  },
+  {
+   "topic": "Feedback and Validation",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "After a round of testing, a team fills a sheet with the columns Issue, Evidence, Frequency, Severity and Follow-up, and labels it their Feedback Capture Matrix. What is accurate?",
+   "code": "",
+   "options": [
+    "It is a table for prioritising issues; the Feedback Capture Matrix is a four-quadrant grid of Likes, Criticisms, Questions and Ideas",
+    "It is the Feedback Capture Matrix in its expanded form, with one column for each stage of analysing a test",
+    "It is the Feedback Capture Matrix, but the Severity column should be renamed Criticisms to match the standard quadrants",
+    "It is the Feedback Capture Matrix, since any grid that sorts test feedback into labelled columns counts as one"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The Feedback Capture Matrix has exactly four quadrants (Likes, Criticisms, Questions and Ideas) and is used to sort raw feedback as it is captured. A sheet that ranks issues by frequency and severity and lists follow-up actions is a prioritisation table. It is useful after the grid, but it is a different tool, and calling it the matrix mixes up capturing feedback with deciding what to fix first.",
+   "why_wrong": [
+    "",
+    "There is no expanded five-column version; the matrix has four fixed quadrants, and these columns are a prioritisation layout.",
+    "Renaming one column still leaves Issue, Evidence, Frequency and Follow-up, none of which are quadrants; the matrix is a different tool, not a relabelled version of this table.",
+    "The matrix is a specific four-quadrant grid, not a name for any table that records feedback."
+   ],
+   "key": "INT335-U5-028"
+  },
+  {
+   "topic": "Usability Testing",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "In a usability test of a library app, the participant hovers over an icon and asks the facilitator, \"Is this the one for renewing my book?\" What should the facilitator do?",
+   "code": "",
+   "options": [
+    "Say \"Yes, that's Renew\" so the session keeps moving",
+    "Show the renewal steps once, then ask the participant to repeat them",
+    "Turn it back neutrally: \"What do you think it does?\"",
+    "Say \"Good guess, most people find that icon easy\" to reassure them"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The test measures whether people can find renewal on their own, so the facilitator must not name the control, demonstrate the workflow or add a judgment. Turning the question back keeps the participant working from their own understanding. Their answer also reveals what they expect the icon to do, which is exactly the data the team needs.",
+   "why_wrong": [
+    "Confirming the icon names the control and gives away the answer, so the task no longer tests whether the icon is understandable.",
+    "Demonstrating the workflow turns the rest of the task into copying, which tests memory of the demo instead of the design.",
+    "",
+    "It confirms the answer and adds a judgment ('easy') that pressures the participant to agree."
+   ],
+   "key": "INT335-U5-029"
+  },
+  {
+   "topic": "Usability Testing",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team wants to learn whether hostel students will actually use a new mess-feedback kiosk. Which session plan follows \"Show, don't tell\"?",
+   "code": "",
+   "options": [
+    "Ask students \"Would you use a kiosk like this after meals?\" and note their answers",
+    "Play a video of someone using the kiosk and ask students to rate the idea from 1 to 5",
+    "Put a prototype kiosk outside the mess, ask students to leave feedback on today's lunch, and watch",
+    "Hand out a survey asking how often students expect they would leave feedback"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "\"Show, don't tell\" means asking participants to perform the task, not to describe what they would do. Only the observed session produces behaviour: where students hesitate, what they skip and whether they finish. Answers about future use, ratings of a video and survey predictions are all stated preference, which is weaker evidence than what people are seen doing.",
+   "why_wrong": [
+    "This asks students to tell you what they would do, and stated intentions often differ from actual behaviour.",
+    "Watching someone else and rating the idea records an opinion, not the participant's own use of the kiosk.",
+    "",
+    "A survey collects predictions about future behaviour, which is telling, not showing."
+   ],
+   "key": "INT335-U5-030"
+  },
+  {
+   "topic": "Customer Experience",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Users of a food-delivery app open the order-tracking screen, but the status stays on \"Preparing\" for 15 minutes even after the rider has left, so they keep refreshing and some call the restaurant. Which statement is correct?",
+   "code": "",
+   "options": [
+    "The tracking screen is a pain point; the stuck status is the touchpoint where it occurs",
+    "The tracking screen is a touchpoint; the stuck status is a pain point at that touchpoint",
+    "Both are touchpoints, because the user comes into contact with each of them",
+    "Both are pain points, because the user feels frustrated at this stage"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A touchpoint is any moment of contact between the user and the service, which here is the tracking screen. A pain point is an obstacle at a touchpoint that creates effort, delay, confusion or dissatisfaction, which here is the status not updating and causing repeated refreshing and calls. The screen would still be a touchpoint even if it worked perfectly, which is why the two terms are not interchangeable.",
+   "why_wrong": [
+    "This swaps the terms: the screen is where contact happens (the touchpoint), and the outdated status is the problem there (the pain point).",
+    "",
+    "The stuck status is not a separate point of contact; it is a problem occurring at the tracking screen.",
+    "The screen itself is not an obstacle but the place where contact happens; calling every contact point a pain point erases the distinction."
+   ],
+   "key": "INT335-U5-031"
+  },
+  {
+   "topic": "Customer Experience",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A college's fee-refund web page says refunds are processed in 3 working days. A student who phones the accounts office is told it takes 3 weeks. The refund page itself is clear and easy to use. What kind of problem is this?",
+   "code": "",
+   "options": [
+    "A usability problem with the refund page, since its stated processing time is wrong",
+    "No problem at all, since each touchpoint works correctly when judged on its own",
+    "A navigation problem, since the student could not find the right refund time online",
+    "A customer-experience problem: two touchpoints give conflicting answers, causing confusion and distrust"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Customer experience is the customer's whole perception across every touchpoint, including phone calls and web pages. The refund page is usable, but it and the accounts office give different answers, so the problem sits between touchpoints, not inside one interface. The fix is to make every touchpoint give the same correct information, not to redesign the page.",
+   "why_wrong": [
+    "The page is clear and easy to use; the problem is the mismatch between two touchpoints, and nothing shows the page is the one that is wrong.",
+    "Each touchpoint working alone does not make the experience good; the conflicting answers are exactly what the student experiences as the problem.",
+    "The student did find the refund time on the page; the difficulty is that another touchpoint contradicts it, not that it was hard to locate.",
+    ""
+   ],
+   "key": "INT335-U5-032"
+  },
+  {
+   "topic": "Journey Mapping",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team is building a journey map for ordering from a food-delivery app. Which placement of these four research notes into layers is correct? (1) \"Taps Track order three times in a minute\" (2) \"Is the rider even moving?\" (3) \"Anxious, getting irritated\" (4) \"Push notification on the phone\"",
+   "code": "",
+   "options": [
+    "1 Actions, 2 Thoughts, 3 Emotions, 4 Channels",
+    "1 Emotions, 2 Thoughts, 3 Actions, 4 Channels",
+    "1 Actions, 2 Emotions, 3 Thoughts, 4 Opportunities",
+    "1 Channels, 2 Thoughts, 3 Emotions, 4 Actions"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Actions are what the user does (tapping Track order), Thoughts are what they are asking themselves (whether the rider is moving), Emotions are how they feel (anxious, irritated), and Channels are the medium contact happens through (a push notification). Opportunities are the team's ideas for improvement, and none of these four notes is an improvement idea.",
+   "why_wrong": [
+    "",
+    "Repeated tapping is something the user does, so it is an action; the anxiety it hints at is recorded separately in the Emotions layer.",
+    "A question in the user's head is a thought, 'anxious' is an emotion, and a push notification is a channel, not an improvement idea.",
+    "Tapping is something the user does (an action) and a push notification is the medium contact comes through (a channel); this option swaps them."
+   ],
+   "key": "INT335-U5-033"
+  },
+  {
+   "topic": "Journey Mapping",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team's journey map for booking a sports-complex slot shows the emotion line fairly steady across most stages but dropping sharply at \"Waiting for approval email\", where several pain points are listed. Where does the map most directly tell the team to look for opportunities?",
+   "code": "",
+   "options": [
+    "At the stage with the most actions listed, since more steps give more to improve",
+    "At the very first stage, since a user's first impression shapes the rest",
+    "At \"Waiting for approval email\", where the emotional low and the pain points coincide",
+    "At the stage where emotion is highest, to make the best part even better"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A journey map's emotion line and pain points show where the experience breaks down, and those low points are where the team should look first for improvements to record in the Opportunities layer. A stage with many actions, or the first stage, may be perfectly smooth for the user. Here the map's own evidence points to the waiting stage.",
+   "why_wrong": [
+    "More actions does not mean more trouble; a busy stage can be smooth, and the map shows the trouble is at the waiting stage.",
+    "Nothing on the map points to the first stage; choosing it ignores the evidence the map provides.",
+    "",
+    "Polishing what already works ignores where users are struggling, which is what the emotional low and pain points reveal."
+   ],
+   "key": "INT335-U5-034"
+  },
+  {
+   "topic": "Navigation and Accessibility",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A blind student uses a screen reader to jump through the links on a college notice page. Every link is written as \"Click here\", so she hears \"Click here, click here, click here\" with no idea where each one goes. Which fix addresses this?",
+   "code": "",
+   "options": [
+    "Make every link bold and a brighter shade of blue so it stands out",
+    "Rewrite each link to name its destination, e.g. \"Download the exam timetable (PDF)\"",
+    "Add alt text to all the images on the notice page",
+    "Move all the links into a single list at the bottom of the page"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Screen-reader users often move through a page link by link, so each link must make sense on its own. Descriptive link text tells them where each link goes. Visual styling does not reach a screen reader at all.",
+   "why_wrong": [
+    "Bold and colour are visual cues; a screen reader reads the same 'Click here' text whatever the styling.",
+    "",
+    "Alt text fixes unlabelled images, but the problem here is the link text, which stays meaningless.",
+    "Moving identical 'Click here' links into one place still leaves them impossible to tell apart."
+   ],
+   "key": "INT335-U5-035"
+  },
+  {
+   "topic": "Navigation and Accessibility",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student who cannot use a mouse fills in an online registration form with the Tab key. The focus jumps from the Name field straight to the footer, and she cannot see which element is currently selected. What should be fixed?",
+   "code": "",
+   "options": [
+    "Increase the font size of the form labels and input text",
+    "Add captions to the instruction video above the form",
+    "Add a colour-coded progress bar at the top of the form",
+    "Make the tab order follow the form's layout and show a visible focus outline"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Keyboard users rely on Tab moving through controls in a logical order and on a visible focus indicator to know where they are. Both are broken here: the order skips to the footer and there is no outline. Bigger text, captions and a progress bar help with other needs but leave keyboard navigation broken.",
+   "why_wrong": [
+    "Larger text helps people with low vision, but it does not fix the jumping tab order or the missing focus indicator.",
+    "Captions help deaf or hard-of-hearing users with video; this student's problem is keyboard navigation.",
+    "A progress bar shows how far through the form she is; it neither fixes the order nor shows which field has focus.",
+    ""
+   ],
+   "key": "INT335-U5-036"
+  },
+  {
+   "topic": "Navigation and Accessibility",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "On a university website, the main menu items are internal office codes plus two vague labels, \"Misc\" and \"Other\". New students keep using the search box or asking seniors to find simple pages such as hostel allotment. Which navigation rule is being broken?",
+   "code": "",
+   "options": [
+    "Labels should use plain words users recognise, not internal codes or vague catch-alls",
+    "The menu should list as many items as possible so every page is one click away",
+    "Menus should be replaced by the search box, which students are already using",
+    "Labels should be as short as possible, even if that means abbreviating them"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Navigation works when people can predict what is behind each label. Internal office codes only make sense to staff, and \"Misc\" or \"Other\" give no clue, so students fall back on search or on asking others. Relabelling with plain descriptive words such as \"Hostel\" or \"Exams\" fixes the menu at its source.",
+   "why_wrong": [
+    "",
+    "Adding more items makes a menu harder to scan; the problem is unclear labels, not too few links.",
+    "Search is a useful backup, but students turning to it is a symptom of a broken menu, not a fix for it.",
+    "Abbreviating is what caused the problem; short labels help only when they are still clear to users."
+   ],
+   "key": "INT335-U5-037"
+  },
+  {
+   "topic": "Feedback and Validation",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A client interviewed students and wrote a detailed brief. A team builds a prototype that meets every point in the brief and says, \"Our design is validated, because it matches a brief that came from student interviews.\" What is the precise problem with this claim?",
+   "code": "",
+   "options": [
+    "There is none: the brief came from student interviews, so a design that meets every point in it meets their real need",
+    "Matching the brief is verification; validation needs real students to confirm the design meets their need, since the brief may have misread it",
+    "It counts as validation only once an independent quality team, not the designers, checks the prototype against every point in the brief",
+    "No prototype can be validated; validation happens only after the final code has been fully tested for bugs"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Verification asks whether a design meets its specification (building the thing right); validation asks whether it meets the real user need (building the right thing). A brief is a specification, even one written from interviews, and it can misread the need, so matching it proves only verification. Validation needs the prototype tested with real users, and changing who checks it against the brief does not change what is being checked.",
+   "why_wrong": [
+    "This treats conformance to a document as validation, collapsing validation into verification; a brief written from interviews can still get the need wrong.",
+    "",
+    "An independent checker is still comparing the prototype with the brief, so it is still verification.",
+    "Testing code for bugs is verification; validation is often done early, with rough prototypes and real users."
+   ],
+   "key": "INT335-U5-038"
+  },
+  {
+   "topic": "Feedback and Validation",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A team is testing the concept of a live seat tracker for the college bus. Which result would best validate that the concept meets students' real need?",
+   "code": "",
+   "options": [
+    "The QA checklist confirms every feature in the specification works exactly as written",
+    "In interviews, most students say they would definitely check the tracker every morning",
+    "In a one-week trial, students using the prototype checked it before leaving and changed buses based on it",
+    "Every participant completed the \"check seats\" task when told which buttons to press"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Validation asks whether the design meets the real user need, and the strongest evidence is behaviour observed under realistic conditions. Students actually using the tracker and changing their choices because of it shows it solves a real problem. A passed checklist is verification, stated intentions are opinions, and a task completed with step-by-step instructions only proves participants followed directions.",
+   "why_wrong": [
+    "Meeting the specification is verification; the specification could describe a feature students do not need.",
+    "This is stated preference; what people say they will do is weaker evidence than what they are seen doing.",
+    "",
+    "Naming the buttons tests obedience; completing guided steps says nothing about whether students need the tracker."
+   ],
+   "key": "INT335-U5-039"
+  },
+  {
+   "topic": "Usability Testing",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "Which of these facilitator lines undermines what a usability test of a bill-splitting app is trying to measure?",
+   "code": "",
+   "options": [
+    "\"Please keep saying out loud what you're looking at and thinking as you go.\"",
+    "\"Your roommate paid for dinner. Use the app to pay back your share.\"",
+    "\"Before you start, let me quickly show you how the bill screen works so you feel comfortable.\"",
+    "\"What did you expect to happen when you tapped that?\""
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A usability test measures whether people can use the design on their own, so the facilitator must not demonstrate the workflow, name controls or embed a judgment. Showing the bill screen first gives participants the route, so their later success reflects the demo, not the design. \"Show, don't tell\" means the participant shows by doing the task, not that the facilitator shows them how. The other lines are a think-aloud prompt, a goal-based task and a neutral follow-up question.",
+   "why_wrong": [
+    "This is the standard think-aloud prompt; it asks for the participant's thoughts without steering them.",
+    "This gives a goal and leaves the route to the participant, which is how a discoverability task should be worded.",
+    "",
+    "This is an open, neutral question about the participant's expectation; it neither suggests an answer nor judges the choice."
+   ],
+   "key": "INT335-U5-040"
+  },
+  {
+   "topic": "Usability Testing",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A usability test of a hostel gym-slot booking flow reports: all 10 participants booked a slot, the average time was 6 minutes against a target of 1 minute, and 7 of 10 described the process as frustrating. Which conclusion is correct?",
+   "code": "",
+   "options": [
+    "Usability is good, because every participant completed the task",
+    "Effectiveness is good, but efficiency and satisfaction are poor",
+    "Efficiency is good because everyone finished, but satisfaction is poor",
+    "Effectiveness is poor because the task took six times longer than the target"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Usability is judged on effectiveness (can users complete the task), efficiency (how much time and effort it takes) and satisfaction (how users feel about it). 10 of 10 completions means effectiveness is good, but 6 minutes against a 1-minute target is poor efficiency, and 7 of 10 frustrated is poor satisfaction. Completion alone does not make a design usable.",
+   "why_wrong": [
+    "Completion covers only effectiveness; it ignores the time taken and how users felt.",
+    "",
+    "Finishing the task is effectiveness; efficiency is about time and effort, and 6 minutes against a 1-minute target is poor.",
+    "Time taken measures efficiency; effectiveness depends on whether the task was completed, and everyone completed it."
+   ],
+   "key": "INT335-U5-041"
+  },
+  {
+   "topic": "Customer Experience",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A food-delivery app's reviews keep saying, \"I never know whether my refund was approved.\" Usability tests show people submit a refund request in about 30 seconds with no errors. Where should the team act first?",
+   "code": "",
+   "options": [
+    "Redesign the refund form so that requests can be submitted even faster, in fewer taps",
+    "Run a larger round of usability tests on the refund form with more participants",
+    "Nowhere: the form passed usability testing, so the complaint is not a design problem at all",
+    "Keep customers informed after they submit, e.g. a message when the refund is approved and when it is paid"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The complaint is not about submitting the request, which the tests show works well; it is about the silence afterwards. Customer experience covers communication and refunds as well as screens, so the pain point sits after submission, and the fix is to keep the customer informed there. Speeding up or re-testing the form works on a part of the journey that is not broken.",
+   "why_wrong": [
+    "The form is already fast and error-free; making it faster does not tell anyone whether their refund was approved.",
+    "The form has already been tested and works; more tests of it examine the wrong touchpoint.",
+    "A usable form does not guarantee a good experience; communication after submission is part of customer experience and is where the problem lies.",
+    ""
+   ],
+   "key": "INT335-U5-042"
+  },
+  {
+   "topic": "Customer Experience",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A grocery-delivery brand advertises \"Delivered in 10 minutes.\" Orders actually arrive in about 20 minutes, which is faster than most competitors, yet ratings fall and reviews call the service \"slow\". What best explains this?",
+   "code": "",
+   "options": [
+    "The advert is a touchpoint that set a 10-minute expectation; customers judge the 20-minute delivery against that promise",
+    "Since delivery is fast, the low ratings must come from a usability problem in the app's ordering screens",
+    "Advertising sits outside customer experience, so the ratings must reflect some other part of the service",
+    "Customers are being unfair, since 20 minutes beats competitors, so nothing in the experience needs changing"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Customer experience is the customer's whole perception across advertising, purchase, delivery, support and communication. The advert set an expectation of 10 minutes, so a 20-minute delivery feels slow even though it is quick by market standards. The problem is the gap between promise and delivery, which the brand can close by changing either the promise or the delivery time.",
+   "why_wrong": [
+    "",
+    "Nothing points to the ordering screens; the reviews complain about slowness, which ties directly to the advert's promise.",
+    "Advertising is one of the touchpoints that shape customer experience, so it cannot be ruled out.",
+    "Comparing with competitors ignores that customers judge against what they were promised; falling ratings show a real experience problem."
+   ],
+   "key": "INT335-U5-043"
+  },
+  {
+   "topic": "Journey Mapping",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A classmate insists that every customer journey map must use the same fixed stages (Awareness, Consideration, Purchase, Retention, Advocacy) and marks down a map of a student's hostel check-in because its stages are \"Arrive at gate\", \"Verify documents\" and \"Get room key\". Which response is accurate?",
+   "code": "",
+   "options": [
+    "The classmate is right: Awareness, Consideration, Purchase, Retention and Advocacy are the stages every journey map must use",
+    "The classmate is partly right: stages can vary, but they must always be grouped under Before, During and After",
+    "Stages are named after the steps of the journey being mapped; the stable part is the layers, such as actions, thoughts, emotions and channels",
+    "Journey maps have no stages at all; they simply list the user's emotions in the order they occurred"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "There is no single fixed list of journey-map stages: they are named after the steps of the specific experience being studied, so \"Arrive at gate\" and \"Get room key\" are valid. What stays consistent is the set of layers recorded at each stage: actions, thoughts, emotions, channels and opportunities. A buying-funnel list suits some purchase journeys but would hide the real steps of a hostel check-in.",
+   "why_wrong": [
+    "That list is one common way to describe a buying journey, not a rule for every map; forcing it onto a hostel check-in would hide the real steps.",
+    "Before, During and After is another rough grouping, not a compulsory structure; stages still depend on the journey being mapped.",
+    "",
+    "Journey maps are organised into stages across time; removing the stages loses the structure the layers are recorded against."
+   ],
+   "key": "INT335-U5-044"
+  },
+  {
+   "topic": "Journey Mapping",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A team wants to show how a student's feelings change step by step, from registering for a college fest online to collecting the participation certificate, and to pinpoint the exact step where contact with the organisers goes wrong. Which tool fits this best?",
+   "code": "",
+   "options": [
+    "An empathy map, since it has a Feels section that records the student's emotions",
+    "A customer journey map, since it sets out the stages in order with the emotions and pain points at each",
+    "A persona, since it summarises the typical student's goals, needs and frustrations",
+    "A Feedback Capture Matrix, since it collects the student's likes, criticisms and questions"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The deciding condition is change over time at specific steps. A journey map is organised by stages in sequence, so it shows where emotions dip and which touchpoint causes the problem. An empathy map, a persona and a Feedback Capture Matrix can all hold feelings or frustrations, but none of them is laid out step by step through the experience.",
+   "why_wrong": [
+    "An empathy map captures what a user says, thinks, does and feels as one snapshot with no sequence of steps, so it cannot locate where things go wrong.",
+    "",
+    "A persona describes who the user is; it does not trace their experience stage by stage.",
+    "The matrix sorts feedback on a prototype into four quadrants; it has no timeline of the journey."
+   ],
+   "key": "INT335-U5-045"
+  },
+  {
+   "topic": "Navigation and Accessibility",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A college web page has two images: a chart of this year's placement numbers and a purely decorative wavy line used as a section divider. Which alt-text plan is correct?",
+   "code": "",
+   "options": [
+    "Describe both in detail; for example, give the divider the alt text \"blue wavy decorative line\"",
+    "Give the divider an empty alt, and leave the chart without alt because a chart is purely visual",
+    "Leave alt off both images and give them descriptive file names such as placement-chart.png",
+    "Give the chart alt text stating what it shows, and give the divider an empty alt (alt=\"\") so it is skipped"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Alt text exists to give screen-reader users the information an image carries. The chart carries information (the placement numbers), so its alt text must convey it. The divider carries none, so an empty alt tells screen readers to skip it instead of reading out noise. The trap is 'every image needs descriptive alt text': decorative images are the exception.",
+   "why_wrong": [
+    "Describing a decorative divider adds noise that screen-reader users must listen through without gaining any information.",
+    "The chart is the image that carries information, so it needs alt text most; with no alt, a screen reader may read out the file name instead.",
+    "Without an alt attribute, screen readers may read file names, which are a poor substitute for a description and still announce the decorative divider.",
+    ""
+   ],
+   "key": "INT335-U5-046"
+  },
+  {
+   "topic": "Navigation and Accessibility",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which of these breaks the accessibility rule \"don't use colour alone to convey information\"?",
+   "code": "",
+   "options": [
+    "A line chart comparing two hostels' mess ratings where the lines differ only in being red and green, with a colour-swatch legend",
+    "A form error shown in red text that reads \"Enter a 10-digit phone number\" below the field",
+    "Required fields marked with a red asterisk, with a note at the top saying \"* Required\"",
+    "Links inside paragraphs shown in blue and underlined"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The rule is broken when colour is the only way to tell things apart. In the chart, someone who cannot distinguish red from green has no other cue (no labels, patterns or markers) to tell the two hostels apart. The red error message also states the problem in words, the asterisk is a symbol explained in text, and underlined links have a cue that does not depend on colour.",
+   "why_wrong": [
+    "",
+    "The error message states the problem in words, so the red colour is an extra cue, not the only one.",
+    "The asterisk is a shape explained by the '* Required' note, so users who cannot see red still get the information.",
+    "The underline marks links without relying on colour, so the blue is an additional cue, not the only one."
+   ],
+   "key": "INT335-U5-047"
+  }
+ ]
+}

@@ -1,0 +1,1111 @@
+{
+ "subject_code": "MTH165",
+ "unit": 6,
+ "unit_label": "Introduction to Fourier Series",
+ "questions": [
+  {
+   "topic": "Euler's Formulae",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A function f has period 2π and is defined on (−π, π). Its Fourier series is written as a₀/2 + Σ(aₙ cos nx + bₙ sin nx). Which formula gives bₙ?",
+   "code": "",
+   "options": [
+    "bₙ = (2/π) ∫ f(x) sin nx dx over (−π, π)",
+    "bₙ = (1/2π) ∫ f(x) sin nx dx over (−π, π)",
+    "bₙ = (1/π) ∫ f(x) sin nx dx over (−π, π)",
+    "bₙ = (1/π) ∫ f(x) cos nx dx over (−π, π)"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The period is 2L = 2π, so L = π, and every Euler coefficient on a full period carries the factor 1/L = 1/π. Multiply the series by sin nx and integrate over (−π, π). Orthogonality removes every other term and leaves bₙ·π, because ∫ sin² nx dx over (−π, π) = π. Hence bₙ = (1/π) ∫ f(x) sin nx dx.",
+   "why_wrong": [
+    "2/π belongs to the odd-function and half-range formulas, where the integral runs over (0, π) only. Over the full interval it doubles bₙ.",
+    "1/2π is the mean-value factor for the constant term. ∫ sin² nx dx is π, not 2π, so this factor halves bₙ.",
+    "",
+    "Integrating against cos nx gives aₙ, the cosine coefficient, not bₙ."
+   ],
+   "key": "MTH165-U6-001"
+  },
+  {
+   "topic": "Euler's Formulae",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "f(x) = x² for 0 < x < 2π, with period 2π. Taking a₀ = (1/π) ∫ f(x) dx over one period (so the constant term of the series is a₀/2), find a₀.",
+   "code": "",
+   "options": [
+    "4π²/3",
+    "8π²/3",
+    "2π²/3",
+    "16π²/3"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "a₀ = (1/π) ∫ x² dx over (0, 2π) = (1/π)·(2π)³/3 = (1/π)·8π³/3 = 8π²/3. The interval is (0, 2π), not (−π, π), so the familiar value 2π²/3 for x² on (−π, π) does not apply here. The constant term of the series would be a₀/2 = 4π²/3.",
+   "why_wrong": [
+    "4π²/3 is a₀/2, the constant term (the mean value), not a₀ itself.",
+    "",
+    "2π²/3 is a₀ for x² on (−π, π), but this integral runs over (0, 2π).",
+    "This uses the factor 2/π, which belongs only to even/odd or half-range formulas, not to a full period."
+   ],
+   "key": "MTH165-U6-002"
+  },
+  {
+   "topic": "Euler's Formulae",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "For a positive integer n, evaluate ∫ cos² nx dx over (−π, π).",
+   "code": "",
+   "options": [
+    "2π",
+    "π/2",
+    "0",
+    "π"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Write cos² nx = (1 + cos 2nx)/2. Over (−π, π) the constant 1/2 integrates to π and cos 2nx integrates to 0, so the result is π. This π is the reason Euler's formulae on (−π, π) carry the factor 1/π.",
+   "why_wrong": [
+    "2π treats cos² nx as if it were 1, dropping the 1/2 in (1 + cos 2nx)/2.",
+    "π/2 is the integral over (0, π) only, which is half the required interval.",
+    "0 is the orthogonality result for cos mx·cos nx with m ≠ n, not for the square of one cosine.",
+    ""
+   ],
+   "key": "MTH165-U6-003"
+  },
+  {
+   "topic": "Convergence and Discontinuities",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "For the Fourier series of f(x) to converge, Dirichlet's conditions are",
+   "code": "",
+   "options": [
+    "Sufficient, but not necessary",
+    "Necessary, but not sufficient",
+    "Both necessary and sufficient",
+    "Neither necessary nor sufficient"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "If f satisfies Dirichlet's conditions, its Fourier series is guaranteed to converge: to f at points of continuity and to the mean of the one-sided limits at jumps. So the conditions are sufficient. Some functions that break them still have convergent Fourier series, so they are not necessary.",
+   "why_wrong": [
+    "",
+    "It is the other way round. Meeting the conditions guarantees convergence, but a series can converge without them.",
+    "They are not necessary, because some functions that violate Dirichlet's conditions still have convergent Fourier series.",
+    "They are sufficient: every f that meets them has a convergent Fourier series."
+   ],
+   "key": "MTH165-U6-004"
+  },
+  {
+   "topic": "Convergence and Discontinuities",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A function f satisfies Dirichlet's conditions and has a jump discontinuity at x = a. At x = a its Fourier series converges to",
+   "code": "",
+   "options": [
+    "f(a⁺)",
+    "f(a)",
+    "½[f(a⁻) + f(a⁺)]",
+    "f(a⁺) − f(a⁻)"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "At a jump the series does not pick either side. It converges to the average of the left-hand and right-hand limits, ½[f(a⁻) + f(a⁺)]. At a point of continuity the two limits are equal, and the average reduces to f(a).",
+   "why_wrong": [
+    "The right-hand limit alone ignores the left-hand limit. The series averages the two.",
+    "The defined value f(a) plays no part at a jump. Equating the series to f(a) there is the usual mistake when deducing sums.",
+    "",
+    "This is the size of the jump, not the value the series converges to."
+   ],
+   "key": "MTH165-U6-005"
+  },
+  {
+   "topic": "Convergence and Discontinuities",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "f(x) = −1 for −π < x < 0 and f(x) = 2 for 0 < x < π, with period 2π. What value does its Fourier series take at x = 0?",
+   "code": "",
+   "options": [
+    "2",
+    "1/2",
+    "−1",
+    "3/2"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "x = 0 is a jump, with f(0⁻) = −1 and f(0⁺) = 2. The series converges to ½[f(0⁻) + f(0⁺)] = ½(−1 + 2) = 1/2.",
+   "why_wrong": [
+    "2 is only the right-hand limit f(0⁺).",
+    "",
+    "−1 is only the left-hand limit f(0⁻).",
+    "3/2 is half the jump, ½[f(0⁺) − f(0⁻)]. The rule adds the two limits; it does not subtract them."
+   ],
+   "key": "MTH165-U6-006"
+  },
+  {
+   "topic": "Change of Interval",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "f has period 2L and is defined on (0, 2L). Which formula gives the Fourier coefficient aₙ?",
+   "code": "",
+   "options": [
+    "aₙ = (2/L) ∫ f(x) cos(nπx/L) dx over (0, 2L)",
+    "aₙ = (1/L) ∫ f(x) cos nx dx over (0, 2L)",
+    "aₙ = (1/L) ∫ f(x) cos(nπx/L) dx over (0, L)",
+    "aₙ = (1/L) ∫ f(x) cos(nπx/L) dx over (0, 2L)"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "On any full interval of length 2L the Euler factor is 1/L. The argument is rescaled to nπx/L, so that cos(nπx/L) has period 2L. The integral must run over the whole period (0, 2L). With L = π this reduces to the familiar (1/π) ∫ f(x) cos nx dx.",
+   "why_wrong": [
+    "2/L is the factor for even/odd or half-range work over half the range. Over a full period it doubles aₙ.",
+    "cos nx has period 2π, not 2L. The argument must be rescaled to nπx/L.",
+    "(0, L) is only half the period, and a full-range coefficient integrates over (0, 2L).",
+    ""
+   ],
+   "key": "MTH165-U6-007"
+  },
+  {
+   "topic": "Change of Interval",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "f has period 4 and is expanded over (−2, 2). Which cosine appears in the nth term of its Fourier series?",
+   "code": "",
+   "options": [
+    "cos(nπx/2)",
+    "cos(nπx/4)",
+    "cos nx",
+    "cos nπx"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A period of 2L = 4 gives L = 2, and the terms are cos(nπx/L) and sin(nπx/L). So the nth cosine is cos(nπx/2). With n = 1 it has period 4, which matches f.",
+   "why_wrong": [
+    "",
+    "This puts 2L = 4 where L = 2 belongs. cos(πx/4) has period 8, not 4.",
+    "cos nx is the form for (−π, π). The change of interval to period 4 was skipped.",
+    "This comes from writing 2nπx/L instead of nπx/L. cos πx has period 2, not 4."
+   ],
+   "key": "MTH165-U6-008"
+  },
+  {
+   "topic": "Change of Interval",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "f has period 10 and is expanded over (0, 10), with the constant term of its Fourier series written as a₀/2. What factor multiplies the integral in each of the Euler formulae for a₀, aₙ and bₙ?",
+   "code": "",
+   "options": [
+    "1/10",
+    "2/5",
+    "1/5",
+    "1/π"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "A period of 2L = 10 gives L = 5. On any full interval of length 2L the Euler factor is 1/L, so every coefficient carries 1/5. For example, aₙ = (1/5) ∫ f(x) cos(nπx/5) dx over (0, 10).",
+   "why_wrong": [
+    "1/10 = 1/(2L) is the mean-value factor, and it halves every coefficient.",
+    "2/5 = 2/L is the half-range or even/odd factor. It is used only when integrating over half the range.",
+    "",
+    "1/π belongs to the interval (−π, π) of length 2π. It does not carry over to a period of 10."
+   ],
+   "key": "MTH165-U6-009"
+  },
+  {
+   "topic": "Even and Odd Functions",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "f is an odd function on (−π, π). Which statement about its Fourier coefficients is correct?",
+   "code": "",
+   "options": [
+    "Every bₙ is 0, so only cosine terms remain",
+    "a₀ and every aₙ are 0, so only sine terms remain",
+    "a₀ is 0, but the aₙ need not vanish",
+    "Every coefficient a₀, aₙ and bₙ is 0"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "If f is odd, then f(x) cos nx is odd, and the integral of an odd function over the symmetric interval (−π, π) is 0. So a₀ = aₙ = 0. But f(x) sin nx is odd × odd = even, so bₙ = (2/π) ∫ f(x) sin nx dx over (0, π), which is usually non-zero.",
+   "why_wrong": [
+    "That describes an even function. For an odd f, the cosine coefficients vanish.",
+    "",
+    "f(x) cos nx is odd for every n, not only for n = 0, so every aₙ vanishes too.",
+    "f(x) sin nx is even, so bₙ usually survives. Otherwise every odd f would have a zero series."
+   ],
+   "key": "MTH165-U6-010"
+  },
+  {
+   "topic": "Even and Odd Functions",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which of these functions is even on (−π, π)?",
+   "code": "",
+   "options": [
+    "x cos x",
+    "x³ + x",
+    "sin x + cos x",
+    "x sin x"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Test f(−x): (−x)·sin(−x) = (−x)(−sin x) = x sin x, so x sin x is even (odd × odd = even). Its Fourier series on (−π, π) therefore has only a constant and cosine terms.",
+   "why_wrong": [
+    "x cos x is odd × even = odd, since (−x)cos(−x) = −x cos x.",
+    "x³ + x is a sum of odd powers, so it is odd.",
+    "sin x + cos x is neither: f(−x) = −sin x + cos x equals neither f(x) nor −f(x).",
+    ""
+   ],
+   "key": "MTH165-U6-011"
+  },
+  {
+   "topic": "Half-Range Series",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "f is defined only on (0, π). Which formula gives bₙ in its half-range sine series Σ bₙ sin nx?",
+   "code": "",
+   "options": [
+    "bₙ = (2/π) ∫ f(x) sin nx dx over (0, π)",
+    "bₙ = (1/π) ∫ f(x) sin nx dx over (0, π)",
+    "bₙ = (2/π) ∫ f(x) cos nx dx over (0, π)",
+    "bₙ = (2/π) ∫ f(x) sin 2nx dx over (0, π)"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The half-range sine series is the Fourier series of the odd extension of f to (−π, π). For that extension, bₙ = (1/π) ∫ over (−π, π) = (2/π) ∫ over (0, π), because f(x) sin nx is even. So the factor 2/π always comes with the integral over the half range.",
+   "why_wrong": [
+    "",
+    "1/π with an integral over only (0, π) applies the full-range factor to half the range, which halves bₙ.",
+    "Integrating against cos nx gives a cosine coefficient, not a sine coefficient.",
+    "sin 2nx comes from treating (0, π) as a full period (2L = π). That gives a full-range series of period π, not the half-range series."
+   ],
+   "key": "MTH165-U6-012"
+  },
+  {
+   "topic": "Half-Range Series",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "The half-range cosine series of f on (0, L) is the full Fourier series of which function?",
+   "code": "",
+   "options": [
+    "The odd extension of f to (−L, L), with period 2L",
+    "f repeated with period L",
+    "The even extension of f to (−L, L), with period 2L",
+    "f on (0, L) and 0 on (−L, 0), with period 2L"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Reflecting f evenly, so that f(−x) = f(x), makes the extension even on the symmetric interval (−L, L). Then every bₙ = 0, and only a₀/2 and the cosine terms survive. That is exactly the half-range cosine series, with aₙ = (2/L) ∫ f(x) cos(nπx/L) dx over (0, L).",
+   "why_wrong": [
+    "The odd extension produces the half-range sine series, in which the aₙ vanish.",
+    "Repeating f with period L gives a full-range series on (0, L), which usually has both sine and cosine terms.",
+    "",
+    "Padding with zero gives a function that is neither even nor odd, so both sine and cosine terms appear."
+   ],
+   "key": "MTH165-U6-013"
+  },
+  {
+   "topic": "Half-Range Series",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Find b₁ in the half-range sine series of f(x) = 1 on (0, π).",
+   "code": "",
+   "options": [
+    "2/π",
+    "4/π",
+    "0",
+    "−4/π"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "b₁ = (2/π) ∫ sin x dx over (0, π) = (2/π)[−cos x] from 0 to π = (2/π)(1 + 1) = 4/π. The sine series represents the odd extension of f, so sine terms survive even though f = 1 looks even.",
+   "why_wrong": [
+    "This uses the full-range factor 1/π, but the half-range sine formula has 2/π.",
+    "",
+    "The half-range sine series uses the odd extension, not the constant 1 on (−π, π), so b₁ does not vanish.",
+    "Sign slip: the antiderivative of sin x is −cos x, and [−cos x] from 0 to π is +2."
+   ],
+   "key": "MTH165-U6-014"
+  },
+  {
+   "topic": "Euler's Formulae",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "f(x) = x for 0 < x < 2π, with period 2π. Find bₙ.",
+   "code": "",
+   "options": [
+    "−2/n",
+    "2/n",
+    "−4/n",
+    "2(−1)ⁿ⁺¹/n"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "bₙ = (1/π) ∫ x sin nx dx over (0, 2π). By parts, ∫ x sin nx dx = [−x cos nx/n] + (1/n) ∫ cos nx dx. The second part is 0 over a full period, and the bracket gives −2π·cos 2nπ/n = −2π/n. So bₙ = (1/π)(−2π/n) = −2/n.",
+   "why_wrong": [
+    "",
+    "Sign slip in integration by parts: the antiderivative of sin nx is −cos nx/n.",
+    "This uses the factor 2/π, which belongs to half-range or even/odd work, not to a full period.",
+    "This is bₙ for x on (−π, π). On (0, 2π) the upper limit gives cos 2nπ = 1, not cos nπ = (−1)ⁿ."
+   ],
+   "key": "MTH165-U6-015"
+  },
+  {
+   "topic": "Euler's Formulae",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "f(x) = 0 for −π < x < 0 and f(x) = 1 for 0 < x < π, with period 2π. Find bₙ.",
+   "code": "",
+   "options": [
+    "2(1 − (−1)ⁿ)/(nπ)",
+    "((−1)ⁿ − 1)/(nπ)",
+    "0 for every n",
+    "(1 − (−1)ⁿ)/(nπ)"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Split the integral at x = 0: bₙ = (1/π)[∫ 0·sin nx dx over (−π, 0) + ∫ sin nx dx over (0, π)]. The first part is 0, and the second is (1/π)[−cos nx/n] from 0 to π = (1 − cos nπ)/(nπ) = (1 − (−1)ⁿ)/(nπ). So b₁ = 2/π and b₂ = 0.",
+   "why_wrong": [
+    "This uses 2/π as if the problem were half-range or odd. f is neither, and the full-period factor is 1/π.",
+    "Sign slip: the antiderivative of sin nx is −cos nx/n, not +cos nx/n.",
+    "This comes from taking cos nπ = 1 for every n. In fact cos nπ = (−1)ⁿ, so the coefficients for odd n survive.",
+    ""
+   ],
+   "key": "MTH165-U6-016"
+  },
+  {
+   "topic": "Convergence and Discontinuities",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "f(x) = x for −π < x < π, extended periodically with period 2π. To what value does its Fourier series converge at x = π?",
+   "code": "",
+   "options": [
+    "π",
+    "−π",
+    "0",
+    "π/2"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The periodic extension jumps at x = π. Just before π, f(π⁻) = π; just after it, the function starts again at f(−π⁺) = −π. The series converges to ½[π + (−π)] = 0. This is why x = π cannot be substituted into the series for x to evaluate a sum.",
+   "why_wrong": [
+    "This equates the series to the left-hand limit, as if x = π were a point of continuity.",
+    "This takes only the right-hand limit of the periodic extension, f(−π⁺) = −π.",
+    "",
+    "This treats f as 0 beyond π instead of extending it periodically, and averages π with 0."
+   ],
+   "key": "MTH165-U6-017"
+  },
+  {
+   "topic": "Convergence and Discontinuities",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of the following is NOT one of Dirichlet's conditions on f(x) over one period?",
+   "code": "",
+   "options": [
+    "f(x) is single-valued and finite",
+    "f(x) is continuous at every point",
+    "f(x) has at most a finite number of finite discontinuities",
+    "f(x) has at most a finite number of maxima and minima"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Dirichlet's conditions require f to be periodic, single-valued and finite, with finitely many finite discontinuities and finitely many maxima and minima in one period. Continuity is not required. That is why square waves and other piecewise functions have Fourier series, which converge to ½[f(a⁻) + f(a⁺)] at each jump.",
+   "why_wrong": [
+    "Being single-valued and finite is one of Dirichlet's conditions.",
+    "",
+    "Finitely many finite discontinuities is one of Dirichlet's conditions, and it explicitly allows jumps.",
+    "Finitely many maxima and minima in a period is one of Dirichlet's conditions."
+   ],
+   "key": "MTH165-U6-018"
+  },
+  {
+   "topic": "Convergence and Discontinuities",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For −π < x < π, x² = π²/3 + 4 Σ (−1)ⁿ (cos nx)/n², summed from n = 1 to ∞. Substitute x = 0 to find 1 − 1/2² + 1/3² − 1/4² + ⋯",
+   "code": "",
+   "options": [
+    "π²/12",
+    "π²/6",
+    "−π²/12",
+    "π²/3"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "x = 0 is a point of continuity, so the series equals 0² = 0 there: 0 = π²/3 + 4 Σ (−1)ⁿ/n². This gives Σ (−1)ⁿ/n² = −π²/12. The required sum has signs +, −, +, …, which is Σ (−1)ⁿ⁺¹/n² = π²/12.",
+   "why_wrong": [
+    "",
+    "π²/6 is Σ 1/n², which comes from substituting x = π, not x = 0.",
+    "This stops at Σ (−1)ⁿ/n² = −π²/12. The required sum starts with +1, so the sign flips.",
+    "This forgets to divide by the factor 4 in front of the sum."
+   ],
+   "key": "MTH165-U6-019"
+  },
+  {
+   "topic": "Change of Interval",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "f(x) = x for −1 < x < 1, with period 2. Find bₙ in its Fourier series.",
+   "code": "",
+   "options": [
+    "2(−1)ⁿ⁺¹/n",
+    "2(−1)ⁿ⁺¹/(nπ)",
+    "(−1)ⁿ⁺¹/(nπ)",
+    "2(−1)ⁿ/(nπ)"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "A period of 2L = 2 gives L = 1, so bₙ = ∫ x sin nπx dx over (−1, 1) = 2 ∫ x sin nπx dx over (0, 1), because x sin nπx is even. By parts, ∫ x sin nπx dx over (0, 1) = [−x cos nπx/(nπ)] from 0 to 1, plus a term that is 0, which gives −(−1)ⁿ/(nπ). Hence bₙ = 2(−1)ⁿ⁺¹/(nπ).",
+   "why_wrong": [
+    "This copies the result for x on (−π, π) without rescaling the argument to nπx/L.",
+    "",
+    "This uses 1/(2L) = 1/2, the mean-value factor, which halves bₙ.",
+    "Sign slip in integration by parts: −x cos nπx/(nπ) at x = 1 gives −(−1)ⁿ/(nπ) = (−1)ⁿ⁺¹/(nπ)."
+   ],
+   "key": "MTH165-U6-020"
+  },
+  {
+   "topic": "Change of Interval",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "f(x) = x for 0 < x < 1 and f(x) = 0 for 1 < x < 2, with period 2. Writing the series as a₀/2 + Σ(aₙ cos nπx + bₙ sin nπx), find the constant term.",
+   "code": "",
+   "options": [
+    "1/2",
+    "1",
+    "1/(4π)",
+    "1/4"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "A period of 2L = 2 gives L = 1, so a₀ = (1/1)[∫ x dx over (0, 1) + ∫ 0 dx over (1, 2)] = 1/2. The constant term of the series is a₀/2 = 1/4. This also equals the mean value of f over one period, (1/2)·(1/2).",
+   "why_wrong": [
+    "1/2 is a₀, but the constant term of the series is a₀/2.",
+    "This integrates x over the whole period (0, 2) without splitting at x = 1, which gives a₀ = 2.",
+    "This carries over the factor 1/π from the interval (−π, π). Here L = 1, so the factor is 1.",
+    ""
+   ],
+   "key": "MTH165-U6-021"
+  },
+  {
+   "topic": "Even and Odd Functions",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "f(x) = |x| for −π < x < π, with period 2π. Find aₙ for n ≥ 1.",
+   "code": "",
+   "options": [
+    "2((−1)ⁿ − 1)/(πn²)",
+    "2(1 − (−1)ⁿ)/(πn²)",
+    "((−1)ⁿ − 1)/(πn²)",
+    "0 for every n"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "|x| is even, so aₙ = (2/π) ∫ x cos nx dx over (0, π). By parts, this integral is [x sin nx/n + cos nx/n²] from 0 to π = ((−1)ⁿ − 1)/n². So aₙ = 2((−1)ⁿ − 1)/(πn²), which gives a₁ = −4/π and 0 for every even n.",
+   "why_wrong": [
+    "",
+    "Sign slip: the by-parts step gives +cos nx/n², so the bracket is (−1)ⁿ − 1, not 1 − (−1)ⁿ.",
+    "This keeps the full-range factor 1/π after halving the interval to (0, π). The even-function formula needs 2/π.",
+    "|x| is even, not odd. For an even function it is the bₙ that vanish, not the aₙ."
+   ],
+   "key": "MTH165-U6-022"
+  },
+  {
+   "topic": "Even and Odd Functions",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For which function can you conclude, without integrating, that every bₙ in its Fourier series is 0?",
+   "code": "",
+   "options": [
+    "f(x) = x² on (0, 2π)",
+    "f(x) = x cos x on (−π, π)",
+    "f(x) = x² on (−π, π)",
+    "f(x) = x² + sin x on (−π, π)"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "You can conclude bₙ = 0 for every n only when f is even and the interval is symmetric about the origin, because then f(x) sin nx is odd and integrates to 0. x² on (−π, π) meets both conditions. On (0, 2π) the shortcut is unavailable, and in fact bₙ = −4π/n there.",
+   "why_wrong": [
+    "(0, 2π) is not symmetric about 0, so the even-function shortcut does not apply. Here bₙ = −4π/n ≠ 0.",
+    "x cos x is odd, so it is the aₙ that vanish while the bₙ survive.",
+    "",
+    "x² + sin x is neither even nor odd, and its sin x part gives b₁ = 1."
+   ],
+   "key": "MTH165-U6-023"
+  },
+  {
+   "topic": "Even and Odd Functions",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "f(x) = x + x² for −π < x < π, with period 2π. Find bₙ.",
+   "code": "",
+   "options": [
+    "0 for every n",
+    "4(−1)ⁿ/n²",
+    "2(−1)ⁿ⁺¹/n + 4(−1)ⁿ/n²",
+    "2(−1)ⁿ⁺¹/n"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "bₙ = (1/π) ∫ (x + x²) sin nx dx over (−π, π). The x² sin nx part is odd and integrates to 0, so only x contributes: bₙ = (2/π) ∫ x sin nx dx over (0, π) = (2/π)·π(−1)ⁿ⁺¹/n = 2(−1)ⁿ⁺¹/n. The x² part contributes only to the cosine coefficients.",
+   "why_wrong": [
+    "This treats f as even because of the x² term. But x + x² is neither even nor odd, and its odd part x keeps the bₙ.",
+    "4(−1)ⁿ/n² is the cosine coefficient aₙ of x², not a sine coefficient.",
+    "This adds the cosine coefficient of x² into bₙ. x² sin nx is odd and contributes nothing to bₙ.",
+    ""
+   ],
+   "key": "MTH165-U6-024"
+  },
+  {
+   "topic": "Half-Range Series",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Find bₙ in the half-range sine series of f(x) = x on (0, 2).",
+   "code": "",
+   "options": [
+    "2(−1)ⁿ⁺¹/(nπ)",
+    "4(−1)ⁿ/(nπ)",
+    "4(−1)ⁿ⁺¹/(nπ)",
+    "−4/(nπ)"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Here L = 2, so bₙ = (2/2) ∫ x sin(nπx/2) dx over (0, 2). By parts, the bracket [−2x cos(nπx/2)/(nπ)] from 0 to 2 gives −4 cos nπ/(nπ). The remaining term is a multiple of sin(nπx/2), which is 0 at both limits. So bₙ = −4(−1)ⁿ/(nπ) = 4(−1)ⁿ⁺¹/(nπ).",
+   "why_wrong": [
+    "This uses the full-range factor 1/L = 1/2 instead of the half-range factor 2/L = 1.",
+    "Sign slip: the antiderivative of sin(nπx/2) is −2cos(nπx/2)/(nπ).",
+    "",
+    "This takes cos nπ = 1 for every n, but cos nπ = (−1)ⁿ."
+   ],
+   "key": "MTH165-U6-025"
+  },
+  {
+   "topic": "Half-Range Series",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Find the constant term a₀/2 of the half-range cosine series of f(x) = sin x on (0, π).",
+   "code": "",
+   "options": [
+    "2/π",
+    "4/π",
+    "0",
+    "1/π"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "a₀ = (2/π) ∫ sin x dx over (0, π) = (2/π)·2 = 4/π, so the constant term is a₀/2 = 2/π. The cosine series represents the even extension |sin x|, whose mean value is 2/π. So the fact that sin x itself is odd does not make this term vanish.",
+   "why_wrong": [
+    "",
+    "4/π is a₀, but the constant term of the series is a₀/2.",
+    "sin x is odd on (−π, π), but the cosine series uses the even extension |sin x|, whose mean is positive.",
+    "This uses the full-range factor 1/π with the half-range integral. The half-range formula has 2/π."
+   ],
+   "key": "MTH165-U6-026"
+  },
+  {
+   "topic": "Euler's Formulae",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "f(x) = −π for −π < x < 0 and f(x) = x for 0 < x < π, with period 2π. Find bₙ in its Fourier series a₀/2 + Σ(aₙ cos nx + bₙ sin nx).",
+   "code": "",
+   "options": [
+    "2(−1)^(n+1)/n",
+    "(1 − (−1)ⁿ)/n",
+    "(1 − 2(−1)ⁿ)/n",
+    "π(1 − 2(−1)ⁿ)/n"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Split the integral at x = 0: bₙ = (1/π)[∫₋π⁰ (−π) sin nx dx + ∫₀^π x sin nx dx]. The first piece is −π·((−1)ⁿ − 1)/n = π(1 − (−1)ⁿ)/n and the second is −π(−1)ⁿ/n. Adding them and dividing by π gives bₙ = (1 − 2(−1)ⁿ)/n, so b₁ = 3 and b₂ = −½.",
+   "why_wrong": [
+    "This is bₙ for f(x) = x on the whole of (−π, π). One formula was pushed across the full period instead of splitting at x = 0, so the −π piece was lost.",
+    "This keeps only the −π piece. The contribution −(−1)ⁿ/n from ∫₀^π x sin nx dx was dropped.",
+    "",
+    "The Euler factor 1/π was never applied. The bracket π(1 − 2(−1)ⁿ)/n still has to be divided by π."
+   ],
+   "key": "MTH165-U6-027"
+  },
+  {
+   "topic": "Euler's Formulae",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A half-wave rectifier passes only the positive half of a sine wave, giving f(x) = 0 for −π < x < 0 and f(x) = sin x for 0 < x < π, with period 2π. Which statement correctly describes the sine terms bₙ sin nx of its Fourier series?",
+   "code": "",
+   "options": [
+    "Only ½ sin x appears: b₁ = ½ and bₙ = 0 for n ≥ 2",
+    "There are no sine terms, because f is an even function",
+    "Only sin x appears, with b₁ = 1",
+    "bₙ = 2/(nπ) for odd n and bₙ = 0 for even n"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "f = 0 on (−π, 0), so bₙ = (1/π)∫₀^π sin x sin nx dx. For n ≥ 2 the integrand is ½[cos(n−1)x − cos(n+1)x], which integrates to 0 over (0, π). For n = 1, (1/π)∫₀^π sin²x dx = (1/π)(π/2) = ½, so ½ sin x is the only sine term.",
+   "why_wrong": [
+    "",
+    "f is not even: f(π/2) = 1 but f(−π/2) = 0. Only a truly even function loses all its sine terms.",
+    "b₁ = 1 comes from using the half-range factor 2/π. On the full period (−π, π) the factor is 1/π, and (1/π)∫₀^π sin²x dx = ½.",
+    "This integrates sin nx on its own over (0, π), as if f were a flat pulse of height 1. The factor sin x in f was dropped."
+   ],
+   "key": "MTH165-U6-028"
+  },
+  {
+   "topic": "Convergence and Discontinuities",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A capacitor's voltage rises as v(t) = eᵗ for 0 < t < 2π. It then resets instantly and the cycle repeats, so v has period 2π. To what value does the Fourier series of v converge at the reset instant t = 2π?",
+   "code": "",
+   "options": [
+    "e^(2π)",
+    "(1 + e^(2π))/2",
+    "1",
+    "(e^(2π) − 1)/(2π)"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The periodic extension jumps at t = 2π. Just before that instant v → e^(2π), and just after it the next cycle starts at e⁰ = 1. By Dirichlet's theorem the series converges to ½[v(2π⁻) + v(2π⁺)] = (1 + e^(2π))/2.",
+   "why_wrong": [
+    "e^(2π) is only the left-hand limit v(2π⁻). At a jump the series takes the mean of both one-sided limits.",
+    "",
+    "1 is only the right-hand limit v(2π⁺) = e⁰, where the next cycle starts. The series averages it with e^(2π).",
+    "(e^(2π) − 1)/(2π) is the constant term a₀/2, which is the mean of v over a whole period. It is not the value of the series at a jump."
+   ],
+   "key": "MTH165-U6-029"
+  },
+  {
+   "topic": "Convergence and Discontinuities",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "For −π < x < π, |x| = π/2 − (4/π)[cos x/1² + cos 3x/3² + cos 5x/5² + ⋯]. Use it to find 1 + 1/3² + 1/5² + 1/7² + ⋯",
+   "code": "",
+   "options": [
+    "π²/6",
+    "π²/4",
+    "π²/12",
+    "π²/8"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Put x = 0. |x| is continuous there, so the series equals |0| = 0, and every cosine equals 1: 0 = π/2 − (4/π)(1 + 1/3² + 1/5² + ⋯). So (4/π)S = π/2, which gives S = π²/8.",
+   "why_wrong": [
+    "π²/6 is 1 + 1/2² + 1/3² + ⋯ summed over all n. Only the odd squares appear here.",
+    "π²/4 comes from using π (the value of a₀) as the constant term instead of a₀/2 = π/2, which gives 0 = π − (4/π)S.",
+    "π²/12 is the alternating sum 1 − 1/2² + 1/3² − ⋯, which is a different series.",
+    ""
+   ],
+   "key": "MTH165-U6-030"
+  },
+  {
+   "topic": "Convergence and Discontinuities",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "f(x) = −π for −π < x < 0 and f(x) = x for 0 < x < π, with period 2π. To what values does its Fourier series converge at x = 0 and at x = π, respectively?",
+   "code": "",
+   "options": [
+    "−π/2 and 0",
+    "0 and π",
+    "−π/2 and π",
+    "−π/4 and 0"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "At x = 0 the series converges to ½[f(0⁻) + f(0⁺)] = ½(−π + 0) = −π/2. At x = π the periodic extension jumps from f(π⁻) = π to f(−π⁺) = −π, so the series gives ½(π − π) = 0.",
+   "why_wrong": [
+    "",
+    "These are f(0⁺) and f(π⁻). Both points are jumps, so the series gives the mean of the two one-sided limits, not the value of f.",
+    "The mean at x = 0 is right, but x = π is also a jump of the periodic extension: from π on the left to −π on the right.",
+    "−π/4 is the constant term a₀/2, the average of f over a period. It is not the mean of the two limits at x = 0."
+   ],
+   "key": "MTH165-U6-031"
+  },
+  {
+   "topic": "Change of Interval",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "f(x) = x² for −1 < x < 1, with period 2. Writing its series as a₀/2 + Σ(aₙ cos nπx + bₙ sin nπx), find aₙ for n ≥ 1.",
+   "code": "",
+   "options": [
+    "4(−1)ⁿ/n²",
+    "2(−1)ⁿ/(n²π²)",
+    "4(−1)ⁿ/(n²π²)",
+    "4(−1)^(n+1)/(n²π²)"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Here L = 1, and x² is even on the symmetric interval (−1, 1), so bₙ = 0 and aₙ = (2/1)∫₀¹ x² cos nπx dx. Integrating by parts twice gives ∫₀¹ x² cos nπx dx = 2(−1)ⁿ/(n²π²), so aₙ = 4(−1)ⁿ/(n²π²). For example, a₁ = −4/π².",
+   "why_wrong": [
+    "This is aₙ for x² on (−π, π), copied unchanged. With L = 1 the argument is nπx, which puts π² in the denominator.",
+    "This uses the factor 1/L = 1 on the half interval (0, 1). For an even function the half-interval factor is 2/L = 2.",
+    "",
+    "Sign slip at the limit: cos nπ = (−1)ⁿ, so a₁ = −4/π², not +4/π²."
+   ],
+   "key": "MTH165-U6-032"
+  },
+  {
+   "topic": "Change of Interval",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A pulse signal equals 1 for 0 < t < 1 and 0 for 1 < t < 3, and repeats every 3 seconds. Its Fourier series is written over one period, (0, 3). Find aₙ, the coefficient of the nth cosine term.",
+   "code": "",
+   "options": [
+    "sin(nπ/3)/(nπ)",
+    "sin(2nπ/3)/(nπ)",
+    "2 sin(2nπ/3)/(nπ)",
+    "(1 − cos(2nπ/3))/(nπ)"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The period is 3 = 2L, so L = 3/2. The factor is 1/L = 2/3 and the argument is nπt/L = 2nπt/3. The signal is 0 on (1, 3), so aₙ = (2/3)∫₀¹ cos(2nπt/3) dt = (2/3)·(3/(2nπ))·sin(2nπ/3) = sin(2nπ/3)/(nπ).",
+   "why_wrong": [
+    "This takes L = 3, the whole period. The period is 2L, so L = 3/2 and the argument is 2nπt/3.",
+    "",
+    "The factor 2/L is only for even/odd or half-range work. On a full period of length 2L the factor is 1/L = 2/3.",
+    "This is bₙ. It comes from integrating sin(2nπt/3) instead of cos(2nπt/3)."
+   ],
+   "key": "MTH165-U6-033"
+  },
+  {
+   "topic": "Change of Interval",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "f(x) = x for −π/2 < x < π/2, with period π. Which is its Fourier series? (Sums run from n = 1 to ∞.)",
+   "code": "",
+   "options": [
+    "2Σ (−1)^(n+1) sin(nx)/n",
+    "2Σ (−1)^(n+1) sin(2nx)/n",
+    "Σ (−1)^(n+1) sin(nx)/n",
+    "Σ (−1)^(n+1) sin(2nx)/n"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "A period of π means 2L = π, so L = π/2 and each term is sin(nπx/L) = sin 2nx. f is odd, so only sine terms appear. bₙ = (2/L)∫₀^(π/2) x sin 2nx dx = (4/π)·(−π(−1)ⁿ/(4n)) = (−1)^(n+1)/n. Check at x = π/4: π/4 = 1 − 1/3 + 1/5 − ⋯, which holds.",
+   "why_wrong": [
+    "This is the series for x on (−π, π), copied over. Neither the interval length nor the argument was changed.",
+    "The argument is right, but 2/L was applied over the whole interval (−π/2, π/2) instead of over (0, π/2), which doubles every coefficient.",
+    "The coefficients are right, but the argument was not rescaled. With L = π/2, nπx/L = 2nx, not nx.",
+    ""
+   ],
+   "key": "MTH165-U6-034"
+  },
+  {
+   "topic": "Even and Odd Functions",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "f(x) = 1 + 2x/π for −π < x < 0 and f(x) = 1 − 2x/π for 0 < x < π, with period 2π. Find aₙ for n ≥ 1.",
+   "code": "",
+   "options": [
+    "4(1 − (−1)ⁿ)/(π²n²)",
+    "2(1 − (−1)ⁿ)/(π²n²)",
+    "4((−1)ⁿ − 1)/(π²n²)",
+    "0"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "For x > 0, f(−x) = 1 − 2x/π = f(x), so f is even: bₙ = 0 and aₙ = (2/π)∫₀^π (1 − 2x/π) cos nx dx. The constant part integrates to 0, and ∫₀^π x cos nx dx = ((−1)ⁿ − 1)/n². So aₙ = (2/π)(−2/π)((−1)ⁿ − 1)/n² = 4(1 − (−1)ⁿ)/(π²n²), which is 8/(π²n²) for odd n and 0 for even n.",
+   "why_wrong": [
+    "",
+    "This uses the full-period factor 1/π on the half interval (0, π). For an even function the factor is 2/π.",
+    "Sign slip: ∫₀^π x cos nx dx = ((−1)ⁿ − 1)/n² is multiplied by −2/π, and that flips its sign.",
+    "f is even, not odd: for x > 0, f(−x) = 1 + 2(−x)/π = 1 − 2x/π = f(x). The sine terms vanish, not the cosine terms."
+   ],
+   "key": "MTH165-U6-035"
+  },
+  {
+   "topic": "Even and Odd Functions",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "On −π < x < π, eˣ = (sinh π/π)[1 + 2Σ (−1)ⁿ(cos nx − n sin nx)/(1 + n²)], with the sum from n = 1 to ∞. Without integrating again, which is the Fourier series of cosh x on (−π, π)?",
+   "code": "",
+   "options": [
+    "(sinh π/π)·2Σ (−1)^(n+1) n sin nx/(1 + n²)",
+    "(sinh π/π)[½ + Σ (−1)ⁿ(cos nx − n sin nx)/(1 + n²)]",
+    "(sinh π/π)[1 + 2Σ (−1)ⁿ cos nx/(1 + n²)]",
+    "(sinh π/π)·2Σ (−1)ⁿ cos nx/(1 + n²)"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "eˣ = cosh x + sinh x, where cosh x is the even part and sinh x is the odd part. On a symmetric interval an even function has only a constant and cosine terms, and an odd function has only sine terms, so the series of eˣ splits exactly along those lines. So cosh x gets the constant and all the cosine terms: (sinh π/π)[1 + 2Σ(−1)ⁿ cos nx/(1 + n²)].",
+   "why_wrong": [
+    "These are the sine terms. They form the series of the odd part, sinh x, not cosh x.",
+    "This halves the whole series, as if cosh x were eˣ/2. In fact cosh x = (eˣ + e⁻ˣ)/2, which is the even part of eˣ.",
+    "",
+    "The constant term sinh π/π also belongs to the even part. Dropping it removes the mean value of cosh x."
+   ],
+   "key": "MTH165-U6-036"
+  },
+  {
+   "topic": "Half-Range Series",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Find aₙ (n ≥ 1) in the half-range cosine series of f(x) = x on (0, 2).",
+   "code": "",
+   "options": [
+    "2((−1)ⁿ − 1)/(n²π²)",
+    "4((−1)ⁿ − 1)/(n²π²)",
+    "4(1 − (−1)ⁿ)/(n²π²)",
+    "0"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "For a half-range series on (0, L) with L = 2, aₙ = (2/2)∫₀² x cos(nπx/2) dx. By parts, the term [2x sin(nπx/2)/(nπ)]₀² is 0, and the rest gives [4cos(nπx/2)/(n²π²)]₀² = 4((−1)ⁿ − 1)/(n²π²). So aₙ = −8/(n²π²) for odd n and 0 for even n.",
+   "why_wrong": [
+    "This uses the full-range factor 1/L = ½. Half-range formulas use 2/L = 1.",
+    "",
+    "Sign slip: at x = 2 the last term is 4cos nπ/(n²π²) = 4(−1)ⁿ/(n²π²), and 4/(n²π²) is subtracted at x = 0.",
+    "This comes from using cos nπx, as if L = 1. On (0, L) with L = 2 the argument is nπx/2; ∫₀² x cos nπx dx happens to be 0, which is why the wrong argument gives 0."
+   ],
+   "key": "MTH165-U6-037"
+  },
+  {
+   "topic": "Half-Range Series",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A string of length 2 is fixed at x = 0 and x = 2. It is pulled into the shape f(x) = x(2 − x) and released. Describing its motion needs the half-range sine series of f on (0, 2). Find b₁.",
+   "code": "",
+   "options": [
+    "16/π³",
+    "64/π³",
+    "0",
+    "32/π³"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "For a half-range sine series on (0, L) with L = 2, bₙ = (2/2)∫₀² x(2 − x) sin(nπx/2) dx. Repeated integration by parts gives bₙ = 16(1 − (−1)ⁿ)/(n³π³). So b₁ = 32/π³, and every even bₙ is 0.",
+   "why_wrong": [
+    "This uses 1/L = ½ as the factor. Half-range sine coefficients use 2/L = 1.",
+    "This uses 2/L with L = 1. The string has length L = 2, so 2/L = 1.",
+    "This comes from using sin(nπx) as if L = 1. On (0, 2) the first term is sin(πx/2), and its coefficient is not 0.",
+    ""
+   ],
+   "key": "MTH165-U6-038"
+  },
+  {
+   "topic": "Euler's Formulae",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "f(x) = sin²x on (−π, π), with period 2π. Take a₀ = (1/π)∫ f dx over one period, so the series is a₀/2 + Σ(aₙ cos nx + bₙ sin nx). Which is correct?",
+   "code": "",
+   "options": [
+    "a₀ = ½, a₂ = −½, all other coefficients 0",
+    "a₀ = 1, a₂ = −½, all other coefficients 0",
+    "a₀ = 1, a₂ = ½, all other coefficients 0",
+    "a₀ = 2, a₂ = −1, all other coefficients 0"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "sin²x = ½ − ½cos 2x is already a finite Fourier series, and Fourier coefficients are unique. Matching a₀/2 = ½ gives a₀ = 1; as a check, (1/π)∫ sin²x dx over (−π, π) = (1/π)·π = 1. Then a₂ = −½ and every other aₙ and bₙ is 0.",
+   "why_wrong": [
+    "½ is the constant term a₀/2, not a₀. By the stated convention, a₀ = (1/π)∫ sin²x dx over (−π, π) = 1.",
+    "",
+    "Sign slip in the identity: sin²x = (1 − cos 2x)/2, so the coefficient of cos 2x is −½.",
+    "This uses sin²x = 1 − cos 2x, dropping the ½ that comes from cos 2x = 1 − 2sin²x."
+   ],
+   "key": "MTH165-U6-039"
+  },
+  {
+   "topic": "Euler's Formulae",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "f(x) = x sin x on (−π, π), with period 2π, is even. For n ≥ 2 its cosine coefficients are aₙ = 2(−1)^(n+1)/(n² − 1). What is a₁?",
+   "code": "",
+   "options": [
+    "−½",
+    "0",
+    "½",
+    "−1"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The general formula came from sin x cos nx = ½[sin(n+1)x − sin(n−1)x], which leads to division by n − 1, so n = 1 must be worked out separately. a₁ = (2/π)∫₀^π x sin x cos x dx = (1/π)∫₀^π x sin 2x dx = (1/π)(−π/2) = −½.",
+   "why_wrong": [
+    "",
+    "The formula fails at n = 1 because it divides by n − 1. That means a₁ must be computed separately, not that it is 0.",
+    "Sign slip: ∫₀^π x sin 2x dx = −π/2, not +π/2.",
+    "This drops the ½ in sin x cos x = ½ sin 2x."
+   ],
+   "key": "MTH165-U6-040"
+  },
+  {
+   "topic": "Convergence and Discontinuities",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "f(x) = x + x² for −π < x < π, with period 2π. To what value does its Fourier series converge at x = π?",
+   "code": "",
+   "options": [
+    "π + π²",
+    "0",
+    "π²",
+    "(π + π²)/2"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "At x = π the periodic extension jumps from f(π⁻) = π + π² to f(−π⁺) = −π + π². The series converges to ½[(π + π²) + (π² − π)] = π². Another way to see it: the odd part x contributes 0 there, and the even part x², which is continuous at π, contributes π².",
+   "why_wrong": [
+    "π + π² is only f(π⁻). The periodic extension jumps at x = π, so the series takes a mean.",
+    "0 is the value for f(x) = x on its own. The even part x² is continuous at π and still contributes π².",
+    "",
+    "This averages f(π⁻) with 0. The right-hand limit is f(−π⁺) = π² − π, not 0."
+   ],
+   "key": "MTH165-U6-041"
+  },
+  {
+   "topic": "Convergence and Discontinuities",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "f(x) = x² for 0 < x < 2, with period 2, has the Fourier series 4/3 + Σ[(4/(n²π²)) cos nπx − (4/(nπ)) sin nπx], summed from n = 1 to ∞. When x = 0 is substituted into this series, which equation is correct?",
+   "code": "",
+   "options": [
+    "0 = 4/3 + (4/π²)Σ 1/n²",
+    "4 = 4/3 + (4/π²)Σ 1/n²",
+    "2 = 4/3 + (4/π²)Σ (−1)ⁿ/n²",
+    "2 = 4/3 + (4/π²)Σ 1/n²"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The periodic extension jumps at x = 0: f(0⁺) = 0 and f(0⁻) = f(2⁻) = 4, so the series converges to ½(0 + 4) = 2. Every sine is 0 and every cosine is 1 there, so 2 = 4/3 + (4/π²)Σ1/n², which gives Σ 1/n² = π²/6.",
+   "why_wrong": [
+    "This sets the series equal to f(0⁺) = 0, but x = 0 is a jump of the periodic extension. It would also make a sum of positive terms negative.",
+    "This sets the series equal to the left-hand limit f(2⁻) = 4 alone. At the jump the series gives the mean of 4 and 0.",
+    "The value 2 is right, but at x = 0, cos nπx = cos 0 = 1. (−1)ⁿ = cos nπ is the value at x = 1.",
+    ""
+   ],
+   "key": "MTH165-U6-042"
+  },
+  {
+   "topic": "Change of Interval",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "f(x) = 2x − x² for 0 < x < 2, with period 2. Writing its series as a₀/2 + Σ(aₙ cos nπx + bₙ sin nπx), find bₙ.",
+   "code": "",
+   "options": [
+    "0",
+    "−4/(nπ)",
+    "4/(nπ)",
+    "−8/(nπ)"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "L = 1, so bₙ = (1/1)∫₀² (2x − x²) sin nπx dx. Here ∫₀² x sin nπx dx = −2/(nπ) and ∫₀² x² sin nπx dx = −4/(nπ), so bₙ = 2(−2/(nπ)) − (−4/(nπ)) = 0. This is no accident: f(2 − x) = f(x), so the periodic extension is even. That has to be checked on the extension, because the interval (0, 2) itself is not symmetric about 0.",
+   "why_wrong": [
+    "",
+    "This keeps only the 2x part, 2·(−2/(nπ)). The −x² part contributes +4/(nπ) and cancels it.",
+    "This keeps only the −x² part. The 2x part contributes −4/(nπ) and cancels it.",
+    "This adds the two integrals instead of subtracting: bₙ = 2∫₀² x sin nπx dx − ∫₀² x² sin nπx dx."
+   ],
+   "key": "MTH165-U6-043"
+  },
+  {
+   "topic": "Even and Odd Functions",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "f(x) = x² for 0 < x < 2π, with period 2π. Find bₙ in its Fourier series.",
+   "code": "",
+   "options": [
+    "0",
+    "−4π/n",
+    "4π/n",
+    "−4π²/n"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "(0, 2π) is not symmetric about the origin, so compute directly: bₙ = (1/π)∫₀^(2π) x² sin nx dx. Using ∫x² sin nx dx = −x² cos nx/n + 2x sin nx/n² + 2cos nx/n³, the limits give −4π²/n + 2/n³ − 2/n³ = −4π²/n. So bₙ = −4π/n.",
+   "why_wrong": [
+    "The even-function shortcut needs an interval symmetric about 0. On (0, 2π) the periodic extension of x² is not even, since (2π − x)² ≠ x².",
+    "",
+    "Sign slip at the limits: cos 2nπ = 1, so the −x² cos nx/n term gives −4π²/n, not +4π²/n.",
+    "−4π²/n is the value of the integral. It still has to be multiplied by the Euler factor 1/π."
+   ],
+   "key": "MTH165-U6-044"
+  },
+  {
+   "topic": "Even and Odd Functions",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "f(x) = 1 + x for −π < x < π, with period 2π. Take a₀ = (1/π)∫ f dx over one period and write the series as a₀/2 + Σ(aₙ cos nx + bₙ sin nx). Which statement is correct?",
+   "code": "",
+   "options": [
+    "a₀ = 1, aₙ = 0 for n ≥ 1, bₙ = 2(−1)^(n+1)/n",
+    "a₀ = 0, aₙ = 0 for all n, bₙ = 2(−1)^(n+1)/n",
+    "a₀ = 2, aₙ = 0 for n ≥ 1, bₙ = 2(−1)^(n+1)/n",
+    "f is neither even nor odd, so aₙ ≠ 0 and bₙ ≠ 0 for every n ≥ 1"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Split f into its even part, 1, and its odd part, x. The constant contributes only to a₀ = (1/π)∫ 1 dx = 2 (the x part integrates to 0), and ∫ cos nx dx over a period is 0, so aₙ = 0 for n ≥ 1. The odd part x gives bₙ = 2(−1)^(n+1)/n.",
+   "why_wrong": [
+    "1 is the constant term a₀/2, not a₀. a₀ = (1/π)∫(1 + x) dx over (−π, π) = 2.",
+    "This treats 1 + x as odd. The constant 1 is an even part, and it survives in a₀.",
+    "",
+    "Being neither even nor odd does not make every coefficient non-zero. Split f into its even part 1 and odd part x: the constant contributes no cos nx terms."
+   ],
+   "key": "MTH165-U6-045"
+  },
+  {
+   "topic": "Half-Range Series",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Find the half-range cosine series of f(x) = 1 on (0, π).",
+   "code": "",
+   "options": [
+    "(4/π)[sin x + sin 3x/3 + sin 5x/5 + ⋯]",
+    "1 + (4/π)[cos x + cos 3x/3 + cos 5x/5 + ⋯]",
+    "½",
+    "1"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The half-range cosine series is the Fourier series of the even extension, and the even extension of 1 is just the constant 1. Directly: a₀ = (2/π)∫₀^π 1 dx = 2, so a₀/2 = 1, and aₙ = (2/π)∫₀^π cos nx dx = (2/π)[sin nx/n]₀^π = 0. The series is the single term 1.",
+   "why_wrong": [
+    "This is the half-range sine series of 1. It comes from the odd extension, which is a square wave.",
+    "This comes from integrating cos nx as if it were sin nx, using (1 − cos nπ)/n. In fact ∫₀^π cos nx dx = [sin nx/n]₀^π = 0.",
+    "This uses the factor 1/π instead of the half-range factor 2/π. That gives a₀ = 1 and a constant term of ½.",
+    ""
+   ],
+   "key": "MTH165-U6-046"
+  },
+  {
+   "topic": "Half-Range Series",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Find the coefficients b₁ and b₂ in the half-range sine series of f(x) = cos x on (0, π).",
+   "code": "",
+   "options": [
+    "b₁ = 0, b₂ = 8/(3π)",
+    "bₙ = 0 for every n",
+    "b₁ = 0, b₂ = 4/(3π)",
+    "b₁ = 0, b₂ = 2/π"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "bₙ = (2/π)∫₀^π cos x sin nx dx = (1/π)∫₀^π [sin(n+1)x + sin(n−1)x] dx. For n = 1 this is (1/π)∫₀^π sin 2x dx = 0. For n = 2 it is (1/π)∫₀^π (sin 3x + sin x) dx = (1/π)(2/3 + 2) = 8/(3π).",
+   "why_wrong": [
+    "",
+    "This assumes the sine terms vanish because cos x is even. A half-range sine series expands the odd extension, so the evenness of cos x on (−π, π) does not matter.",
+    "This uses the full-range factor 1/π instead of the half-range factor 2/π.",
+    "This takes cos 3π as 1, which makes ∫₀^π sin 3x dx vanish. In fact the integral is (1 − cos 3π)/3 = 2/3."
+   ],
+   "key": "MTH165-U6-047"
+  },
+  {
+   "topic": "Half-Range Series",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "f(x) = x on (0, π) is expanded once as a half-range sine series and once as a half-range cosine series. What value does each series take at x = π?",
+   "code": "",
+   "options": [
+    "Sine series π, cosine series π",
+    "Sine series π, cosine series 0",
+    "Sine series 0, cosine series π",
+    "Sine series π/2, cosine series π"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The sine series is the Fourier series of the odd extension, x on (−π, π). That extension jumps from π to −π at x = π, so the series gives ½(π − π) = 0. The cosine series comes from the even extension |x|, which equals π on both sides of x = π, so it converges to π.",
+   "why_wrong": [
+    "This sets both series equal to f(π). Only the cosine series does that; the extension behind the sine series jumps at x = π.",
+    "The two are swapped. The odd extension jumps at x = π, while the even extension is continuous there.",
+    "",
+    "This averages π with f(0) = 0. The odd extension jumps from π to −π, not to 0, so the mean is 0."
+   ],
+   "key": "MTH165-U6-048"
+  }
+ ]
+}

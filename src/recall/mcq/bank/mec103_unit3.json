@@ -1,0 +1,1111 @@
+{
+ "subject_code": "MEC103",
+ "unit": 3,
+ "unit_label": "Orthographic Projections (including Projection of Regular Solids)",
+ "questions": [
+  {
+   "topic": "Orthographic Basics",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In orthographic projection, how are the projectors arranged?",
+   "code": "",
+   "options": [
+    "Converging to a single point at the observer's eye",
+    "Parallel to one another but inclined to the plane of projection",
+    "Parallel to one another and perpendicular to the plane of projection",
+    "Parallel to one another and parallel to the plane of projection"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "'Ortho' means right-angled, so orthographic projection uses projectors that are parallel to one another and meet the plane of projection at 90°. This is why a face parallel to the plane shows in true shape. Converging projectors give perspective projection, and parallel projectors inclined to the plane give oblique projection.",
+   "why_wrong": [
+    "Projectors meeting at the observer's eye describe perspective projection, not orthographic.",
+    "Parallel projectors inclined to the plane give oblique projection; orthographic needs them at 90° to the plane.",
+    "",
+    "A projector parallel to the plane never meets it, so no view could form; the projectors must strike the plane at right angles."
+   ],
+   "key": "MEC103-U3-001"
+  },
+  {
+   "topic": "Orthographic Basics",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "On which plane is the front view of an object projected?",
+   "code": "",
+   "options": [
+    "Horizontal plane (HP)",
+    "Vertical plane (VP)",
+    "Profile plane (PP)",
+    "An auxiliary plane inclined to both HP and VP"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The front view is obtained by looking at the object from the front, with projectors perpendicular to the vertical plane, so it forms on the VP. That is why the front view is also called the elevation. The top view goes on the HP and the side view on the profile plane.",
+   "why_wrong": [
+    "The HP receives the top view (plan), seen by looking from above.",
+    "",
+    "The profile plane receives the side view (end view).",
+    "The front view is one of the three principal views and goes on the principal vertical plane, not on an extra inclined plane."
+   ],
+   "key": "MEC103-U3-002"
+  },
+  {
+   "topic": "Orthographic Basics",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In orthographic projection, the term 'plan' refers to which view?",
+   "code": "",
+   "options": [
+    "Top view",
+    "Front view",
+    "Side view",
+    "Sectional view"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The three principal views have alternative names: front view = elevation, top view = plan, side view = end view. The plan is seen by looking from above and is projected on the horizontal plane.",
+   "why_wrong": [
+    "",
+    "The front view is called the elevation, not the plan.",
+    "The side view is called the end view, not the plan.",
+    "A sectional view shows the object as if cut open; it is not another name for any principal view."
+   ],
+   "key": "MEC103-U3-003"
+  },
+  {
+   "topic": "Orthographic Basics",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "On which plane is the side view (end view) of an object projected?",
+   "code": "",
+   "options": [
+    "Vertical plane (VP)",
+    "Horizontal plane (HP)",
+    "A plane parallel to both HP and VP",
+    "Profile plane (PP)"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The profile plane is perpendicular to both the HP and the VP, and the view obtained by looking at the object from the side is projected onto it. This side view is also called the end view. The front view goes on the VP and the top view on the HP.",
+   "why_wrong": [
+    "The VP receives the front view (elevation), not the side view.",
+    "The HP receives the top view (plan), not the side view.",
+    "No plane can be parallel to both HP and VP, because they are perpendicular to each other; the profile plane is perpendicular to both.",
+    ""
+   ],
+   "key": "MEC103-U3-004"
+  },
+  {
+   "topic": "Quadrants and Angles",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which angle of projection is followed in India under BIS (IS) practice?",
+   "code": "",
+   "options": [
+    "Third-angle projection",
+    "First-angle projection",
+    "Second-angle projection",
+    "Fourth-angle projection"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "India follows first-angle projection as per BIS/IS practice, while the USA and Canada use third-angle projection. Only the first and third quadrants are used for drawing at all, because in the second and fourth the front and top views overlap when the HP is rotated into the VP.",
+   "why_wrong": [
+    "Third-angle projection is the convention of the USA and Canada, not the BIS convention.",
+    "",
+    "The second quadrant is not used at all, because the front and top views would overlap after rotating the HP.",
+    "The fourth quadrant is not used at all, because the front and top views would overlap after rotating the HP."
+   ],
+   "key": "MEC103-U3-005"
+  },
+  {
+   "topic": "Quadrants and Angles",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In first-angle projection, where does the object lie?",
+   "code": "",
+   "options": [
+    "Behind the plane of projection, with the plane nearer the observer",
+    "Below the HP and behind the VP",
+    "Between the observer and the plane of projection",
+    "Above the HP and behind the VP"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "In first-angle projection the object is placed in the first quadrant (above the HP, in front of the VP), so it lies between the observer and the plane of projection. Each view is therefore pushed through the object onto the plane beyond it. In third angle the order is reversed: the transparent plane lies between the observer and the object.",
+   "why_wrong": [
+    "Having the plane nearer the observer than the object is the third-angle arrangement; putting the object behind the plane in first angle is the classic swap.",
+    "Below the HP and behind the VP is the third quadrant, which is used for third-angle projection.",
+    "",
+    "Above the HP and behind the VP is the second quadrant, which is not used because the views would overlap."
+   ],
+   "key": "MEC103-U3-006"
+  },
+  {
+   "topic": "Quadrants and Angles",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "The standard symbol that shows the angle of projection on a drawing is made from two views of which solid?",
+   "code": "",
+   "options": [
+    "A frustum of a cone",
+    "A cube",
+    "A cylinder",
+    "A square pyramid"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The angle-of-projection symbol is a frustum of a cone drawn in two views: a front view (a trapezium) and an end view (two concentric circles). How these two views are arranged tells the reader whether first- or third-angle projection has been used.",
+   "why_wrong": [
+    "",
+    "A cube's views are identical squares, so they could not show which view is placed where; the symbol uses a frustum of a cone.",
+    "A cylinder has equal ends, so its views show no direction; the symbol uses the tapered frustum of a cone.",
+    "The symbol is based on a cone frustum, whose end view is two concentric circles; no pyramid is used."
+   ],
+   "key": "MEC103-U3-007"
+  },
+  {
+   "topic": "Quadrants and Angles",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "How many quadrants are formed when the HP and the VP, extended beyond their line of intersection, cut each other at right angles?",
+   "code": "",
+   "options": [
+    "2",
+    "3",
+    "8",
+    "4"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The HP and VP, extended beyond their line of intersection XY, divide space into four dihedral angles called quadrants, numbered first to fourth. The object is placed in the first quadrant for first-angle projection and in the third quadrant for third-angle projection.",
+   "why_wrong": [
+    "Two intersecting planes divide space into four regions, not two.",
+    "Two planes crossing each other always give four regions; an odd number such as three is not possible.",
+    "Eight regions (octants) appear only when a third, profile plane is added; the HP and VP alone give four.",
+    ""
+   ],
+   "key": "MEC103-U3-008"
+  },
+  {
+   "topic": "View Placement",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In first-angle projection, where is the top view placed relative to the front view?",
+   "code": "",
+   "options": [
+    "Directly above the front view",
+    "To the right of the front view",
+    "Directly below the front view",
+    "To the left of the front view"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "In first angle the object lies between the observer and the HP, so looking from above throws the top view onto the HP below the object. When the HP is rotated down about XY into the plane of the VP, the top view ends up below the front view.",
+   "why_wrong": [
+    "Top view above the front view is the third-angle position.",
+    "In first angle the right-hand position holds the view from the left, not the top view.",
+    "",
+    "In first angle the left-hand position holds the view from the right, not the top view."
+   ],
+   "key": "MEC103-U3-009"
+  },
+  {
+   "topic": "View Placement",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In third-angle projection, where is the top view placed relative to the front view?",
+   "code": "",
+   "options": [
+    "Directly above the front view",
+    "Directly below the front view",
+    "To the right of the front view",
+    "Overlapping the front view"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "In third angle the transparent plane lies between the observer and the object, so each view is drawn on the plane on the same side the observer looked from. Looking from above gives a top view on the HP above the object, and after rotation it sits above the front view, the mirror of first angle.",
+   "why_wrong": [
+    "",
+    "Below the front view is the first-angle position; third angle is the mirror of first angle.",
+    "In third angle the right-hand position holds the view from the right, not the top view.",
+    "Views overlap only in the unused second and fourth quadrants; in third angle the top view is separate from the front view."
+   ],
+   "key": "MEC103-U3-010"
+  },
+  {
+   "topic": "View Placement",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In first-angle projection, where is the view from the left placed?",
+   "code": "",
+   "options": [
+    "To the left of the front view",
+    "Above the front view",
+    "Below the top view",
+    "To the right of the front view"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "In first angle, the view from the left is projected through the object onto the profile plane standing on the right of the object, so it is placed to the right of the front view. Every first-angle view lands on the side away from the direction you looked from.",
+   "why_wrong": [
+    "Placing the view from the left on the left is the third-angle arrangement.",
+    "Above the front view is where first angle puts the view from below.",
+    "Side views are placed level with the front view, not stacked below the top view.",
+    ""
+   ],
+   "key": "MEC103-U3-011"
+  },
+  {
+   "topic": "Projection of Solids",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "How many faces does a tetrahedron have?",
+   "code": "",
+   "options": [
+    "3",
+    "4",
+    "5",
+    "6"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "A tetrahedron has four equal equilateral triangular faces. It can be seen as a triangular pyramid whose base is the same size as its three sloping faces, so F = 3 + 1 = 4.",
+   "why_wrong": [
+    "Three flat faces cannot enclose a solid; the minimum is four.",
+    "",
+    "Five faces belongs to a square pyramid (four triangles plus a square base), not a tetrahedron.",
+    "Six faces is a cube; 'tetra' means four."
+   ],
+   "key": "MEC103-U3-012"
+  },
+  {
+   "topic": "Projection of Solids",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which cut produces a frustum of a cone?",
+   "code": "",
+   "options": [
+    "A plane parallel to the base, with the portion containing the apex removed",
+    "A plane inclined to the base, with the portion containing the apex removed",
+    "A plane parallel to the base, keeping only the portion containing the apex",
+    "A plane perpendicular to the base, passing through the apex"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A frustum is the portion of a cone or pyramid left between the base and a cutting plane parallel to the base, after the top part with the apex is removed. It therefore has two parallel ends. If the cutting plane is inclined to the base, the remaining solid is called truncated instead.",
+   "why_wrong": [
+    "",
+    "An inclined cut leaves a truncated cone, not a frustum.",
+    "The piece containing the apex is just a smaller cone; the frustum is the piece left after it is removed.",
+    "A vertical cut through the apex splits the cone lengthwise; neither piece has two parallel circular ends."
+   ],
+   "key": "MEC103-U3-013"
+  },
+  {
+   "topic": "Projection of Solids",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "How many edges does a right regular hexagonal prism have?",
+   "code": "",
+   "options": [
+    "6",
+    "8",
+    "12",
+    "18"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Edges = 6 on the bottom hexagon + 6 on the top hexagon + 6 vertical lateral edges = 18. Check with Euler's formula: V − E + F = 12 − 18 + 8 = 2 ✓.",
+   "why_wrong": [
+    "Counts only the six vertical lateral edges and misses the 12 edges of the two hexagonal ends.",
+    "8 is the number of faces (6 rectangles + 2 hexagons), not edges.",
+    "Counts only the edges of the two hexagons (6 + 6) and misses the 6 lateral edges; 12 is also its vertex count.",
+    ""
+   ],
+   "key": "MEC103-U3-014"
+  },
+  {
+   "topic": "Orthographic Basics",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which set correctly pairs each principal view with its alternative name and its plane of projection?",
+   "code": "",
+   "options": [
+    "Front view – plan – HP; top view – elevation – VP; side view – end view – PP",
+    "Front view – elevation – HP; top view – plan – VP; side view – end view – PP",
+    "Front view – elevation – VP; top view – plan – HP; side view – end view – PP",
+    "Front view – elevation – VP; top view – end view – HP; side view – plan – PP"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Looking from the front gives the front view, called the elevation, on the vertical plane. Looking from above gives the top view, called the plan, on the horizontal plane, and looking from the side gives the side view, called the end view, on the profile plane. Any option that swaps a name or a plane between these views is wrong.",
+   "why_wrong": [
+    "Swaps both the names and the planes of the front and top views; the front view is the elevation on the VP.",
+    "The names are right but the planes are swapped: the elevation goes on the VP and the plan on the HP.",
+    "",
+    "The planes are right but 'plan' and 'end view' are swapped; the plan is the top view and the end view is the side view."
+   ],
+   "key": "MEC103-U3-015"
+  },
+  {
+   "topic": "Orthographic Basics",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of the following is NOT true of orthographic projection?",
+   "code": "",
+   "options": [
+    "The projectors are parallel to one another.",
+    "The projectors converge to a point at the observer's eye.",
+    "The projectors are perpendicular to the plane of projection.",
+    "A surface parallel to the plane of projection appears in its true shape."
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Orthographic projection uses parallel projectors that are perpendicular to the plane of projection, so faces parallel to that plane show their true shape and size. Projectors converging at the observer's eye describe perspective projection, which is not used for orthographic views.",
+   "why_wrong": [
+    "This is true: parallel projectors are part of what makes a projection orthographic.",
+    "",
+    "This is true: 'ortho' means right-angled, so the projectors meet the plane at 90°.",
+    "This is true: for example, the base of a prism resting on the HP appears as a true polygon in the top view."
+   ],
+   "key": "MEC103-U3-016"
+  },
+  {
+   "topic": "Quadrants and Angles",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Why are the second and fourth quadrants not used for orthographic projection?",
+   "code": "",
+   "options": [
+    "An object cannot physically be placed in those quadrants.",
+    "The projectors there become inclined to the planes, giving oblique views.",
+    "All four quadrants are used; the second and fourth are simply less common.",
+    "When the HP is rotated into the plane of the VP, the front and top views overlap or coincide."
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "In the second quadrant the object is above the HP and behind the VP, so after the HP is rotated both views fall above XY; in the fourth quadrant both fall below XY. The front and top views then overlap or coincide and the drawing cannot be read, so only the first and third quadrants are used.",
+   "why_wrong": [
+    "An object can be placed in any quadrant; the problem is that its views overlap on the drawing, not where it can be placed.",
+    "Projectors stay perpendicular to the HP and VP in every quadrant; the quadrant does not change their direction.",
+    "Only the first and third quadrants are used in practice; the second and fourth are not used at all.",
+    ""
+   ],
+   "key": "MEC103-U3-017"
+  },
+  {
+   "topic": "Quadrants and Angles",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about the relative positions of observer, object and plane of projection is correct?",
+   "code": "",
+   "options": [
+    "In third-angle projection, the plane of projection is assumed transparent and lies between the observer and the object.",
+    "In first-angle projection, the object is placed behind the plane of projection.",
+    "In third-angle projection, the object lies between the observer and the plane of projection.",
+    "In first-angle projection, the plane of projection is assumed transparent and lies in front of the object."
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "First angle: observer, then object, then plane, so each view is pushed through the object onto the plane beyond it. Third angle: observer, then transparent plane, then object, so the view is traced on the plane nearer the observer. This swap is why third-angle view placement is the mirror of first angle.",
+   "why_wrong": [
+    "",
+    "In first angle the object is in front of the plane, lying between the observer and the plane.",
+    "The order observer–object–plane is first angle, not third angle.",
+    "The transparent-plane assumption belongs to third angle; in first angle the plane lies behind the object."
+   ],
+   "key": "MEC103-U3-018"
+  },
+  {
+   "topic": "Quadrants and Angles",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of the following statements about projection conventions is NOT correct?",
+   "code": "",
+   "options": [
+    "India follows first-angle projection under BIS practice.",
+    "The USA and Canada follow third-angle projection.",
+    "First-angle projection places the object in the third quadrant.",
+    "The angle-of-projection symbol is a frustum of a cone shown in two views."
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "First-angle projection places the object in the first quadrant (above the HP, in front of the VP); it is third-angle projection that uses the third quadrant (below the HP, behind the VP). The other three statements are standard facts about the two conventions and their symbol.",
+   "why_wrong": [
+    "This is true: India follows first-angle projection under BIS/IS practice.",
+    "This is true: the USA and Canada use third-angle projection.",
+    "",
+    "This is true: the symbol is a frustum of a cone drawn in two views."
+   ],
+   "key": "MEC103-U3-019"
+  },
+  {
+   "topic": "View Placement",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of the following is NOT a correct view position in first-angle projection?",
+   "code": "",
+   "options": [
+    "Top view below the front view",
+    "View from the right to the right of the front view",
+    "View from the left to the right of the front view",
+    "View from below above the front view"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "In first angle every view lands on the side away from the direction of sight: top view below, view from below above, view from the left on the right, and view from the right on the left. Putting the view from the right on the right is the third-angle arrangement.",
+   "why_wrong": [
+    "This is correct for first angle: the top view goes below the front view.",
+    "",
+    "This is correct for first angle: the view from the left crosses over to the right.",
+    "This is correct for first angle: the view from below goes above the front view."
+   ],
+   "key": "MEC103-U3-020"
+  },
+  {
+   "topic": "View Placement",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "In third-angle projection, which pair of positions is correct for the view from the left and the view from below?",
+   "code": "",
+   "options": [
+    "View from the left: right of the front view; view from below: above the front view",
+    "View from the left: left of the front view; view from below: above the front view",
+    "View from the left: right of the front view; view from below: below the front view",
+    "View from the left: left of the front view; view from below: below the front view"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "In third angle the transparent plane lies between the observer and the object, so each view is placed on the same side it was looked from: the view from the left on the left and the view from below below. This is the exact mirror of first angle, where they go on the right and above.",
+   "why_wrong": [
+    "This is the first-angle arrangement for both views.",
+    "The view from the left is placed correctly, but in third angle the view from below goes below the front view; above is the first-angle position.",
+    "The view from below is placed correctly, but in third angle the view from the left goes on the left; to the right is the first-angle position.",
+    ""
+   ],
+   "key": "MEC103-U3-021"
+  },
+  {
+   "topic": "View Placement",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A layout places the top view directly above the front view and the view from the right to the right of the front view. Which angle of projection does this layout follow?",
+   "code": "",
+   "options": [
+    "First-angle projection",
+    "Third-angle projection",
+    "Second-angle projection",
+    "Neither; it mixes first- and third-angle placements"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "In third angle each view is placed on the side it is seen from: the top view above the front view and the view from the right on the right. Both placements agree, so this is a consistent third-angle layout. A first-angle drawing would show the mirror image of both.",
+   "why_wrong": [
+    "First angle puts the top view below and the view from the right on the left, the mirror of this layout.",
+    "",
+    "Second-angle projection is not used, because its front and top views overlap.",
+    "Both placements are third-angle positions, so the layout is consistent, not mixed."
+   ],
+   "key": "MEC103-U3-022"
+  },
+  {
+   "topic": "View Placement",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "In first-angle projection, reading down the sheet along the vertical line through the front view, in what order do these views appear?",
+   "code": "",
+   "options": [
+    "View from below, front view, top view",
+    "Top view, front view, view from below",
+    "Front view, top view, view from below",
+    "Front view, view from below, top view"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "In first angle each view lands on the side away from where you looked: the view from below goes above the front view and the top view goes below it. So reading down the sheet the order is view from below, front view, top view. Third angle reverses this order.",
+   "why_wrong": [
+    "",
+    "This is the third-angle order, where the top view is above and the view from below is below.",
+    "The front view is not at the top; in first angle the view from below sits above it.",
+    "The front view sits between the other two; the view from below goes above it, not below it."
+   ],
+   "key": "MEC103-U3-023"
+  },
+  {
+   "topic": "Projection of Solids",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A hexagonal prism is placed with its axis perpendicular to the VP. Which view is drawn first, and what does that view show?",
+   "code": "",
+   "options": [
+    "Top view first; a regular hexagon",
+    "Front view first; a rectangle",
+    "Front view first; a regular hexagon",
+    "Top view first; a rectangle"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The view on the plane the axis is perpendicular to is drawn first, because there the end face shows in true shape. With the axis perpendicular to the VP, the hexagonal ends are parallel to the VP, so the front view is a true regular hexagon and the top view is projected from it. With the axis perpendicular to the HP, the order would reverse.",
+   "why_wrong": [
+    "The axis is perpendicular to the VP, not the HP, so the hexagon appears in the front view, and that view is drawn first.",
+    "The order is right, but with the axis perpendicular to the VP the hexagonal end faces the VP, so the front view is a hexagon, not a rectangle.",
+    "",
+    "This reverses the order: here the top view (rectangles) is projected from the front view, not drawn first."
+   ],
+   "key": "MEC103-U3-024"
+  },
+  {
+   "topic": "Projection of Solids",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "How many faces (F), edges (E) and vertices (V) does a right regular hexagonal pyramid have?",
+   "code": "",
+   "options": [
+    "F = 8, E = 18, V = 12",
+    "F = 6, E = 12, V = 7",
+    "F = 7, E = 12, V = 6",
+    "F = 7, E = 12, V = 7"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "A pyramid has n triangular faces meeting at the apex plus one base, so F = 6 + 1 = 7. Edges = 6 base edges + 6 slant edges = 12, and vertices = 6 base corners + 1 apex = 7. Check: V − E + F = 7 − 12 + 7 = 2 ✓.",
+   "why_wrong": [
+    "These are the counts for a hexagonal prism, not a hexagonal pyramid.",
+    "Counts only the 6 triangular faces and forgets the hexagonal base; V − E + F = 7 − 12 + 6 = 1, which fails Euler's check.",
+    "Counts only the 6 base corners and forgets the apex; V − E + F = 6 − 12 + 7 = 1, which fails Euler's check.",
+    ""
+   ],
+   "key": "MEC103-U3-025"
+  },
+  {
+   "topic": "Projection of Solids",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of the following statements about solids is NOT correct?",
+   "code": "",
+   "options": [
+    "A truncated solid is what remains after the solid is cut by a plane parallel to its base.",
+    "A right regular prism has two identical polygonal ends and rectangular side faces.",
+    "A pyramid has triangular side faces that meet at a common apex.",
+    "A tetrahedron has four equal equilateral triangular faces."
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A cut parallel to the base leaves a frustum; a solid is called truncated when the cutting plane is inclined to the base. The other statements are standard definitions: a prism has two identical polygonal ends joined by rectangles, a pyramid's triangular faces meet at the apex, and a tetrahedron has four equal equilateral triangles.",
+   "why_wrong": [
+    "",
+    "This is true: a right regular n-sided prism has two identical polygonal ends and n rectangular faces.",
+    "This is true: a pyramid's n triangular faces meet at the apex.",
+    "This is true: all four faces of a tetrahedron are equal equilateral triangles."
+   ],
+   "key": "MEC103-U3-026"
+  },
+  {
+   "topic": "Orthographic Basics",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A drawing shows only two views of a solid. The front view is a plain rectangle 40 mm wide and 60 mm high, and the top view directly below it is a circle of 40 mm diameter. What is the solid?",
+   "code": "",
+   "options": [
+    "A cylinder of 40 mm diameter and 60 mm height, standing with its axis perpendicular to the HP",
+    "A cylinder of 60 mm diameter and 40 mm length, lying with its axis perpendicular to the VP",
+    "A square prism with a 40 × 40 mm section and 60 mm height, standing on its base",
+    "A cone with a 40 mm base diameter and 60 mm height, standing on its base"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Each view shows only two of the three dimensions, so the solid has to fit both views at once. The circular top view says the object is round when seen from above, 40 mm across. The rectangular front view gives the same 40 mm width, a 60 mm height and straight vertical sides. Only an upright cylinder fits both views together. The rectangle alone would also fit a square prism, and the circle alone would also fit a cone, which is why one view never fixes the shape.",
+   "why_wrong": [
+    "",
+    "With its axis perpendicular to the VP, a cylinder shows a circle in the front view, not a rectangle.",
+    "A square prism gives the matching rectangular front view, but its top view would be a 40 mm square, not a circle.",
+    "A cone gives the circular top view, but its front view would be a triangle, not a rectangle."
+   ],
+   "key": "MEC103-U3-027"
+  },
+  {
+   "topic": "Orthographic Basics",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A draughtsman has finished the front view and the top view of a bracket. He now builds the side view beside the front view. Which dimensions does he take from each of the two finished views?",
+   "code": "",
+   "options": [
+    "Heights from the front view; depths from the top view",
+    "Heights from the top view; depths from the front view",
+    "Lengths from the front view; depths from the top view",
+    "Heights and depths, both from the front view"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The side view shows height and depth only. Height is shared with the front view, so it is projected straight across horizontally. Depth appears in the top view but not in the front view, so it is carried over from the top view, usually with a 45° mitre line or with arcs; length does not appear in the side view at all.",
+   "why_wrong": [
+    "",
+    "This swaps the views: the top view shows length and depth, not height, and the front view has no depth to give.",
+    "The side view has no length dimension; length is shared by the front and top views, not the side view.",
+    "The front view shows only length and height, so it cannot supply depth."
+   ],
+   "key": "MEC103-U3-028"
+  },
+  {
+   "topic": "Orthographic Basics",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A wedge-shaped block has one sloping rectangular face. The face is perpendicular to the VP and inclined to the HP. How does this sloping face appear in the front, top and side views?",
+   "code": "",
+   "options": [
+    "Front view: an inclined straight line; top and side views: foreshortened shapes, neither in true shape",
+    "Front view: its true shape; top and side views: straight lines",
+    "Front view: an inclined straight line; top view: its true shape; side view: a straight line",
+    "Front view: an inclined straight line; top view: a foreshortened shape; side view: its true shape"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A face perpendicular to a plane of projection is seen edge-on in the view on that plane, so the front view shows it as a line sloping at the face's angle. A face shows its true shape only on a plane it is parallel to. This face is parallel to none of the three planes, so the top and side views both show it smaller than its real size.",
+   "why_wrong": [
+    "",
+    "A face perpendicular to the VP is seen edge-on in the front view, so it cannot appear there in true shape.",
+    "True shape in the top view needs the face to be parallel to the HP; an inclined face is foreshortened there, and it is not edge-on in the side view either.",
+    "True shape in the side view needs the face to be parallel to the profile plane, which would make it vertical; a sloping face is foreshortened there."
+   ],
+   "key": "MEC103-U3-029"
+  },
+  {
+   "topic": "Quadrants and Angles",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "To draw the views of a bracket, a student imagines a transparent sheet held between her eye and the bracket. She traces on it what she sees from the front, from above and from the left. Which angle of projection is she using, and where does the view from the left go on the finished drawing?",
+   "code": "",
+   "options": [
+    "First-angle projection; to the right of the front view",
+    "Third-angle projection; to the left of the front view",
+    "Third-angle projection; to the right of the front view",
+    "First-angle projection; to the left of the front view"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A plane between the observer and the object, assumed to be transparent, is the defining arrangement of third-angle projection. In first angle the object lies between the observer and the plane instead. In third angle each view goes on the same side it was seen from, so the view from the left goes to the left of the front view and the top view goes above it.",
+   "why_wrong": [
+    "First angle puts the object between the observer and the plane; a transparent sheet in front of the object is the third-angle arrangement.",
+    "",
+    "The method is correct, but the position is wrong: the view from the left goes to the right of the front view only in first angle.",
+    "A plane between the eye and the object means third angle, and in first angle the view to the left of the front view is the view from the right."
+   ],
+   "key": "MEC103-U3-030"
+  },
+  {
+   "topic": "Quadrants and Angles",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "An object is placed below the HP and behind the VP. The HP is then rotated about XY in the standard way until it lies in the plane of the VP. Where do the front view and the top view appear?",
+   "code": "",
+   "options": [
+    "Front view above XY; top view below XY",
+    "Front view below XY; top view above XY",
+    "Both views above XY",
+    "Both views below XY"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Below the HP and behind the VP is the third quadrant. The front view lies on the VP below XY because the object is below the HP. The top view lies on the part of the HP behind the VP. The standard rotation turns the front part of the HP down, so the rear part swings up above XY, which is why the top view sits above the front view in third-angle projection.",
+   "why_wrong": [
+    "This is the first-quadrant result, for an object above the HP and in front of the VP.",
+    "",
+    "Both views fall above XY in the second quadrant (above the HP and behind the VP).",
+    "Both views fall below XY in the fourth quadrant (below the HP and in front of the VP)."
+   ],
+   "key": "MEC103-U3-031"
+  },
+  {
+   "topic": "Quadrants and Angles",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "A first-angle drawing has an XY line. The lowest edge of the front view of a rectangular block is 10 mm above XY. The edge of its top view nearest XY is 15 mm below XY. Where is the block?",
+   "code": "",
+   "options": [
+    "Its base is 10 mm above the HP and its rear face is 15 mm in front of the VP",
+    "Its base is 10 mm above the HP and its front face is 15 mm in front of the VP",
+    "Its base is 15 mm above the HP and its rear face is 10 mm in front of the VP",
+    "Its base is 10 mm above the HP and its rear face is 15 mm behind the VP"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "XY stands for both principal planes. The distance of the front view above XY is the distance above the HP, so the base is 10 mm above the HP. The distance of the top view below XY is the distance in front of the VP, and the top-view edge nearest XY is the face nearest the VP (the rear face), so the rear face is 15 mm in front of the VP.",
+   "why_wrong": [
+    "",
+    "The top-view edge nearest XY is the face closest to the VP, which is the rear face; the front face is the edge farthest from XY.",
+    "This swaps the readings: front-view distances from XY give height above the HP, and top-view distances give distance from the VP.",
+    "A top view below XY means the object is in front of the VP; an object behind the VP has its top view above XY."
+   ],
+   "key": "MEC103-U3-032"
+  },
+  {
+   "topic": "View Placement",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A component drawing arrives from a supplier in the USA, drawn to that country's usual practice. The front view is in the middle of the sheet. Which projection is it, and where is the view from the right?",
+   "code": "",
+   "options": [
+    "Third-angle projection; to the right of the front view",
+    "First-angle projection; to the left of the front view",
+    "Third-angle projection; to the left of the front view",
+    "First-angle projection; to the right of the front view"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The USA and Canada use third-angle projection, while India follows first angle under BIS. In third angle each view goes on the side it is seen from, so the view from the right sits to the right of the front view. In first angle it would go on the left.",
+   "why_wrong": [
+    "",
+    "That is the BIS (Indian) first-angle arrangement; a US drawing normally follows third angle.",
+    "In third angle the view to the left of the front view is the view from the left, not the view from the right.",
+    "The method is wrong, and even in first angle the view from the right goes to the left of the front view, not the right."
+   ],
+   "key": "MEC103-U3-033"
+  },
+  {
+   "topic": "View Placement",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student lays out a front view, a top view and a view from the left in first-angle projection. The three views fill three positions of an imaginary 2 × 2 grid. Which grid position stays empty?",
+   "code": "",
+   "options": [
+    "Bottom-right",
+    "Top-right",
+    "Top-left",
+    "Bottom-left"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "In first angle the top view goes below the front view and the view from the left goes to its right. That puts the front view top-left, the view from the left top-right and the top view bottom-left. The bottom-right position, below the side view and beside the top view, stays empty.",
+   "why_wrong": [
+    "",
+    "Top-right is the empty position in the third-angle layout of front view, top view and view from the right (top view above, side view to the right).",
+    "Top-left is the empty position in the third-angle layout with a view from the left (top view above the front view, side view to its left).",
+    "Bottom-left is the empty position when the side view sits to the left of the front view, as the view from the right does in first angle."
+   ],
+   "key": "MEC103-U3-034"
+  },
+  {
+   "topic": "View Placement",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student preparing a drawing to BIS practice places the top view below the front view and the view from the left to the LEFT of the front view. What is wrong, and what is the correct fix?",
+   "code": "",
+   "options": [
+    "Nothing is wrong: in first angle a side view may go on either side of the front view",
+    "The sheet mixes the two methods; the view from the left must move to the right of the front view",
+    "The sheet mixes the two methods; the top view must move above the front view to match the side view",
+    "The side view only needs to be relabelled as the view from the right; no view has to move"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "BIS practice is first angle: the top view goes below the front view and the view from the left goes to its right. On this sheet the top view is in its first-angle position but the side view is in its third-angle position, so the two methods are mixed. To stay with BIS, the side view must move to the right of the front view.",
+   "why_wrong": [
+    "Each side view has one fixed position: in first angle the view from the left always goes to the right of the front view.",
+    "",
+    "Moving the top view makes the sheet consistent, but in third angle, which breaks the BIS rule of first-angle projection.",
+    "A view from the right shows the other end of the object; relabelling does not change what was drawn, so the drawing would still be wrong."
+   ],
+   "key": "MEC103-U3-035"
+  },
+  {
+   "topic": "Projection of Solids",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A square prism has a 30 mm base side and a 70 mm axis. It lies on one of its rectangular faces on the HP, with its axis parallel to both the HP and the VP. Which view is drawn first, and what does it show?",
+   "code": "",
+   "options": [
+    "The top view, a 70 × 30 mm rectangle, because the prism rests on the HP",
+    "The front view, a 70 × 30 mm rectangle, because the axis is parallel to the VP",
+    "The side view, a 30 mm square, because the axis is perpendicular to the profile plane",
+    "The front view, a 30 mm square, because the square end faces the observer"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The view drawn first is the one on the plane the axis is perpendicular to, because that view shows the base in true shape. An axis parallel to both the HP and the VP is perpendicular to the profile plane. So the side view, a true 30 mm square, comes first, and the front and top views (both 70 × 30 mm rectangles) are projected from it.",
+   "why_wrong": [
+    "Resting on the HP does not decide the order; the top view comes first only when the axis is perpendicular to the HP.",
+    "The front view comes first only when the axis is perpendicular to the VP; here the axis is parallel to it.",
+    "",
+    "With the axis parallel to the VP the square ends face sideways, not toward the front, so the front view is a rectangle."
+   ],
+   "key": "MEC103-U3-036"
+  },
+  {
+   "topic": "Projection of Solids",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "A right regular hexagonal prism has a 25 mm base edge and a 60 mm axis. It stands on its base on the HP with two of its rectangular faces parallel to the VP. What does its front view look like?",
+   "code": "",
+   "options": [
+    "50 mm wide and 60 mm high, divided into three rectangles",
+    "About 43.3 mm wide and 60 mm high, divided into two rectangles",
+    "25 mm wide and 60 mm high, a single rectangle",
+    "75 mm wide and 60 mm high, three rectangles each 25 mm wide"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The top view (a true hexagon) is drawn first. With two faces parallel to the VP, two sides of the hexagon are parallel to XY, so the corner-to-corner width of 2 × 25 = 50 mm runs across the front view. The lateral edges split it into 12.5 + 25 + 12.5 mm: the middle face, parallel to the VP, shows its true width, and the two sloping faces are foreshortened.",
+   "why_wrong": [
+    "",
+    "An across-flats width of 25√3 ≈ 43.3 mm with two rectangles belongs to the position with two faces perpendicular to the VP.",
+    "The front view shows every face visible from the front, not just the one parallel to the VP.",
+    "The two side faces are inclined to the VP and appear foreshortened (12.5 mm each); only the face parallel to the VP shows its true 25 mm width."
+   ],
+   "key": "MEC103-U3-037"
+  },
+  {
+   "topic": "Projection of Solids",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "A right circular cone with a base diameter of 60 mm and an axis of 40 mm stands on its base on the HP. Its front view is an isosceles triangle. How long is each sloping side of that triangle?",
+   "code": "",
+   "options": [
+    "50 mm",
+    "40 mm",
+    "≈72.1 mm",
+    "70 mm"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The sloping sides of the front view are the two outermost generators. They lie in a plane parallel to the VP, so they show their true length. Each one is the slant height, found with the base radius (not the diameter): √(30² + 40²) = √2500 = 50 mm.",
+   "why_wrong": [
+    "",
+    "40 mm is the axis (the height of the triangle), not its sloping side.",
+    "√(60² + 40²) ≈ 72.1 mm uses the diameter instead of the radius.",
+    "30 + 40 = 70 adds the radius and the height instead of combining them by Pythagoras."
+   ],
+   "key": "MEC103-U3-038"
+  },
+  {
+   "topic": "Orthographic Basics",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A cylindrical hole is drilled vertically through a rectangular block, from the centre of the top face right through to the bottom face. How is the hole shown in the top view and in the front view?",
+   "code": "",
+   "options": [
+    "Top view: a circle in continuous (visible) line; front view: two vertical dashed lines with a centre line between them",
+    "Top view: a dashed circle, because the hole lies inside the block; front view: two vertical dashed lines",
+    "Top view: a circle in continuous line; front view: a dashed circle",
+    "Top view: a circle in continuous line; front view: two vertical continuous lines, because the hole runs the full height"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Seen from above, the edge of the hole on the top face is in plain sight, so the top view shows a visible circle with its centre lines. Seen from the front, the sides of the hole are behind the block's front face. Its two outermost generators are therefore hidden edges, drawn as dashed lines with a centre line for the hole's axis; a hole appears as a circle only in the view looking along its axis.",
+   "why_wrong": [
+    "",
+    "The hole opens on the top face, so its edge is visible from above; dashed lines are only for edges hidden behind material.",
+    "The circle appears only in the view looking along the hole's axis; from the front, a vertical hole shows as two lines, not a circle.",
+    "Running the full height does not make the sides visible: the block's front face lies in front of them, so they are hidden edges."
+   ],
+   "key": "MEC103-U3-039"
+  },
+  {
+   "topic": "Orthographic Basics",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A flat face of a component appears as a single straight line in the front view. What must be true of that line for the top view to show the true shape of the face?",
+   "code": "",
+   "options": [
+    "Nothing more: any face seen edge-on in the front view appears in true shape in the top view",
+    "The line must be parallel to XY",
+    "The line must be perpendicular to XY",
+    "The line must be inclined at 45° to XY"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A face seen as a line in the front view is perpendicular to the VP, and the angle that line makes with XY is the face's inclination to the HP. The top view shows the true shape only when the face is parallel to the HP, which means the line must be parallel to XY. At any other angle the top view is foreshortened, and at 90° the face is vertical and its top view shrinks to a line.",
+   "why_wrong": [
+    "Being edge-on in the front view only makes the face perpendicular to the VP; if it is also tilted to the HP, its top view is foreshortened.",
+    "",
+    "A line perpendicular to XY means the face is vertical (perpendicular to the HP), so its top view is a line, not its true shape.",
+    "At 45° the face is inclined to both the HP and the profile plane, so the top and side views are equally foreshortened and neither shows true shape."
+   ],
+   "key": "MEC103-U3-040"
+  },
+  {
+   "topic": "Quadrants and Angles",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The same object is drawn once in first-angle and once in third-angle projection, with the same front direction. How do the two sets of views compare?",
+   "code": "",
+   "options": [
+    "Every view has the same shape and orientation in both; only the positions of the views around the front view differ",
+    "The front views match, but the top and side views of one method are mirror images of those in the other",
+    "The front and top views match, but the side views of one method are turned through 180° relative to the other",
+    "Only the front view keeps its shape; the other views change because the object sits in a different quadrant"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Each view is the object seen from one direction, and that does not depend on the method. What changes is where each view is placed: below and to the right in first angle, above and to the left in third angle. In both methods the top view shows the object's front along its lower edge and the view from the left shows the front on its right-hand side, so the views are identical and only their positions swap.",
+   "why_wrong": [
+    "",
+    "Moving the top view from below the front view to above it does not flip it: in both methods its lower edge represents the object's front.",
+    "The view from the left shows the object's front on its right-hand side in both methods; only its position swaps from the right of the front view to the left.",
+    "The quadrant decides where each view lands on the sheet, not what the view looks like; every view keeps its shape."
+   ],
+   "key": "MEC103-U3-041"
+  },
+  {
+   "topic": "Quadrants and Angles",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "The HP is rotated about XY in the standard way, with its front part turning down. In which case does an object's top view appear ABOVE the XY line?",
+   "code": "",
+   "options": [
+    "Whenever the object is behind the VP, whether it is above or below the HP",
+    "Whenever the object is below the HP, whether it is in front of or behind the VP",
+    "Only when the object is in the third quadrant",
+    "Only when the object is above the HP and in front of the VP"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The top view lies on the HP. The rotation sends the part of the HP in front of the VP below XY and the part behind the VP above XY. So the side of XY the top view falls on depends only on whether the object is in front of or behind the VP, which puts the top view above XY in both the second and the third quadrants; being above or below the HP decides where the front view falls.",
+   "why_wrong": [
+    "",
+    "Being above or below the HP decides which side of XY the front view falls on, not the top view.",
+    "The third quadrant is one case, but an object in the second quadrant (above the HP, behind the VP) also has its top view above XY.",
+    "That is the first quadrant, where the top view falls below XY."
+   ],
+   "key": "MEC103-U3-042"
+  },
+  {
+   "topic": "View Placement",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "In a first-angle drawing, the view from the left sits to the right of the front view. The object has a small boss on its front face. Where does the boss appear in this side view?",
+   "code": "",
+   "options": [
+    "On the right-hand side of the side view, the side farther from the front view",
+    "On the left-hand side of the side view, the side nearer the front view",
+    "On the left-hand side, because a side view is a mirror image of the front view",
+    "On the right-hand side, but in dashed lines, because the front face cannot be seen from the left"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "For an observer looking from the left, the object's front is on the right, so the boss appears on the right-hand side of the view from the left. In first angle this view sits to the right of the front view, so the object's front faces away from the front view. The same holds in the top view below, where the front is the edge farthest from the front view; in third angle the views sit on the other side and the front faces toward the front view.",
+   "why_wrong": [
+    "",
+    "The front facing toward the front view is the third-angle pattern; in first angle it faces away.",
+    "A side view is not a mirror image of any other view; it is the object seen from the left, where the front lies on the observer's right.",
+    "The boss sticks out from the front face, so seen from the left its outline stands clear of the block and is visible, drawn in continuous lines."
+   ],
+   "key": "MEC103-U3-043"
+  },
+  {
+   "topic": "View Placement",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A third-angle drawing reaches a workshop whose staff miss the projection symbol and read it as first angle. What will they take the view above the front view and the view to the left of the front view to be?",
+   "code": "",
+   "options": [
+    "The view from below and the view from the right",
+    "The top view and the view from the left",
+    "The view from below and the view from the left",
+    "The top view and the view from the right"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "In third angle the view above the front view is the top view, and the view to its left is the view from the left. First-angle placement is the mirror of this: the view above the front view is the view from below, and the view to the left is the view from the right. A reader assuming first angle therefore takes the top view for the view from below and the view from the left for the view from the right.",
+   "why_wrong": [
+    "",
+    "These are what the views really are; reading by first-angle rules changes both names.",
+    "A first-angle reader also misnames the side view, because in first angle the view to the left of the front view is the view from the right.",
+    "A first-angle reader also misnames the upper view, because in first angle the view above the front view is the view from below."
+   ],
+   "key": "MEC103-U3-044"
+  },
+  {
+   "topic": "Projection of Solids",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A right regular square pyramid has a 30 mm base edge and a 20 mm axis. It stands on its base on the HP with two of its base edges parallel to the VP. How long is each sloping side of its front view, and how does that compare with a slant edge?",
+   "code": "",
+   "options": [
+    "25 mm, shorter than the true length of a slant edge (≈29.2 mm)",
+    "≈29.2 mm, since the slant edges appear in true length in the front view",
+    "25 mm, which is the true length of a slant edge",
+    "≈36.1 mm, from √(30² + 20²)"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "With the base edges parallel and perpendicular to the VP, each sloping side of the front view is a side face seen edge-on, running from the middle of a base edge up to the apex: √(15² + 20²) = 25 mm. A slant edge starts at a corner, 15 mm off the axis in both directions, so its true length is √(15² + 15² + 20²) = √850 ≈ 29.2 mm. It is inclined to the VP and so appears shortened to 25 mm; only with the base turned 45° would the outline slant edges lie parallel to the VP and show 29.2 mm.",
+   "why_wrong": [
+    "",
+    "Slant edges show their true length only when they are parallel to the VP, which needs the base turned 45°; here they are inclined to the VP.",
+    "25 mm is right for the drawn side, but it is the height of a side face (base-edge midpoint to apex), not the slant edge, which is ≈29.2 mm.",
+    "This uses the full 30 mm base edge; the horizontal distance from the axis to a side is half of it, 15 mm."
+   ],
+   "key": "MEC103-U3-045"
+  },
+  {
+   "topic": "Projection of Solids",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A right regular hexagonal pyramid is cut by a plane parallel to its base, and the part containing the apex is removed. How many faces (F), edges (E) and vertices (V) does the remaining solid have?",
+   "code": "",
+   "options": [
+    "F = 8, E = 18, V = 12",
+    "F = 7, E = 12, V = 7",
+    "F = 8, E = 12, V = 12",
+    "F = 7, E = 18, V = 12"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "A cut parallel to the base leaves a frustum. It has the hexagonal base, a new hexagonal top face and 6 trapezium side faces, so F = 8. It has 6 edges on the base, 6 on the top and 6 slanting edges, so E = 18, and 6 corners on each hexagon, so V = 12. Euler's formula checks it: V − E + F = 12 − 18 + 8 = 2.",
+   "why_wrong": [
+    "",
+    "These are the counts for the whole pyramid; removing the apex adds a top face and replaces the single apex with six corners.",
+    "This forgets the six edges of the new hexagonal top face.",
+    "This forgets the new hexagonal top face made by the cut."
+   ],
+   "key": "MEC103-U3-046"
+  },
+  {
+   "topic": "Projection of Solids",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Which of these solids is a right regular pyramid?",
+   "code": "",
+   "options": [
+    "A pyramid on a square base with its apex directly above the centre of the square",
+    "A pyramid on a 40 × 30 mm rectangular base with its apex directly above the centre of the rectangle",
+    "A pyramid on a square base with its apex directly above the midpoint of one base edge",
+    "A pyramid on a rhombus base (all sides equal, angles 60° and 120°) with its apex directly above the centre"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Two separate conditions must both hold. 'Right' means the axis, running from the apex to the centre of the base, is perpendicular to the base, so the apex lies directly above the base centre. 'Regular' means the base is a regular polygon, with all sides AND all angles equal. Only the square-based pyramid with a centred apex meets both conditions.",
+   "why_wrong": [
+    "",
+    "The apex is centred, so the pyramid is right, but a rectangle has unequal sides, so the pyramid is not regular.",
+    "The base is regular, but an off-centre apex tilts the axis away from the perpendicular, which makes the pyramid oblique.",
+    "A rhombus has equal sides but unequal angles, so it is not a regular polygon; this pyramid is right but not regular."
+   ],
+   "key": "MEC103-U3-047"
+  },
+  {
+   "topic": "Projection of Solids",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "A right regular square pyramid is cut by a plane parallel to its base, and the lower part stands on its base on the HP. What does its top view show?",
+   "code": "",
+   "options": [
+    "Two concentric squares with their matching corners joined by four continuous lines",
+    "Two concentric squares with their matching corners joined by four dashed lines, because the slant edges lie below the top face",
+    "A single square with both diagonals drawn, as for the complete pyramid",
+    "Two concentric squares only, because the sloping faces are seen edge-on from above"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A cut parallel to the base leaves a frustum whose top face is a smaller square, concentric with the base and with its sides parallel to the base's sides. From above, the top face and all four sloping faces are in view. The four slant edges therefore show as continuous lines joining each corner of the small square to the matching corner of the base; diagonals meeting at a point belong to the uncut pyramid, whose slant edges meet at the apex.",
+   "why_wrong": [
+    "",
+    "The top face is smaller than the base, so it cannot hide the slant edges; every sloping face is visible from above.",
+    "Removing the apex replaces the point where the slant edges meet with a small square top face.",
+    "Only a vertical face is seen edge-on from above; these faces slope, so they appear as trapezia bounded by the slant edges."
+   ],
+   "key": "MEC103-U3-048"
+  }
+ ]
+}

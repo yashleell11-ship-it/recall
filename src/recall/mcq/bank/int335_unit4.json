@@ -1,0 +1,1042 @@
+{
+ "subject_code": "INT335",
+ "unit": 4,
+ "unit_label": "Product Design and Prototyping",
+ "questions": [
+  {
+   "topic": "Purpose of Prototyping",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the main purpose of building a prototype in design thinking?",
+   "code": "",
+   "options": [
+    "To prove that the chosen solution is correct",
+    "To learn about the idea and expose where it is weak",
+    "To demonstrate the finished product to stakeholders",
+    "To release a first working version to paying customers"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A prototype is a learning tool. It makes an idea concrete enough for users to try, so the team can see where it breaks. Finding weaknesses early is the point, because changes are still cheap at this stage. A prototype is not proof that a design works, and it is not a finished build.",
+   "why_wrong": [
+    "This treats the prototype as confirmation of an answer already chosen. Its job is to find where the idea fails, not to prove it right.",
+    "",
+    "This confuses a prototype with a finished build. Prototypes are rough on purpose and are made for learning, not for impressing stakeholders.",
+    "This describes an MVP. A prototype is not given to real customers in a real operating context."
+   ],
+   "key": "INT335-U4-001"
+  },
+  {
+   "topic": "Purpose of Prototyping",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which of these best describes a prototype?",
+   "code": "",
+   "options": [
+    "The smallest working product that real customers use for real work",
+    "The final, fully built product ready for launch",
+    "A simulation of an experience that users try so the team can learn",
+    "A written problem statement describing the user's need"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A prototype simulates the product or service experience so the team can watch users and learn from what happens. It does not need to really work, and real customers do not use it in their real context. The other options describe an MVP, a finished product and a Define-stage problem statement.",
+   "why_wrong": [
+    "This describes an MVP, which real customers use to get real value. A prototype only simulates the experience.",
+    "A prototype is deliberately rough and incomplete. A finished product ready for launch is the end of the process, not a tool for learning.",
+    "",
+    "This describes a problem statement from the Define stage. A prototype is something users can try, not a written description of their need."
+   ],
+   "key": "INT335-U4-002"
+  },
+  {
+   "topic": "Prototype Fidelity",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which of these is an example of a low-fidelity prototype?",
+   "code": "",
+   "options": [
+    "A clickable mock-up with final colours and animations",
+    "An interactive prototype that reproduces real loading delays",
+    "A fully coded app released to customers",
+    "Hand-drawn screens on sheets of paper"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Fidelity means how closely a prototype resembles the finished product. Hand-drawn paper screens are rough, quick and cheap, so they are low fidelity. Final colours, animations and real timing belong to high fidelity. A coded app that customers use is not a prototype at all.",
+   "why_wrong": [
+    "Final colours and animations make it look and behave like the real product, which makes it high fidelity.",
+    "Reproducing real timing is exactly what high fidelity adds. Paper cannot show a delay.",
+    "A coded app in customers' hands is a real product, possibly an MVP, not a low-fidelity prototype.",
+    ""
+   ],
+   "key": "INT335-U4-003"
+  },
+  {
+   "topic": "Prototype Fidelity",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What can a low-fidelity prototype, such as a set of paper screens, test well?",
+   "code": "",
+   "options": [
+    "The concept, information hierarchy and order of screens",
+    "Animation and response time",
+    "Visual appeal of the final colours and imagery",
+    "Realistic typing and data entry"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Low fidelity strips away visual finish, so users react to the idea and its structure: what each screen is for, what matters most on it, and what comes next. It cannot reproduce motion, timing, final visual style or realistic input, because a person moving paper by hand supplies every response.",
+   "why_wrong": [
+    "",
+    "Paper has no motion and no real delay, so animation and response time need a high-fidelity prototype.",
+    "Low fidelity deliberately leaves out final colour and imagery, so it cannot judge visual appeal.",
+    "Users point at paper or write on it rather than typing into real fields, so realistic data entry cannot be tested."
+   ],
+   "key": "INT335-U4-004"
+  },
+  {
+   "topic": "Prototype Fidelity",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which kind of prototype is needed to test precise interaction timing and visual credibility?",
+   "code": "",
+   "options": [
+    "Paper prototype",
+    "Grayscale wireframe",
+    "High-fidelity prototype",
+    "Hand-drawn sketch"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Timing, micro-feedback and whether the product looks believable only exist once the prototype looks and behaves close to the real thing. That is high fidelity. Paper, wireframes and sketches are all low fidelity, and they answer questions about concept and structure instead.",
+   "why_wrong": [
+    "Paper is low fidelity. A person moving the sheets responds instantly, so real timing cannot be shown.",
+    "A wireframe is grayscale and leaves out final visuals, so it cannot test visual credibility or timing.",
+    "",
+    "A sketch is the lowest fidelity of all. It shows an idea, not how the finished product behaves or looks."
+   ],
+   "key": "INT335-U4-005"
+  },
+  {
+   "topic": "Prototype Fidelity",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is one key advantage of paper prototyping?",
+   "code": "",
+   "options": [
+    "It shows exactly how long each screen takes to load",
+    "Screens can be made and changed in minutes, so ideas are tested cheaply",
+    "It shows the final brand colours and typography",
+    "It can be handed straight to customers as the product"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Paper prototypes are fast and cheap: a team can sketch screens, test them with a user and redraw them within minutes. Because so little effort goes into them, the team is willing to throw ideas away. The trade-off is that paper cannot show timing or the final visual design.",
+   "why_wrong": [
+    "Paper cannot reproduce a loading delay, because whoever moves the sheets responds instantly.",
+    "",
+    "Paper prototypes are rough by design and leave out final colours and fonts.",
+    "A paper prototype simulates the product so the team can learn. It gives customers no real value."
+   ],
+   "key": "INT335-U4-006"
+  },
+  {
+   "topic": "Minimum Viable Product",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does MVP stand for?",
+   "code": "",
+   "options": [
+    "Maximum Value Prototype",
+    "Minimum Visual Prototype",
+    "Most Valuable Product",
+    "Minimum Viable Product"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "MVP stands for Minimum Viable Product. 'Minimum' means the smallest coherent version. 'Viable' means it works well enough for real users to complete the core task. It is a product, not a prototype.",
+   "why_wrong": [
+    "An MVP is a minimum, not a maximum, and it is a real product rather than a prototype.",
+    "'Viable' is about working for real users, not about visuals, and an MVP is a real product, not a prototype.",
+    "This mixes up 'most valuable' with 'minimum viable'. The term is about the smallest version that still works.",
+    ""
+   ],
+   "key": "INT335-U4-007"
+  },
+  {
+   "topic": "Minimum Viable Product",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which of these is the correct definition of an MVP?",
+   "code": "",
+   "options": [
+    "The smallest coherent end-to-end product that reliably delivers the core value to real users",
+    "The version of a product with the fewest features, whatever its quality",
+    "A cheap, half-working product released just to see what happens",
+    "A clickable mock-up of the whole app tested with users in a lab"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "An MVP is the smallest product that still works end to end and reliably delivers the core value. Real use of it then gives evidence about one central hypothesis. Its scope is minimal, but its quality must let a real user finish the core task. A mock-up tested in a lab is a prototype, not an MVP.",
+   "why_wrong": [
+    "",
+    "This defines an MVP by feature count alone. 'Viable' also requires that it actually works for the core task.",
+    "A half-working product is not viable, because real users could not complete the core task with it.",
+    "A mock-up tested in a lab is a prototype. Real customers use an MVP in their real context."
+   ],
+   "key": "INT335-U4-008"
+  },
+  {
+   "topic": "Minimum Viable Product",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In 'Minimum Viable Product', what does 'viable' require?",
+   "code": "",
+   "options": [
+    "It includes every feature planned for the final product",
+    "It is built as quickly and cheaply as possible, whatever its quality",
+    "It works well enough for a real user to complete the core task",
+    "It looks visually polished on every screen"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "'Viable' sets the quality bar: a real user must be able to finish the core task and get the core value. 'Minimum' keeps the scope small, and 'viable' stops the product from being broken or unusable. The word does not ask for a full feature set or for visual polish.",
+   "why_wrong": [
+    "Including every planned feature contradicts 'minimum'. Viability is about the core task, not the full plan.",
+    "Speed and cost matter, but a product that fails at the core task is not viable, however cheap it was.",
+    "",
+    "Viability is about completing the core task reliably, not about visual polish on every screen."
+   ],
+   "key": "INT335-U4-009"
+  },
+  {
+   "topic": "Wireframes and Storyboards",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does a wireframe show?",
+   "code": "",
+   "options": [
+    "The final colours, typography and imagery",
+    "The layout, content placement and hierarchy of a screen",
+    "The user's context, action and outcome over time",
+    "How quickly the screen responds to a tap"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A wireframe is a structural drawing of an interface. It shows where each element sits, what matters most and how the screen is organised. It deliberately leaves out final visual styling. Context over time is what a storyboard shows, and testing response speed needs a high-fidelity prototype.",
+   "why_wrong": [
+    "Final colour, typography and imagery are exactly what a wireframe deliberately leaves out.",
+    "",
+    "This describes a storyboard, which shows a user's situation and actions over time.",
+    "A static wireframe has no behaviour. Testing response time needs a high-fidelity prototype."
+   ],
+   "key": "INT335-U4-010"
+  },
+  {
+   "topic": "Wireframes and Storyboards",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Wireframes are conventionally drawn in which colour scheme?",
+   "code": "",
+   "options": [
+    "The final brand colour palette",
+    "Full-colour photographs and imagery",
+    "Bright, high-contrast colours for each button",
+    "Grayscale"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Wireframes are conventionally grayscale so that attention stays on layout and hierarchy rather than on colour choices. Leaving colour out also signals that the design is not final. Brand colours and imagery come later, in higher-fidelity work.",
+   "why_wrong": [
+    "Brand colours belong to the final visual design, which a wireframe deliberately leaves out.",
+    "Wireframes leave imagery out. Simple placeholder boxes mark where images will go.",
+    "Adding colour draws attention to styling, which is the opposite of what a wireframe is for.",
+    ""
+   ],
+   "key": "INT335-U4-011"
+  },
+  {
+   "topic": "User Flows and Features",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In a user flow, what is the 'happy path'?",
+   "code": "",
+   "options": [
+    "The route through the product that has the most screens",
+    "The route a user takes after something goes wrong",
+    "The main route in which the user completes the goal with no errors or detours",
+    "A route designed with cheerful colours to please users"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The happy path is the default, successful sequence of steps from start to goal, assuming nothing goes wrong. It carries the core task, so it is usually designed and tested first. Error routes and alternative routes are mapped separately.",
+   "why_wrong": [
+    "The happy path is defined by success without detours, not by how many screens it passes through.",
+    "That is an error or recovery path, which branches off the happy path.",
+    "",
+    "'Happy' means the user reaches the goal smoothly. It has nothing to do with visual styling."
+   ],
+   "key": "INT335-U4-012"
+  },
+  {
+   "topic": "User Flows and Features",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is a core feature of a product?",
+   "code": "",
+   "options": [
+    "A feature that is nice to have but not needed for the main task",
+    "A feature essential for delivering the product's main value",
+    "The feature with the most attractive visual design",
+    "Whichever feature was cheapest to build"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A core feature is one without which the user cannot complete the main task or get the main value. Features that add convenience or polish but are not needed for that task are peripheral. Neither cost nor looks decides whether a feature is core.",
+   "why_wrong": [
+    "That describes a peripheral feature, which can be removed without breaking the main task.",
+    "",
+    "Visual appeal does not make a feature essential. A core feature is one that delivers the main value.",
+    "Build cost says nothing about whether the user needs the feature for the main task."
+   ],
+   "key": "INT335-U4-013"
+  },
+  {
+   "topic": "Purpose of Prototyping",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these is NOT a valid reason to build a prototype?",
+   "code": "",
+   "options": [
+    "To find where an idea is weak before investing heavily in it",
+    "To learn from how users react when they try the idea",
+    "To make an abstract idea concrete enough to test",
+    "To prove to stakeholders that the chosen design is already correct"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Prototypes exist to learn and to expose weaknesses while changes are still cheap. Making an idea concrete and watching users react is how that learning happens. Using a prototype to prove a chosen design right turns a learning tool into a sales pitch, and the team stops listening to what it reveals.",
+   "why_wrong": [
+    "Exposing weaknesses early is a central reason to prototype, so this is a valid reason.",
+    "Learning from user reactions is exactly what prototypes are for, so this is a valid reason.",
+    "Making an idea concrete is what allows users to test it, so this is a valid reason.",
+    ""
+   ],
+   "key": "INT335-U4-014"
+  },
+  {
+   "topic": "Purpose of Prototyping",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about prototypes is correct?",
+   "code": "",
+   "options": [
+    "A prototype should be tested only after the design has been confirmed correct",
+    "A prototype that reveals problems has done its job, because its purpose is learning",
+    "A prototype should look finished so that it impresses stakeholders",
+    "A successful prototype is released to the market for customers to use"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Finding problems is the payoff of prototyping: every weakness exposed now is one the team does not discover after launch. Waiting for confirmation, polishing to impress, or releasing to the market all treat the prototype as a finished product. Releasing to real customers is what an MVP does.",
+   "why_wrong": [
+    "This reverses the logic. Testing a prototype is how a team finds out whether a design works, so testing comes before any confirmation.",
+    "",
+    "Polish is not the goal. A prototype is kept as rough as the question being tested allows, so that it stays cheap to change.",
+    "A prototype is not given to real customers in a real operating context. That is what an MVP is for."
+   ],
+   "key": "INT335-U4-015"
+  },
+  {
+   "topic": "Prototype Fidelity",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these CANNOT be tested with a paper prototype?",
+   "code": "",
+   "options": [
+    "Whether users understand what each screen is for",
+    "Whether users can follow the order of the screens",
+    "Whether users stay confident during a two-second loading delay",
+    "Whether the most important information is where users look first"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Paper tests concept, screen sequence and information hierarchy. That covers whether users understand each screen, whether they can follow the order and whether they find the key information. A delay cannot exist on paper, because the person swapping the sheets responds instantly. Timing and micro-feedback need a higher-fidelity interactive prototype in which the delay is real.",
+   "why_wrong": [
+    "This is a question about the concept, which paper tests well.",
+    "Screen sequence is exactly what a paper prototype can check.",
+    "",
+    "Information hierarchy is visible in a paper layout, so this can be tested."
+   ],
+   "key": "INT335-U4-016"
+  },
+  {
+   "topic": "Prototype Fidelity",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which pairing of a question with the right prototype fidelity is correct?",
+   "code": "",
+   "options": [
+    "Low fidelity: Do users understand the order of the screens?",
+    "Low fidelity: Do users trust the look of the brand?",
+    "High fidelity: Which of three navigation structures works best, before any visual design exists?",
+    "Low fidelity: Does the transition animation feel smooth?"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Match the fidelity to what is uncertain. Screen order is a question about structure, and cheap low-fidelity screens answer it. Trust in a visual identity and smoothness of animation need high fidelity. Comparing navigation structures before any visual design exists is a job for low fidelity.",
+   "why_wrong": [
+    "",
+    "Trust in a visual identity depends on final colours and styling, which low fidelity leaves out.",
+    "Navigation structure is a question about structure. Building high fidelity before any visual design exists spends effort on details that do not matter yet.",
+    "Paper and sketches have no motion, so animation needs high fidelity."
+   ],
+   "key": "INT335-U4-017"
+  },
+  {
+   "topic": "Minimum Viable Product",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What is the key difference between an MVP and a prototype?",
+   "code": "",
+   "options": [
+    "An MVP always has fewer features than a prototype",
+    "An MVP is simply a low-fidelity type of prototype",
+    "A prototype is released to the market, while an MVP stays inside the team",
+    "An MVP is used by real customers to get real value; a prototype simulates the experience so the team can learn"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The deciding question is who uses it and for what. A prototype simulates an experience so the team can learn, and it is not given to real customers in a real operating context. An MVP is a real, working product that real customers use to get real value. Scope size does not decide which one something is.",
+   "why_wrong": [
+    "Scope is not the difference. A prototype can cover the whole app while an MVP may be a single feature.",
+    "This blurs the two. An MVP is a working product used for real, not a simulation made for learning.",
+    "This reverses the roles. The MVP goes to real customers, while a prototype stays in testing.",
+    ""
+   ],
+   "key": "INT335-U4-018"
+  },
+  {
+   "topic": "Minimum Viable Product",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which statement about an MVP is NOT correct?",
+   "code": "",
+   "options": [
+    "It delivers the product's core value to real users",
+    "It may be half-working, as long as its feature count is minimal",
+    "It generates evidence about one central hypothesis",
+    "It works end to end, even though its scope is small"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "An MVP is minimal in scope but must still be viable: a real user must be able to complete the core task. A half-working product fails that test, so a small feature count alone never makes something an MVP. Delivering core value, testing one central hypothesis and working end to end are all part of the definition.",
+   "why_wrong": [
+    "Delivering core value to real users is part of the definition, so this statement is correct.",
+    "",
+    "An MVP exists to generate evidence about one central hypothesis, so this statement is correct.",
+    "An MVP must hold together end to end despite its small scope, so this statement is correct."
+   ],
+   "key": "INT335-U4-019"
+  },
+  {
+   "topic": "Wireframes and Storyboards",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What does a storyboard show that a wireframe does not?",
+   "code": "",
+   "options": [
+    "Where each piece of content is placed on the screen",
+    "Which elements on a screen are most important",
+    "The final colours and typography of the interface",
+    "The user's context and what happens over time as they use the product"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A wireframe shows the structure of an interface: where things are placed and which matter most. A storyboard adds the story around the interface: where the user is, what they do, how the system responds and how it ends, over time. Neither one is meant to show final colours and typography.",
+   "why_wrong": [
+    "Content placement is exactly what a wireframe shows, so a storyboard does not add it.",
+    "A wireframe shows hierarchy, so hierarchy is not what a storyboard adds.",
+    "Neither shows final visual styling. Wireframes deliberately leave it out, and storyboards focus on the situation rather than the look of the interface.",
+    ""
+   ],
+   "key": "INT335-U4-020"
+  },
+  {
+   "topic": "Wireframes and Storyboards",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Match each artefact to its description: (1) a grayscale layout of a checkout screen showing where each element sits; (2) six panels showing a shopper waiting in a queue, tapping Pay and leaving satisfied; (3) hand-drawn screens that a facilitator swaps while a user points at them.",
+   "code": "",
+   "options": [
+    "1 = paper prototype, 2 = wireframe, 3 = storyboard",
+    "1 = wireframe, 2 = storyboard, 3 = paper prototype",
+    "1 = wireframe, 2 = paper prototype, 3 = storyboard",
+    "1 = storyboard, 2 = wireframe, 3 = paper prototype"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A wireframe is a grayscale layout showing the structure of a screen. A storyboard shows, across panels over time, a person's situation, what they do, how the system responds and how it ends. Screens swapped by hand while a user interacts with them are a paper prototype, a low-fidelity simulation that users can try.",
+   "why_wrong": [
+    "This calls a static grayscale layout a prototype and calls panels that tell a story over time a wireframe.",
+    "",
+    "This swaps storyboard and paper prototype. The panels tell a shopper's story, while screens swapped as a user points are something the user actually tries.",
+    "This swaps wireframe and storyboard, treating a storyboard as a screen layout. The grayscale layout of one screen is the wireframe."
+   ],
+   "key": "INT335-U4-021"
+  },
+  {
+   "topic": "User Flows and Features",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What is the correct order of the happy path for ordering food in a delivery app?",
+   "code": "",
+   "options": [
+    "Choose a restaurant → add dishes to the cart → place the order and pay → see the 'order placed' confirmation",
+    "Add dishes to the cart → choose a restaurant → place the order and pay → see the 'order placed' confirmation",
+    "Choose a restaurant → place the order and pay → add dishes to the cart → see the 'order placed' confirmation",
+    "Choose a restaurant → add dishes to the cart → see the 'order placed' confirmation → place the order and pay"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A happy path is the successful sequence with no detours, and here each step depends on the one before it. Dishes come from a chosen restaurant's menu. An order can be paid for only once the cart has items. The confirmation reports an order that has already been placed. So the order is restaurant → cart → order and pay → confirmation.",
+   "why_wrong": [
+    "",
+    "Dishes are picked from a restaurant's menu, so the restaurant must be chosen first.",
+    "If you pay before anything is in the cart, there is nothing to order.",
+    "The confirmation reports an order already placed, so it cannot come before placing the order and paying."
+   ],
+   "key": "INT335-U4-022"
+  },
+  {
+   "topic": "User Flows and Features",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For a ride-booking app, which of these is a peripheral feature rather than a core one?",
+   "code": "",
+   "options": [
+    "Entering the pickup location",
+    "Entering the drop-off location",
+    "Choosing a custom colour theme for the app",
+    "Requesting a ride"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Core features are the ones the user needs to complete the main task, which here is getting a ride from one place to another. Pickup, drop-off and the request itself are all essential steps of that task. A colour theme suits personal taste, but rides work without it, so it is peripheral.",
+   "why_wrong": [
+    "Without a pickup location the driver cannot find the rider, so this feature is core.",
+    "Without a destination the trip cannot be completed, so this feature is core.",
+    "",
+    "Requesting the ride is the main task itself, so this feature is core."
+   ],
+   "key": "INT335-U4-023"
+  },
+  {
+   "topic": "User Flows and Features",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which set of features belongs in an MVP?",
+   "code": "",
+   "options": [
+    "Every peripheral feature as well, so that early users are impressed",
+    "As few features as possible, even if the main task cannot be completed",
+    "Visual polish first, with the working core features added later",
+    "Only the core features a user needs to complete the main task end to end"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "An MVP keeps its scope minimal but must be viable. So it contains the core features needed to complete the main task end to end, and little else. Peripheral features add cost and delay without testing the central hypothesis. Cutting below the core, or shipping polish without working features, leaves nothing a real user can actually use.",
+   "why_wrong": [
+    "Adding peripheral features breaks 'minimum' and delays the evidence the MVP exists to gather.",
+    "This defines an MVP by feature count alone. If the main task cannot be completed, the product is not viable.",
+    "Polish without working core features gives users nothing to do, so the product is not viable.",
+    ""
+   ],
+   "key": "INT335-U4-024"
+  },
+  {
+   "topic": "Purpose of Prototyping",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team tests a paper prototype of a canteen pre-order app with five students. Four of them cannot work out where to collect their order after paying. The team lead says, 'The prototype failed. We wasted a day.' Which response best fits the purpose of prototyping?",
+   "code": "",
+   "options": [
+    "The lead is right: a prototype succeeds only when it confirms the design works.",
+    "The result should be ignored, because a paper prototype cannot test how screens connect.",
+    "The prototype did its job: it exposed a weakness cheaply, before anything was built.",
+    "The team should rebuild it in high fidelity, because polished screens stop users getting confused."
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A prototype is built to learn and to find where an idea is weak before time and money go into building it. Finding that four of five students can't locate the pickup point is exactly that learning, and it cost a day of paper, not weeks of code. The finding can also be trusted, because where things sit and what comes next are exactly what paper prototypes test well.",
+   "why_wrong": [
+    "Treats the prototype's goal as proving the design correct. Its goal is to learn and to expose weakness.",
+    "Paper prototypes do test screen order and where information sits, and that is exactly this problem.",
+    "",
+    "The problem is where information sits in the flow, not polish. Visual detail would not fix it and would cost far more."
+   ],
+   "key": "INT335-U4-025"
+  },
+  {
+   "topic": "Purpose of Prototyping",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Two teams are designing a campus lost-and-found service. Team X spends six weeks coding its one favourite idea and only then shows it to users. Team Y spends one day making rough prototypes of three ideas, tests them with students, and develops the one that holds up. Why is Team Y's approach the better use of prototyping?",
+   "code": "",
+   "options": [
+    "It finds out which ideas are weak while changes are still cheap, before weeks of effort are committed",
+    "It proves in advance that the chosen idea is correct, so no further testing is needed",
+    "It reaches a finished product sooner, because rough prototypes turn directly into the final app",
+    "It gives stakeholders three options to choose from, which impresses them more"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Prototyping exists to learn and to expose weak ideas early, when dropping an idea costs a day, not six weeks. Team Y lets real students show which ideas fail before anything expensive is built. Team X finds out whether its favourite idea is weak only after the whole cost has been spent.",
+   "why_wrong": [
+    "",
+    "Prototypes don't prove an idea correct. They reveal weaknesses, and testing carries on after one idea survives.",
+    "Rough prototypes are thrown away or reworked. Their value is what the team learns from them, not becoming the final build.",
+    "The prototypes are for testing with students, not for impressing stakeholders. A prototype's purpose is learning."
+   ],
+   "key": "INT335-U4-026"
+  },
+  {
+   "topic": "Prototype Fidelity",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team designing a library seat-booking app has three different ideas for how to organise the home screen and menus. No colours, fonts or images have been chosen yet. They want to find out which structure students find easiest to navigate. What should they build?",
+   "code": "",
+   "options": [
+    "Three high-fidelity clickable prototypes with final colours and branding",
+    "Three low-fidelity versions (paper screens or grayscale wireframes) to test with students",
+    "One MVP released to all students for a semester",
+    "A storyboard of a student walking into the library to find a seat"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The open question is about navigation structure and the order of screens, and low fidelity tests both well. Paper screens or grayscale wireframes let the team build and compare all three structures in hours. Final visuals would cost far more and would not help answer a navigation question, especially when no visual design exists yet.",
+   "why_wrong": [
+    "Spends effort on visuals that don't affect the navigation question, and no visual design exists yet to show.",
+    "",
+    "An MVP is a working product for real users. One MVP can test only one structure, over months, at far more cost than this question needs.",
+    "A storyboard shows the user's situation and actions over time. It does not compare three menu structures."
+   ],
+   "key": "INT335-U4-027"
+  },
+  {
+   "topic": "Prototype Fidelity",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Paper-prototype tests of a college fee-payment page went well, and students understood every step. The team's next worry is whether students will trust the page enough to enter their payment details, given its colours, logo and overall look. What should they test with?",
+   "code": "",
+   "options": [
+    "The same paper prototype with more students, to be more certain",
+    "A grayscale wireframe of the payment page",
+    "A user flow diagram of the payment steps",
+    "A high-fidelity prototype that shows the real colours, logo and layout"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Whether users trust how a page looks is a question of visual credibility, and only a high-fidelity prototype can test it. Paper screens and wireframes deliberately leave out colour, logo and imagery, so no number of paper tests can show whether the finished look feels trustworthy. The earlier paper result still stands, but only for step order and understanding.",
+   "why_wrong": [
+    "More participants don't help, because paper can't show the colours and logo the question is about.",
+    "Wireframes are grayscale and leave out branding by design, so they can't test visual trust.",
+    "A user flow shows the order of steps, not how the page looks or whether it feels trustworthy.",
+    ""
+   ],
+   "key": "INT335-U4-028"
+  },
+  {
+   "topic": "Prototype Fidelity",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team is designing a hostel complaint app. They want to know whether students mistype their long registration number when entering it on a phone keypad. Which prototype can answer this?",
+   "code": "",
+   "options": [
+    "A paper prototype, where the student writes the number into a box drawn on the sheet",
+    "A higher-fidelity interactive prototype on a real phone, where students type the number themselves",
+    "A grayscale wireframe showing where the registration-number field sits",
+    "A storyboard showing a student filing a complaint late at night"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Mistyping on a phone keypad is a question about realistic data entry, which low-fidelity prototypes cannot test. On paper the student writes the number by hand and no keypad is involved, so keypad errors never show up. Only an interactive prototype on the actual device lets students type the way they really would.",
+   "why_wrong": [
+    "Writing on paper involves no phone keypad, so it can't reveal keypad typing errors.",
+    "",
+    "A wireframe shows where the field sits, not what happens when someone types into it.",
+    "A storyboard shows the situation around the app, not the act of typing the number."
+   ],
+   "key": "INT335-U4-029"
+  },
+  {
+   "topic": "Minimum Viable Product",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team launches a 'minimum' cab-sharing app for students with a single feature: booking a shared ride. For about half the users the booking fails, and drivers are often not told about rides at all. The team says, 'It's an MVP. It's meant to be minimal.' What is wrong with their claim?",
+   "code": "",
+   "options": [
+    "It is not viable: an MVP must work well enough for real users to complete the core task",
+    "Nothing is wrong: an MVP may be half-working as long as it has few features",
+    "It has too few features: an MVP should include everything planned, just at lower quality",
+    "It should have been launched to more users so that the failures average out"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "'Viable' in MVP means the product works well enough for a real user to finish the core task and get its value. A booking that fails half the time and never reaches the driver delivers no ride, so the core value never arrives. An MVP is allowed to be small. It is not allowed to be unreliable at the one thing it exists to do.",
+   "why_wrong": [
+    "",
+    "Confuses 'minimum' with 'unfinished'. Small scope never excuses a core task that fails.",
+    "Gets it backwards. An MVP keeps its scope small, and 'viable' is exactly what rules out low quality.",
+    "More users would just meet the same failures. The fix is to make the core task work."
+   ],
+   "key": "INT335-U4-030"
+  },
+  {
+   "topic": "Minimum Viable Product",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team's central hypothesis is: 'Hostel students will pay to have groceries delivered to their rooms late at night.' Which of these is an MVP that tests this hypothesis?",
+   "code": "",
+   "options": [
+    "A clickable mock-up of the full app, tried by eight students on set tasks in a classroom",
+    "A survey asking students whether they would pay for late-night grocery delivery",
+    "A full app with groceries, stationery, food, chat and loyalty points, launched campus-wide",
+    "A simple working order-and-delivery service for one hostel with a short item list, used by real paying students"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "An MVP is the smallest coherent product that real customers actually use and pay for, so it produces real evidence about one central hypothesis. The one-hostel service does exactly that: if students keep paying for late-night deliveries, the hypothesis gains support. The mock-up and the survey produce only opinions, and the full app mixes in many other ideas and is far from minimal.",
+   "why_wrong": [
+    "This is a prototype. Set tasks in a classroom involve no real payment and no real groceries, so it can't show whether students will pay.",
+    "A survey is not a product, and saying you would pay is not the same as paying.",
+    "Not minimal. It tests many ideas at once, so the results can't isolate the grocery hypothesis.",
+    ""
+   ],
+   "key": "INT335-U4-031"
+  },
+  {
+   "topic": "Minimum Viable Product",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team's clickable prototype of a peer-tutoring app tested well in the lab. Tapping 'Book' shows a confirmation screen, but no tutor is ever told about the booking. A teammate suggests putting the prototype on the app store as the team's MVP. Why is that a mistake?",
+   "code": "",
+   "options": [
+    "It isn't a mistake: any prototype becomes an MVP once real users can download it",
+    "The mistake is size: the prototype has too many screens to count as minimal",
+    "The prototype only simulates booking, so real students would get no tutor. An MVP must actually deliver the core value",
+    "The mistake is timing: the prototype should first be given final colours and polish"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A prototype produces learning by simulating an experience. It is not meant to serve real customers. An MVP is used by real customers to get real value, so it has to work end to end. Releasing this prototype would let students 'book' sessions that never happen, so the core value is missing and the product is not viable.",
+   "why_wrong": [
+    "Being downloadable doesn't make it viable, because it still delivers no real tutoring.",
+    "An MVP isn't defined by how many screens it has. The problem is that booking doesn't really happen.",
+    "",
+    "Polish doesn't help. Even a perfect-looking prototype still books no real tutor."
+   ],
+   "key": "INT335-U4-032"
+  },
+  {
+   "topic": "Wireframes and Storyboards",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team shows a wireframe of their canteen app's menu screen to the canteen owner, who complains: 'Why is everything grey? Where is our orange brand colour, and why are the food photos just boxes with crosses?' What is the best reply?",
+   "code": "",
+   "options": [
+    "Sorry. Wireframes should show the final brand colours and photos, so we'll add them before the next review.",
+    "A wireframe deliberately leaves out colour, fonts and images so that feedback focuses on layout, placement and hierarchy.",
+    "Brand colours and photos belong in the storyboard, so we'll make one next.",
+    "Wireframes are meant only for developers, so owners don't need to review them."
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A wireframe shows layout, content placement and hierarchy (what sits where and what matters most), and it is conventionally grayscale. Colour, typography and real images are left out on purpose so reviewers judge the structure instead of reacting to styling. The brand colour and photos come later, in higher-fidelity designs.",
+   "why_wrong": [
+    "A wireframe that shows final branding is no longer a wireframe. Leaving styling out is the point.",
+    "",
+    "A storyboard shows the user's situation, actions and outcome over time, not brand styling.",
+    "Reviewing structure with people who know the business is useful. Wireframes are not only for developers."
+   ],
+   "key": "INT335-U4-033"
+  },
+  {
+   "topic": "Wireframes and Storyboards",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A team wants to show faculty the whole experience of a first-year student lost in a large academic block: she stands confused in a corridor, opens the app, searches for her classroom, follows the directions, and arrives just before class starts, relieved. Which artefact fits best?",
+   "code": "",
+   "options": [
+    "A wireframe of the app's search screen",
+    "A high-fidelity mock-up of the directions screen",
+    "A list of the app's core features",
+    "A storyboard"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A storyboard is a sequence of panels showing the user's context, her actions, the system's response and the outcome over time. Here that runs from being lost in the corridor to arriving relieved. A wireframe or a mock-up shows one screen's layout or look and says nothing about where she is or how she feels. A feature list names what the app can do but tells no story of use.",
+   "why_wrong": [
+    "Shows the layout of one screen only, not her situation or what happens over time.",
+    "Shows how one screen looks, not the setting, her actions and the outcome around the app.",
+    "Lists what the app can do, but shows no user, no context and no sequence of events.",
+    ""
+   ],
+   "key": "INT335-U4-034"
+  },
+  {
+   "topic": "User Flows and Features",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "In a canteen pre-order app, the happy path is: choose items → tap 'Order' → pay → get a pickup token. The team adds a full-screen 'Rate your last meal' form that appears after 'Order' and must be filled in before the student can pay. What is the problem?",
+   "code": "",
+   "options": [
+    "A peripheral feature has been made a compulsory step on the happy path, which blocks the core task",
+    "Nothing: making rating a required step turns it into a core feature, which strengthens the app",
+    "Nothing: a happy path should include every feature the app has",
+    "The rating form should come before choosing items, so that the path starts with it"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The happy path is the ideal route to the user's goal, which here is a pickup token. Rating the last meal is peripheral, because ordering works perfectly well without it. Forcing it in as a required step between ordering and paying puts an obstacle on the core route. It belongs somewhere optional, such as after the token is shown.",
+   "why_wrong": [
+    "",
+    "Making a step compulsory doesn't make it core. Core means the main task can't work without it, and ordering works fine without ratings.",
+    "The happy path is the shortest route to the goal, not a tour of every feature.",
+    "Moving the obstacle earlier still blocks the core task. The problem is that it is compulsory, not where it sits."
+   ],
+   "key": "INT335-U4-035"
+  },
+  {
+   "topic": "Purpose of Prototyping",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A team wants to find out whether students understand the idea and the order of steps in their hostel visitor-pass app. They spend two weeks building a polished, fully coloured clickable prototype. In testing, students say 'looks great' and comment only on icons and colours. The team concludes that the concept is validated. What is the most accurate critique?",
+   "code": "",
+   "options": [
+    "The conclusion is sound: positive reactions from real users confirm that the concept works.",
+    "The test was fine: a more detailed prototype always gives more reliable feedback, so the two weeks were well spent.",
+    "The team should have shown it to their mentor first, because a prototype's main job is to win approval.",
+    "Praise is not evidence of understanding, and concept and step order could have been tested quickly and cheaply in low fidelity."
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A prototype is for learning where an idea is weak, so the evidence that matters is what users can do, not whether they like how it looks. 'Looks great' and comments on icons say nothing about whether students understood the concept or the order of steps. Those are exactly the questions low fidelity answers well, so two weeks of polish bought no extra evidence and drew attention to surface details.",
+   "why_wrong": [
+    "Treats praise as proof. A prototype's job is to expose weakness, and liking the look is not the same as understanding the flow.",
+    "More detail doesn't mean better evidence. Concept and step order don't need polish, and here the polish drew comments about surface details.",
+    "Treats the prototype as a way to win approval. Its purpose is to learn from users.",
+    ""
+   ],
+   "key": "INT335-U4-036"
+  },
+  {
+   "topic": "Purpose of Prototyping",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A team is exploring a hostel guest-room booking service. Which of these is NOT a prototype?",
+   "code": "",
+   "options": [
+    "Paper screens that a teammate swaps by hand each time a student 'taps' a button",
+    "A basic working app that visiting parents actually use each week to book and pay for rooms",
+    "Teammates acting out check-in at a cardboard desk while a student plays the guest",
+    "A finished-looking clickable app that recruited students try out on set tasks"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "How rough or polished something looks does not decide whether it is a prototype or an MVP. How it is used does. Paper screens, a role-play and a clickable mock-up all simulate the experience so the team can learn, and nobody gets a real room. The basic working app is used by real customers who actually book and pay, so it delivers real value. That makes it an MVP, not a prototype.",
+   "why_wrong": [
+    "Paper screens are the classic low-fidelity prototype. They simulate the app to test the flow.",
+    "",
+    "Role-play is a prototype of a service experience. A prototype doesn't have to be a screen or an object.",
+    "Looking finished doesn't change how it is used. Recruited students doing set tasks is still simulation for learning, so this is a high-fidelity prototype."
+   ],
+   "key": "INT335-U4-037"
+  },
+  {
+   "topic": "Prototype Fidelity",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "Late in a project, the team's high-fidelity visual design is complete. They then add a new 'return a book' flow and are unsure whether students will understand the order of its steps. A teammate says, 'We're past the low-fidelity stage, so this has to be tested in high fidelity.' Which response is correct?",
+   "code": "",
+   "options": [
+    "A quick low-fidelity prototype of the new flow is enough, because fidelity should match the question being asked, not the project stage.",
+    "The teammate is right: once a project reaches high fidelity, every new test must be high fidelity too.",
+    "No test is needed: the rest of the app already tested well, so the new flow will work too.",
+    "The new flow should go straight to real users as an MVP, since that is the stage after high fidelity."
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Fidelity is chosen by what the team is unsure about. The question here is step order, which low fidelity answers, so paper screens or a grayscale wireframe settle it quickly and cheaply however far along the rest of the project is. Earlier results cover only what was tested then, so a brand-new flow still needs its own test.",
+   "why_wrong": [
+    "",
+    "Ties fidelity to the project stage. The rule is to match fidelity to the question, and step order can be tested in low fidelity.",
+    "Earlier tests covered only the earlier flows. Success there says nothing about a flow nobody has tested yet.",
+    "An MVP is a product for real customers, not a stage that follows high fidelity. Releasing an untested flow skips the cheap learning a prototype gives."
+   ],
+   "key": "INT335-U4-038"
+  },
+  {
+   "topic": "Prototype Fidelity",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "In a paper-prototype test of a campus gym sign-up flow, every participant completed sign-up without help. Which conclusion does this result justify?",
+   "code": "",
+   "options": [
+    "Students will not mistype their phone numbers when signing up in the real app",
+    "The real app will feel quick, because nobody got stuck waiting",
+    "The order of the sign-up screens, and where things sit on them, make sense to students",
+    "The sliding transitions between screens will not confuse students"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "A paper prototype can answer only questions about what it shows: concept, information hierarchy and screen order. So success on paper supports the claim that the screens come in a sensible order and are laid out clearly. Typing on a real keypad, response time and animation don't exist on paper, because a person swapping sheets stands in for all of them, so the test says nothing about them.",
+   "why_wrong": [
+    "Paper involves no phone keypad, so realistic data entry was never tested.",
+    "On paper a person swaps the sheets by hand, so the real app's response time was never part of the test.",
+    "",
+    "Animations can't exist on paper. Testing transitions needs a higher-fidelity prototype."
+   ],
+   "key": "INT335-U4-039"
+  },
+  {
+   "topic": "Minimum Viable Product",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A team's happy path for a campus print-ordering service is: upload a file → choose print options → pay → collect the printout from the shop with a pickup code. They only have time to build part of it well. Which plan produces a genuine MVP?",
+   "code": "",
+   "options": [
+    "Build only uploading and print options, polished to a high standard, and add payment and pickup later",
+    "Build all four steps end to end in the simplest way that works reliably, leaving out extras such as saved files and discount coupons",
+    "Build all four steps plus saved files, discount coupons and a rewards scheme, so students are impressed from day one",
+    "Build only the payment step first, since it is the riskiest part, and release it on its own"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "An MVP is the smallest coherent product that lets a real user complete the core task from start to finish and get its value, which here means a printout in hand. So every step of the happy path is needed, but each can be simple, and anything outside the path can wait. A polished half-flow feels further along, but students still can't get a printout, so it is not viable.",
+   "why_wrong": [
+    "Polish can't make up for the missing steps. Without payment and pickup no student gets a printout, so it isn't viable.",
+    "",
+    "Adds features outside the happy path, so it is no longer minimal and mixes extra ideas into the test.",
+    "A payment step on its own delivers nothing. An MVP must work end to end, not be the riskiest piece in isolation."
+   ],
+   "key": "INT335-U4-040"
+  },
+  {
+   "topic": "Minimum Viable Product",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A team launches an MVP of a campus book-exchange app with book listings, in-app chat, seller ratings, a price-suggestion tool and doorstep delivery. Everything works reliably, but few students use it. A teammate says, 'Our MVP wasn't viable.' Which assessment is most accurate?",
+   "code": "",
+   "options": [
+    "The teammate is right: an MVP that few people use is not viable.",
+    "The low usage proves students don't want to exchange books, so the idea should be dropped.",
+    "It was viable, since it worked reliably, but it bundled so many ideas that the low usage can't show which one failed. An MVP should test one central hypothesis.",
+    "It failed because it had too few features to compete, so more should be added before judging the idea."
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "'Viable' means the product works well enough for a real user to complete the core task. This one did, so viability is not the problem. The problem is scope: with listings, chat, ratings, pricing and delivery all launched together, low usage could come from any of them, so the team can't tell whether students simply don't want to exchange books. An MVP should be the smallest coherent product that gives clear evidence about one central hypothesis.",
+   "why_wrong": [
+    "Confuses viable with popular. Viable means it works well enough to complete the core task, which it did.",
+    "Reads too much into the result. With five ideas launched together, low usage can't be blamed on the core idea.",
+    "",
+    "More features make the evidence even harder to read. An MVP is judged on one hypothesis, not on feature count."
+   ],
+   "key": "INT335-U4-041"
+  },
+  {
+   "topic": "Wireframes and Storyboards",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A team draws six panels. Each shows one phone screen of their food-ordering app, in order from the home screen to the payment confirmation. No people, places or reactions are drawn. They label it a storyboard. What does it lack to be a storyboard?",
+   "code": "",
+   "options": [
+    "The user's situation, actions and outcome over time. As drawn, it is just a sequence of screens",
+    "Final colours and typography, since a storyboard shows the finished visual design",
+    "Nothing: any set of panels showing the app in order is a storyboard",
+    "Every error path, since a storyboard must cover all the ways the flow can branch"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A storyboard tells the story of use panel by panel: who the user is, where they are, what they do, how the system responds and how things end up. Six screens in a row show only the interface, which makes them a screen sequence, closer to a set of wireframes. Adding the hungry student in the hostel, her taps and her food arriving would turn it into a storyboard.",
+   "why_wrong": [
+    "",
+    "Storyboards are usually rough sketches. Visual polish is not what makes something a storyboard.",
+    "Mistakes a screen sequence for a storyboard. Without the user and their context there is no story.",
+    "Mapping every branch is the job of a user flow. A storyboard usually tells one key story of use."
+   ],
+   "key": "INT335-U4-042"
+  },
+  {
+   "topic": "Wireframes and Storyboards",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "In a grayscale wireframe test, every user found the 'Pay' button straight away. In the final visual design, the button is pale grey text on a white background to match the brand style. The team skips further testing because 'the layout is already proven'. What is the precise risk?",
+   "code": "",
+   "options": [
+    "None: users found the button in the wireframe, so they will find it in the final design",
+    "The wireframe should have used the brand colours, so the original test was carried out wrongly",
+    "Too few users tested the wireframe, and more testers would have caught any problem",
+    "The wireframe tested where the button sits, not how visible it is in its final colours, and that needs a higher-fidelity test"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A wireframe shows layout, placement and hierarchy, and it deliberately leaves colour out. So the test proved the button is in a sensible place, but it could not test whether pale grey on white is visible enough. Colour and contrast arrived only with the final visual design, so they are a new, untested question that needs a higher-fidelity prototype.",
+   "why_wrong": [
+    "Treats the wireframe result as if it covered colour, which the wireframe never showed.",
+    "Leaving colour out is what a wireframe is meant to do, and the test was valid for what it tested.",
+    "More wireframe testers still wouldn't see the final colours. The gap is in what was tested, not in how many people tested it.",
+    ""
+   ],
+   "key": "INT335-U4-043"
+  },
+  {
+   "topic": "User Flows and Features",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "In a survey for a campus bus-tracking app, the most requested feature is custom app themes. The team lead argues that this makes themes a core feature. Which response is correct?",
+   "code": "",
+   "options": [
+    "Yes: the feature users request most is a core feature by definition",
+    "No: a core feature is one the main value can't be delivered without (here, seeing where the bus is), and the app works fine without themes",
+    "No: core features are the ones that are hardest to build, such as live tracking",
+    "Yes: any feature that comes out of user research is core"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Whether a feature is core depends on the product's main value, not on how popular or difficult it is. The main value of a bus-tracking app is knowing where the bus is and when it will arrive, and without that the app is useless. Without themes every student can still catch the bus, so themes are peripheral, however popular they are.",
+   "why_wrong": [
+    "Popularity doesn't decide it. A popular extra is still peripheral if the main task works without it.",
+    "",
+    "Right verdict, wrong rule. Difficulty doesn't make a feature core. Tracking is core because the main value depends on it.",
+    "Research turns up many wishes, and only the ones the main value depends on are core."
+   ],
+   "key": "INT335-U4-044"
+  },
+  {
+   "topic": "User Flows and Features",
+   "difficulty": "medium",
+   "kind": "situation",
+   "q": "A team needs one document showing every step a user takes to reset a forgotten password, including the decision points where the route splits, for example when the OTP is wrong or has expired. Which artefact is this?",
+   "code": "",
+   "options": [
+    "A user flow",
+    "A storyboard",
+    "A wireframe",
+    "The happy path"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A user flow maps the sequence of steps a user takes to complete a task, including the points where the route branches depending on what happens. The happy path is only one route through that flow, the one where everything goes right, so it leaves out the wrong-OTP and expired-OTP branches. A storyboard tells one person's story in context, and a wireframe lays out a single screen.",
+   "why_wrong": [
+    "",
+    "A storyboard shows one user's context, actions and outcome over time, not every branch and decision point.",
+    "A wireframe shows the layout of individual screens, not the steps and decisions that connect them.",
+    "The happy path is the single ideal route, so by definition it leaves out the error branches this document must show."
+   ],
+   "key": "INT335-U4-045"
+  }
+ ]
+}

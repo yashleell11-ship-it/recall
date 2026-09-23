@@ -1,0 +1,1111 @@
+{
+ "subject_code": "MTH165",
+ "unit": 4,
+ "unit_label": "Multivariate Differentiation",
+ "questions": [
+  {
+   "topic": "Limits and Continuity",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate the limit of (x²y + 3y)/(x + y) as (x, y) → (1, 2).",
+   "code": "",
+   "options": [
+    "10/3",
+    "8/3",
+    "7/3",
+    "8"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "This is a rational function, and its denominator is x + y = 3 ≠ 0 at (1, 2), so it is continuous there and you can substitute directly. The numerator is 1²·2 + 3·2 = 8 and the denominator is 1 + 2 = 3, so the limit is 8/3.",
+   "why_wrong": [
+    "Evaluated x²y as (xy)² = 4 instead of 1²·2 = 2, giving (4 + 6)/3.",
+    "",
+    "Swapped the coordinates and substituted x = 2, y = 1, giving (4 + 3)/3.",
+    "Found the numerator 8 but forgot to divide by x + y = 3."
+   ],
+   "key": "MTH165-U4-001"
+  },
+  {
+   "topic": "Limits and Continuity",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Along the line y = mx, what does xy/(x² + y²) tend to as (x, y) → (0, 0)?",
+   "code": "",
+   "options": [
+    "m/(1 + m)",
+    "1/(1 + m²)",
+    "m/(1 + m²)",
+    "0"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Substitute y = mx: x·mx/(x² + m²x²) = mx²/(x²(1 + m²)) = m/(1 + m²). The x² cancels, which leaves a constant that depends on m. That dependence on m is why this two-variable limit does not exist.",
+   "why_wrong": [
+    "Wrote (mx)² as mx² instead of m²x², so the denominator became x²(1 + m).",
+    "Replaced the numerator xy by x² and lost the factor m.",
+    "",
+    "Assumed the limit is 0 because the numerator tends to 0, ignoring that the denominator tends to 0 at the same rate."
+   ],
+   "key": "MTH165-U4-002"
+  },
+  {
+   "topic": "Limits and Continuity",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A function f(x, y) is continuous at the point (a, b) when:",
+   "code": "",
+   "options": [
+    "the limit of f(x, y) as (x, y) → (a, b) exists and equals f(a, b)",
+    "f(a, b) is defined",
+    "f_x(a, b) and f_y(a, b) both exist",
+    "the limits along the x-direction and the y-direction through (a, b) both equal f(a, b)"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Continuity needs three things at once: f(a, b) is defined, the two-variable limit exists (the same value along every path), and that limit equals f(a, b). Partial derivatives existing is a different and weaker property, and it does not guarantee continuity.",
+   "why_wrong": [
+    "",
+    "Being defined at the point is only one of the three conditions. The limit must also exist and equal f(a, b).",
+    "Partial derivatives can exist at a point where f is discontinuous, for example xy/(x² + y²) with f(0, 0) = 0.",
+    "The two axis directions are only two paths out of infinitely many. The limit must agree along every path."
+   ],
+   "key": "MTH165-U4-003"
+  },
+  {
+   "topic": "Limits and Continuity",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For f(x, y) = x²y/(x⁴ + y²), the value tends to 0 along every straight line y = mx through the origin and along both axes. Along the curve y = x² it tends to 1/2. What is the correct conclusion about the limit of f as (x, y) → (0, 0)?",
+   "code": "",
+   "options": [
+    "The limit exists and equals 0, because every straight line gives 0",
+    "The limit exists and equals 0, because both axes give 0",
+    "The limit exists and equals 1/2, because the curved path overrides the lines",
+    "The limit does not exist, because two paths give different values"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "A two-variable limit exists only if f approaches the same value along every path. Along y = x², f = x²·x²/(x⁴ + x⁴) = 1/2. Along y = mx, f = mx/(x² + m²) → 0. Two different values mean the limit does not exist, no matter how many straight lines agree.",
+   "why_wrong": [
+    "Agreement along all straight lines is not enough. The curve y = x² is also a path, and it gives 1/2.",
+    "The two axes are just two of the straight-line paths, so they cannot prove the limit exists.",
+    "No single path decides the limit. When paths give different values, the limit does not exist at all.",
+    ""
+   ],
+   "key": "MTH165-U4-004"
+  },
+  {
+   "topic": "Limits and Continuity",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For which function does the limit as (x, y) → (0, 0) NOT exist?",
+   "code": "",
+   "options": [
+    "x²y/(x² + y²)",
+    "(x² − y²)/(x² + y²)",
+    "sin(x² + y²)/(x² + y²)",
+    "(x³ + y³)/(x² + y²)"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Along y = mx, (x² − y²)/(x² + y²) = (1 − m²)/(1 + m²). This changes with m (it is 1 on the x-axis and 0 on y = x), so the limit does not exist. The other three do have limits. In polar form x = r cos θ, y = r sin θ, each settles to one value as r → 0 whatever θ is.",
+   "why_wrong": [
+    "In polar form this is r cos²θ sin θ, which tends to 0 as r → 0 for every θ, so the limit exists and equals 0.",
+    "",
+    "With t = x² + y² → 0 this is sin t/t, which tends to 1, so the limit exists.",
+    "In polar form this is r(cos³θ + sin³θ), which tends to 0 as r → 0, so the limit exists and equals 0."
+   ],
+   "key": "MTH165-U4-005"
+  },
+  {
+   "topic": "Partial Derivatives",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "If f(x, y) = x³y² + 4xy, what is ∂f/∂x?",
+   "code": "",
+   "options": [
+    "2x³y + 4x",
+    "6x²y + 4",
+    "3x²y² + 4y",
+    "3x²y²"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Differentiate with respect to x and hold y constant. ∂(x³y²)/∂x = 3x²y² and ∂(4xy)/∂x = 4y, so ∂f/∂x = 3x²y² + 4y.",
+   "why_wrong": [
+    "This is ∂f/∂y. The derivative was taken with respect to y instead of x.",
+    "This is the mixed derivative f_xy: after reaching 3x²y² + 4y it was differentiated again with respect to y.",
+    "",
+    "Dropped the 4xy term as if it were constant. It contains x, so it contributes 4y."
+   ],
+   "key": "MTH165-U4-006"
+  },
+  {
+   "topic": "Partial Derivatives",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "For f(x, y) = x² + 3xy − y², find f_y at the point (1, 2).",
+   "code": "",
+   "options": [
+    "8",
+    "7",
+    "2",
+    "−1"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Holding x constant gives f_y = 3x − 2y. At (1, 2), f_y = 3·1 − 2·2 = 3 − 4 = −1.",
+   "why_wrong": [
+    "This is f_x = 2x + 3y at (1, 2). The derivative was taken with respect to the wrong variable.",
+    "Sign error on the last term: −y² was differentiated as +2y, giving 3 + 4.",
+    "Differentiated 3xy with respect to y as 3y instead of 3x, giving 6 − 4.",
+    ""
+   ],
+   "key": "MTH165-U4-007"
+  },
+  {
+   "topic": "Partial Derivatives",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "When is the equality of mixed partial derivatives, f_xy = f_yx, guaranteed at a point?",
+   "code": "",
+   "options": [
+    "When f_xy and f_yx exist near the point and are continuous at it",
+    "Always, for every function of two variables",
+    "Whenever f_x and f_y exist at the point",
+    "Only when f is a polynomial in x and y"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The mixed partials are equal when they exist in a neighbourhood of the point and are continuous there. Without that continuity, the two orders of differentiation can give different values. So the equality is a theorem with a hypothesis, not an automatic rule.",
+   "why_wrong": [
+    "",
+    "Some functions have mixed partials that differ at a point. Equality needs the mixed partials to be continuous.",
+    "The first-order partials existing says nothing about the second-order ones, or whether they are equal.",
+    "Polynomials do satisfy it, but so does any function with continuous mixed partials, such as eˣ sin y."
+   ],
+   "key": "MTH165-U4-008"
+  },
+  {
+   "topic": "Partial Derivatives",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Let f(x, y) = xy/(x² + y²) for (x, y) ≠ (0, 0) and f(0, 0) = 0. Which statement about the point (0, 0) is correct?",
+   "code": "",
+   "options": [
+    "f_x(0, 0) and f_y(0, 0) exist, so f is continuous at (0, 0)",
+    "f_x(0, 0) does not exist, because the formula's denominator is 0 at the origin",
+    "f_x(0, 0) and f_y(0, 0) both exist and equal 0, yet f is not continuous at (0, 0)",
+    "f is continuous at (0, 0), but f_x(0, 0) does not exist"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "By definition, f_x(0, 0) = lim h→0 [f(h, 0) − f(0, 0)]/h = (0 − 0)/h = 0, and in the same way f_y(0, 0) = 0. But along y = x, f = x²/(2x²) = 1/2 ≠ f(0, 0), so f is not continuous at the origin. Partial derivatives existing does not imply continuity.",
+   "why_wrong": [
+    "Partial derivatives only look along the two axes. Along y = x the function stays at 1/2, so f is not continuous.",
+    "At the origin f is defined separately as f(0, 0) = 0. Computing the partial from the limit definition gives 0, so it exists.",
+    "",
+    "Both halves are reversed. The value along y = x is 1/2 ≠ 0, so f is discontinuous, while f_x(0, 0) = 0 exists."
+   ],
+   "key": "MTH165-U4-009"
+  },
+  {
+   "topic": "Partial Derivatives",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For u = ln(x² + y²), what is ∂²u/∂x² + ∂²u/∂y²?",
+   "code": "",
+   "options": [
+    "4/(x² + y²)",
+    "0",
+    "−4/(x² + y²)",
+    "−2(x + y)/(x² + y²)²"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "u_x = 2x/(x² + y²). The quotient rule gives u_xx = [2(x² + y²) − 2x·2x]/(x² + y²)² = 2(y² − x²)/(x² + y²)². By symmetry u_yy = 2(x² − y²)/(x² + y²)², so the sum is 0.",
+   "why_wrong": [
+    "Differentiated only the numerator 2x of u_x (getting 2/(x² + y²)) and ignored the quotient rule.",
+    "",
+    "Kept only the −2x·2x part of the quotient rule and dropped the 2(x² + y²) term.",
+    "Forgot the chain-rule factor and took u_x = 1/(x² + y²) instead of 2x/(x² + y²)."
+   ],
+   "key": "MTH165-U4-010"
+  },
+  {
+   "topic": "Chain Rule and Errors",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "If u = f(x, y) and y is itself a function of x, the total derivative du/dx is:",
+   "code": "",
+   "options": [
+    "∂u/∂x",
+    "∂u/∂x + ∂u/∂y",
+    "(∂u/∂x)(∂u/∂y)(dy/dx)",
+    "∂u/∂x + (∂u/∂y)(dy/dx)"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "u depends on x directly and also indirectly through y, and both routes contribute: du/dx = ∂u/∂x + (∂u/∂y)(dy/dx). The partial ∂u/∂x on its own captures only the direct route.",
+   "why_wrong": [
+    "Gives only the partial derivative and drops the indirect contribution through y.",
+    "Forgets to multiply the y-route by dy/dx, the rate at which y changes with x.",
+    "Multiplies the contributions together, but the chain rule adds the contributions of the separate routes.",
+    ""
+   ],
+   "key": "MTH165-U4-011"
+  },
+  {
+   "topic": "Chain Rule and Errors",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "If z = xy with x = t² and y = t³, find dz/dt using the chain rule.",
+   "code": "",
+   "options": [
+    "5t⁴",
+    "6t³",
+    "2t⁴",
+    "3t⁴"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "dz/dt = (∂z/∂x)(dx/dt) + (∂z/∂y)(dy/dt) = y·2t + x·3t² = t³·2t + t²·3t² = 2t⁴ + 3t⁴ = 5t⁴. As a check, z = t⁵ directly, so dz/dt = 5t⁴.",
+   "why_wrong": [
+    "",
+    "Multiplied dx/dt = 2t by dy/dt = 3t² instead of forming the chain-rule sum.",
+    "Kept only the x-route term y·2t and dropped the y-route.",
+    "Kept only the y-route term x·3t² and dropped the x-route."
+   ],
+   "key": "MTH165-U4-012"
+  },
+  {
+   "topic": "Chain Rule and Errors",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "If A = x²y and x, y are measured with positive errors of 1% and 2% respectively, what is the approximate percentage error in A?",
+   "code": "",
+   "options": [
+    "3%",
+    "2%",
+    "4%",
+    "5%"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Take logs: ln A = 2 ln x + ln y, so δA/A ≈ 2(δx/x) + δy/y. The percentage error is about 2·1% + 2% = 4%. This is a first-order approximation for small errors.",
+   "why_wrong": [
+    "Forgot that x is squared and added 1% + 2% without the factor 2 on x's error.",
+    "Multiplied the percentage errors (1 × 2) instead of adding them, each weighted by its power.",
+    "",
+    "Put the power 2 on the wrong variable: 1% + 2·2%."
+   ],
+   "key": "MTH165-U4-013"
+  },
+  {
+   "topic": "Chain Rule and Errors",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "If u = x² + y² and y = sin x, find du/dx.",
+   "code": "",
+   "options": [
+    "2x",
+    "2x + sin 2x",
+    "2x + 2 sin x",
+    "2x + 2 cos x"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "du/dx = ∂u/∂x + (∂u/∂y)(dy/dx) = 2x + 2y·cos x = 2x + 2 sin x cos x = 2x + sin 2x. As a check, u = x² + sin²x directly, and its derivative is 2x + 2 sin x cos x.",
+   "why_wrong": [
+    "Gave only ∂u/∂x and dropped the term that comes through y = sin x.",
+    "",
+    "Added ∂u/∂y = 2y = 2 sin x without multiplying by dy/dx = cos x.",
+    "Took ∂u/∂y as 2 instead of 2y, so the second term became only 2·cos x."
+   ],
+   "key": "MTH165-U4-014"
+  },
+  {
+   "topic": "Chain Rule and Errors",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For V = πr²h at r = 5 cm and h = 10 cm, with small errors δr = δh = 0.1 cm, what approximate error δV does the total differential give?",
+   "code": "",
+   "options": [
+    "10π cm³",
+    "2.5π cm³",
+    "3.5π cm³",
+    "12.5π cm³"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "δV ≈ (∂V/∂r)δr + (∂V/∂h)δh = 2πrh·δr + πr²·δh. Here that is 2π·5·10·0.1 + π·25·0.1 = 10π + 2.5π = 12.5π cm³. This is a first-order approximation, valid for small errors.",
+   "why_wrong": [
+    "Kept only the r-term 2πrh·δr and dropped the h-term πr²·δh.",
+    "Kept only the h-term πr²·δh and dropped the r-term.",
+    "Took ∂V/∂r as 2πr without the factor h, so the r-term became π instead of 10π.",
+    ""
+   ],
+   "key": "MTH165-U4-015"
+  },
+  {
+   "topic": "Euler's Theorem",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the degree of the homogeneous function f(x, y) = (x³ + y³)/(x − y)?",
+   "code": "",
+   "options": [
+    "2",
+    "3",
+    "4",
+    "−2"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Replace x by tx and y by ty: (t³x³ + t³y³)/(tx − ty) = (t³/t)·f = t²·f. For a quotient the degrees subtract, 3 − 1 = 2.",
+   "why_wrong": [
+    "",
+    "Used only the numerator's degree and ignored the denominator.",
+    "Added the degrees 3 + 1 instead of subtracting them for a quotient.",
+    "Subtracted the wrong way round: 1 − 3 instead of 3 − 1."
+   ],
+   "key": "MTH165-U4-016"
+  },
+  {
+   "topic": "Euler's Theorem",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "For u = x³ + 2x²y + y³, what is x(∂u/∂x) + y(∂u/∂y)?",
+   "code": "",
+   "options": [
+    "u",
+    "2u",
+    "3u",
+    "6u"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Every term has total degree 3, so u is homogeneous of degree n = 3, and Euler's theorem gives x u_x + y u_y = 3u. Direct check: x(3x² + 4xy) + y(2x² + 3y²) = 3x³ + 6x²y + 3y³ = 3u.",
+   "why_wrong": [
+    "Took the degree as 1. Euler's theorem gives n·u, and here n = 3.",
+    "Took the degree from the x² in the middle term, but the degree of x²y is 2 + 1 = 3.",
+    "",
+    "Used the second-order result n(n − 1)u = 6u, which belongs to x²u_xx + 2xy·u_xy + y²u_yy."
+   ],
+   "key": "MTH165-U4-017"
+  },
+  {
+   "topic": "Euler's Theorem",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which of the following is a homogeneous function of x and y?",
+   "code": "",
+   "options": [
+    "x² + y + 1",
+    "x² + y³",
+    "x² + y² + 5",
+    "x² + xy + y²"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "f is homogeneous of degree n if f(tx, ty) = tⁿ f(x, y). Every term of x² + xy + y² has degree 2, so f(tx, ty) = t²f(x, y). Each of the other options mixes terms of different degrees.",
+   "why_wrong": [
+    "The terms have degrees 2, 1 and 0, so no single power of t can be factored out.",
+    "The terms have degrees 2 and 3, so f(tx, ty) = t²x² + t³y³ is not tⁿ·f.",
+    "Adding the constant 5 (degree 0) to a degree-2 function destroys homogeneity.",
+    ""
+   ],
+   "key": "MTH165-U4-018"
+  },
+  {
+   "topic": "Euler's Theorem",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "If u = tan⁻¹((x² + y²)/(x + y)), find x(∂u/∂x) + y(∂u/∂y).",
+   "code": "",
+   "options": [
+    "u",
+    "(1/2) sin 2u",
+    "tan u",
+    "sin 2u"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "u itself is not homogeneous, but F = tan u = (x² + y²)/(x + y) is homogeneous of degree 2 − 1 = 1. So x u_x + y u_y = n·F(u)/F′(u) = tan u/sec²u = sin u cos u = (1/2) sin 2u.",
+   "why_wrong": [
+    "Applied Euler's theorem to u directly (n·u), but u is the inverse tangent of a homogeneous function and is not homogeneous itself.",
+    "",
+    "Gave n·F = tan u but forgot to divide by F′(u) = sec²u.",
+    "Took the degree as 2 from the numerator. For a quotient the degree is 2 − 1 = 1."
+   ],
+   "key": "MTH165-U4-019"
+  },
+  {
+   "topic": "Euler's Theorem",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "If u = ln((x⁴ + y⁴)/(x + y)), find x(∂u/∂x) + y(∂u/∂y).",
+   "code": "",
+   "options": [
+    "3",
+    "3u",
+    "4",
+    "5"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "e^u = (x⁴ + y⁴)/(x + y) is homogeneous of degree 4 − 1 = 3, but u itself is not. Applying Euler's theorem to F = e^u gives x u_x + y u_y = n·F/F′ = 3·e^u/e^u = 3.",
+   "why_wrong": [
+    "",
+    "Treated u as homogeneous and wrote n·u. Because of the log wrapper the answer is n·F(u)/F′(u) = 3.",
+    "Used the numerator's degree 4 and ignored the denominator.",
+    "Added the degrees 4 + 1 instead of subtracting them."
+   ],
+   "key": "MTH165-U4-020"
+  },
+  {
+   "topic": "Euler's Theorem",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For u = x²y + xy², what is x²(∂²u/∂x²) + 2xy(∂²u/∂x∂y) + y²(∂²u/∂y²)?",
+   "code": "",
+   "options": [
+    "3u",
+    "9u",
+    "2u",
+    "6u"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "u is homogeneous of degree n = 3 and its mixed partials are continuous, so the second-order Euler result gives n(n − 1)u = 3·2·u = 6u. Check: u_xx = 2y, u_xy = 2x + 2y, u_yy = 2x, and x²·2y + 2xy(2x + 2y) + y²·2x = 6x²y + 6xy² = 6u.",
+   "why_wrong": [
+    "Used the first-order result n·u, but the second-order expression gives n(n − 1)u.",
+    "Used n²·u instead of n(n − 1)·u.",
+    "Used (n − 1)·u and dropped the factor n.",
+    ""
+   ],
+   "key": "MTH165-U4-021"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Find the stationary point of f(x, y) = x² + y² − 4x + 6y.",
+   "code": "",
+   "options": [
+    "(−2, 3)",
+    "(2, −3)",
+    "(2, 3)",
+    "(4, −6)"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Set both first partials to zero. f_x = 2x − 4 = 0 gives x = 2, and f_y = 2y + 6 = 0 gives y = −3, so the stationary point is (2, −3).",
+   "why_wrong": [
+    "Made a sign error in both equations and solved 2x + 4 = 0 and 2y − 6 = 0.",
+    "",
+    "Made a sign error in f_y and solved 2y − 6 = 0 instead of 2y + 6 = 0.",
+    "Differentiated x² as x and y² as y, so solved x − 4 = 0 and y + 6 = 0."
+   ],
+   "key": "MTH165-U4-022"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "At a stationary point, D = f_xx·f_yy − (f_xy)² is negative. What does the second-derivative test conclude?",
+   "code": "",
+   "options": [
+    "The test is inconclusive",
+    "A local maximum if f_xx < 0, a local minimum if f_xx > 0",
+    "The point is a saddle point",
+    "A local extremum whose type is not yet known"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "D < 0 is a definite verdict: the surface curves up in one direction and down in another, so the point is a saddle point. Only D = 0 leaves the test inconclusive, and the sign of f_xx matters only when D > 0.",
+   "why_wrong": [
+    "Inconclusive is the verdict for D = 0 only. D < 0 means the point is a saddle.",
+    "The sign of f_xx separates a maximum from a minimum only when D > 0.",
+    "",
+    "D < 0 rules out any extremum, so the point is neither a maximum nor a minimum."
+   ],
+   "key": "MTH165-U4-023"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For f(x, y) = x³ − 3x + y², which classification of the stationary points is correct?",
+   "code": "",
+   "options": [
+    "(1, 0) is a local minimum and (−1, 0) is a saddle point",
+    "(1, 0) is a local minimum and (−1, 0) is a local maximum",
+    "(1, 0) is a local minimum and at (−1, 0) the test is inconclusive",
+    "(1, 0) is a local maximum and (−1, 0) is a saddle point"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "f_x = 3x² − 3 = 0 gives x = ±1, and f_y = 2y = 0 gives y = 0. The second partials are f_xx = 6x, f_yy = 2 and f_xy = 0. At (1, 0), D = 6·2 − 0 = 12 > 0 and f_xx = 6 > 0, so the point is a local minimum. At (−1, 0), D = −6·2 = −12 < 0, so the point is a saddle.",
+   "why_wrong": [
+    "",
+    "Classified (−1, 0) from f_xx = −6 < 0 alone without checking D. D = −12 < 0, which means a saddle.",
+    "D = −12 < 0 gives a definite saddle verdict. Only D = 0 is inconclusive.",
+    "Reversed the rule: D > 0 with f_xx > 0 means a minimum, not a maximum."
+   ],
+   "key": "MTH165-U4-024"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For f(x, y) = x³ + y³, the origin is a stationary point with D = f_xx·f_yy − (f_xy)² = 0. What is the nature of (0, 0)?",
+   "code": "",
+   "options": [
+    "D = 0 means (0, 0) is a local minimum",
+    "D = 0 means (0, 0) is a local maximum",
+    "The test is inconclusive, so the nature of (0, 0) cannot be determined by any method",
+    "The test is inconclusive; checking f directly, (0, 0) is neither a maximum nor a minimum"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "At the origin f_xx = 6x = 0, f_yy = 6y = 0 and f_xy = 0, so D = 0 and the test says nothing. Checking f directly, f(t, 0) = t³ is positive for t > 0 and negative for t < 0, while f(0, 0) = 0. So the origin is neither a maximum nor a minimum.",
+   "why_wrong": [
+    "D = 0 is not evidence of an extremum. f(t, 0) = t³ takes values below f(0, 0) = 0 arbitrarily close to the origin.",
+    "D = 0 is not evidence of an extremum. f(t, 0) = t³ takes values above f(0, 0) = 0 arbitrarily close to the origin.",
+    "Inconclusive means only that this test fails. Examining f near the point still decides its nature.",
+    ""
+   ],
+   "key": "MTH165-U4-025"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Using F = x² + y² + λ(2x + y − 5), find the stationary point of f = x² + y² subject to 2x + y = 5.",
+   "code": "",
+   "options": [
+    "(5/4, 5/2)",
+    "(5/3, 5/3)",
+    "(2, 1)",
+    "(0, 0)"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "F_x = 2x + 2λ = 0 and F_y = 2y + λ = 0 give λ = −x = −2y, so x = 2y. Substituting into the constraint gives 2(2y) + y = 5, so y = 1 and x = 2. The stationary point is (2, 1), where f = 5.",
+   "why_wrong": [
+    "Inverted the ratio and used y = 2x, which gives 4x = 5.",
+    "Assumed x = y by symmetry, but the constraint's coefficients 2 and 1 make x = 2y.",
+    "",
+    "Solved f_x = f_y = 0 and left out the constraint. g = 0 is itself one of the equations, and (0, 0) does not satisfy 2x + y = 5."
+   ],
+   "key": "MTH165-U4-026"
+  },
+  {
+   "topic": "Limits and Continuity",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Evaluate the limit of (√(x² + y² + 1) − 1)/(x² + y²) as (x, y) → (0, 0).",
+   "code": "",
+   "options": [
+    "2",
+    "0",
+    "1/2",
+    "Does not exist (0/0 form)"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Multiply the numerator and denominator by √(x² + y² + 1) + 1. The numerator becomes (x² + y² + 1) − 1 = x² + y², which cancels. What remains, 1/(√(x² + y² + 1) + 1), depends only on x² + y², so every path gives the same value 1/(1 + 1) = 1/2.",
+   "why_wrong": [
+    "Inverts the simplified fraction. After rationalising, √(x² + y² + 1) + 1 is in the denominator, which gives 1/2, not 2.",
+    "Lets the numerator go to 0 without noticing that the denominator also goes to 0. The ratio has to be simplified before substituting.",
+    "",
+    "0/0 is an indeterminate form, not a result. After rationalising, the limit is the finite value 1/2."
+   ],
+   "key": "MTH165-U4-027"
+  },
+  {
+   "topic": "Limits and Continuity",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "For f(x, y) = (x − y)/(x + y), define the repeated limits L₁ = lim as x → 0 of [lim as y → 0 of f] and L₂ = lim as y → 0 of [lim as x → 0 of f]. Which statement is correct?",
+   "code": "",
+   "options": [
+    "L₁ = −1 and L₂ = 1, so the limit of f as (x, y) → (0, 0) does not exist",
+    "L₁ = 1 and L₂ = −1, so the limit of f as (x, y) → (0, 0) does not exist",
+    "L₁ = L₂ = 1, so the limit of f as (x, y) → (0, 0) is 1",
+    "L₁ = 1 and L₂ = −1, but the limit of f as (x, y) → (0, 0) may still exist"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Take the inner limit first. With y → 0, f → x/x = 1, so L₁ = 1. With x → 0, f → (−y)/y = −1, so L₂ = −1. If the double limit existed, both repeated limits would have to equal it (the inner limits exist here), so unequal repeated limits prove it does not exist.",
+   "why_wrong": [
+    "Swaps the order. In L₁ the inner limit is y → 0, which leaves x/x = 1, not −1.",
+    "",
+    "Drops the minus sign. As x → 0, (x − y)/(x + y) → −y/y = −1, not +1.",
+    "If the double limit existed, each repeated limit (whose inner limits exist) would equal it. Since 1 ≠ −1, the double limit cannot exist."
+   ],
+   "key": "MTH165-U4-028"
+  },
+  {
+   "topic": "Limits and Continuity",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Let f(x, y) = x²y²/(x²y² + (x − y)²) for (x, y) ≠ (0, 0). Which statement about the limit of f as (x, y) → (0, 0) is correct?",
+   "code": "",
+   "options": [
+    "The limit is 0, because f → 0 along both coordinate axes",
+    "The limit is 0, because along y = mx, f = m²x²/(m²x² + (1 − m)²) → 0 for every slope m",
+    "The limit does not exist: f → 0 along the x-axis, but f = 1 at every point of the line y = x except the origin",
+    "The limit is 1, because f → 1 along the line y = x"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Along y = mx, f = m²x²/(m²x² + (1 − m)²). This tends to 0 only while (1 − m)² ≠ 0, that is, when m ≠ 1. On y = x the (x − y)² term vanishes, so f = x⁴/x⁴ = 1 there. One path gives 0 and another gives 1, so the limit does not exist.",
+   "why_wrong": [
+    "Two paths agreeing proves nothing. The line y = x gives 1.",
+    "The formula fails at m = 1. There (1 − m)² = 0, the expression becomes m²x²/(m²x²) = 1, and f → 1, not 0.",
+    "",
+    "One path giving 1 does not settle the limit. The axes give 0, so there is no single limiting value."
+   ],
+   "key": "MTH165-U4-029"
+  },
+  {
+   "topic": "Limits and Continuity",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Define f(x, y) = (x² − y²)/(x − y) when x ≠ y, and f(x, y) = 2 when x = y. At which points of the plane is f continuous?",
+   "code": "",
+   "options": [
+    "At every point except those on the line y = x",
+    "At every point, because (x² − y²)/(x − y) = x + y",
+    "At every point except (1, 1)",
+    "At every point except the points (a, a) with a ≠ 1"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Off the line y = x, f = x + y, which is a polynomial, so f is continuous there. Near a point (a, a), values off the line approach 2a while values on the line equal 2, so the limit exists only when 2a = 2. At (1, 1) the limit is 2 = f(1, 1), so f is continuous there. It is discontinuous at every other point of y = x.",
+   "why_wrong": [
+    "Misses the exception. At (1, 1) the off-line values x + y tend to 2, which equals the assigned value 2.",
+    "The cancellation holds only for x ≠ y. On the line, f is defined as 2, which differs from the limit 2a unless a = 1.",
+    "Reverses the condition. (1, 1) is the only point of y = x where f is continuous.",
+    ""
+   ],
+   "key": "MTH165-U4-030"
+  },
+  {
+   "topic": "Partial Derivatives",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "If u = e^(xyz), find ∂³u/∂x∂y∂z.",
+   "code": "",
+   "options": [
+    "(1 + xyz)e^(xyz)",
+    "(1 + 3xyz + x²y²z²)e^(xyz)",
+    "(1 + 3xyz)e^(xyz)",
+    "x²y²z²·e^(xyz)"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "∂u/∂z = xy·e^(xyz). Differentiating with respect to y by the product rule gives (x + x²yz)e^(xyz). Differentiating that with respect to x gives (1 + xyz)e^(xyz) + (2xyz + x²y²z²)e^(xyz) = (1 + 3xyz + x²y²z²)e^(xyz).",
+   "why_wrong": [
+    "Skips the product rule at the y-step and keeps only x·e^(xyz). This loses the term x²yz·e^(xyz) that comes from differentiating the exponential.",
+    "",
+    "When differentiating x²yz·e^(xyz) with respect to x, differentiates only the factor x²yz and treats e^(xyz) as a constant. That loses the x²y²z² term, which comes from the exponential's chain factor yz.",
+    "Multiplies only the chain factors xy·xz·yz and ignores every product-rule term."
+   ],
+   "key": "MTH165-U4-031"
+  },
+  {
+   "topic": "Partial Derivatives",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "The temperature in a thin rod is modelled as u(x, t) = e^(−kt)·sin 3x, and it must satisfy the heat equation ∂u/∂t = ∂²u/∂x². What value of the constant k is required?",
+   "code": "",
+   "options": [
+    "3",
+    "1",
+    "−9",
+    "9"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "∂u/∂t = −k·e^(−kt) sin 3x. ∂u/∂x = 3e^(−kt) cos 3x, so ∂²u/∂x² = −9e^(−kt) sin 3x. Setting the two equal gives −k = −9, so k = 9.",
+   "why_wrong": [
+    "Brings down the factor 3 only once. Differentiating sin 3x twice gives a factor of 3·3 = 9.",
+    "Ignores the chain factor 3 entirely and differentiates sin 3x as if it were sin x.",
+    "Sign slip. ∂u/∂t = −k·u and ∂²u/∂x² = −9u, so −k = −9 and k = +9.",
+    ""
+   ],
+   "key": "MTH165-U4-032"
+  },
+  {
+   "topic": "Partial Derivatives",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "For an ideal gas, PV = kT with k a constant. Each partial derivative holds the remaining variable fixed. What is (∂P/∂V)·(∂V/∂T)·(∂T/∂P)?",
+   "code": "",
+   "options": [
+    "−1",
+    "1",
+    "0",
+    "It cannot be found without numerical values of P, V and T"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "P = kT/V gives ∂P/∂V = −kT/V². V = kT/P gives ∂V/∂T = k/P. T = PV/k gives ∂T/∂P = V/k. The product is (−kT/V²)(k/P)(V/k) = −kT/(PV), and PV = kT makes this −1 at every state.",
+   "why_wrong": [
+    "",
+    "Cancels the ∂ terms as if they were fractions. Each derivative holds a different variable fixed, and the minus sign from differentiating 1/V remains.",
+    "Treats P, V and T as independent, so every cross-derivative is taken as 0. They are linked by PV = kT.",
+    "The product simplifies to −kT/(PV), and the gas law turns this into −1 at every state, so no numbers are needed."
+   ],
+   "key": "MTH165-U4-033"
+  },
+  {
+   "topic": "Partial Derivatives",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Let f(x, y) = (x³ + 2y³)/(x² + y²) for (x, y) ≠ (0, 0), and f(0, 0) = 0. What are f_x(0, 0) and f_y(0, 0)?",
+   "code": "",
+   "options": [
+    "f_x(0, 0) = 0 and f_y(0, 0) = 0",
+    "f_x(0, 0) = 2 and f_y(0, 0) = 1",
+    "f_x(0, 0) = 1 and f_y(0, 0) = 2",
+    "Neither exists, since the quotient-rule formulas give 0/0 at (0, 0)"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The formula does not apply at the origin, so use the definition. f_x(0, 0) = lim as h → 0 of [f(h, 0) − f(0, 0)]/h = (h³/h²)/h = 1. f_y(0, 0) = lim as h → 0 of [f(0, h) − f(0, 0)]/h = (2h³/h²)/h = 2.",
+   "why_wrong": [
+    "Differentiates the single value f(0, 0) = 0 as if it were a constant. A partial derivative depends on the values of f near the point.",
+    "Swaps the paths. f_x uses f(h, 0) = h along the x-axis, which gives 1. f_y uses f(0, h) = 2h, which gives 2.",
+    "",
+    "The quotient-rule formula holds only away from the origin. Getting 0/0 there means you must use the limit definition, which gives finite values."
+   ],
+   "key": "MTH165-U4-034"
+  },
+  {
+   "topic": "Chain Rule and Errors",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "The radius of a right circular cone is increasing at 0.5 cm/s while its height is decreasing at 1 cm/s. At the instant when r = 3 cm and h = 4 cm, how fast is its volume V = (1/3)πr²h changing?",
+   "code": "",
+   "options": [
+    "7π cm³/s, increasing",
+    "π cm³/s, increasing",
+    "4π cm³/s, increasing",
+    "3π cm³/s, increasing"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "dV/dt = (∂V/∂r)(dr/dt) + (∂V/∂h)(dh/dt) = (1/3)π[2rh·(dr/dt) + r²·(dh/dt)]. With dr/dt = 0.5 and dh/dt = −1, this is (1/3)π[2·3·4·0.5 + 9·(−1)] = (1/3)π(12 − 9) = π cm³/s. The positive sign means the volume is increasing.",
+   "why_wrong": [
+    "Uses dh/dt = +1. The height is decreasing, so dh/dt = −1 and the r²-term is subtracted.",
+    "",
+    "Keeps only the r-term. V also depends on h, so (∂V/∂h)(dh/dt) must be added.",
+    "Drops the factor 1/3 from the cone's volume formula."
+   ],
+   "key": "MTH165-U4-035"
+  },
+  {
+   "topic": "Chain Rule and Errors",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "The period of a simple pendulum is T = 2π√(l/g). If l is measured 2% too large and g is taken 1% too large, what is the approximate percentage error in T?",
+   "code": "",
+   "options": [
+    "1.5%",
+    "3%",
+    "1%",
+    "0.5%"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "log T = log 2π + (1/2)log l − (1/2)log g, so δT/T ≈ (1/2)(δl/l) − (1/2)(δg/g). The percentage error is (1/2)(2) − (1/2)(1) = 0.5%, so T comes out about 0.5% too large.",
+   "why_wrong": [
+    "Adds (1/2)(2) + (1/2)(1). g is in the denominator, so its term carries a minus sign.",
+    "Ignores both the square root and the sign, and simply adds 2 + 1.",
+    "Gets the sign right but ignores the square root. Both exponents are 1/2, so each error is halved.",
+    ""
+   ],
+   "key": "MTH165-U4-036"
+  },
+  {
+   "topic": "Chain Rule and Errors",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "The curve x² + xy + y² = 7 passes through (1, 2). Using partial derivatives, find dy/dx at (1, 2).",
+   "code": "",
+   "options": [
+    "4/5",
+    "−5/4",
+    "−4/5",
+    "−4"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Write f(x, y) = x² + xy + y² − 7 = 0. The total derivative gives f_x + f_y·(dy/dx) = 0, so dy/dx = −f_x/f_y. At (1, 2), f_x = 2x + y = 4 and f_y = x + 2y = 5, so dy/dx = −4/5.",
+   "why_wrong": [
+    "Drops the minus sign in dy/dx = −f_x/f_y.",
+    "Inverts the ratio and uses −f_y/f_x.",
+    "",
+    "Stops at −f_x and never divides by f_y = 5."
+   ],
+   "key": "MTH165-U4-037"
+  },
+  {
+   "topic": "Chain Rule and Errors",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Let z = f(x, y) with x = u + v and y = u − v. Which expression equals (∂z/∂u)·(∂z/∂v)?",
+   "code": "",
+   "options": [
+    "(∂z/∂x)² − (∂z/∂y)²",
+    "(∂z/∂x + ∂z/∂y)²",
+    "(∂z/∂x)² + (∂z/∂y)²",
+    "(∂z/∂x)·(∂z/∂y)"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "By the chain rule, ∂z/∂u = (∂z/∂x)(∂x/∂u) + (∂z/∂y)(∂y/∂u) = z_x + z_y. Since ∂x/∂v = 1 and ∂y/∂v = −1, ∂z/∂v = z_x − z_y. The product is (z_x + z_y)(z_x − z_y) = (z_x)² − (z_y)².",
+   "why_wrong": [
+    "",
+    "Takes ∂y/∂v = +1. Because y = u − v, ∂y/∂v = −1, which makes ∂z/∂v = z_x − z_y.",
+    "Expands (z_x + z_y)(z_x − z_y) with the wrong sign. A sum times a difference gives a difference of squares.",
+    "Treats ∂z/∂u as z_x and ∂z/∂v as z_y, ignoring that x and y each depend on both u and v."
+   ],
+   "key": "MTH165-U4-038"
+  },
+  {
+   "topic": "Chain Rule and Errors",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A surveyor computes a triangle's area from Δ = (1/2)ab·sin C. Sides a and b are exact, but the angle C = 60° may be off by 1°. What is the approximate percentage error in Δ?",
+   "code": "",
+   "options": [
+    "100/√3 %, about 57.7%",
+    "5π/(9√3) %, about 1.0%",
+    "5/3 %, about 1.7%",
+    "5√3π/9 %, about 3.0%"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "δΔ ≈ (∂Δ/∂C)δC = (1/2)ab·cos C·δC, so δΔ/Δ ≈ cot C·δC, with δC in radians. Here δC = 1° = π/180 and cot 60° = 1/√3. The percentage error is 100π/(180√3) = 5π/(9√3) % ≈ 1.0%.",
+   "why_wrong": [
+    "Uses δC = 1 without converting to radians. The derivative of sin C is cos C only when C is in radians, so δC = π/180.",
+    "",
+    "Assumes Δ has the same percentage error as C (1° out of 60°). Δ depends on sin C, so the factor is cot C·δC.",
+    "Uses tan C instead of cot C. The ratio is (cos C)/(sin C), not (sin C)/(cos C)."
+   ],
+   "key": "MTH165-U4-039"
+  },
+  {
+   "topic": "Euler's Theorem",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "If u = sin⁻¹((x + y)/(√x + √y)) for x, y > 0, find x(∂u/∂x) + y(∂u/∂y).",
+   "code": "",
+   "options": [
+    "(1/2)u",
+    "(3/2)tan u",
+    "(1/2)sin u",
+    "(1/2)tan u"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "u itself is not homogeneous, but sin u = (x + y)/(√x + √y) is, with degree 1 − 1/2 = 1/2. Applying Euler's theorem to sin u gives x·cos u·(∂u/∂x) + y·cos u·(∂u/∂y) = (1/2)sin u. Dividing by cos u gives (1/2)tan u.",
+   "why_wrong": [
+    "Applies Euler's theorem to u directly. Only sin u is homogeneous, so the answer is n·sin u/cos u, not n·u.",
+    "Adds the degrees 1 + 1/2. For a quotient the degrees subtract, which gives 1/2.",
+    "Stops at n·sin u. Differentiating sin u brings out a factor cos u, which has to be divided out.",
+    ""
+   ],
+   "key": "MTH165-U4-040"
+  },
+  {
+   "topic": "Euler's Theorem",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A plant's output is modelled as P = 5L^(0.7)·K^(0.5), where L is labour and K is capital. At the current operating point P = 200 units. What is L(∂P/∂L) + K(∂P/∂K) there?",
+   "code": "",
+   "options": [
+    "200 units",
+    "240 units",
+    "70 units",
+    "40 units"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "P(tL, tK) = 5(tL)^(0.7)(tK)^(0.5) = t^(1.2)·P, so P is homogeneous of degree 0.7 + 0.5 = 1.2. Euler's theorem gives L(∂P/∂L) + K(∂P/∂K) = 1.2P = 1.2 × 200 = 240 units.",
+   "why_wrong": [
+    "Assumes degree 1. For a product of powers the exponents add, so the degree is 0.7 + 0.5 = 1.2.",
+    "",
+    "Multiplies the exponents, 0.7 × 0.5 = 0.35. For a product the degrees add.",
+    "Subtracts the exponents, 0.7 − 0.5 = 0.2. Degrees subtract only for a quotient."
+   ],
+   "key": "MTH165-U4-041"
+  },
+  {
+   "topic": "Euler's Theorem",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "For u = x²·tan⁻¹(y/x) − y²·tan⁻¹(x/y) with x, y ≠ 0, find x²(∂²u/∂x²) + 2xy(∂²u/∂x∂y) + y²(∂²u/∂y²).",
+   "code": "",
+   "options": [
+    "4u",
+    "0",
+    "2u",
+    "Euler's theorem cannot be used, because tan⁻¹ destroys homogeneity"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "y/x and x/y are homogeneous of degree 0, and any function of a degree-0 expression is still degree 0, so both tan⁻¹ factors have degree 0. So u is homogeneous of degree 2, and the second-order form of Euler's theorem gives n(n − 1)u = 2·1·u = 2u.",
+   "why_wrong": [
+    "Uses n²u. This second-order combination equals n(n − 1)u, not n²u.",
+    "Takes the degree as 0 because of the tan⁻¹ factors, forgetting the x² and y² that multiply them.",
+    "",
+    "An inverse trig function breaks homogeneity only when its argument has non-zero degree. y/x has degree 0, so tan⁻¹(y/x) is homogeneous of degree 0."
+   ],
+   "key": "MTH165-U4-042"
+  },
+  {
+   "topic": "Euler's Theorem",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "If u = (x² + y²)/(x + y) + 3, find x(∂u/∂x) + y(∂u/∂y).",
+   "code": "",
+   "options": [
+    "u − 3",
+    "u",
+    "3(u − 3)",
+    "It cannot be simplified: the + 3 makes u non-homogeneous, so Euler's theorem gives nothing"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "u is not homogeneous because of the + 3, but v = u − 3 = (x² + y²)/(x + y) is, with degree 2 − 1 = 1. The constant has zero partial derivatives, so x(∂u/∂x) + y(∂u/∂y) = x(∂v/∂x) + y(∂v/∂y) = 1·v = u − 3.",
+   "why_wrong": [
+    "",
+    "Applies Euler's theorem to u itself. The constant 3 is not homogeneous of degree 1, so it has to be removed first.",
+    "Adds the degrees 2 + 1. For a quotient they subtract, which gives degree 1.",
+    "The constant adds nothing to the partial derivatives, so Euler's theorem applies to u − 3, which is homogeneous."
+   ],
+   "key": "MTH165-U4-043"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A rectangular plate with sides parallel to the axes is to be cut from an elliptical sheet whose edge is x²/16 + y²/9 = 1 (lengths in cm). Using Lagrange's method, what is the largest possible area of the plate?",
+   "code": "",
+   "options": [
+    "12 cm²",
+    "6 cm²",
+    "48 cm²",
+    "24 cm²"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "With its corner at (x, y) in the first quadrant, the plate is 2x by 2y, so maximise A = 4xy subject to x²/16 + y²/9 = 1. From F = 4xy + λ(x²/16 + y²/9 − 1), setting F_x = 0 and F_y = 0 gives x²/16 = y²/9, and the constraint makes each equal 1/2, so x = 2√2 and y = 3/√2. Then A = 4·2√2·(3/√2) = 24 cm².",
+   "why_wrong": [
+    "Takes the area as 2xy. A rectangle with corner (x, y) has width 2x and height 2y, so A = 4xy.",
+    "Takes the area as xy, which is only the first-quadrant quarter of the plate.",
+    "Ignores the constraint and uses the corner (4, 3), which lies outside the ellipse because 16/16 + 9/9 = 2 ≠ 1.",
+    ""
+   ],
+   "key": "MTH165-U4-044"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Find and classify the stationary points of f(x, y) = x⁴ + y⁴ − 4xy.",
+   "code": "",
+   "options": [
+    "Test inconclusive at (0, 0); local minima at (1, 1) and (−1, −1)",
+    "Saddle point at (0, 0); local maxima at (1, 1) and (−1, −1)",
+    "Saddle point at (0, 0); local minima at (1, 1) and (−1, −1), each with f = −2",
+    "Saddle point at (0, 0); a single local minimum at (1, 1)"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "f_x = 4x³ − 4y = 0 and f_y = 4y³ − 4x = 0 give y = x³ and x = y³, so x⁹ = x and x = 0, 1 or −1. With f_xx = 12x², f_yy = 12y² and f_xy = −4: at (0, 0), D = 0 − 16 < 0, so it is a saddle point. At (1, 1) and (−1, −1), D = 144 − 16 = 128 > 0 with f_xx = 12 > 0, so both are minima with f = 1 + 1 − 4 = −2.",
+   "why_wrong": [
+    "Reads D = −16 < 0 as inconclusive. Only D = 0 is inconclusive; D < 0 means a definite saddle point.",
+    "Uses D > 0 without checking the sign of f_xx. f_xx = 12 > 0 makes these points minima.",
+    "",
+    "Misses the root x = −1 of x⁸ = 1, which gives the second minimum at (−1, −1)."
+   ],
+   "key": "MTH165-U4-045"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A firm makes x thousand units of product A and y thousand units of product B, with profit P(x, y) = 13x + 2y − 2x² + xy − y² (in ₹ lakh). Which statement about its stationary point is correct?",
+   "code": "",
+   "options": [
+    "At x = 4, y = 3 the profit is a maximum, ₹29 lakh",
+    "At x = 4, y = 3 the profit is a minimum, since D = 7 > 0",
+    "At x = 13/4, y = 1 the profit is a maximum",
+    "At x = 4, y = 3 there is a saddle point, since D = −9 < 0"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "P_x = 13 − 4x + y = 0 and P_y = 2 + x − 2y = 0 give x = 4, y = 3. With P_xx = −4, P_yy = −2 and P_xy = 1, D = (−4)(−2) − 1² = 7 > 0 and P_xx < 0, so this is a maximum. P(4, 3) = 52 + 6 − 32 + 12 − 9 = 29, which is ₹29 lakh.",
+   "why_wrong": [
+    "",
+    "D > 0 only tells you it is a maximum or a minimum. P_xx = −4 < 0 makes it a maximum.",
+    "Drops the cross term xy when differentiating. P_x = 13 − 4x + y and P_y = 2 + x − 2y each contain the other variable.",
+    "Sign slip: (−4)(−2) = +8, so D = 8 − 1 = 7, not −8 − 1 = −9."
+   ],
+   "key": "MTH165-U4-046"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "For f(x, y) = x² + kxy + 4y², the origin is a stationary point for every real k. For exactly which values of k is the origin a saddle point?",
+   "code": "",
+   "options": [
+    "|k| ≥ 4",
+    "|k| > 4",
+    "|k| < 4",
+    "k > 4"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "f_xx = 2, f_yy = 8 and f_xy = k, so D = 16 − k². A saddle needs D < 0, which means k² > 16, or |k| > 4. At k = ±4, D = 0 and the test says nothing, but f = (x ± 2y)² ≥ 0 = f(0, 0), so f never drops below its value at the origin and there is no saddle.",
+   "why_wrong": [
+    "Includes k = ±4, where D = 0. There f = (x ± 2y)² is never negative, so the origin is not a saddle.",
+    "",
+    "Reverses the inequality. For |k| < 4, D > 0 and f_xx = 2 > 0, which makes the origin a minimum.",
+    "Forgets negative k. k² > 16 also holds for every k < −4."
+   ],
+   "key": "MTH165-U4-047"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Lagrange's method for the extreme values of f = xy subject to x + y = 4 (x and y any real numbers) gives the single candidate (2, 2). Which statement is correct?",
+   "code": "",
+   "options": [
+    "(2, 2) is neither, because for f = xy, D = 0·0 − 1² = −1 < 0 makes it a saddle point",
+    "f has maximum value 4 at (2, 2) and minimum value 0 at (4, 0) and (0, 4)",
+    "f has minimum value 4 at (2, 2), since the single candidate from Lagrange's method must be the minimum",
+    "f has maximum value 4 at (2, 2) and no minimum, since xy = x(4 − x) → −∞ as |x| → ∞"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "F = xy + λ(x + y − 4) gives y + λ = 0 and x + λ = 0, so x = y = 2 and f = 4. Lagrange's method only gives candidates, though. On the line, f = x(4 − x) = 4 − (x − 2)², which never exceeds 4 and has no lower bound, so 4 is the maximum and there is no minimum.",
+   "why_wrong": [
+    "Applies the unconstrained D-test to xy. On the constraint line f becomes 4 − (x − 2)², which has a maximum at x = 2.",
+    "Assumes x, y ≥ 0, which was not given. For example, (6, −2) lies on the line and gives f = −12.",
+    "Lagrange's method only gives candidates. Checking f = 4 − (x − 2)² shows (2, 2) is a maximum, not a minimum.",
+    ""
+   ],
+   "key": "MTH165-U4-048"
+  }
+ ]
+}

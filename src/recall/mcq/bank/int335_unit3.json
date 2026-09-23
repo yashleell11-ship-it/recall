@@ -1,0 +1,1111 @@
+{
+ "subject_code": "INT335",
+ "unit": 3,
+ "unit_label": "Ideation and Creative Problem Solving",
+ "questions": [
+  {
+   "topic": "Divergent and Convergent Thinking",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is divergent thinking in the ideation stage?",
+   "code": "",
+   "options": [
+    "Evaluating ideas and narrowing them down to the strongest few",
+    "Generating many varied ideas while holding back judgement",
+    "Ranking ideas by their weighted scores on set criteria",
+    "Checking each idea against budget, time and available skills"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Divergent thinking opens up the range of options. It holds back judgement and values quantity, variety and novelty. Evaluating, ranking and checking feasibility all narrow the set, and narrowing is the job of convergent thinking.",
+   "why_wrong": [
+    "Evaluating and narrowing is convergent thinking, so this swaps the two.",
+    "",
+    "Weighted ranking is a convergent screening activity, not idea generation.",
+    "Checking budget, time and skills is a feasibility screen, which is convergent."
+   ],
+   "key": "INT335-U3-001"
+  },
+  {
+   "topic": "Divergent and Convergent Thinking",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In the normal ideation sequence, what comes first?",
+   "code": "",
+   "options": [
+    "Convergent thinking, which evaluates and narrows",
+    "Feasibility screening of each idea",
+    "Divergent thinking, which generates options",
+    "Weighted scoring of every idea"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "The normal order is diverge, then converge. A team first generates a wide variety of options, and evaluation starts only once there is enough variety to choose from. Judging too early shuts ideas down before anyone says them.",
+   "why_wrong": [
+    "This puts evaluation first, which reverses the diverge-then-converge order.",
+    "Feasibility screening is a convergent step. It needs a set of ideas to screen, so it cannot come first.",
+    "",
+    "Weighted scoring is convergent, and ideas have to exist before they can be scored."
+   ],
+   "key": "INT335-U3-002"
+  },
+  {
+   "topic": "SCAMPER Technique",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In the SCAMPER technique, what does the letter S stand for?",
+   "code": "",
+   "options": [
+    "Simplify",
+    "Separate",
+    "Stretch",
+    "Substitute"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "SCAMPER stands for Substitute, Combine, Adapt, Modify, Put to another use, Eliminate, Reverse or rearrange. S (Substitute) asks which part, material or step could be swapped for something else.",
+   "why_wrong": [
+    "'Simplify' is a common wrong expansion of S. Stripping things out is closer to E (Eliminate).",
+    "'Separate' is not a SCAMPER prompt. It only seems likely because it starts with S.",
+    "'Stretch' is not a SCAMPER prompt. Changing size or shape comes under M (Modify).",
+    ""
+   ],
+   "key": "INT335-U3-003"
+  },
+  {
+   "topic": "SCAMPER Technique",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In SCAMPER, what does the letter P stand for?",
+   "code": "",
+   "options": [
+    "Put to another use",
+    "Prototype",
+    "Prioritise",
+    "Plan"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "P stands for Put to another use. It asks how an existing product, part or material could serve a different purpose or a different user. Like every SCAMPER letter, it is a prompt for generating ideas, not for ranking or building them.",
+   "why_wrong": [
+    "",
+    "Prototyping is a later design-thinking stage, not a SCAMPER prompt.",
+    "Prioritising is a convergent screening activity, not one of the seven SCAMPER prompts.",
+    "'Plan' is not a SCAMPER prompt. It is a guess based only on the letter."
+   ],
+   "key": "INT335-U3-004"
+  },
+  {
+   "topic": "SCAMPER Technique",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In SCAMPER, what does the letter R stand for?",
+   "code": "",
+   "options": [
+    "Refine",
+    "Reverse or rearrange",
+    "Redesign",
+    "Reduce"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "R stands for Reverse or rearrange: turning something around or changing the order of its parts. It counts as one prompt, not two, so SCAMPER has seven letters.",
+   "why_wrong": [
+    "'Refine' is a common wrong expansion of R. Refining means polishing, which is not a SCAMPER prompt.",
+    "",
+    "'Redesign' is another common wrong expansion. It is too broad to be a single SCAMPER prompt.",
+    "'Reduce' is not the R. Removing parts comes under E (Eliminate), and making something smaller comes under M (Modify)."
+   ],
+   "key": "INT335-U3-005"
+  },
+  {
+   "topic": "Brainstorming and Mind Maps",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the brainstorming rule 'defer criticism' ask participants to do?",
+   "code": "",
+   "options": [
+    "Judge each idea as soon as it is said so no time is wasted",
+    "Drop any idea that seems impractical",
+    "Hold back from judging ideas until the idea-generation phase is over",
+    "Let only the facilitator criticise ideas during the session"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Deferring criticism keeps judgement out of the divergent phase, so unfinished and unusual ideas still get said out loud. Evaluation still happens, but later, in the convergent step.",
+   "why_wrong": [
+    "Judging each idea straight away is exactly what the rule forbids. It brings convergent evaluation into idea generation.",
+    "Dropping ideas that seem impractical is early evaluation. A wild idea can still lead to a workable one.",
+    "",
+    "The rule applies to everyone, including the facilitator. Criticism from any one person still makes others hold back their ideas."
+   ],
+   "key": "INT335-U3-006"
+  },
+  {
+   "topic": "Brainstorming and Mind Maps",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is placed at the centre of a mind map?",
+   "code": "",
+   "options": [
+    "The central topic or problem being explored",
+    "The idea that scored highest in screening",
+    "The list of evaluation criteria",
+    "The largest cluster from affinity grouping"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "A mind map starts from one central topic or problem. Branches spread outward carrying related ideas, sub-topics and associations. It is a tool for generating ideas, so nothing at its centre has been scored or chosen yet.",
+   "why_wrong": [
+    "",
+    "A top-scoring idea comes out of convergent screening, which happens after idea-generation tools like the mind map.",
+    "Evaluation criteria form the columns of a screening matrix, not the centre of a mind map.",
+    "Clusters are the output of affinity clustering, which is a separate sorting step. A mind map grows from a single topic."
+   ],
+   "key": "INT335-U3-007"
+  },
+  {
+   "topic": "Brainstorming and Mind Maps",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In reverse thinking, what question does the team ask first?",
+   "code": "",
+   "options": [
+    "How can we solve this problem directly?",
+    "Which idea is cheapest to build?",
+    "What do users say about this problem?",
+    "How could we cause or make this problem worse?"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Reverse thinking turns the problem around: the team first lists ways to cause or worsen it. Each answer is then flipped into a possible solution, which often turns up ideas that direct thinking misses.",
+   "why_wrong": [
+    "Asking for a direct solution is ordinary problem solving, which is the step reverse thinking deliberately flips.",
+    "Cost is a feasibility question for later screening, not the opening question of an idea-generation technique.",
+    "Collecting what users say is part of understanding the problem, not the reverse-thinking step.",
+    ""
+   ],
+   "key": "INT335-U3-008"
+  },
+  {
+   "topic": "Affinity Clustering",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In affinity clustering, ideas are grouped by what?",
+   "code": "",
+   "options": [
+    "Their weighted scores",
+    "Natural similarity between the ideas",
+    "Categories fixed before any idea is read",
+    "The person who suggested each idea"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Affinity clustering puts ideas together because they share an underlying principle, so the groups come out of the ideas themselves. Categories are not set in advance, and nothing is scored.",
+   "why_wrong": [
+    "Scoring is done in the screening matrix. Clustering does not rank or score.",
+    "",
+    "Fixing categories in advance is exactly what affinity clustering avoids. The groups should come out of the ideas.",
+    "Grouping by who suggested an idea says nothing about the principle the ideas share."
+   ],
+   "key": "INT335-U3-009"
+  },
+  {
+   "topic": "Affinity Clustering",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does affinity clustering produce?",
+   "code": "",
+   "options": [
+    "A single winning idea",
+    "A ranked list with a score for each idea",
+    "Named clusters that form a shortlist of concept families",
+    "A low-fidelity prototype of the best idea"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Each cluster is named after the principle its ideas share. Together, the named clusters give the team a shortlist of concept families to take forward. Choosing a winner and scoring ideas happen later, in screening.",
+   "why_wrong": [
+    "Clustering does not pick a winner. Selection happens in the later screening step.",
+    "Clustering does not rank or score. That is the job of a screening matrix.",
+    "",
+    "Prototyping comes after an idea has been chosen. Clustering only organises ideas."
+   ],
+   "key": "INT335-U3-010"
+  },
+  {
+   "topic": "Idea Screening and Selection",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In an idea screening matrix, what forms the rows?",
+   "code": "",
+   "options": [
+    "The evaluation criteria",
+    "The weights of the criteria",
+    "The team members doing the rating",
+    "The ideas being compared"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "In a screening matrix, each idea is a row and each criterion is a column. So each cell holds one idea's rating on one criterion, commonly on a 1 to 5 scale. Reading along a row gives everything needed to work out that idea's total.",
+   "why_wrong": [
+    "The criteria form the columns. Putting them in the rows swaps the layout.",
+    "Weights belong to the criteria (the columns). They are not the rows.",
+    "The raters are not part of the matrix layout. The rows are the ideas being judged.",
+    ""
+   ],
+   "key": "INT335-U3-011"
+  },
+  {
+   "topic": "Idea Screening and Selection",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "An idea is rated 4 on a criterion whose weight is 0.3. How much does that criterion add to the idea's weighted total?",
+   "code": "",
+   "options": [
+    "1.2",
+    "4.3",
+    "0.12",
+    "3.7"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Each criterion adds weight × rating to the total: 0.3 × 4 = 1.2. The full total is the sum of these products, Σ(wᵢ × rᵢ).",
+   "why_wrong": [
+    "",
+    "Adds the weight to the rating (4 + 0.3) instead of multiplying.",
+    "Puts the decimal point in the wrong place: 0.3 × 4 is 1.2, not 0.12.",
+    "Subtracts the weight from the rating (4 − 0.3) instead of multiplying."
+   ],
+   "key": "INT335-U3-012"
+  },
+  {
+   "topic": "Idea Screening and Selection",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What does the feasibility criterion ask about an idea?",
+   "code": "",
+   "options": [
+    "Whether it addresses the defined user problem",
+    "Whether it is new and unusual",
+    "Whether it can be delivered with the available technology, skills, time, budget and regulation",
+    "Whether most of the team likes it"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Feasibility is about whether an idea can be delivered: can it be built and run with the technology, skills, time, budget and rules available? Whether it solves the user's problem is a separate criterion, relevance.",
+   "why_wrong": [
+    "That is relevance, not feasibility. The two are separate criteria.",
+    "Being new and unusual is novelty, which divergent thinking values. It does not test whether the idea can be delivered.",
+    "",
+    "Popularity within the team is not a screening criterion. Feasibility is about whether the idea can be delivered."
+   ],
+   "key": "INT335-U3-013"
+  },
+  {
+   "topic": "Idea Screening and Selection",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "In an impact–effort matrix, which quadrant is usually taken up first?",
+   "code": "",
+   "options": [
+    "High impact, high effort",
+    "Low impact, low effort",
+    "Low impact, high effort",
+    "High impact, low effort"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "An impact–effort matrix places each idea by how much value it delivers and how much work it needs. High-impact, low-effort ideas give the most benefit for the least work, so they are usually tackled first.",
+   "why_wrong": [
+    "High-impact, high-effort ideas are worth doing, but they need planning and resources, so they usually come after the easy wins.",
+    "Low-impact, low-effort ideas are cheap but deliver little, so they are not the priority.",
+    "Low impact for high effort is the worst trade-off, and these ideas are usually avoided.",
+    ""
+   ],
+   "key": "INT335-U3-014"
+  },
+  {
+   "topic": "Divergent and Convergent Thinking",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these activities is an example of convergent thinking?",
+   "code": "",
+   "options": [
+    "Listing fifty possible uses for a paper clip",
+    "Building on a teammate's unusual suggestion",
+    "Screening ideas for feasibility and ranking the ones that pass",
+    "Holding back judgement so ideas keep flowing"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Convergent thinking evaluates and narrows. Screening for feasibility and ranking both cut many ideas down to a justified few. The other three options either add ideas or protect them from judgement, which is divergent thinking.",
+   "why_wrong": [
+    "Producing a long list of uses is idea generation that values quantity, so it is divergent.",
+    "Building on others' ideas adds to the set. It is a divergent brainstorming rule.",
+    "",
+    "Holding back judgement is the defining feature of divergent thinking, not convergent thinking."
+   ],
+   "key": "INT335-U3-015"
+  },
+  {
+   "topic": "Divergent and Convergent Thinking",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these is NOT a feature of divergent thinking?",
+   "code": "",
+   "options": [
+    "It holds back judgement",
+    "It values a large quantity of ideas",
+    "It values novelty and variety",
+    "It values relevance and justified choice"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Divergent thinking generates ideas: it holds back judgement and values quantity, variety and novelty. Relevance, coherence and justified choice are what convergent thinking values, because it evaluates and narrows.",
+   "why_wrong": [
+    "Holding back judgement IS a feature of divergent thinking, so it cannot be the exception.",
+    "Valuing a large quantity of ideas IS a feature of divergent thinking.",
+    "Novelty and variety ARE values of divergent thinking.",
+    ""
+   ],
+   "key": "INT335-U3-016"
+  },
+  {
+   "topic": "Divergent and Convergent Thinking",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which sequence describes the double-diamond pattern of diverging and converging?",
+   "code": "",
+   "options": [
+    "Converge then diverge while understanding the problem; converge then diverge again while developing solutions",
+    "Diverge then converge while understanding the problem; diverge then converge again while developing solutions",
+    "Diverge on both the problem and the solutions first, then converge on both at the end",
+    "Diverge and converge once, only while developing solutions"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The double-diamond pattern repeats the diverge-then-converge shape twice. The first diamond opens up the problem and then pins it down. The second opens up solutions and then pins them down. Each diamond widens before it narrows, because evaluation needs enough variety to choose from.",
+   "why_wrong": [
+    "Reverses the order inside each diamond. Converging first would mean judging before any variety exists.",
+    "",
+    "Merges the two diamonds into one wide opening. In the pattern, the team converges on the problem before it explores solutions.",
+    "Leaves out the first diamond. The pattern also diverges and converges while understanding the problem."
+   ],
+   "key": "INT335-U3-017"
+  },
+  {
+   "topic": "SCAMPER Technique",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these is NOT one of the SCAMPER prompts?",
+   "code": "",
+   "options": [
+    "Adapt",
+    "Combine",
+    "Simplify",
+    "Put to another use"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "SCAMPER stands for Substitute, Combine, Adapt, Modify, Put to another use, Eliminate, Reverse or rearrange. 'Simplify' is a common misreading of the S, which actually stands for Substitute.",
+   "why_wrong": [
+    "Adapt is the A in SCAMPER, so it is a real prompt.",
+    "Combine is the C in SCAMPER.",
+    "",
+    "Put to another use is the P in SCAMPER. It is easy to forget because it is a phrase rather than a single verb."
+   ],
+   "key": "INT335-U3-018"
+  },
+  {
+   "topic": "SCAMPER Technique",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "A smartphone that brings a phone, a camera and a music player together in one device is an example of which SCAMPER prompt?",
+   "code": "",
+   "options": [
+    "Adapt",
+    "Substitute",
+    "Modify",
+    "Combine"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Combine asks which separate products, functions or parts could be merged into one. Putting the functions of three devices into a single handset is a direct merge, so it is Combine.",
+   "why_wrong": [
+    "Adapt borrows an idea from another context and adjusts it to fit. Nothing is borrowed here; three functions are merged.",
+    "Substitute swaps one part or material for another. Nothing is replaced here; functions are joined together.",
+    "Modify changes a feature of one thing, such as its size, shape or colour. Here, separate things are joined into one.",
+    ""
+   ],
+   "key": "INT335-U3-019"
+  },
+  {
+   "topic": "SCAMPER Technique",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Using old car tyres as garden planters is an example of which SCAMPER prompt?",
+   "code": "",
+   "options": [
+    "Adapt",
+    "Put to another use",
+    "Substitute",
+    "Eliminate"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Put to another use takes an existing object and finds it a different purpose or user. The tyre stays a tyre; it simply does a new job as a planter.",
+   "why_wrong": [
+    "Adapt borrows an idea from elsewhere to improve your own product. Here, an existing object is given a new job, which is Put to another use.",
+    "",
+    "Substitute replaces a part or material inside a product. Nothing is swapped here.",
+    "Eliminate removes a part or feature. Nothing is removed here."
+   ],
+   "key": "INT335-U3-020"
+  },
+  {
+   "topic": "Brainstorming and Mind Maps",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these is NOT a brainstorming rule?",
+   "code": "",
+   "options": [
+    "Evaluate each idea as soon as it is suggested",
+    "Build on the ideas of others",
+    "Welcome unusual or wild ideas",
+    "Keep one conversation going at a time"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Brainstorming defers criticism, aims for quantity, welcomes unusual ideas, builds on others' contributions and keeps one conversation going at a time. Evaluating each idea on the spot breaks the defer-criticism rule; evaluation belongs in the later convergent step.",
+   "why_wrong": [
+    "",
+    "Building on others' ideas is a core brainstorming rule.",
+    "Welcoming unusual ideas is a core rule, because they often lead to workable ones.",
+    "Keeping one conversation at a time is a rule so that every idea is heard."
+   ],
+   "key": "INT335-U3-021"
+  },
+  {
+   "topic": "Brainstorming and Mind Maps",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Arrange the steps of reverse thinking in order: (1) turn each answer around into a possible solution, (2) state the problem, (3) list ways to cause or worsen the problem.",
+   "code": "",
+   "options": [
+    "3 → 2 → 1",
+    "2 → 1 → 3",
+    "2 → 3 → 1",
+    "1 → 2 → 3"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "First the problem is stated (2). Next the team asks how it could be caused or made worse and lists the answers (3). Finally each answer is flipped into a possible solution (1). The flip only works once there are 'make it worse' answers to turn around.",
+   "why_wrong": [
+    "Lists ways to worsen a problem before stating what the problem is.",
+    "Tries to flip answers into solutions before any 'make it worse' answers have been listed.",
+    "",
+    "Starts with solutions, which skips the reversal and becomes ordinary direct problem solving."
+   ],
+   "key": "INT335-U3-022"
+  },
+  {
+   "topic": "Affinity Clustering",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these statements about affinity clustering is NOT true?",
+   "code": "",
+   "options": [
+    "Categories come out of the ideas rather than being fixed in advance",
+    "It ranks the clusters and picks the winning idea",
+    "Each cluster is named after the principle its ideas share",
+    "One idea may sit in more than one cluster"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Affinity clustering only organises ideas. Ideas are grouped by natural similarity, each cluster is named after its shared principle, and an idea may belong to more than one cluster. It does not rank or choose; that happens in screening.",
+   "why_wrong": [
+    "This is true: letting the categories come out of the ideas is the point of affinity clustering.",
+    "",
+    "This is true: naming each cluster after its shared principle is how the concept families are formed.",
+    "This is true: an idea that shares a principle with two groups may sit in both."
+   ],
+   "key": "INT335-U3-023"
+  },
+  {
+   "topic": "Idea Screening and Selection",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which of these is a relevance question rather than a feasibility question?",
+   "code": "",
+   "options": [
+    "Does it address the defined user problem?",
+    "Can the team build it with the skills it has?",
+    "Can it be delivered within the budget?",
+    "Is it allowed under current regulations?"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Relevance asks whether an idea addresses the user problem the team has defined. Skills, budget and regulation are all feasibility questions: they ask whether the idea can be delivered, not whether it is worth delivering.",
+   "why_wrong": [
+    "",
+    "The team's skills are a feasibility constraint.",
+    "Budget is a feasibility constraint.",
+    "Regulation is a feasibility constraint, and a legal limit may also be a mandatory gate."
+   ],
+   "key": "INT335-U3-024"
+  },
+  {
+   "topic": "Idea Screening and Selection",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "How should a mandatory constraint such as legality or safety be handled when screening ideas?",
+   "code": "",
+   "options": [
+    "As one more weighted column, scored like the other criteria",
+    "As a gate applied before scoring, removing any idea that fails it",
+    "As a tie-breaker used only when two totals are equal",
+    "Set aside during screening and checked after the idea is built"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A mandatory constraint is pass or fail, not a matter of degree. Ideas that fail it are removed before any scoring, because no weighted total can make up for breaking a rule that must be met.",
+   "why_wrong": [
+    "Making it a weighted column lets high scores on other criteria make up for breaking a rule that must be met.",
+    "",
+    "Using it only as a tie-breaker would let an illegal or unsafe idea win outright on points.",
+    "Checking only after building wastes effort on ideas that were never allowed to go ahead."
+   ],
+   "key": "INT335-U3-025"
+  },
+  {
+   "topic": "Idea Screening and Selection",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "An idea is rated 8, 4 and 6 on three criteria whose weights are 0.5, 0.3 and 0.2 respectively. What is its weighted total?",
+   "code": "",
+   "options": [
+    "6.2",
+    "6.0",
+    "18",
+    "6.4"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Total = Σ(wᵢ × rᵢ) = 0.5 × 8 + 0.3 × 4 + 0.2 × 6 = 4.0 + 1.2 + 1.2 = 6.4. The weights add up to 0.5 + 0.3 + 0.2 = 1.0, so the total stays on the same scale as the ratings.",
+   "why_wrong": [
+    "Gets one product wrong, for example taking 0.2 × 6 as 1.0 instead of 1.2.",
+    "Takes the plain average (8 + 4 + 6) ÷ 3 = 6.0 and ignores the weights.",
+    "Adds the raw ratings 8 + 4 + 6 = 18 and ignores the weights.",
+    ""
+   ],
+   "key": "INT335-U3-026"
+  },
+  {
+   "topic": "Divergent and Convergent Thinking",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Twenty minutes into an ideation session on reducing noise in a hostel study room, the team has only five ideas, and all of them are close variations of 'put up more signs'. One member suggests ranking the five now to save time. What should the facilitator do?",
+   "code": "",
+   "options": [
+    "Rank the five now, because diverge-then-converge means converging as soon as any ideas exist",
+    "Keep the team generating ideas, because convergence should start only once there is enough variety to choose from",
+    "Pick the most feasible of the five and move straight to prototyping, since time is short",
+    "Group the five by similarity with affinity clustering to find the winning idea"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Divergent thinking values quantity, variety and novelty, and convergent thinking then evaluates and narrows. Five near-identical ideas give the team almost nothing to choose between, so evaluating now would only pick the best version of one idea. The facilitator should keep the session divergent until real variety exists, and only then converge.",
+   "why_wrong": [
+    "Diverge-then-converge does not mean converging at the first ideas. Evaluation begins only once enough variety exists, and five versions of one idea are not variety.",
+    "",
+    "Choosing on feasibility is a convergent step taken too early, and it also skips screening against the user problem.",
+    "Affinity clustering groups ideas by similarity but never picks a winner, and five near-identical notes would make a single cluster anyway."
+   ],
+   "key": "INT335-U3-027"
+  },
+  {
+   "topic": "Divergent and Convergent Thinking",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "In one workshop a team (1) lists 40 ways to cut paper use in hostels, (2) adds twists to one another's ideas, (3) checks each idea against the budget, and (4) picks two ideas to prototype. Which steps are divergent thinking?",
+   "code": "",
+   "options": [
+    "Steps 3 and 4",
+    "Steps 1 and 3",
+    "Steps 1 and 2",
+    "Steps 2 and 4"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Divergent thinking generates ideas: it holds back judgement and aims for many varied ideas. Listing 40 ways and building on each other's ideas both do that. Checking against a budget is a feasibility judgement and picking two ideas narrows the set, so steps 3 and 4 are convergent.",
+   "why_wrong": [
+    "These are the convergent steps. Checking feasibility and picking ideas both evaluate and narrow.",
+    "Step 3 judges ideas against a budget. That is evaluation, so it is convergent, not divergent.",
+    "",
+    "Step 4 narrows 40 ideas down to two, which is convergent. Only step 2 in this pair is divergent."
+   ],
+   "key": "INT335-U3-028"
+  },
+  {
+   "topic": "Divergent and Convergent Thinking",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Affinity clustering does not rank or score ideas. Which statement correctly places it on the divergent–convergent scale?",
+   "code": "",
+   "options": [
+    "Divergent: because it passes no judgement on which idea is better, it keeps all options open",
+    "Divergent: because one note can sit in two clusters, clustering adds to the set of ideas",
+    "Convergent: because it picks the strongest idea from each cluster",
+    "Convergent: it narrows many notes into a few named concept families, even though it ranks nothing"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Convergent thinking narrows options and makes coherent sense of them, and ranking is only one way to do that. Clustering turns a wall of separate notes into a short list of concept families, each named by its shared principle, so it narrows the field without scoring anything. Divergent thinking generates new ideas, and clustering generates none.",
+   "why_wrong": [
+    "This treats 'convergent' as meaning only ranking. Clustering still narrows many notes into a few families, and it produces no new ideas.",
+    "Putting one note in two clusters reorganises an existing idea. It does not create a new one, so nothing is diverged.",
+    "The label is right but the reason is wrong. Affinity clustering never picks a strongest idea; that happens later, when the concept families are screened.",
+    ""
+   ],
+   "key": "INT335-U3-029"
+  },
+  {
+   "topic": "Divergent and Convergent Thinking",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "After generating 40 ideas for helping new students find their classrooms, a team picks the most surprising one, a campus-wide treasure-hunt game, as its final idea, saying 'novelty is what ideation is for'. What is the flaw in this choice?",
+   "code": "",
+   "options": [
+    "Novelty is a divergent value; the final choice should be justified by relevance to the defined user problem, not by surprise alone",
+    "There is no flaw: the rule to welcome unusual ideas means the most unusual idea should be the one chosen",
+    "There is no flaw: convergent thinking values novelty and variety, so the most surprising idea is the right pick",
+    "The team should instead choose the idea that is easiest to build, since feasibility alone decides the final choice"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Divergent thinking values quantity, variety and novelty so that the pool of ideas is rich. Convergent thinking then values relevance, coherence and a justified choice. 'Welcome unusual ideas' is a rule for the generation phase, not a selection criterion. The treasure hunt could still win, but only if it is shown to address the students' actual problem better than the other ideas.",
+   "why_wrong": [
+    "",
+    "'Welcome unusual ideas' applies during generation. It keeps odd ideas in the pool, but it does not make them winners at selection.",
+    "This inverts the two modes. Novelty and variety are what divergent thinking values; convergent thinking values relevance and a justified choice.",
+    "Feasibility is one screening criterion, not the only one. An idea that is easy to build but does not address the user problem is still a poor choice."
+   ],
+   "key": "INT335-U3-030"
+  },
+  {
+   "topic": "SCAMPER Technique",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "At a food court, customers eat first and pay at the end of the meal. A team proposes that customers pay while ordering, before they eat. Which SCAMPER prompt does this change use?",
+   "code": "",
+   "options": [
+    "Eliminate",
+    "Substitute",
+    "Reverse or rearrange",
+    "Modify"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Nothing new is added and no step disappears. The same two steps, paying and eating, simply swap places. Changing the order or sequence of steps is what the 'Reverse or rearrange' prompt covers.",
+   "why_wrong": [
+    "Eliminate removes a part or step, but payment still happens. Only its place in the sequence has changed.",
+    "Substitute replaces one component or material with a different one. Here the same steps remain, just in a new order.",
+    "",
+    "Modify changes an attribute such as size, shape or colour. The steps themselves are unchanged; they are only reordered."
+   ],
+   "key": "INT335-U3-031"
+  },
+  {
+   "topic": "SCAMPER Technique",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A bicycle for small children is designed without pedals, so that children learn to balance by pushing along with their feet. Which SCAMPER prompt produced this design?",
+   "code": "",
+   "options": [
+    "Modify",
+    "Eliminate",
+    "Substitute",
+    "Reverse or rearrange"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "The design comes from taking a part away, the pedals, and nothing is put in their place. Removing a component or feature to simplify a product or sharpen its purpose is the 'Eliminate' prompt.",
+   "why_wrong": [
+    "Modify changes an attribute such as size, shape or colour. Here a whole part is removed, not reshaped.",
+    "",
+    "Substitute would put something else in the pedals' place, and nothing replaces them.",
+    "Reverse or rearrange changes the order or layout of parts. The pedals are not moved; they are removed."
+   ],
+   "key": "INT335-U3-032"
+  },
+  {
+   "topic": "SCAMPER Technique",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A railway station makes the text and buttons on its ticket-machine screen twice as large so that elderly travellers can use it more easily. Which SCAMPER prompt does this change use?",
+   "code": "",
+   "options": [
+    "Adapt",
+    "Substitute",
+    "Combine",
+    "Modify"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The machine keeps all its parts; only one attribute changes, the size of the text and buttons. Making something bigger or smaller (magnifying or minifying) comes under the single 'Modify' prompt.",
+   "why_wrong": [
+    "In SCAMPER, Adapt means borrowing an idea from another product or setting. Nothing is borrowed here, even though the machine is made to suit elderly users.",
+    "Substitute swaps one component or material for another. The same text and buttons remain, only larger.",
+    "Combine merges two things or functions into one. No second function is added to the machine.",
+    ""
+   ],
+   "key": "INT335-U3-033"
+  },
+  {
+   "topic": "SCAMPER Technique",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "Two cafés rethink plastic straws. Café A stops handing out straws altogether. Café B hands out paper straws in place of plastic ones. Which SCAMPER prompts do the two changes use?",
+   "code": "",
+   "options": [
+    "Café A: Eliminate; Café B: Substitute",
+    "Café A: Eliminate; Café B: Eliminate",
+    "Café A: Substitute; Café B: Eliminate",
+    "Café A: Substitute; Café B: Substitute"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "The deciding question is whether something takes the removed item's place. Café A removes the straw and puts nothing in its place, which is Eliminate. Café B removes plastic but puts paper in its place, which is Substitute: a replacement, not a removal.",
+   "why_wrong": [
+    "",
+    "Café B does get rid of plastic straws, but paper straws take their place. A replacement is Substitute, not Eliminate.",
+    "The two are swapped. Café A has no replacement (Eliminate) and Café B has one (Substitute).",
+    "Café A puts nothing in the straw's place, so nothing is substituted. The straw is simply eliminated."
+   ],
+   "key": "INT335-U3-034"
+  },
+  {
+   "topic": "SCAMPER Technique",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A college makes two changes. Change 1: an unused seminar hall is opened at night as a study room. Change 2: the library adds an after-hours book-return slot, copying the letter slot that post offices use. Which SCAMPER prompts do the two changes use?",
+   "code": "",
+   "options": [
+    "Change 1: Adapt; Change 2: Put to another use",
+    "Change 1: Put to another use; Change 2: Put to another use",
+    "Change 1: Put to another use; Change 2: Adapt",
+    "Change 1: Adapt; Change 2: Adapt"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Put to another use takes an existing thing and gives it a new purpose, so the seminar hall itself is reused as a study room. Adapt borrows an idea that works in another setting and fits it to your problem: the library does not reuse a post-office slot, it copies the idea. The test is whether the object itself is reused (Put to another use) or an idea is borrowed from elsewhere (Adapt).",
+   "why_wrong": [
+    "The two are swapped. The hall is an existing object given a new job, and the slot is an idea borrowed from post offices.",
+    "Change 2 does not reuse an existing object for a new job. It copies an idea from another setting, which is Adapt.",
+    "",
+    "Change 1 borrows no idea from elsewhere. It gives the college's own hall a new purpose, which is Put to another use."
+   ],
+   "key": "INT335-U3-035"
+  },
+  {
+   "topic": "Brainstorming and Mind Maps",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "During a brainstorm on campus bus timings, two members at one end of the table start their own side discussion while the rest carry on. Several ideas from both halves are never heard by the whole group. Which brainstorming rule is being broken?",
+   "code": "",
+   "options": [
+    "Defer criticism",
+    "Seek quantity",
+    "Welcome unusual ideas",
+    "Keep one conversation active"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "When a group splits into side discussions, ideas get spoken but not shared, so nobody else can hear them or build on them. Keeping one conversation active means the whole group hears every idea as it is offered. Nothing in this scene judges an idea or limits how many are produced.",
+   "why_wrong": [
+    "No one is criticising an idea. The problem is that the whole group does not hear the ideas.",
+    "Both halves are still producing ideas, so the number of ideas is not what is going wrong.",
+    "No unusual idea is being dismissed. The ideas are lost because they stay inside a side discussion.",
+    ""
+   ],
+   "key": "INT335-U3-036"
+  },
+  {
+   "topic": "Brainstorming and Mind Maps",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Situation 1: a student working alone starts from the single topic 'campus safety at night' and wants to spread out related sub-topics and see how they connect. Situation 2: a team has 80 sticky notes of ideas and wants to find natural groups among them without ranking them. Which tools fit the two situations?",
+   "code": "",
+   "options": [
+    "1: affinity clustering; 2: mind map",
+    "1: mind map; 2: affinity clustering",
+    "1: SCAMPER; 2: idea screening matrix",
+    "1: mind map; 2: idea screening matrix"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "A mind map puts one topic at the centre and branches outward into related sub-topics, which suits exploring from a single starting point. Affinity clustering starts from many existing ideas and groups them by natural similarity without scoring them. A screening matrix rates ideas against criteria, which the team has said it does not want to do yet.",
+   "why_wrong": [
+    "The two are swapped. Affinity clustering needs many existing ideas to group, and a mind map grows outward from one central topic.",
+    "",
+    "SCAMPER works by changing an existing product or process, and situation 1 starts from a topic, not a product. A screening matrix scores and ranks, which situation 2 rules out.",
+    "Situation 1 is right, but a screening matrix rates ideas against criteria, and the team wants to group ideas, not rank them."
+   ],
+   "key": "INT335-U3-037"
+  },
+  {
+   "topic": "Brainstorming and Mind Maps",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "In a brainstorm, member A suggests 'a water cooler on every floor of the hostel'. Member B replies: 'That is too expensive to be worth it, but a cooler on every second floor could work.' Which statement about B's reply is correct?",
+   "code": "",
+   "options": [
+    "B broke no rule, because B built on A's idea by offering a cheaper version",
+    "B broke 'keep one conversation active' by raising a new idea before A's was finished",
+    "B broke 'defer criticism': the 'too expensive' verdict is evaluation, though offering a variation on A's idea would have been fine on its own",
+    "B broke no rule, because cost is a feasibility question and feasibility can be raised at any time"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Building on others' contributions means adding to an idea, and B's alternative does that. But the words 'too expensive to be worth it' judge A's idea, and judgement is held back while ideas are being generated. B should have offered the variation as an addition ('and what if…') and left the cost question for screening.",
+   "why_wrong": [
+    "The variation does build on A's idea, but that does not cancel the judgement that came with it. The reply both builds and criticises.",
+    "B is replying to A in the same conversation, not starting a separate discussion.",
+    "",
+    "Feasibility is a criterion for convergent screening. Raising it during generation is exactly what 'defer criticism' holds back."
+   ],
+   "key": "INT335-U3-038"
+  },
+  {
+   "topic": "Brainstorming and Mind Maps",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "At the end of a brainstorm, once the wall is full of ideas, the facilitator asks everyone to vote for their top three. A member objects that voting breaks the rule to defer criticism. Is she right?",
+   "code": "",
+   "options": [
+    "No: criticism is held back while ideas are being generated, and judging them once enough ideas exist is the convergent step it was put off for",
+    "Yes: deferring criticism means ideas are never judged during ideation",
+    "Yes: the ideas must first be grouped by affinity clustering, and judging them before that breaks the rule",
+    "No: deferring criticism applies only to criticising people, not to judging their ideas"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "To defer means to postpone, not to abandon. Judgement is kept out of the generation phase so that people keep offering unfinished and unusual ideas. Once enough variety exists the team converges, and voting, clustering and screening are all ways of doing that. So a vote after generation is placed correctly and does not break the rule.",
+   "why_wrong": [
+    "",
+    "This reads 'defer' as 'never'. Ideation needs a convergent half, and that is where judgement belongs.",
+    "The rule is about when judgement happens relative to generation, not about clustering first. Nothing in the rule requires clustering before a vote.",
+    "The verdict is right but the reason is wrong. The rule does cover judging ideas; it simply holds that judgement back until generation is over."
+   ],
+   "key": "INT335-U3-039"
+  },
+  {
+   "topic": "Affinity Clustering",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "Before looking at the 90 sticky notes from a brainstorm, a team leader draws three boxes labelled 'Cost', 'Technology' and 'Marketing' and asks everyone to sort the notes into them. What does this go against in affinity clustering?",
+   "code": "",
+   "options": [
+    "Nothing, because fixed category boxes are the standard way to begin an affinity cluster",
+    "Groups should emerge from the notes' natural similarity rather than being fixed in advance",
+    "Every note should be scored against criteria before it is placed in a group",
+    "The notes should be arranged around a single central topic instead of in boxes"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Affinity clustering works bottom-up. The team reads the notes, puts similar ones together, and only then names each group after the principle its notes share. Drawing the boxes first forces the ideas into categories the team assumed beforehand, and it can hide groupings nobody expected.",
+   "why_wrong": [
+    "Fixed categories are exactly what affinity clustering avoids. The groups are meant to be discovered from the notes.",
+    "",
+    "Scoring against criteria belongs to idea screening. Affinity clustering groups ideas without scoring them.",
+    "Arranging ideas around one central topic describes a mind map, not affinity clustering."
+   ],
+   "key": "INT335-U3-040"
+  },
+  {
+   "topic": "Affinity Clustering",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "After affinity clustering, one cluster holds these notes: 'stagger meal times by hostel block', 'pre-book a meal slot the night before' and 'show a live crowd count at the mess door'. Which name for this cluster best follows affinity clustering practice?",
+   "code": "",
+   "options": [
+    "Cluster 3",
+    "Pre-book a meal slot",
+    "Best ideas",
+    "Spread students' arrivals across the meal period"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "Each cluster is named by the principle its notes share, so the name should say what all of them have in common. All three notes work by spreading students out over time so that the mess is never crowded at once. A name that only numbers the cluster, repeats one note or praises the cluster loses that shared principle.",
+   "why_wrong": [
+    "A number says nothing about what the notes share, so the cluster cannot later be read as a concept family.",
+    "This names the cluster after one of its notes and leaves out the principle that links all three.",
+    "Clustering groups ideas by similarity and does not rank them, so a label like 'Best ideas' makes a judgement that clustering cannot make.",
+    ""
+   ],
+   "key": "INT335-U3-041"
+  },
+  {
+   "topic": "Affinity Clustering",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "While clustering, a team finds that the note 'solar-powered charging bench near the library' fits both the 'Save energy' cluster and the 'Places to rest between classes' cluster. What should the team do?",
+   "code": "",
+   "options": [
+    "Put it only in the larger cluster, since each idea must belong to exactly one cluster",
+    "Move it to a separate 'Miscellaneous' cluster for ideas that fit more than one group",
+    "Place it in both clusters, with a copy in each, since one idea can belong to more than one cluster",
+    "Score it against both clusters and keep it only where it scores higher"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Affinity clusters are families of ideas that share a principle, not boxes that must exclude one another. An idea that carries two principles belongs to both families, and keeping it in each preserves both links. Forcing it into a single cluster, or parking it in a leftover group, throws away a connection the team has just found.",
+   "why_wrong": [
+    "Affinity clusters do not exclude one another. The 'exactly one cluster' rule is an assumption the method does not make.",
+    "A 'Miscellaneous' group has no shared principle, so the note would lose both of the links that made it interesting.",
+    "",
+    "Affinity clustering does not score ideas. Scoring comes later, in screening."
+   ],
+   "key": "INT335-U3-042"
+  },
+  {
+   "topic": "Affinity Clustering",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "Affinity clustering leaves a team with six clusters. The largest holds 18 notes and the smallest holds 3. A member says, 'The biggest cluster clearly wins, so let's prototype it.' What is wrong with this?",
+   "code": "",
+   "options": [
+    "Nothing, because the largest cluster shows where the team agrees most, so it is the strongest choice",
+    "Clustering groups by similarity and does not rank; cluster size only shows how many similar notes there are, and the families still need screening against criteria",
+    "The team should prototype the smallest cluster instead, because fewer similar notes means more original ideas",
+    "The team should keep merging clusters until only one is left, and prototype that one"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Affinity clustering produces a shortlist of concept families, not a winner. A big cluster may only mean that many people wrote down the same obvious idea, and it says nothing about relevance or feasibility. The next step is to screen the families against criteria and choose on that basis.",
+   "why_wrong": [
+    "The number of similar notes shows how often an idea came up, not how well it addresses the user problem. Clustering does not rank.",
+    "",
+    "This swaps one size-based rule for another. Cluster size, large or small, is not a screening criterion.",
+    "Merging until one cluster remains destroys the shortlist of families that clustering exists to produce, and it still ranks nothing."
+   ],
+   "key": "INT335-U3-043"
+  },
+  {
+   "topic": "Idea Screening and Selection",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "An idea would sharply cut waiting time at the hostel mess, but it needs a new serving counter, building work and a full semester to put in place. Where does it fall on an impact–effort matrix?",
+   "code": "",
+   "options": [
+    "High impact, high effort",
+    "High impact, low effort",
+    "Low impact, high effort",
+    "Low impact, low effort"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Impact asks how much the idea would help users, and effort asks how much time, money and work it needs. Sharply cutting waiting time is high impact, and building work over a full semester is high effort. So the idea sits in the high-impact, high-effort quadrant.",
+   "why_wrong": [
+    "",
+    "The benefit is large, but building work and a full semester are far from low effort.",
+    "Sharply cutting waiting time is a large benefit, so the impact is high, not low.",
+    "This rates both sides too low: the benefit is large and the work needed is heavy."
+   ],
+   "key": "INT335-U3-044"
+  },
+  {
+   "topic": "Idea Screening and Selection",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "An idea for a campus app is cheap, can be built in a week with tools the team already has, and passes every safety and legal check. However, none of the students interviewed reported the problem it solves. How should it be rated?",
+   "code": "",
+   "options": [
+    "High on feasibility, high on relevance",
+    "Low on feasibility, high on relevance",
+    "High on feasibility, low on relevance",
+    "Low on feasibility, low on relevance"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "Feasibility asks whether the idea can be delivered with the available technology, skills, time, budget and rules, and this one easily can. Relevance asks whether it addresses the defined user problem, and no user reported this problem. Being easy to build does not make an idea relevant.",
+   "why_wrong": [
+    "This lets ease of building stand in for relevance. An idea for a problem nobody has does not address the defined user problem.",
+    "The two are swapped. The idea is easy to build; what is missing is the fit with users.",
+    "",
+    "A week's work with tools the team already has is highly feasible. Only relevance is low."
+   ],
+   "key": "INT335-U3-045"
+  },
+  {
+   "topic": "Idea Screening and Selection",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "A screening matrix gives relevance a weight of 0.4 and feasibility a weight of 0.25, and affordability takes the remaining weight. An idea is rated 3 on relevance, 4 on feasibility and 5 on affordability. What is its weighted total?",
+   "code": "",
+   "options": [
+    "2.20",
+    "3.45",
+    "4.00",
+    "3.95"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The weights must add to 1, so affordability's weight is 1 − 0.4 − 0.25 = 0.35. Then Total = Σ(wᵢ × rᵢ) = 0.4 × 3 + 0.25 × 4 + 0.35 × 5 = 1.20 + 1.00 + 1.75 = 3.95.",
+   "why_wrong": [
+    "This leaves affordability out: 1.20 + 1.00 = 2.20, ignoring the remaining weight of 0.35.",
+    "This gives affordability a weight of 0.25 by copying feasibility's weight: 1.20 + 1.00 + 1.25 = 3.45. The remaining weight is actually 0.35.",
+    "This is the plain average (3 + 4 + 5) ÷ 3 = 4.00, which ignores the weights entirely.",
+    ""
+   ],
+   "key": "INT335-U3-046"
+  },
+  {
+   "topic": "Idea Screening and Selection",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A team screens three ideas with weights of 0.5 for user impact, 0.3 for feasibility and 0.2 for affordability, each rated 1 to 5. Idea X is rated 5, 4, 5 but breaks the hostel fire-safety rules. Idea Y is rated 5, 3, 2. Idea Z is rated 3, 4, 5. Which idea goes forward?",
+   "code": "",
+   "options": [
+    "Idea X, with a weighted total of 4.7",
+    "Idea Y, with a weighted total of 3.8",
+    "Idea Z, with a total of 12",
+    "Idea Z, with a weighted total of 4.3"
+   ],
+   "options_mono": false,
+   "correct": 1,
+   "explain": "Safety is a mandatory constraint, so Idea X is removed before any scoring; no total can make up for breaking a rule that must be met. Y = 0.5 × 5 + 0.3 × 3 + 0.2 × 2 = 2.5 + 0.9 + 0.4 = 3.8, and Z = 0.5 × 3 + 0.3 × 4 + 0.2 × 5 = 1.5 + 1.2 + 1.0 = 3.7. Y wins by 0.1, even though Z has the larger raw sum.",
+   "why_wrong": [
+    "This scores Idea X despite the fire-safety breach. A mandatory constraint is a gate applied before scoring, and a high total cannot override it.",
+    "",
+    "12 is Z's unweighted sum (3 + 4 + 5). Adding raw ratings ignores the weights, and Z's weighted total is only 3.7.",
+    "4.3 comes from applying the weights in reverse order (0.2, 0.3, 0.5), which puts the heaviest weight on affordability instead of user impact."
+   ],
+   "key": "INT335-U3-047"
+  },
+  {
+   "topic": "Idea Screening and Selection",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Two ideas are screened with weights of 0.45 for relevance, 0.35 for feasibility and 0.2 for affordability. Idea M is rated 5, 2, 3 and Idea N is rated 4, 4, 2. Which idea should go forward?",
+   "code": "",
+   "options": [
+    "Idea M, because its 5 on the heaviest criterion outweighs everything else",
+    "Neither, because both sets of ratings add up to 10, so the matrix cannot separate them",
+    "Idea M, with 3.70 against 3.30",
+    "Idea N, with 3.60 against 3.55"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "M = 0.45 × 5 + 0.35 × 2 + 0.2 × 3 = 2.25 + 0.70 + 0.60 = 3.55, and N = 0.45 × 4 + 0.35 × 4 + 0.2 × 2 = 1.80 + 1.40 + 0.40 = 3.60. N wins by 0.05 because M's weak feasibility cancels its top rating on relevance. When raw sums are equal, the weights decide.",
+   "why_wrong": [
+    "One high rating does not decide a weighted matrix. M's 5 on relevance gains it 0.45 over N, but its 2 on feasibility costs it 0.70.",
+    "Equal raw sums do not mean equal weighted totals. With the weights applied, the totals are 3.55 and 3.60.",
+    "3.70 and 3.30 come from swapping the feasibility and affordability weights, putting 0.2 on feasibility and 0.35 on affordability.",
+    ""
+   ],
+   "key": "INT335-U3-048"
+  }
+ ]
+}

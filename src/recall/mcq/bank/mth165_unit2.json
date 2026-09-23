@@ -1,0 +1,1111 @@
+{
+ "subject_code": "MTH165",
+ "unit": 2,
+ "unit_label": "Differential Calculus and Its Applications",
+ "questions": [
+  {
+   "topic": "Differentiation Techniques",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is d/dx (xˣ) for x > 0?",
+   "code": "",
+   "options": [
+    "x·x^(x−1)",
+    "xˣ(1 + ln x)",
+    "xˣ ln x",
+    "1 + ln x"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Neither the base nor the exponent is constant, so take logs: ln y = x ln x. Differentiating, (1/y)·y′ = ln x + x·(1/x) = 1 + ln x. Multiply back by y: y′ = xˣ(1 + ln x).",
+   "why_wrong": [
+    "Uses the power rule as if the exponent x were a constant (it simplifies to just xˣ).",
+    "",
+    "Uses the exponential rule d/dx(aˣ) = aˣ ln a as if the base x were a constant.",
+    "Forgets to multiply by y when undoing the log: (1/y)y′ = 1 + ln x gives y′ = y(1 + ln x), not 1 + ln x."
+   ],
+   "key": "MTH165-U2-001"
+  },
+  {
+   "topic": "Differentiation Techniques",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "If x = t² and y = t³, what is dy/dx?",
+   "code": "",
+   "options": [
+    "3t²",
+    "2/(3t)",
+    "3t/2",
+    "6t³"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "For a parametric curve dy/dx = (dy/dt)/(dx/dt). Here dy/dt = 3t² and dx/dt = 2t, so dy/dx = 3t²/(2t) = 3t/2 (t ≠ 0).",
+   "why_wrong": [
+    "This is only dy/dt; it still has to be divided by dx/dt = 2t.",
+    "Divides the wrong way round: (dx/dt)/(dy/dt) = 2t/(3t²) is dx/dy, not dy/dx.",
+    "",
+    "Multiplies dy/dt by dx/dt (3t²·2t) instead of dividing."
+   ],
+   "key": "MTH165-U2-002"
+  },
+  {
+   "topic": "Differentiation Techniques",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the nth derivative of y = e^(2x)?",
+   "code": "",
+   "options": [
+    "2n·e^(2x)",
+    "2e^(2x)",
+    "e^(2x)",
+    "2ⁿ·e^(2x)"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Each differentiation of e^(2x) brings down one more factor of 2: y₁ = 2e^(2x), y₂ = 2²e^(2x), and so on. In general the nth derivative of e^(ax) is aⁿe^(ax), so yₙ = 2ⁿe^(2x).",
+   "why_wrong": [
+    "Multiplies n by 2; the factors of 2 multiply together to give the power 2ⁿ, not the product 2n.",
+    "This is only the first derivative; every further differentiation contributes another factor of 2.",
+    "Forgets the chain-rule factor 2 that comes from the inner function 2x.",
+    ""
+   ],
+   "key": "MTH165-U2-003"
+  },
+  {
+   "topic": "Differentiation Techniques",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For the parabola x = at², y = 2at (a ≠ 0), what is d²y/dx²?",
+   "code": "",
+   "options": [
+    "0",
+    "−1/t²",
+    "−1/(2at³)",
+    "−2a/t"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "First dy/dx = (dy/dt)/(dx/dt) = 2a/(2at) = 1/t. Then d²y/dx² = [d/dt(dy/dx)]/(dx/dt) = (−1/t²)/(2at) = −1/(2at³).",
+   "why_wrong": [
+    "Computes (d²y/dt²)/(d²x/dt²) = 0/(2a); the second derivative is not the ratio of the second t-derivatives.",
+    "Differentiates dy/dx = 1/t with respect to t but forgets to divide by dx/dt = 2at.",
+    "",
+    "Multiplies −1/t² by dx/dt = 2at instead of dividing by it."
+   ],
+   "key": "MTH165-U2-004"
+  },
+  {
+   "topic": "Differentiation Techniques",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "The point (1, 2) lies on the curve x² + xy + y² = 7. What is dy/dx at (1, 2)?",
+   "code": "",
+   "options": [
+    "−4/5",
+    "4/5",
+    "−1",
+    "−5/4"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Differentiate term by term, using the product rule on xy: 2x + (y + x·dy/dx) + 2y·dy/dx = 0. So dy/dx = −(2x + y)/(x + 2y), and at (1, 2) this is −(2 + 2)/(1 + 4) = −4/5.",
+   "why_wrong": [
+    "",
+    "Loses the minus sign when moving 2x + y to the other side.",
+    "Differentiates xy as just y, dropping the x·dy/dx term: 2x + y + 2y·dy/dx = 0 gives −4/4 = −1.",
+    "Inverts the fraction, writing −(x + 2y)/(2x + y) instead of −(2x + y)/(x + 2y)."
+   ],
+   "key": "MTH165-U2-005"
+  },
+  {
+   "topic": "Differentiation Techniques",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Which expression is the nth derivative of y = sin(3x + 1)?",
+   "code": "",
+   "options": [
+    "sin(3x + 1 + nπ/2)",
+    "3ⁿ·sin(3x + 1 + nπ)",
+    "3ⁿ·sin(3x + 1 + nπ/2)",
+    "3n·sin(3x + 1 + nπ/2)"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Differentiating once gives 3cos(3x + 1) = 3·sin(3x + 1 + π/2): one factor of 3 and a phase shift of π/2. Repeating this n times gives yₙ = 3ⁿ·sin(3x + 1 + nπ/2), the standard result aⁿ·sin(ax + b + nπ/2).",
+   "why_wrong": [
+    "Drops the chain-rule factor 3 that each differentiation brings out.",
+    "Uses a phase shift of π per derivative; each derivative of sin shifts the angle by only π/2 (sin → cos).",
+    "",
+    "Multiplies n by 3 instead of raising 3 to the power n."
+   ],
+   "key": "MTH165-U2-006"
+  },
+  {
+   "topic": "Mean Value Theorems",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Which set of conditions on f are the hypotheses of Rolle's theorem on [a, b]?",
+   "code": "",
+   "options": [
+    "f continuous on [a, b], differentiable on (a, b), and f(a) = f(b)",
+    "f continuous on [a, b] and differentiable on (a, b)",
+    "f differentiable on (a, b) and f(a) = f(b)",
+    "f continuous on [a, b] and f(a) = f(b)"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Rolle's theorem needs all three: continuity on the closed interval [a, b], differentiability on the open interval (a, b), and equal end values f(a) = f(b). Then some c in (a, b) has f′(c) = 0. Dropping any one of the three breaks the theorem.",
+   "why_wrong": [
+    "",
+    "Missing f(a) = f(b); these are the hypotheses of Lagrange's Mean Value Theorem, which does not promise f′(c) = 0.",
+    "Missing continuity on the closed [a, b]; f can jump at an endpoint, e.g. f(x) = x on (0, 1] with f(0) = 1 has f′ = 1 everywhere inside.",
+    "Missing differentiability on (a, b); f(x) = |x| on [−1, 1] meets these conditions but has no point where f′(c) = 0."
+   ],
+   "key": "MTH165-U2-007"
+  },
+  {
+   "topic": "Mean Value Theorems",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "f(x) = x² − 6x + 8 satisfies Rolle's theorem on [2, 4]. What is the value of c?",
+   "code": "",
+   "options": [
+    "2",
+    "3",
+    "6",
+    "−3"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "f(2) = 4 − 12 + 8 = 0 and f(4) = 16 − 24 + 8 = 0, so the end values match. Setting f′(c) = 2c − 6 = 0 gives c = 3, which lies inside (2, 4).",
+   "why_wrong": [
+    "Solves f(c) = 0 instead of f′(c) = 0; x = 2 is an endpoint, and c must lie strictly inside (2, 4).",
+    "",
+    "Drops the coefficient 2 when solving 2c − 6 = 0.",
+    "Sign slip when solving 2c − 6 = 0; −3 is not even inside (2, 4)."
+   ],
+   "key": "MTH165-U2-008"
+  },
+  {
+   "topic": "Mean Value Theorems",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "For f(x) = x² on [1, 5], find the value of c given by Lagrange's Mean Value Theorem.",
+   "code": "",
+   "options": [
+    "6",
+    "12",
+    "13/4",
+    "3"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "The theorem says f′(c) = [f(5) − f(1)]/(5 − 1) = (25 − 1)/4 = 6. Since f′(c) = 2c, 2c = 6 gives c = 3, which lies in (1, 5).",
+   "why_wrong": [
+    "6 is the slope of the chord, i.e. the value of f′(c), not the point c itself.",
+    "Forgets to divide by b − a = 4: 2c = 24 gives c = 12, which is not even in (1, 5).",
+    "Adds f(5) + f(1) instead of subtracting: 2c = 26/4 gives c = 13/4.",
+    ""
+   ],
+   "key": "MTH165-U2-009"
+  },
+  {
+   "topic": "Mean Value Theorems",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For f(x) = x³ on [0, 3], what value of c satisfies Lagrange's Mean Value Theorem?",
+   "code": "",
+   "options": [
+    "3/2",
+    "√3",
+    "3",
+    "−√3"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "The chord slope is [f(3) − f(0)]/(3 − 0) = 27/3 = 9. Setting f′(c) = 3c² = 9 gives c² = 3, so c = ±√3. Only c = √3 lies in the open interval (0, 3).",
+   "why_wrong": [
+    "Assumes c is the midpoint of the interval; that shortcut works only for quadratics.",
+    "",
+    "Forgets to divide by b − a = 3: 3c² = 27 gives c = 3, an endpoint, which never verifies the theorem.",
+    "Solves c² = 3 correctly but keeps the root that lies outside (0, 3)."
+   ],
+   "key": "MTH165-U2-010"
+  },
+  {
+   "topic": "Mean Value Theorems",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "On [−1, 1], Rolle's theorem does NOT apply to which function?",
+   "code": "",
+   "options": [
+    "∛(x⁴)",
+    "√(1 − x²)",
+    "x⁴ − x²",
+    "∛(x²)"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "∛(x²) is continuous on [−1, 1] with f(−1) = f(1) = 1, but f′(x) = 2/(3∛x) does not exist at x = 0, which is inside (−1, 1). Differentiability on the open interval fails, and indeed f′ is never 0 there.",
+   "why_wrong": [
+    "f′(x) = (4/3)∛x exists everywhere, including f′(0) = 0, and f(±1) = 1, so every hypothesis holds.",
+    "Its derivative fails only at x = ±1, the endpoints; Rolle needs differentiability only on the open (−1, 1), and f(±1) = 0, so it applies with c = 0.",
+    "A polynomial is continuous and differentiable everywhere, and f(−1) = f(1) = 0, so the theorem applies.",
+    ""
+   ],
+   "key": "MTH165-U2-011"
+  },
+  {
+   "topic": "Taylor and Maclaurin Series",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the Maclaurin series of sin x up to the x⁵ term?",
+   "code": "",
+   "options": [
+    "x − x³/3! + x⁵/5!",
+    "x + x³/3! + x⁵/5!",
+    "1 − x²/2! + x⁴/4!",
+    "x − x³/3 + x⁵/5"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The derivatives of sin x at 0 cycle 0, 1, 0, −1, 0, 1, …, so only odd powers survive and their signs alternate. Dividing each by n! gives sin x = x − x³/3! + x⁵/5! − …",
+   "why_wrong": [
+    "",
+    "Loses the alternating signs; f‴(0) = −cos 0 = −1, so the x³ term is negative.",
+    "This is the series for cos x, which has only even powers.",
+    "Divides by n instead of n!; that pattern belongs to tan⁻¹x, not sin x."
+   ],
+   "key": "MTH165-U2-012"
+  },
+  {
+   "topic": "Taylor and Maclaurin Series",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "A function has f(0) = 2, f′(0) = 3 and f″(0) = 4. What is its Maclaurin expansion up to the x² term?",
+   "code": "",
+   "options": [
+    "2 + 3x + 4x²",
+    "3x + 2x²",
+    "2 + 3x + 2x²",
+    "2 + 3x + 8x²"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "The Maclaurin series is f(0) + f′(0)·x + f″(0)·x²/2! + … . Here that is 2 + 3x + (4/2)x² = 2 + 3x + 2x².",
+   "why_wrong": [
+    "Forgets to divide f″(0) by 2!.",
+    "Drops the constant term f(0) = 2.",
+    "",
+    "Multiplies f″(0) by 2! instead of dividing by it."
+   ],
+   "key": "MTH165-U2-013"
+  },
+  {
+   "topic": "Taylor and Maclaurin Series",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What is the Maclaurin series of ln(1 + x) up to the x³ term?",
+   "code": "",
+   "options": [
+    "x + x²/2 + x³/3",
+    "x − x²/2 + x³/3",
+    "x − x²/2 + x³/6",
+    "1 + x − x²/2 + x³/3"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "f(0) = ln 1 = 0; f′(x) = (1 + x)⁻¹ gives 1; f″(x) = −(1 + x)⁻² gives −1; f‴(x) = 2(1 + x)⁻³ gives 2. Dividing by n!: x − x²/2 + 2x³/6 = x − x²/2 + x³/3.",
+   "why_wrong": [
+    "Loses the alternating signs; f″(0) = −1, so the x² term is negative (this is the series of −ln(1 − x)).",
+    "",
+    "Takes f‴(0) = 1 instead of 2, forgetting the factor 2 from differentiating (1 + x)⁻².",
+    "Adds a constant term 1, but f(0) = ln 1 = 0."
+   ],
+   "key": "MTH165-U2-014"
+  },
+  {
+   "topic": "Taylor and Maclaurin Series",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What is the Taylor expansion of f(x) = x³ about x = 1?",
+   "code": "",
+   "options": [
+    "1 + 3(x − 1) + 6(x − 1)² + 6(x − 1)³",
+    "3(x − 1) + 3(x − 1)² + (x − 1)³",
+    "1 + 3x + 3x² + x³",
+    "1 + 3(x − 1) + 3(x − 1)² + (x − 1)³"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "At x = 1: f = 1, f′ = 3x² = 3, f″ = 6x = 6, f‴ = 6. Dividing by n!: 1 + 3(x − 1) + (6/2!)(x − 1)² + (6/3!)(x − 1)³ = 1 + 3(x − 1) + 3(x − 1)² + (x − 1)³. Expanding this gives back x³, a quick check.",
+   "why_wrong": [
+    "Forgets to divide f″(1) and f‴(1) by 2! and 3!.",
+    "Drops the constant term f(1) = 1.",
+    "Uses powers of x instead of powers of (x − 1); this expands to (1 + x)³, not x³.",
+    ""
+   ],
+   "key": "MTH165-U2-015"
+  },
+  {
+   "topic": "Taylor and Maclaurin Series",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What is the coefficient of x³ in the Maclaurin series of sin 2x?",
+   "code": "",
+   "options": [
+    "−4/3",
+    "−1/3",
+    "4/3",
+    "−8"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Substitute u = 2x into sin u = u − u³/3! + … . The cubic term is −(2x)³/3! = −8x³/6, so the coefficient is −8/6 = −4/3.",
+   "why_wrong": [
+    "",
+    "Writes the term as −2x³/3!, forgetting to cube the 2 in (2x)³.",
+    "Drops the minus sign carried by the x³ term of sin.",
+    "Forgets to divide (2x)³ by 3! = 6."
+   ],
+   "key": "MTH165-U2-016"
+  },
+  {
+   "topic": "Indeterminate Forms",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "To which of these limits can L'Hospital's rule be applied directly, as written?",
+   "code": "",
+   "options": [
+    "lim(x→0) (1 + x)/x",
+    "lim(x→0) (sin x)/x",
+    "lim(x→0⁺) x·ln x",
+    "lim(x→0) (1 + x)^(1/x)"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "L'Hospital's rule applies directly only to a quotient of the form 0/0 or ∞/∞. (sin x)/x is 0/0 at x = 0, and the rule gives cos x/1 → 1. The other limits are not in that form as written.",
+   "why_wrong": [
+    "This is 1/0, not indeterminate; applying the rule would wrongly give 1/1 = 1, while the limit actually does not exist.",
+    "",
+    "This is a 0·∞ form; it must first be rewritten, e.g. as ln x/(1/x), before the rule can be used.",
+    "This is a 1^∞ form; take logarithms first to turn it into 0/0."
+   ],
+   "key": "MTH165-U2-017"
+  },
+  {
+   "topic": "Indeterminate Forms",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate lim(x→0) (e^(3x) − 1)/x.",
+   "code": "",
+   "options": [
+    "1",
+    "1/3",
+    "3",
+    "0"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "At x = 0 this is 0/0, so L'Hospital's rule applies. Differentiating numerator and denominator separately gives 3e^(3x)/1 → 3e⁰ = 3.",
+   "why_wrong": [
+    "Differentiates e^(3x) as e^(3x), forgetting the chain-rule factor 3.",
+    "Puts the derivative of the denominator over the derivative of the numerator.",
+    "",
+    "Treats the 0/0 form as if its value were 0; 0/0 only says more work is needed."
+   ],
+   "key": "MTH165-U2-018"
+  },
+  {
+   "topic": "Indeterminate Forms",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "Evaluate lim(x→∞) (ln x)/x.",
+   "code": "",
+   "options": [
+    "0",
+    "1",
+    "∞",
+    "Does not exist"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "This is an ∞/∞ form, so L'Hospital's rule applies. Differentiating top and bottom separately gives (1/x)/1 = 1/x → 0, so x grows much faster than ln x.",
+   "why_wrong": [
+    "",
+    "Treats ∞/∞ as equal to 1; it is an indeterminate form, not a value.",
+    "Looks only at the numerator ln x → ∞ and ignores the faster-growing denominator.",
+    "L'Hospital's rule works for x → ∞ too; an ∞/∞ form does not mean the limit fails to exist."
+   ],
+   "key": "MTH165-U2-019"
+  },
+  {
+   "topic": "Indeterminate Forms",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Evaluate lim(x→0) (1 − cos x)/x².",
+   "code": "",
+   "options": [
+    "−1/2",
+    "1",
+    "2",
+    "1/2"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "It is 0/0, so apply L'Hospital's rule: sin x/(2x), which is still 0/0. Apply it again: cos x/2 → 1/2.",
+   "why_wrong": [
+    "Sign error: d/dx(1 − cos x) is +sin x, not −sin x.",
+    "Differentiates x² as x instead of 2x, getting sin x/x → 1.",
+    "Inverts the ratio, putting the derivatives of the denominator on top.",
+    ""
+   ],
+   "key": "MTH165-U2-020"
+  },
+  {
+   "topic": "Indeterminate Forms",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "Evaluate lim(x→0) (1 + 2x)^(1/x).",
+   "code": "",
+   "options": [
+    "e²",
+    "2",
+    "1",
+    "e"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "This is a 1^∞ form, so take logs first: ln L = lim(x→0) ln(1 + 2x)/x, which is 0/0. L'Hospital gives [2/(1 + 2x)]/1 → 2, so ln L = 2 and L = e².",
+   "why_wrong": [
+    "",
+    "Stops at ln L = 2 and forgets to exponentiate back.",
+    "Treats 1^∞ as 1; the base tends to 1 but the exponent grows without bound, so the form is indeterminate.",
+    "Differentiates ln(1 + 2x) as 1/(1 + 2x), dropping the chain-rule factor 2, so gets ln L = 1."
+   ],
+   "key": "MTH165-U2-021"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "What is the minimum value of f(x) = x² − 4x + 7?",
+   "code": "",
+   "options": [
+    "2",
+    "3",
+    "7",
+    "19"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "f′(x) = 2x − 4 = 0 gives x = 2, and f″(x) = 2 > 0, so this is a minimum. The minimum value is f(2) = 4 − 8 + 7 = 3.",
+   "why_wrong": [
+    "2 is where the minimum occurs (the x-value), not the minimum value f(2).",
+    "",
+    "This is f(0), the constant term; x = 0 is not a stationary point.",
+    "Sign slip: takes the stationary point as x = −2, and f(−2) = 4 + 8 + 7 = 19."
+   ],
+   "key": "MTH165-U2-022"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "If f′(c) = 0 and f″(c) > 0, what does f have at x = c?",
+   "code": "",
+   "options": [
+    "A local maximum",
+    "A point of inflexion",
+    "A local minimum",
+    "Nothing can be concluded"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "f″(c) > 0 means f′ is increasing through c, so f′ goes from negative to positive. The graph has a horizontal tangent and is concave up there, which is a local minimum.",
+   "why_wrong": [
+    "Reverses the test; a local maximum needs f″(c) < 0.",
+    "An inflexion needs a change of concavity; f″(c) > 0 means the graph is concave up at c.",
+    "",
+    "The test is inconclusive only when f″(c) = 0; here f″(c) > 0 decides it."
+   ],
+   "key": "MTH165-U2-023"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "easy",
+   "kind": "recall",
+   "q": "For f(x) = x³, f′(0) = 0. What kind of point is x = 0?",
+   "code": "",
+   "options": [
+    "A point of inflexion, neither maximum nor minimum",
+    "A local minimum",
+    "A local maximum",
+    "Not a stationary point, because f″(0) = 0"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "f′(x) = 3x² is positive on both sides of 0, so f′ does not change sign and f keeps increasing through x = 0. Since f″(x) = 6x changes sign there, x = 0 is a point of inflexion, neither a maximum nor a minimum.",
+   "why_wrong": [
+    "",
+    "f(x) < 0 for x < 0, so values just left of 0 are below f(0) = 0; it cannot be a minimum.",
+    "f(x) > 0 for x > 0, so values just right of 0 are above f(0); it cannot be a maximum.",
+    "A stationary point only needs f′(c) = 0, which holds; f″(0) = 0 just makes the second-derivative test inconclusive."
+   ],
+   "key": "MTH165-U2-024"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "What is the absolute maximum value of f(x) = x³ − 3x on [0, 3]?",
+   "code": "",
+   "options": [
+    "2",
+    "−2",
+    "18",
+    "3"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "f′(x) = 3x² − 3 = 0 gives x = ±1, but only x = 1 lies in [0, 3]. Compare f there and at the endpoints: f(0) = 0, f(1) = −2, f(3) = 27 − 9 = 18. The absolute maximum is 18, at the endpoint x = 3.",
+   "why_wrong": [
+    "This is f(−1), the local maximum value, but x = −1 is outside [0, 3].",
+    "This is f(1), the absolute minimum on [0, 3], not the maximum.",
+    "",
+    "3 is where the maximum occurs, not the maximum value f(3)."
+   ],
+   "key": "MTH165-U2-025"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "medium",
+   "kind": "recall",
+   "q": "For f(x) = x⁴, both f′(0) = 0 and f″(0) = 0. What is x = 0?",
+   "code": "",
+   "options": [
+    "A point of inflexion",
+    "A local maximum",
+    "Nothing can be concluded",
+    "A local minimum"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The second-derivative test is inconclusive, so check the sign of f′(x) = 4x³: negative for x < 0 and positive for x > 0. f′ changes from − to +, so x = 0 is a local minimum (indeed x⁴ ≥ 0 = f(0)). Equivalently, the first non-zero derivative, f⁗(0) = 24, is of even order and positive.",
+   "why_wrong": [
+    "Copies the behaviour of x³; for x⁴, f″(x) = 12x² ≥ 0 never changes sign, so there is no inflexion.",
+    "x⁴ ≥ f(0) for all x, so 0 cannot be a maximum.",
+    "Stops at the inconclusive second-derivative test; the sign change of f′ (or the higher derivatives) still decides it.",
+    ""
+   ],
+   "key": "MTH165-U2-026"
+  },
+  {
+   "topic": "Differentiation Techniques",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "The point (3, 4) lies on the circle x² + y² = 25. What is d²y/dx² at (3, 4)?",
+   "code": "",
+   "options": [
+    "−3/4",
+    "−25/64",
+    "−1/4",
+    "−7/64"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Differentiating gives 2x + 2y·y′ = 0, so y′ = −x/y = −3/4 at (3, 4). Differentiate y′ = −x/y again with the quotient rule, remembering that y depends on x: y″ = −(y − x·y′)/y² = −(4 + 9/4)/16 = −25/64. In general y″ = −(x² + y²)/y³ = −25/y³.",
+   "why_wrong": [
+    "−3/4 is dy/dx = −x/y, the first derivative, not the second.",
+    "",
+    "Differentiating −x/y as if y were a constant gives −1/y = −1/4. The x·y′ term from the quotient rule is lost.",
+    "Using y′ = +3/4 (a sign slip) in y″ = −(y − x·y′)/y² gives −(4 − 9/4)/16 = −7/64."
+   ],
+   "key": "MTH165-U2-027"
+  },
+  {
+   "topic": "Differentiation Techniques",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Using logarithmic differentiation, find dy/dx at x = 0 for y = (x + 1)²(x + 4)/(x + 2).",
+   "code": "",
+   "options": [
+    "7/4",
+    "3/2",
+    "7/2",
+    "11/2"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "Take logs: ln y = 2 ln(x + 1) + ln(x + 4) − ln(x + 2), so y′/y = 2/(x + 1) + 1/(x + 4) − 1/(x + 2). At x = 0 this is 2 + 1/4 − 1/2 = 7/4, and y(0) = 1·4/2 = 2. Hence y′(0) = y·(7/4) = 2·(7/4) = 7/2.",
+   "why_wrong": [
+    "7/4 is y′/y. It still has to be multiplied by y(0) = 2 to undo the logarithm.",
+    "Dropping the power 2 on (x + 1) gives y′/y = 1 + 1/4 − 1/2 = 3/4, so y′ = 3/2.",
+    "",
+    "Adding ln(x + 2) instead of subtracting it gives y′/y = 2 + 1/4 + 1/2 = 11/4, so y′ = 11/2."
+   ],
+   "key": "MTH165-U2-028"
+  },
+  {
+   "topic": "Differentiation Techniques",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What is the nth derivative of y = 1/((x − 1)(x − 2))?",
+   "code": "",
+   "options": [
+    "(−1)ⁿ n! [1/(x − 2)ⁿ⁺¹ − 1/(x − 1)ⁿ⁺¹]",
+    "n! [1/(x − 2)ⁿ⁺¹ − 1/(x − 1)ⁿ⁺¹]",
+    "(−1)ⁿ n! [1/(x − 2)ⁿ − 1/(x − 1)ⁿ]",
+    "(−1)ⁿ n! [1/(x − 1)ⁿ⁺¹ − 1/(x − 2)ⁿ⁺¹]"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Split into partial fractions first: 1/((x − 1)(x − 2)) = 1/(x − 2) − 1/(x − 1). The nth derivative of 1/(x − a) is (−1)ⁿ n!/(x − a)ⁿ⁺¹, because each differentiation brings down a negative factor and raises the power by one. Apply this to each fraction and keep the minus sign between them.",
+   "why_wrong": [
+    "",
+    "The (−1)ⁿ is missing. Each differentiation of (x − a)^(−k) brings down the negative factor −k, so the signs alternate.",
+    "The power must be n + 1. After one derivative 1/(x − a) already becomes −1/(x − a)².",
+    "The partial fractions are reversed. For A/(x − 1), A = 1/(1 − 2) = −1, so the 1/(x − 1) term carries the minus sign."
+   ],
+   "key": "MTH165-U2-029"
+  },
+  {
+   "topic": "Differentiation Techniques",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Here y₁ = dy/dx and y₂ = d²y/dx². Which function satisfies (1 − x²)y₂ − x·y₁ − 4y = 0?",
+   "code": "",
+   "options": [
+    "y = sin(2 sin⁻¹x)",
+    "y = e^(4 sin⁻¹x)",
+    "y = (sin⁻¹x)²",
+    "y = e^(2 sin⁻¹x)"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "For y = e^(a sin⁻¹x), y₁ = a·y/√(1 − x²), so (1 − x²)y₁² = a²y². Differentiate: −2x·y₁² + 2(1 − x²)y₁y₂ = 2a²y·y₁. Cancelling 2y₁ gives (1 − x²)y₂ − x·y₁ − a²y = 0. The coefficient 4 is a², so a = 2, not 4.",
+   "why_wrong": [
+    "For y = sin(2 sin⁻¹x), (1 − x²)y₁² = 4(1 − y²), which leads to (1 − x²)y₂ − x·y₁ + 4y = 0. The 4y term has the opposite sign.",
+    "Here a = 4, so the equation is (1 − x²)y₂ − x·y₁ − 16y = 0. The coefficient is a², not a.",
+    "Here (1 − x²)y₁² = 4y, which differentiates to (1 − x²)y₂ − x·y₁ − 2 = 0. That is a constant 2, not a 4y term.",
+    ""
+   ],
+   "key": "MTH165-U2-030"
+  },
+  {
+   "topic": "Differentiation Techniques",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "For the cycloid x = 2(θ − sin θ), y = 2(1 − cos θ), what is d²y/dx² at θ = π/2?",
+   "code": "",
+   "options": [
+    "0",
+    "−1/2",
+    "−1",
+    "1"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "dx/dθ = 2(1 − cos θ) and dy/dθ = 2 sin θ, so dy/dx = sin θ/(1 − cos θ) = cot(θ/2). Then d²y/dx² = [d/dθ(cot(θ/2))]/(dx/dθ) = (−½ cosec²(θ/2))/(2(1 − cos θ)). At θ = π/2 this is (−½·2)/(2·1) = −1/2.",
+   "why_wrong": [
+    "This is (d²y/dθ²)/(d²x/dθ²) = (2 cos θ)/(2 sin θ), which is 0 at π/2. Dividing the two second derivatives does not give the parametric second derivative.",
+    "",
+    "−1 is d/dθ(dy/dx) = −½ cosec²(π/4). It still has to be divided by dx/dθ = 2.",
+    "1 is dy/dx = cot(π/4) at θ = π/2. That is the first derivative, not the second."
+   ],
+   "key": "MTH165-U2-031"
+  },
+  {
+   "topic": "Mean Value Theorems",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A tank is being filled. Its volume V(t) in litres is differentiable, V(0) = 2, and the fill rate V′(t) never exceeds 5 litres per minute. What is the largest volume the tank can possibly hold at t = 3 minutes?",
+   "code": "",
+   "options": [
+    "17 litres",
+    "15 litres",
+    "7 litres",
+    "13 litres"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "By Lagrange's Mean Value Theorem, V(3) − V(0) = 3·V′(c) for some c in (0, 3). Since V′(c) ≤ 5, V(3) − 2 ≤ 15, so V(3) ≤ 17. The bound is reached when the tank fills at exactly 5 L/min the whole time.",
+   "why_wrong": [
+    "",
+    "15 L is only the largest possible increase, 3 × 5. The starting 2 L must be added.",
+    "7 L adds the rate to the starting volume without multiplying the rate by the 3-minute interval.",
+    "13 L subtracts the starting volume. The theorem gives V(3) = V(0) + 3·V′(c), not 3·V′(c) − V(0)."
+   ],
+   "key": "MTH165-U2-032"
+  },
+  {
+   "topic": "Mean Value Theorems",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Which values of c satisfy the conclusion of Lagrange's Mean Value Theorem for f(x) = x³ − 3x on [−2, 2]?",
+   "code": "",
+   "options": [
+    "c = 2/√3 only",
+    "c = ±1",
+    "c = ±2/√3",
+    "c = 0"
+   ],
+   "options_mono": true,
+   "correct": 2,
+   "explain": "f(2) = 2 and f(−2) = −2, so the chord slope is (2 − (−2))/(2 − (−2)) = 1. Solve f′(c) = 3c² − 3 = 1: c² = 4/3, so c = ±2/√3 ≈ ±1.15. Both values lie inside (−2, 2), so both are valid.",
+   "why_wrong": [
+    "The negative root −2/√3 ≈ −1.15 also lies in (−2, 2). A root is discarded only if it falls outside the open interval.",
+    "±1 are the solutions of f′(c) = 0, which is Rolle's condition. Here f(−2) ≠ f(2) and the chord slope is 1, not 0.",
+    "",
+    "c = 0 is the midpoint of the interval, but f′(0) = −3, not the chord slope 1."
+   ],
+   "key": "MTH165-U2-033"
+  },
+  {
+   "topic": "Mean Value Theorems",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "f(x) = √x on [0, 4] is not differentiable at x = 0. Does Lagrange's Mean Value Theorem apply, and if so, what is c?",
+   "code": "",
+   "options": [
+    "No, because f must be differentiable at every point of [0, 4]",
+    "Yes, and c = 2",
+    "Yes, and c = 1/16",
+    "Yes, and c = 1"
+   ],
+   "options_mono": false,
+   "correct": 3,
+   "explain": "The theorem needs continuity on the closed [0, 4] and differentiability only on the open (0, 4). √x meets both, because the bad point x = 0 is an endpoint. The chord slope is (2 − 0)/(4 − 0) = 1/2, and f′(c) = 1/(2√c) = 1/2 gives √c = 1, so c = 1, which lies in (0, 4).",
+   "why_wrong": [
+    "Differentiability is required only on the open interval (0, 4). Failing at the endpoint x = 0 does not matter.",
+    "c = 2 is the midpoint, but f′(2) = 1/(2√2) ≈ 0.35, not the chord slope 1/2.",
+    "Taking the slope as Δx/Δy = 4/2 = 2 gives 1/(2√c) = 2 and c = 1/16. The slope has been inverted.",
+    ""
+   ],
+   "key": "MTH165-U2-034"
+  },
+  {
+   "topic": "Mean Value Theorems",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "f(x) = tan x has f(0) = f(π) = 0, yet f′(x) = sec²x is never 0 in (0, π). Why does this not contradict Rolle's theorem?",
+   "code": "",
+   "options": [
+    "tan x is not continuous on [0, π]; it is undefined at x = π/2",
+    "tan x is not differentiable at the endpoints x = 0 and x = π",
+    "Rolle's theorem applies only to polynomials",
+    "The theorem does hold: f′(π/2) = 0, because tan x changes sign at π/2"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "Rolle's theorem needs three things: continuity on the closed [a, b], differentiability on the open (a, b), and f(a) = f(b). tan x has a vertical asymptote at x = π/2, inside [0, π], so the continuity hypothesis fails and the theorem promises nothing. When a hypothesis fails, the conclusion is allowed to fail too.",
+   "why_wrong": [
+    "",
+    "tan x is differentiable at 0 and π (sec²0 = 1). Differentiability at the endpoints is not required anyway, only on the open interval.",
+    "Rolle's theorem applies to any function that meets its three hypotheses, for example sin x on [0, π]. It does not have to be a polynomial.",
+    "tan x is undefined at π/2, so f′(π/2) does not exist. Jumping from +∞ to −∞ across an asymptote does not make f′ equal to zero."
+   ],
+   "key": "MTH165-U2-035"
+  },
+  {
+   "topic": "Taylor and Maclaurin Series",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What is the Taylor polynomial of degree 2 for f(x) = √x about x = 4?",
+   "code": "",
+   "options": [
+    "2 + (x − 4)/4 − (x − 4)²/32",
+    "2 + (x − 4)/4 − (x − 4)²/64",
+    "2 + (x − 4)/4 + (x − 4)²/64",
+    "2 + x/4 − x²/64"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "f(4) = 2. f′(x) = 1/(2√x) gives f′(4) = 1/4, and f″(x) = −1/(4x^(3/2)) gives f″(4) = −1/32. By Taylor's formula, f(4) + f′(4)(x − 4) + f″(4)(x − 4)²/2! = 2 + (x − 4)/4 − (x − 4)²/64.",
+   "why_wrong": [
+    "This forgets to divide f″(4) = −1/32 by 2!.",
+    "",
+    "f″(x) = −1/(4x^(3/2)) is negative, so the quadratic term must be subtracted.",
+    "About x = 4 the powers must be of (x − 4), not x. This puts the coefficients found at 4 into a Maclaurin form."
+   ],
+   "key": "MTH165-U2-036"
+  },
+  {
+   "topic": "Taylor and Maclaurin Series",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What is the Maclaurin series of eˣ sin x up to the x³ term?",
+   "code": "",
+   "options": [
+    "x + x² + x³/2",
+    "x − x³/6",
+    "x + x² + 2x³/3",
+    "x + x² + x³/3"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Multiply the two series: (1 + x + x²/2 + x³/6 + …)(x − x³/6 + …). The x term is x, the x² term is x·x = x², and the x³ terms are (x²/2)·x + 1·(−x³/6) = x³/2 − x³/6 = x³/3. So eˣ sin x = x + x² + x³/3 + …",
+   "why_wrong": [
+    "This drops the product 1·(−x³/6) and keeps only x³/2 from (x²/2)·x.",
+    "This uses only the 1 from eˣ, which just gives back the series of sin x.",
+    "This uses sin x = x + x³/6, with the wrong sign, giving x³/2 + x³/6 = 2x³/3.",
+    ""
+   ],
+   "key": "MTH165-U2-037"
+  },
+  {
+   "topic": "Taylor and Maclaurin Series",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "For f(x) = x²eˣ, what is f⁽⁵⁾(0), the fifth derivative at x = 0?",
+   "code": "",
+   "options": [
+    "1/6",
+    "20",
+    "10",
+    "1"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "x²eˣ = x²(1 + x + x²/2! + x³/3! + …), so the coefficient of x⁵ is 1/3! = 1/6. In a Maclaurin series the coefficient of x⁵ is f⁽⁵⁾(0)/5!, so f⁽⁵⁾(0) = 5!·(1/6) = 120/6 = 20. Leibniz's rule agrees: only the term C(5, 2)·(x²)″·eˣ = 10·2·1 = 20 survives at x = 0.",
+   "why_wrong": [
+    "1/6 is the coefficient of x⁵. It must be multiplied by 5! to give the derivative.",
+    "",
+    "10 is C(5, 2) alone. The second derivative of x² is 2, not 1, so the Leibniz term is 10·2 = 20.",
+    "This multiplies the coefficient 1/6 by 3!, from the eˣ term, instead of by 5!, from the power x⁵."
+   ],
+   "key": "MTH165-U2-038"
+  },
+  {
+   "topic": "Taylor and Maclaurin Series",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What is the Maclaurin series of e^(sin x) up to the x³ term?",
+   "code": "",
+   "options": [
+    "1 + x + x²/2",
+    "1 + x + x²/2 + x³/6",
+    "1 + x + x²/2 − x³/6",
+    "1 + x − x³/6"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "Put u = sin x = x − x³/6 + … into eᵘ = 1 + u + u²/2 + u³/6 + …. Up to x³, u = x − x³/6, u²/2 = x²/2 and u³/6 = x³/6. The x³ terms cancel (−x³/6 + x³/6 = 0), so e^(sin x) = 1 + x + x²/2 + 0·x³ + …",
+   "why_wrong": [
+    "",
+    "This replaces sin x by x everywhere, which gives the series of eˣ and loses the −x³/6 from sin x.",
+    "This keeps −x³/6 from u but stops eᵘ at u²/2, dropping the u³/6 = x³/6 term that cancels it.",
+    "This stops eᵘ at 1 + u, losing x²/2 from u²/2 and x³/6 from u³/6."
+   ],
+   "key": "MTH165-U2-039"
+  },
+  {
+   "topic": "Indeterminate Forms",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Evaluate lim(x→0) [1/x − 1/(eˣ − 1)].",
+   "code": "",
+   "options": [
+    "0",
+    "−1/2",
+    "1",
+    "1/2"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "This is ∞ − ∞, so combine the fractions first: (eˣ − 1 − x)/(x(eˣ − 1)), which is a 0/0 form. Since eˣ − 1 − x ≈ x²/2 and x(eˣ − 1) ≈ x², the limit is 1/2. Applying L'Hospital's rule twice gives the same value: eˣ/(2eˣ + xeˣ) → 1/2.",
+   "why_wrong": [
+    "This treats ∞ − ∞ as 0, or replaces eˣ − 1 by x too early so that the two terms cancel. ∞ − ∞ is indeterminate and must be combined first.",
+    "This combines the fractions in the wrong order, as (x − (eˣ − 1))/(x(eˣ − 1)), which flips the sign.",
+    "This uses eˣ − 1 ≈ x + x², dropping the 2! in x²/2. That gives 1/x − 1/(x + x²) = 1/(1 + x) → 1.",
+    ""
+   ],
+   "key": "MTH165-U2-040"
+  },
+  {
+   "topic": "Indeterminate Forms",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "Evaluate lim(x→π/2) (x − π/2)·tan x.",
+   "code": "",
+   "options": [
+    "−1",
+    "0",
+    "1",
+    "Does not exist, since tan x → +∞ on one side of π/2 and −∞ on the other"
+   ],
+   "options_mono": false,
+   "correct": 0,
+   "explain": "This is 0·∞, so first rewrite it as a quotient: (x − π/2)/cot x, which is a 0/0 form. By L'Hospital's rule the limit is lim 1/(−cosec²x) = 1/(−1) = −1 as x → π/2. The sign is the same on both sides because (x − π/2) also changes sign at π/2.",
+   "why_wrong": [
+    "",
+    "This treats 0·∞ as 0. The form is indeterminate and must be rewritten as 0/0 or ∞/∞ first.",
+    "This uses d/dx(cot x) = +cosec²x. The correct derivative is −cosec²x.",
+    "The factor (x − π/2) changes sign at π/2 as well, so the product is negative on both sides and tends to −1 from each side."
+   ],
+   "key": "MTH165-U2-041"
+  },
+  {
+   "topic": "Indeterminate Forms",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "A student evaluates lim(x→0) (e^(2x) − cos x)/(x + x²) like this. Step 1: the form is 0/0, so by L'Hospital's rule the limit equals lim (2e^(2x) + sin x)/(1 + 2x). Step 2: apply L'Hospital's rule again to get lim (4e^(2x) + cos x)/2. Step 3: put x = 0 to get 5/2. Which verdict is correct?",
+   "code": "",
+   "options": [
+    "Step 1 is wrong: e^(2x) differentiates to e^(2x), so the limit is 1",
+    "The working is correct, and the limit is 5/2",
+    "Step 2 is wrong: after Step 1 the form is 2/1, which is not indeterminate, so the limit is 2",
+    "Step 1 is wrong: the whole quotient must be differentiated with the quotient rule"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "L'Hospital's rule may be applied only while the form is 0/0 or ∞/∞. After Step 1, putting x = 0 gives (2 + 0)/(1 + 0) = 2/1, a definite value, so the limit is 2. Step 2 applies the rule to a quotient that is not indeterminate, which is not allowed, and that produces the wrong 5/2.",
+   "why_wrong": [
+    "Step 1 is right. By the chain rule, d/dx e^(2x) = 2e^(2x), not e^(2x).",
+    "L'Hospital's rule cannot be repeated at will. Step 2 applied it to 2/1, which is not indeterminate.",
+    "",
+    "L'Hospital's rule differentiates the numerator and denominator separately. Using the quotient rule on N/D is the classic mistake, not the fix."
+   ],
+   "key": "MTH165-U2-042"
+  },
+  {
+   "topic": "Indeterminate Forms",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Consider lim(x→0) x² sin(1/x)/sin x. Differentiating the numerator and denominator separately gives [2x sin(1/x) − cos(1/x)]/cos x, which has no limit as x → 0. What is the original limit?",
+   "code": "",
+   "options": [
+    "It does not exist, because lim f′/g′ does not exist",
+    "1",
+    "0",
+    "It cannot be found, because L'Hospital's rule fails here"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "L'Hospital's rule only says that if lim f′/g′ exists, the original limit equals it. If lim f′/g′ does not exist, the rule tells you nothing. Instead, write the expression as (x/sin x)·x sin(1/x). Here x/sin x → 1 and |x sin(1/x)| ≤ |x| → 0, so the limit is 1·0 = 0.",
+   "why_wrong": [
+    "When lim f′/g′ does not exist, that says nothing about lim f/g. The rule only works in the other direction.",
+    "This replaces sin(1/x) by 1/x. That small-angle step needs 1/x → 0, but here 1/x → ∞.",
+    "",
+    "When L'Hospital's rule gives no answer, the limit can still be found another way, here by rewriting and bounding sin(1/x)."
+   ],
+   "key": "MTH165-U2-043"
+  },
+  {
+   "topic": "Indeterminate Forms",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "Evaluate lim(x→0⁺) x^(1/ln x).",
+   "code": "",
+   "options": [
+    "1",
+    "0",
+    "e",
+    "Does not exist, because 0⁰ is undefined"
+   ],
+   "options_mono": false,
+   "correct": 2,
+   "explain": "As x → 0⁺ the base → 0 and the exponent 1/ln x → 0, so the form is 0⁰. That form is indeterminate and has no fixed value. Take logs: ln L = lim (1/ln x)·ln x = 1, so L = e¹ = e.",
+   "why_wrong": [
+    "0⁰ is an indeterminate form, not the number 1. Stopping at ln L = 1 without exponentiating also gives this wrong answer.",
+    "The base tending to 0 does not force the power to 0 when the exponent is also tending to 0.",
+    "",
+    "An indeterminate form means the limit has to be worked out, not that there is no limit. Taking logs gives a definite value."
+   ],
+   "key": "MTH165-U2-044"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "hard",
+   "kind": "situation",
+   "q": "An open box is made from a 12 cm × 12 cm square sheet by cutting equal squares of side x cm from each corner and folding up the sides. What value of x gives the largest volume?",
+   "code": "",
+   "options": [
+    "x = 2 cm",
+    "x = 6 cm",
+    "x = 4 cm",
+    "x = 3 cm"
+   ],
+   "options_mono": true,
+   "correct": 0,
+   "explain": "The base is (12 − 2x) by (12 − 2x) and the height is x, so V = x(12 − 2x)² = 4x³ − 48x² + 144x. V′ = 12x² − 96x + 144 = 12(x − 2)(x − 6), which is zero at x = 2 or x = 6. V″ = 24x − 96 is −48 at x = 2, so x = 2 gives the maximum, V = 2·8² = 128 cm³.",
+   "why_wrong": [
+    "",
+    "x = 6 is the other root of V′ = 0, but V(6) = 0 and V″(6) = 48 > 0, so it is a minimum: the whole sheet has been cut away.",
+    "Using a base side of 12 − x, as if only one square were cut from each side, gives V = x(12 − x)², which peaks at x = 4.",
+    "Using V = x(12 − 2x), forgetting that the base is a square, gives V′ = 12 − 4x = 0 at x = 3."
+   ],
+   "key": "MTH165-U2-045"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "hard",
+   "kind": "recall",
+   "q": "What is the local maximum value of f(x) = 2x³ − 9x² + 12x + 1?",
+   "code": "",
+   "options": [
+    "5",
+    "1",
+    "−6",
+    "6"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "f′(x) = 6x² − 18x + 12 = 6(x − 1)(x − 2), so the stationary points are x = 1 and x = 2. f″(x) = 12x − 18 gives f″(1) = −6 < 0, a maximum, and f″(2) = 6 > 0, a minimum. The local maximum value is f(1) = 2 − 9 + 12 + 1 = 6.",
+   "why_wrong": [
+    "5 = f(2) is the local minimum value. f″(2) = 6 > 0 means a minimum, not a maximum.",
+    "1 is the x-coordinate where the maximum occurs, not the maximum value f(1).",
+    "−6 is f″(1), the second-derivative value used in the test, not the value of f.",
+    ""
+   ],
+   "key": "MTH165-U2-046"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "max",
+   "kind": "recall",
+   "q": "What is the greatest value of f(x) = x^(1/x) for x > 0?",
+   "code": "",
+   "options": [
+    "e",
+    "e^(1/e)",
+    "1",
+    "e^(−e)"
+   ],
+   "options_mono": true,
+   "correct": 1,
+   "explain": "Take logs: ln y = (ln x)/x, so y′ = y·(1 − ln x)/x². Since y > 0, y′ = 0 only at x = e. y′ > 0 for x < e and y′ < 0 for x > e, so x = e gives the maximum, and the greatest value is f(e) = e^(1/e) ≈ 1.44.",
+   "why_wrong": [
+    "e is where the maximum occurs, not the maximum value f(e).",
+    "",
+    "Differentiating x^(1/x) as if the base were constant gives x^(1/x)·ln x·(−1/x²), which is zero at x = 1. The correct derivative has the factor (1 − ln x), and f′(1) = 1 ≠ 0.",
+    "Writing ln y = x ln x, the log of xˣ, gives a stationary point at x = 1/e, and f(1/e) = (1/e)^e = e^(−e). The log of x^(1/x) is (ln x)/x."
+   ],
+   "key": "MTH165-U2-047"
+  },
+  {
+   "topic": "Maxima and Minima",
+   "difficulty": "max",
+   "kind": "situation",
+   "q": "A robot moves along the track y = x², with distances in metres. A charging post stands at (0, 2). What is the shortest distance from the post to the track?",
+   "code": "",
+   "options": [
+    "2 m",
+    "7/4 m",
+    "√6/2 m",
+    "√7/2 m"
+   ],
+   "options_mono": true,
+   "correct": 3,
+   "explain": "Minimise the squared distance D = x² + (x² − 2)² = x⁴ − 3x² + 4. D′ = 4x³ − 6x = 2x(2x² − 3), which is zero at x = 0 or x² = 3/2. D″ = 12x² − 6 is −6 at x = 0 (a local maximum of the distance) and 12 at x² = 3/2 (a minimum), where D = 9/4 − 9/2 + 4 = 7/4. So the shortest distance is √(7/4) = √7/2 m ≈ 1.32 m.",
+   "why_wrong": [
+    "2 m comes from the stationary point x = 0, but D″(0) = −6 < 0. The vertex is a local maximum of the distance, not the minimum.",
+    "7/4 is D, the squared distance that was minimised. The distance is its square root.",
+    "√6/2 = √(3/2) is the x-coordinate of the nearest points, not the distance.",
+    ""
+   ],
+   "key": "MTH165-U2-048"
+  }
+ ]
+}
